@@ -330,28 +330,34 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
             (bind-key "M-/" #'company-complete-common org-mode-map)))
 #+END_SRC
 
-For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] (and [[https://github.com/randomphrase/company-c-headers][company-c-headers]]) which can be a bit tricky to set up, but
-works very well once that is done. For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]]. For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but
-insert unicode symbols via [[https://github.com/vspinu/company-math][company-math]].
+For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] (and [[https://github.com/randomphrase/company-c-headers][company-c-headers]]) which can be a bit tricky to set up, butworks very well once that is done. 
 
 #+BEGIN_SRC emacs-lisp
-  (use-package company-c-headers
-    :ensure t)
+(use-package company-c-headers
+  :ensure t)
+#+END_SRC
 
-  (use-package company-anaconda
-    :ensure t)
+For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]]. 
 
-  (use-package company-math
-    :ensure t)
+#+BEGIN_SRC emacs-lisp
+(use-package company-anaconda
+  :ensure t)
+#+END_SRC
 
-  (use-package company-auctex
-    :ensure t
-    :config (progn
-              (add-to-list 'company-backends
-                           '(company-auctex-macros company-auctex-environments company-math-symbols-unicode))
-              (add-to-list 'company-backends #'company-auctex-labels)
-              (add-to-list 'company-backends #'company-auctex-bibs)
-              (setq company-math-disallow-unicode-symbols-in-faces nil)))
+For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but insert unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-math
+  :ensure t)
+
+(use-package company-auctex
+  :ensure t
+  :config (progn
+            (add-to-list 'company-backends
+                         '(company-auctex-macros company-auctex-environments company-math-symbols-unicode))
+            (add-to-list 'company-backends #'company-auctex-labels)
+            (add-to-list 'company-backends #'company-auctex-bibs)
+            (setq company-math-disallow-unicode-symbols-in-faces nil)))
 #+END_SRC
 
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
