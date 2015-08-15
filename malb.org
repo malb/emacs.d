@@ -2211,6 +2211,8 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
 
             (add-hook 'org-mode-hook #'malb/diminish-org-indent-mode)
 
+            (bind-key "<home>" #'org-beginning-of-line org-mode-map)
+            (bind-key "<end>" #'org-end-of-line org-mode-map)
             ))
 #+END_SRC
 
