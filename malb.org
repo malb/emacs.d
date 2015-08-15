@@ -111,7 +111,8 @@ When splitting windows open the previous buffer in it.
 (use-package ace-window
   :ensure t
   :bind (("C-x o" . ace-window)
-         ("±" . other-window))
+         ("±" . other-window)
+         ("M-p" . ace-window))
   :config (progn
             (setq aw-keys   '(?a ?s ?d ?f ?j ?k ?l)
                   aw-dispatch-always t
