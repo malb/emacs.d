@@ -1908,6 +1908,8 @@ Diminish ~flyspell-mode~ as we always use it.
 
 ** [[http://jblevins.org/projects/markdown-mode/][Markdown]]
 
+Standard setup and also a quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-markdown.el][source]])
+
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
   :ensure t
@@ -1925,8 +1927,33 @@ Diminish ~flyspell-mode~ as we always use it.
                   markdown-css-paths (list malb/markdown.css)
                   markdown-enable-math t)
 
+            (defun malb/markdown-preview-buffer ()
+              (interactive)
+              (require 'shr)
+              (let* ((buf-this (buffer-name (current-buffer)))
+                     (buf-html (get-buffer-create
+                                (format "*md-html (%s)*" buf-this))))
+                (markdown-other-window (buffer-name buf-html))
+                (shr-render-buffer buf-html)
+                (kill-buffer buf-html)))
+
             (bind-key "M-." #'markdown-jump markdown-mode-map)
+            (bind-key "C-c C-e o" #'malb/markdown-preview-buffer markdown-mode-map) ;; inspired by org-mode-export
             (add-hook 'markdown-mode-hook #'flyspell-mode)))
+#+END_SRC
+
+*** TODO Pandoc
+
+Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http://johnmacfarlane.net/pandoc/][pandoc]] for converting markdown to everything else.
+
+Currently, enabling pandoc mode causes problems with emacsclient
+
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package pandoc-mode
+  ;;   :ensure t
+  ;;   :config (progn
+  ;;             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
+  ;;             (add-hook 'markdown-mode-hook #'pandoc-mode)))
 #+END_SRC
 
 ** ReST
