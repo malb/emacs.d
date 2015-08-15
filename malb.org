@@ -662,8 +662,6 @@ Make sure auto automatically rescan for imenu change
 - =C-c p r=   ~projectile-replace~
 - =C-c p s s= ~helm-projectile-ag~
 
-We also use guide-key below to pop up a menu for these.
-
 *Note*: =next-error= has nothing to do with projectile, but =<f5>= and =<f6>= kind of go together.
 
 #+BEGIN_SRC emacs-lisp
@@ -2690,19 +2688,14 @@ line above it in a reasonable manner for the type of file you're editing.
 (bind-key "C-z" nil)
 #+END_SRC
 
-* Guide Key
-
-Learn key bindings
+** Learn key bindings
 
 #+BEGIN_SRC emacs-lisp
-(use-package guide-key
+(use-package which-key
   :ensure t
-  :diminish guide-key-mode
+  :diminish which-key-mode
   :config (progn
-            (setq guide-key/guide-key-sequence '("C-c" "C-x" "C-h" "C-c p" "C-c h" "C-c C-x")
-                  guide-key/popup-window-position 'bottom)
-            (guide-key-mode 1)
-            ))
+            (which-key-mode 1)))
 #+END_SRC
 
 * Look
