@@ -2907,20 +2907,6 @@ When only one window is open, center it using [[https://github.com/anler/centere
 #+END_SRC
 
 * ToDos
-** TODO fix ~pandoc~
-
-Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http://johnmacfarlane.net/pandoc/][pandoc]] for converting markdown to everything else.
-
-Currently, enabling pandoc-mode means that emacsclient startup fails
-
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package pandoc-mode
-  ;;   :ensure t
-  ;;   :config (progn
-  ;;             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
-  ;;             (add-hook 'markdown-mode-hook #'pandoc-mode)))
-#+END_SRC
-
 ** TODO AucTeX
 - ~\begin{comment}…\end{comment}~ does not work as expected
 ** TODO [[http://emacs.stackexchange.com/q/8069][.el.gpg]]
