@@ -2374,6 +2374,25 @@ If we are in a project we might add a TODO entry to the appropriate entry in "pr
 #+END_SRC
 
 ** Tips
+*** Agenda Commands
+
+| ~F~         | ~(org-agenda-follow-mode)~           | Toggle Follow mode                                     |
+| ~L~         | ~(org-agenda-recenter)~              | Display original location and recenter that window.    |
+| ~o~         |                                    | Delete other windows.                                  |
+| ~f~         | ~(org-agenda-later)~                 | Go forward in time to display                          |
+| ~b~         | ~(org-agenda-earlier)~               | Go backward in time to display earlier dates           |
+| r and ~g~   | ~(org-agenda-redo)~                  | Recreate the agenda buffer.                            |
+| ~C-c C-s~   | ~(org-agenda-schedule)~              | Schedule this item.                                    |
+| ~C-c C-d~   | ~(org-agenda-deadline)~              | Set a deadline for this item.                          |
+| ~S-<right>~ | ~(org-agenda-do-date-later)~         | Change the timestamp by one day into the future.       |
+| ~S-<left>~  | ~(org-agenda-do-date-earlier)~       | Change the timestamp by one day into the past.         |
+| ~>~         | ~(org-agenda-date-prompt)~           | Change the timestamp associated with the current line. |
+| ~m~         | ~(org-agenda-bulk-mark)~             | Mark the entry at point for bulk action.               |
+| ~*~         | ~(org-agenda-bulk-mark-all)~         | Mark all visible agenda entries for bulk action.       |
+| ~u~         | ~(org-agenda-bulk-unmark)~           | Unmark entry at point for bulk action.                 |
+| ~U~         | ~(org-agenda-bulk-remove-all-marks)~ | Unmark all marked entries for bulk action.             |
+| ~B~         | ~(org-agenda-bulk-action)~           | Bulk action: act on all marked entries in the agenda.  |
+
 *** Commands I easily forget
 
 - =C-c C-j= calls ~(org-goto)~ which jumps to headlines in a file
