@@ -1747,11 +1747,11 @@ Indent correctly in ~visual-line-mode~ (~org-mode~ has its own thing).
 A [[https://github.com/jorgenschaefer/typoel][minor mode]] that will change a number of normal keys to make them insert typographically useful unicode characters. Some of those keys can be used repeatedly to cycle through variations. This includes in particular quotation marks and dashes.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package typo
-    :ensure t
-    :diminish typo-mode
-    :init (progn
-            (typo-global-mode 1)
+(use-package typo
+  :ensure t
+  :diminish typo-mode
+  :config (progn
+            (setq-default  typo-language "English")
             (add-hook 'markdown-mode-hook #'typo-mode)
             (add-hook 'org-mode-hook #'typo-mode)
             (add-hook 'rst-mode-hook #'typo-mode)))
