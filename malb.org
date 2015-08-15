@@ -2608,6 +2608,12 @@ Make command history persistent
 (savehist-mode t)
 #+END_SRC
 
+Always prefer to load newer files, instead of giving precedence to the .elc files.
+
+#+BEGIN_SRC emacs-lisp
+(setq load-prefer-newer t)
+#+END_SRC
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
