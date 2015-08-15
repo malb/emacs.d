@@ -291,7 +291,7 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
   :ensure t
   :bind (("C-<return>" . company-complete)
          ("M-/" . company-dabbrev))
-  
+
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
                   company-idle-delay 0.1   ; disable delay before autocompletion popup shows
@@ -331,14 +331,14 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
             (bind-key "M-/" #'company-complete-common org-mode-map)))
 #+END_SRC
 
-For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] (and [[https://github.com/randomphrase/company-c-headers][company-c-headers]]) which can be a bit tricky to set up, butworks very well once that is done. 
+For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] (and [[https://github.com/randomphrase/company-c-headers][company-c-headers]]) which can be a bit tricky to set up, butworks very well once that is done.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-c-headers
   :ensure t)
 #+END_SRC
 
-For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]]. 
+For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-anaconda
@@ -369,7 +369,7 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
   :init (company-quickhelp-mode 1))
 #+END_SRC
 
-Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]]) 
+Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
 
 *Note:* Do this at the very end.
 
@@ -414,7 +414,7 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
           helm-source-recentf)
       '(helm-source-recentf)) ;; all recent files
 
-    
+
     ;; always make some common files easily accessible
     '(((name . "Common Files")
        (candidates . malb/common-file-targets)
@@ -886,7 +886,7 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
 
 2. =M-x= ~isend-associate~ RET *Sage* RET
 
-3. Hitting =C-RET= will send the current line to the interpreter. If a region is active, all lines spanned by the region will be sent (i.e. no line will be only partially sent). 
+3. Hitting =C-RET= will send the current line to the interpreter. If a region is active, all lines spanned by the region will be sent (i.e. no line will be only partially sent).
 
 #+BEGIN_SRC emacs-lisp
 (use-package isend-mode
@@ -1315,7 +1315,7 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 #+END_SRC
 
 *** Docstrings
-**** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]] 
+**** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]]
 
 Python docstring mode provides syntax highlighting for docstrings in both ReStructuredText and Epydoc formats, as well as an override for the fill-paragraph function when editing such a docstring that will wrap things according to Python community convention.
 
@@ -1353,7 +1353,7 @@ Disabled for now in favour of ~python-docstring-mode~.
                   ))
 #+END_SRC
 
-**** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx-doc]] 
+**** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx-doc]]
 
 An emacs minor mode for inserting docstring skeleton for Python functions and methods (=C-c M-d=). The structure of the docstring is as per the requirement of the Sphinx documentation generator.
 
@@ -1540,8 +1540,8 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
 This makes Emacs regexp actually usable for me.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package visual-regexp-steroids
-    :ensure t)
+(use-package visual-regexp-steroids
+  :ensure t)
 
   (use-package visual-regexp
     :ensure t
@@ -1884,7 +1884,7 @@ Diminish ~flyspell-mode~ as we always use it.
          ("\\.txt\\'" . markdown-mode)
          ("README\\.md\\'" . gfm-mode)
          )
-  :config (progn             
+  :config (progn
             (defvar malb/markdown.css
               (expand-file-name "themes/foghorn.css" user-emacs-directory))
 
@@ -1936,7 +1936,7 @@ Parse BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-r
             (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
             (add-hook 'LaTeX-mode-hook #'TeX-fold-mode)
-            
+
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
             (setq TeX-view-program-selection '(((output-dvi style-pstricks) "dvips and gv")
@@ -1952,7 +1952,7 @@ Parse BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-r
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
 
             (bind-key "C-<tab>" #'TeX-fold-dwim LaTeX-mode-map)
-            
+
             (setq TeX-auto-save t)
             (setq TeX-parse-self t)
             (setq-default TeX-master nil)
@@ -1993,16 +1993,17 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
           (setq helm-bibtex-notes-path malb/literature-notes-dir)))
 #+END_SRC
 
-*** [[https://github.com/politza/pdf-tools][Pdf tools]] 
+*** [[https://github.com/politza/pdf-tools][Pdf tools]]
 
 A reasonable PDF viewer for Emacs
 
 #+BEGIN_SRC emacs-lisp
-  (use-package pdf-tools
-    :init (progn
-            (add-hook 'pdf-view-mode-hook 'auto-revert-mode))
-    :config (progn
-              (pdf-tools-install)))
+(use-package pdf-tools
+  :init (progn
+          (add-hook 'pdf-view-mode-hook 'auto-revert-mode))
+  :config (progn
+            (pdf-tools-install)
+            (setq-default pdf-view-display-size 'fit-page)))
 #+END_SRC
 
 We make ~scroll-other-window~ work for PDF tools ([[https://github.com/politza/pdf-tools/issues/55][source]])
@@ -2146,8 +2147,9 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
 
             (defun malb/diminish-org-indent-mode ()
               (diminish 'org-indent-mode))
-            
+
             (add-hook 'org-mode-hook #'malb/diminish-org-indent-mode)
+
             ))
 #+END_SRC
 
