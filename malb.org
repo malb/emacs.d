@@ -428,7 +428,17 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
     '(helm-source-locate               ;; file anywhere
       helm-source-bookmarks            ;; bookmarks too
       helm-source-buffer-not-found     ;; ask to create a buffer otherwise
-      )) "*Helm all the things*"))
+      )
+
+    ;; adding helm-source-imenu-anywhere does some weird pre-filtering
+    '(((name . "imenu-anywere")
+       (candidates . helm-imenu-anywhere-candidates)
+       (action .
+               #[(elm)
+                 "\301\302\"\207"
+                 [elm imenu-anywhere--goto-function ""]
+                 3])))
+    ) "*Helm all the things*"))
 #+END_SRC
 
 Use helm for switching buffers, opening files, calling interactive functions.
