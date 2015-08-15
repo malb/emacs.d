@@ -2744,6 +2744,7 @@ We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
 (malb/set-menu-key "g" #'magit-status)
 (malb/set-menu-key "i" #'helm-semantic-or-imenu)
 (malb/set-menu-key "j" #'ace-jump-mode)
+(malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex)
 (malb/set-menu-key "m" #'mu4e)
 (malb/set-menu-key "o" #'helm-org-agenda-files-headings)
