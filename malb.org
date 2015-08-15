@@ -633,9 +633,15 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 
 * [[https://github.com/vspinu/imenu-anywhere][IMenu-anywhere]]
 
+Make sure auto automatically rescan for imenu change
+
 #+BEGIN_SRC emacs-lisp
-  (use-package imenu-anywhere
-    :ensure t)
+(set-default 'imenu-auto-rescan t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package imenu-anywhere
+  :ensure t)
 #+END_SRC
 
 ** TODO do we need ~helm-imenu-anywhere~ or is ~helm-imenu-in-all-buffers~ sufficient?
