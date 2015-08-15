@@ -1902,7 +1902,8 @@ Diminish ~flyspell-mode~ as we always use it.
                   deft-file-naming-rules '((noslash . "-")
                                            (nospace . "-")
                                            (case-fn . downcase))
-                  )))
+                  )
+            (add-hook 'deft-mode-hook #'hl-line-mode)))
 #+END_SRC
 
 ** [[http://jblevins.org/projects/markdown-mode/][Markdown]]
