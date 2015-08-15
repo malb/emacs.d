@@ -1857,10 +1857,10 @@ Diminish ~flyspell-mode~ as we always use it.
 (use-package langtool
   :ensure t
   :config (progn
-            (setq langtool-language-tool-jar
-                  (expand-file-name "languagetool-commandline.jar"
-                                    (file-name-as-directory "langtool")))
-            langtool-mother-tongue nil))
+            (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
+                                                               (file-name-as-directory "langtool"))
+                  langtool-default-language "en-GB"))
+  )
 #+END_SRC
 
 *** [#A] Dictionary
