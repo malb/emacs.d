@@ -2140,6 +2140,7 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
             (setq org-src-fontify-natively t ; fontify code blocks
                   org-hide-emphasis-markers t
                   org-enforce-todo-dependencies t ; enforce todo dependencies
+                  org-agenda-dim-blocked-tasks nil ; t is very slow (BUG)
                   org-habit-graph-column 128
                   org-agenda-tags-column -128
                   org-tags-column -120
@@ -2161,7 +2162,7 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
                   org-special-ctrl-k t ; special keys for killing a headline
                   org-src-window-setup 'current-window ; how org-src windows are set up when hitting C-c '
                   org-agenda-window-setup 'current-window ; Overwrite the current window with the agenda
-                  org-agenda-compact-blocks t ; Compact the block agenda view           
+                  org-agenda-compact-blocks t ; Compact the block agenda view
                   org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory)
                   )
 
@@ -2811,10 +2812,10 @@ line above it in a reasonable manner for the type of file you're editing.
                   (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
                   (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
                   (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
-                  (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")                
+                  (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
                   (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
                   (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-                  (set-face-attribute 'org-block-background nil :background "#FDF8EC")
+                  (set-face-attribute 'org-block nil :background "#FDF8EC")
 
                   (set-face-attribute 'mmm-default-submode-face nil :background "#FDF8EC")
                   (set-face-attribute 'hl-sentence-face nil :background "#FDF9EF")
