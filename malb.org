@@ -1292,7 +1292,18 @@ If processing fails throw ProcessingError.
 (use-package python-mode
   :config (progn
             (setq-default python-indent 4
-                          py-docstring-style 'SYMMETRIC)))
+                          py-docstring-style 'SYMMETRIC)
+
+            ;; https://answers.launchpad.net/python-mode/+question/221144
+            (defun malb/remove-python-ffap ()
+              ;; remove python-mode's ffap things that slow down find-file
+              (setq ffap-alist (remove '(python-mode . py-ffap-module-path) ffap-alist))
+              (setq ffap-alist (remove '(python-mode . py-module-path) ffap-alist))
+              (setq ffap-alist (remove '(inferior-python-mode . py-ffap-module-path) ffap-alist))
+              )
+
+            (add-hook 'python-mode-hook #'malb/remove-python-ffap)
+            ))
 #+END_SRC
 
 *** Highlight indentation
