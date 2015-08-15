@@ -1691,6 +1691,10 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
       (move-beginning-of-line nil))))
 
 (bind-key "C-a" #'malb/beginning-of-line-dwim)
+(bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-map)
+(bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
+(bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
+
 #+END_SRC
 
 * Prose
