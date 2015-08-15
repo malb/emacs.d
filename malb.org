@@ -426,6 +426,7 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
       '(helm-source-files-in-current-dir)) ;; files in current directory
 
     '(helm-source-locate               ;; file anywhere
+      helm-source-baloo                ;; baloo search
       helm-source-bookmarks            ;; bookmarks too
       helm-source-buffer-not-found     ;; ask to create a buffer otherwise
       )
@@ -576,6 +577,45 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 #+BEGIN_SRC emacs-lisp
 (use-package helm-commandlinefu
   :ensure t)
+#+END_SRC
+
+** Helm-baloo
+
+#+BEGIN_SRC emacs-lisp
+(defcustom helm-baloo-file-limit 100
+  "Limit number of entries returned by baloo to this number."
+  :group 'helm-baloo
+  :type '(integer :tag "Limit"))
+
+
+(defun baloo-search (pattern)
+  (start-process "baloosearch" nil "baloosearch" (format "-l %d " helm-baloo-file-limit) pattern))
+
+(defun helm-baloo-search ()
+  (baloo-search helm-pattern))
+
+(defun helm-baloo-transform (cs)
+  (let '(helm-baloo-clean-up-regexp (rx (or
+                                         control
+                                         (seq "[0;31m" (+ (not (any "["))) "[0;0m")
+                                         "[0;32m"
+                                         "[0;0m")))
+    (mapcar (function (lambda (c)
+                        (replace-regexp-in-string  (rx (seq bol (+ space))) ""
+                                                   (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
+            cs)))
+
+(defvar helm-source-baloo
+  (helm-build-async-source "Baloo"
+    :candidates-process #'helm-baloo-search
+    :candidate-transformer #'helm-baloo-transform
+    :action '(("Open" . (lambda (x) (find-file x)
+                          )))))
+
+(defun helm-baloo ()
+  (interactive)
+  (helm :sources helm-source-baloo
+        :buffer "*helm baloo*"))
 #+END_SRC
 
 * Recentf
