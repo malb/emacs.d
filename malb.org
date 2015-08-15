@@ -1570,12 +1570,13 @@ This makes Emacs regexp actually usable for me.
 (use-package visual-regexp-steroids
   :ensure t)
 
-  (use-package visual-regexp
-    :ensure t
-    :bind (("C-c m" . vr/mc-mark)
-           ("C-M-%" . vr/query-replace)
-           ("C-M-s" . vr/isearch-forward)
-           ("C-M-r" . vr/isearch-backward)))
+(use-package visual-regexp
+  :ensure t
+  :bind (("C-c m" . vr/mc-mark)
+         ("C-M-%" . vr/query-replace)
+         ("M-%" . vr/query-replace)
+         ("C-M-s" . vr/isearch-forward)
+         ("C-M-r" . vr/isearch-backward)))
 #+END_SRC
 
 ** Multiple cursors
