@@ -893,7 +893,10 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
             (dolist (key '("C-<up>" "M-<up>" "M-p"))
               (bind-key key #'comint-previous-matching-input-from-input comint-mode-map))
             (dolist (key '("C-<down>" "M-<down>" "M-n"))
-              (bind-key key #'comint-next-matching-input-from-input comint-mode-map))))
+              (bind-key key #'comint-next-matching-input-from-input comint-mode-map))
+            (setq comint-scroll-to-bottom-on-input t  ; always insert at the bottom
+                  comint-input-ignoredups t           ; no duplicates in command history
+                  )))
 #+END_SRC
 
 *** [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
