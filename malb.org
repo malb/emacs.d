@@ -2352,7 +2352,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                                                                   "-blx.bib$" "\\.snm$"
                                                                   "\\.synctex\\.gz$" "\\.tex\\.backup$" "\\.bib\\.backup$"
                                                                   "\\.fdb_latexmk$" "\\.fls$"
-                                                                  "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'") 
+                                                                  "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'")
                                                       "\\|"))
 
             (push ".brf" dired-latex-unclean-extensions)
@@ -2576,7 +2576,7 @@ We don’t want the *scratch* buffer to be killed ever.
   :ensure t)
 #+END_SRC
 
-** [[https://github.com/Malabarba/elisp-bug-hunter][Bug-hunter]] 
+** [[https://github.com/Malabarba/elisp-bug-hunter][Bug-hunter]]
 
 Debug startup failures. If your Emacs init file signals an error during startup, but you don't know why, simply issue ~M-x bug-hunter-init-file RET RET~ and The Bug Hunter will find it for you.
 
@@ -2785,7 +2785,7 @@ line above it in a reasonable manner for the type of file you're editing.
 
 *** TODO clean up Solarized config
 
-** Rainbow mode 
+** Rainbow mode
 
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-mode
@@ -2837,21 +2837,15 @@ Currently, enabling pandoc-mode means that emacsclient startup fails
 ** TODO AucTeX
 - ~\begin{comment}…\end{comment}~ does not work as expected
 ** TODO [[http://emacs.stackexchange.com/q/8069][.el.gpg]]
-:PROPERTIES:
-:ID:       3e260de2-0b9c-49a8-8ef5-1535d8e290e4
-:END:      
 ** TODO [[https://github.com/rejeep/prodigy.el][prodigy]]
-:PROPERTIES:
-:ID:       ca5dcdf8-73f0-4220-b1af-e3968023b292
-:END:
 ** TODO [[https://github.com/wasamasa/firestarter][firestarter]]
 :PROPERTIES:
 :ID:       01e6ff33-8437-4b06-967c-85dd8df6e7b6
 :END:
 ** TODO [[https://github.com/gregsexton/ob-ipython][org-ipython]]
-** TODO [[http://blog.binchen.org/posts/export-org-file-embedded-with-code-snippets.html][org-export]]
 ** TODO [[https://github.com/bastibe/annotate.el][annotate]]
-** TODO [[https://github.com/danielsz/Palimpsest][Palimpsest]]
+** TODO [[https://github.com/danielsz/Palimpsest][palimpsest]]
+
 * Notes
 ** Compile .emacs
 
@@ -2867,12 +2861,12 @@ Currently, enabling pandoc-mode means that emacsclient startup fails
 - =C-x z= repeat last command (and again with just =z=)
 - =align-regexp= to align on regexp
 - =C-c == reftex-toc
-- =C-h c= invokes describe-key-briefly. 
+- =C-h c= invokes describe-key-briefly.
 - =%&= in =dired= marks garbage files
-- =M-a= and =M-e= to move through sentences and 
+- =M-a= and =M-e= to move through sentences and
 - =C-<down>= and =C-<up>= to move backwards and forwards through paragraphs
 - ~M-|~ to send the contents of a region to a shell command
-- =C-x 4 C-o= (~display-buffer~) opens another window, but instead if showing the same buffer, shows another one, the name of which is read from the minibuffer. Note that the newly opened window does not get selected! 
+- =C-x 4 C-o= (~display-buffer~) opens another window, but instead if showing the same buffer, shows another one, the name of which is read from the minibuffer. Note that the newly opened window does not get selected!
 - =C-x 4 0= (~kill-buffer-and-window~), which not only deletes the current window (like ~C-x 0~), but also kills its buffer.
 - ~C-x 4 c~ (~clone-indirect-buffer-other-window~) splits the current window, clones the current buffer and visits the clone in the newly opened window.
 
