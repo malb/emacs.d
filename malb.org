@@ -2523,6 +2523,9 @@ directory to make multiple eshell windows easier."
 (use-package eshell
   :config (progn
             (bind-key "C-!" #'malb/eshell-here)
+            (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
+
+            (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
 
             (defun eshell/q ()
               (delete-window)
