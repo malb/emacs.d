@@ -674,8 +674,16 @@ Make sure auto automatically rescan for imenu change
             (require 'helm-projectile)
             (helm-projectile-on)
 
+            (defun malb/projectile-ignored-project-function (project-root)
+              (progn
+                (or (file-remote-p project-root)
+                    ;; don't litter project list with cryptobib subprojects
+                    (and  (string-match (rx-to-string `(: "cryptobib/" eos) t)
+                                        project-root) t))))
+
             (setq projectile-make-test-cmd "make check"
                   projectile-ignored-projects malb/projectile-ignored-projects
+                  projectile-ignored-project-function #'malb/projectile-ignored-project-function
                   projectile-switch-project-action 'helm-projectile
                   projectile-mode-line  '(:eval
                                           (format " [%s]"
