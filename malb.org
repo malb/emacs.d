@@ -295,7 +295,7 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
 (use-package company
   :ensure t
   :bind (("C-<return>" . company-complete)
-         ("M-/" . company-dabbrev))
+         ("M-/"        . company-dabbrev))
 
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
@@ -321,12 +321,6 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
             (add-to-list 'company-backends #'company-c-headers)
             (add-to-list 'company-backends #'company-anaconda)
 
-            (defun malb/ede-object-system-include-path ()
-              "Return the system include path for the current buffer."
-              (when ede-object
-                (ede-system-include-path ede-object)))
-
-            (setq company-c-headers-path-system #'malb/ede-object-system-include-path)
             (bind-key "C-n"   #'company-select-next company-active-map)
             (bind-key "C-p"   #'company-select-previous company-active-map)
             (bind-key "<tab>" #'company-complete company-active-map)
@@ -339,7 +333,15 @@ For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-c-headers
-  :ensure t)
+  :ensure t
+  :config (progn
+            (defun malb/ede-object-system-include-path ()
+              "Return the system include path for the current buffer."
+              (when ede-object
+                (ede-system-include-path ede-object)))
+
+            (setq company-c-headers-path-system #'malb/ede-object-system-include-path)
+            ))
 #+END_SRC
 
 For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]].
