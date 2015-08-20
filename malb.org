@@ -2328,8 +2328,7 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
     (cancel-timer malb/org-icalendar-export-timer))
   (setq malb/org-icalendar-export-timer
         (run-with-idle-timer   (* 1 secs) nil (lambda ()
-                                                ;; (org-save-all-org-buffers)
-                                                (org-icalendar-combine-agenda-files t) ;; async, check org-export-init.el for config
+                                                (org-icalendar-combine-agenda-files t) ; async, check org-export-init.el for config
                                                 (org-agenda-redo)
                                                 ))))
 #+END_SRC
