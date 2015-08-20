@@ -10,6 +10,7 @@ We assume that the following variables are defined:
 - ~malb/literature-dir~ - PDFs of papers
 - ~malb/literature-notes-dir~ - notes on papers
 - ~malb/documents-dir~ - documents
+- ~malb/sync-dir~ - documents that are syncronised
 - ~malb/solarized-p~ - do we want solarized?
 - ~malb/paradox-github-token~ - github login
 - ~malb/org-files-dir~ - org files go here
@@ -1897,7 +1898,7 @@ Diminish ~flyspell-mode~ as we always use it.
   :bind ("<f8>" . deft)
   :config (progn
             (setq deft-extensions '("org" "md")
-                  deft-directory (expand-file-name "deft" malb/documents-dir)
+                  deft-directory (expand-file-name "deft" malb/sync-dir)
                   deft-text-mode 'org-mode
                   deft-use-filename-as-title nil
                   deft-use-filter-string-for-filename t
