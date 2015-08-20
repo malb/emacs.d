@@ -2958,7 +2958,14 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
     ))
 #+END_SRC
 
-*** TODO clean up Solarized config
+Set transparency because reasons ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/transparency (value)
+  "Sets the transparency of the frame window. 0=transparent/100=opaque"
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+#+END_SRC
 
 *** TODO clean up Solarized config
 ** Rainbow mode
