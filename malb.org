@@ -2765,10 +2765,18 @@ Debug startup failures. If your Emacs init file signals an error during startup,
 * X11
 
 #+BEGIN_SRC emacs-lisp
-  (setq x-select-enable-clipboard t
-        save-interprogram-paste-before-kill t
-        x-select-enable-primary t
-        mouse-yank-at-point t)
+(setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
+      save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
+      x-select-enable-primary t
+      mouse-yank-at-point t
+      mouse-autoselect-window    -1                 ; Focus follows mouse after 2 seconds without movement
+      )
+#+END_SRC
+
+Use GTK printing interface.
+
+#+BEGIN_SRC emacs-lisp
+(setq lpr-command "gtklp")
 #+END_SRC
 
 * Autosaves & backups
