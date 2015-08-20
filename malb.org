@@ -1994,18 +1994,20 @@ Standard setup and also a quick preview ([[https://github.com/kaushalmodi/.emacs
             (add-hook 'markdown-mode-hook #'flyspell-mode)))
 #+END_SRC
 
-*** TODO Pandoc
+*** Pandoc
 
 Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http://johnmacfarlane.net/pandoc/][pandoc]] for converting markdown to everything else.
 
-Currently, enabling pandoc mode causes problems with emacsclient
-
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package pandoc-mode
-  ;;   :ensure t
-  ;;   :config (progn
-  ;;             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
-  ;;             (add-hook 'markdown-mode-hook #'pandoc-mode)))
+(use-package pandoc-mode
+  :ensure t
+  :config (progn
+            (add-hook 'markdown-mode-hook #'pandoc-mode)
+            (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
+            (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
+            (delight 'pandoc-mode
+                     '(:eval (concat " ▣[" (pandoc--get 'write) "]")))
+            ))
 #+END_SRC
 
 ** ReST
