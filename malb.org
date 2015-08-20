@@ -2934,7 +2934,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
                   (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
                   (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
                   (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-                  (set-face-attribute 'org-block nil :background "#FDF8EC")
+                  (set-face-attribute 'org-block-background nil :background "#FDF8EC")
 
                   (set-face-attribute 'mmm-default-submode-face nil :background "#FDF8EC")
                   (set-face-attribute 'hl-sentence-face nil :background "#FDF9EF")
