@@ -20,7 +20,7 @@ We assume that the following variables are defined:
 - ~malb/org-files~ - org files go here
 - ~malb/common-file-targets~ - for helm
 - ~malb/projectile-ignored-projects~ - ignored projects
-- =malb/sage-executable= - full path of Sage executable
+- ~malb/sage-executable~ - full path of Sage executable
 
 ** TODO ~malb/private-org~ should be redundant
 
