@@ -2949,7 +2949,6 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
                       (set-face-attribute 'flycheck-fringe-warning nil :background "#fdf6e3" :foreground "#DEB542" :weight 'bold)
                       (set-face-attribute 'flycheck-fringe-info    nil :background "#fdf6e3" :foreground "#69B7F0" :weight 'bold)
                       ))
-
                   )))
   (progn
     ;; (use-package zenburn-theme
@@ -2961,6 +2960,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 *** TODO clean up Solarized config
 
+*** TODO clean up Solarized config
 ** Rainbow mode
 
 #+BEGIN_SRC emacs-lisp
