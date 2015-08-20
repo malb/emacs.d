@@ -2478,12 +2478,13 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
   :config (progn
             (setq dired-listing-switches "-laGh1v --group-directories-first")
 
-            (defvar malb/unimportant-files (mapconcat 'identity '("\\.idx" "\\.run\\.xml$" "\\.bcf$" ".blg$"
-                                                                  "-blx.bib$" "\\.snm$"
-                                                                  "\\.synctex\\.gz$" "\\.tex\\.backup$" "\\.bib\\.backup$"
-                                                                  "\\.fdb_latexmk$" "\\.fls$"
-                                                                  "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'")
-                                                      "\\|"))
+            (defvar malb/unimportant-files
+              (mapconcat 'identity '("\\.idx" "\\.run\\.xml$" "\\.bcf$" ".blg$"
+                                     "-blx.bib$" "\\.snm$"
+                                     "\\.synctex\\.gz$" "\\.tex\\.backup$" "\\.bib\\.backup$"
+                                     "\\.fdb_latexmk$" "\\.fls$"
+                                     "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'")
+                         "\\|"))
 
             (push ".brf" dired-latex-unclean-extensions)
             (push ".bmt" dired-latex-unclean-extensions)
