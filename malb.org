@@ -1535,18 +1535,24 @@ On our system port 8888 is already taken.
 (use-package elisp-slime-nav
   :ensure t
   :diminish elisp-slime-nav-mode
-  :init (progn
+  :config (progn
 
-          (defun malb/elisp-hook ()
-            (elisp-slime-nav-mode)
-            (turn-on-eldoc-mode))
+            (defun malb/elisp-hook ()
+              (elisp-slime-nav-mode)
+              (turn-on-eldoc-mode))
 
-          (add-hook 'emacs-lisp-mode-hook #'malb/elisp-hook)
-          (add-hook 'lisp-interaction-mode-hook #'malb/elisp-hook)
-          (add-hook 'ielm-mode-hook #'malb/elisp-hook)
+            (setq eldoc-idle-delay 0.1)
 
-          (bind-key "M-?" #'elisp-slime-nav-describe-elisp-thing-at-point
-                    emacs-lisp-mode-map)))
+            (add-hook 'emacs-lisp-mode-hook #'malb/elisp-hook)
+            (add-hook 'lisp-interaction-mode-hook #'malb/elisp-hook)
+            (add-hook 'ielm-mode-hook #'malb/elisp-hook)
+
+            (bind-key "M-?" #'elisp-slime-nav-describe-elisp-thing-at-point
+                      emacs-lisp-mode-map)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "C-c C-z" #'ielm emacs-lisp-mode-map)
 #+END_SRC
 
 * Editing
