@@ -2677,6 +2677,24 @@ Always prefer to load newer files, instead of giving precedence to the .elc file
 (setq load-prefer-newer t)
 #+END_SRC
 
+Smoother scrolling and better defaults for recentering with =C-l=
+
+#+BEGIN_SRC emacs-lisp
+(setq scroll-conservatively 10000
+      scroll-preserve-screen-position t
+      recenter-positions '(top middle bottom))
+#+END_SRC
+
+Use ~kill -pUSR1~ to kill Emacs. ([[https://github.com/wasamasa/dotemacs/blob/master/init.org][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/quit-emacs-unconditionally ()
+  (interactive)
+  (my-quit-emacs '(4)))
+
+(define-key special-event-map (kbd "<sigusr1>") #'malb/quit-emacs-unconditionally)
+#+END_SRC
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
