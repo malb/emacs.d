@@ -466,29 +466,25 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (bind-key "C-c h" #'helm-command-prefix)
             (unbind-key "C-x c")
 
-            (setq helm-quick-update t
-                  helm-bookmark-show-location t
-                  helm-org-headings-fontify nil
-                  helm-input-idle-delay 0.01
-                  helm-split-window-in-side-p t
-                  helm-ff-skip-boring-files t
-                  helm-autoresize-min-height 40
-                  helm-autoresize-max-height 40
-                  helm-display-header-line t
+            (setq helm-M-x-fuzzy-match t
                   helm-adaptive-mode t
-                  helm-ff-skip-boring-files t
-                  helm-truncate-lines nil
-                  helm-buffer-max-length 32)
-
-            (setq helm-mode-fuzzy-match t
-                  helm-completion-in-region-fuzzy-match t
-                  helm-buffers-fuzzy-matching t
-                  helm-recentf-fuzzy-match t
-                  helm-M-x-fuzzy-match t
-                  helm-semantic-fuzzy-match t
-                  helm-imenu-fuzzy-match t
                   helm-apropos-fuzzy-match t
-                  helm-lisp-fuzzy-completion t)
+                  helm-bookmark-show-location t
+                  helm-buffer-max-length 48
+                  helm-buffers-fuzzy-matching t
+                  helm-completion-in-region-fuzzy-match t
+                  helm-display-header-line t
+                  helm-ff-skip-boring-files t
+                  helm-lisp-fuzzy-completion t
+                  helm-imenu-fuzzy-match t
+                  helm-input-idle-delay 0.01
+                  helm-mode-fuzzy-match t
+                  helm-org-headings-fontify t
+                  helm-quick-update t             ; be faster
+                  helm-recentf-fuzzy-match t
+                  helm-semantic-fuzzy-match t
+                  helm-split-window-in-side-p t
+                  helm-truncate-lines nil)
 
             (when (executable-find "curl")
               (setq helm-google-suggest-use-curl-p t))
@@ -506,7 +502,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (bind-key "<tab>" 'helm-execute-persistent-action helm-map) ; rebihnd tab to do persistent action
             (bind-key "C-i"   'helm-execute-persistent-action helm-map) ; make TAB works in terminal
             (bind-key "C-z"   'helm-select-action             helm-map) ; list actions using C-z
-            (helm-autoresize-mode 1)
             )
   )
 #+END_SRC
