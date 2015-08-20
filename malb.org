@@ -856,15 +856,15 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
             (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
 
             ;; allow for updating mail using 'U' in the main view:
-            (setq mu4e-get-mail-command "mbsync googlemail")
-            (setq mu4e-update-interval 3600)
-            (setq mu4e-html2text-command "html2text -utf8 -width 72")
+            (setq mu4e-get-mail-command "mbsync googlemail"
+                  mu4e-update-interval 3600
+                  mu4e-html2text-command "html2text -utf8 -width 80")
 
+            ;; PGP
             (setq mml2015-encrypt-to-self t)
-
-            ;; Compose view
             (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
-            (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)))
+            (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
+            (add-hook 'message-send-hook #'mml-secure-message-sign-pgpmime)))
 #+END_SRC
 
 ** Org-mu4e
