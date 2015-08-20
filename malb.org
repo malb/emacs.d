@@ -2193,33 +2193,35 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
             (setq org-default-notes-file malb/inbox-org)
 
             ;; behaviour
-            (setq org-src-fontify-natively t ; fontify code blocks
-                  org-hide-emphasis-markers t
-                  org-enforce-todo-dependencies t ; enforce todo dependencies
-                  org-agenda-dim-blocked-tasks nil ; t is very slow (BUG)
+            (setq org-src-fontify-natively t                                   ; fontify code blocks
+                  org-hide-emphasis-markers nil                                ; hide markers for like *foo*
+                  org-enforce-todo-dependencies t                              ; enforce todo dependencies
                   org-habit-graph-column 128
-                  org-agenda-tags-column -128
                   org-tags-column -120
                   org-startup-folded 'fold
                   org-log-into-drawer t
                   org-log-done t
-                  org-agenda-include-diary nil
-                  org-use-speed-commands nil
+                  org-use-speed-commands t
                   org-catch-invisible-edits 'smart
+                  org-agenda-tags-column -128
+                  org-agenda-include-diary nil
+                  org-agenda-dim-blocked-tasks t
                   org-agenda-skip-deadline-prewarning-if-scheduled t
+                  org-agenda-ignore-drawer-properties '(effort appt category)
+                  org-agenda-window-setup 'current-window                      ; Overwrite the current window with the agenda
+                  org-agenda-sticky t                                          ; Use sticky agenda's so they persist
+                  org-agenda-compact-blocks t                                  ; Compact the block agenda view
                   org-export-coding-system 'utf-8
                   org-clock-persist 'history
                   org-highlight-latex-and-related '(latex)
-                  org-return-follows-link t ; follow links by pressing ENTER on them
-                  org-edit-src-content-indentation 0 ; don't indent source code
-                  org-src-preserve-indentation t ; preserve the indentation inside of source blocks
-                  org-agenda-sticky t ; Use sticky agenda's so they persist
-                  org-special-ctrl-a/e t ; special begin/end of line to skip tags and stars
-                  org-special-ctrl-k t ; special keys for killing a headline
-                  org-src-window-setup 'current-window ; how org-src windows are set up when hitting C-c '
-                  org-agenda-window-setup 'current-window ; Overwrite the current window with the agenda
-                  org-agenda-compact-blocks t ; Compact the block agenda view
+                  org-return-follows-link t                                    ; follow links by pressing ENTER on them
+                  org-edit-src-content-indentation 0                           ; don't indent source code
+                  org-src-preserve-indentation t                               ; preserve the indentation inside of source blocks
+                  org-special-ctrl-a/e t                                       ; special begin/end of line to skip tags and stars
+                  org-special-ctrl-k t                                         ; special keys for killing a headline
+                  org-src-window-setup 'current-window                         ; how org-src windows are set up when hitting C-c '
                   org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory)
+                  org-ellipsis " […]"
                   )
 
             ;; load more languages for org-babel
@@ -2263,7 +2265,8 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
             (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
 
             (defun malb/diminish-org-indent-mode ()
-              (diminish 'org-indent-mode))
+              (ignore-errors
+                (diminish 'org-indent-mode)))
 
             (add-hook 'org-mode-hook #'malb/diminish-org-indent-mode)
 
@@ -2291,9 +2294,13 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
 (use-package org-bullets
   :ensure t
   :commands org-bullets-mode
-  :init (add-hook 'org-mode-hook
-                  (lambda () (org-bullets-mode 1)))
-  :config  (setq org-bullets-bullet-list '("◉" "✸" "○" "○")))
+  :init  (progn
+
+           (defun malb/enable-org-bullets ()
+             (org-bullets-mode 1))
+
+           (add-hook 'org-mode-hook #'malb/enable-org-bullets)
+           (setq org-bullets-bullet-list '("◉" "✸" "○" "○"))))
 #+END_SRC
 
 ** iCalendar export
