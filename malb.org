@@ -80,6 +80,7 @@ Disable cluttler
 #+END_SRC
 
 * Window Management
+
 ** Splitting
 
 When splitting windows open the previous buffer in it.
@@ -105,13 +106,10 @@ When splitting windows open the previous buffer in it.
 
 ** Switching
 
-[[https://github.com/abo-abo/ace-window][ace-window]] for switching windows
+Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
 
 - ~C-x o~ jump to window (rebound from =other-window=)
-- ~§§~ jump to window
 - ~±~ jump to window
-- prefix with ~C-u~ to swap windows
-- prefix ~C-u C-u~ to kill a window
 
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
@@ -256,7 +254,7 @@ If you change the variable ~compilation-scroll-output~ to a non-nil value, the c
 (setq compilation-scroll-output 'first-error)
 #+END_SRC
 
-* Diminish
+* Clean up Mode Line
 
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as I’m using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
 
@@ -285,8 +283,6 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
     :diminish yas-minor-mode
     :config (progn
               (yas-global-mode)
-              ;; (define-key yas-minor-mode-map [(tab)] nil)
-              ;; (define-key yas-minor-mode-map (kbd "TAB") nil)
               (setq yas-verbosity 1)))
 #+END_SRC
 
@@ -328,16 +324,15 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
                 (ede-system-include-path ede-object)))
 
             (setq company-c-headers-path-system #'malb/ede-object-system-include-path)
-
-            (bind-key "C-n" #'company-select-next company-active-map)
-            (bind-key "C-p" #'company-select-previous company-active-map)
+            (bind-key "C-n"   #'company-select-next company-active-map)
+            (bind-key "C-p"   #'company-select-previous company-active-map)
             (bind-key "<tab>" #'company-complete company-active-map)
-            (bind-key "M-?" #'company-show-doc-buffer company-active-map)
-            (bind-key "M-." #'company-show-location company-active-map)
-            (bind-key "M-/" #'company-complete-common org-mode-map)))
+            (bind-key "M-?"   #'company-show-doc-buffer company-active-map)
+            (bind-key "M-."   #'company-show-location company-active-map)
+            (bind-key "M-/"   #'company-complete-common org-mode-map)))
 #+END_SRC
 
-For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] (and [[https://github.com/randomphrase/company-c-headers][company-c-headers]]) which can be a bit tricky to set up, butworks very well once that is done.
+For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] (and [[https://github.com/randomphrase/company-c-headers][company-c-headers]]) which can be a bit tricky to set up, but works very well once that is done.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-c-headers
@@ -392,11 +387,11 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
   (setq company-backends (mapcar #'malb/company-mode/backend-with-yas company-backends))
 #+END_SRC
 
-* Finding stuff ([[https://github.com/emacs-helm/helm][Helm]])
+* [[https://github.com/emacs-helm/helm][Helm]]
+
 ** General
 
-Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many sources to create
-=malb/helm-omni.= [[[http://stackoverflow.com/a/19284509][source]]]
+Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many sources to create =malb/helm-omni.= ([[http://stackoverflow.com/a/19284509][source]])
 
 *Tip:* Use =@foo= to search for content =foo= in buffers when in =helm-omni=.
 
@@ -450,8 +445,7 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
 
 Use helm for switching buffers, opening files, calling interactive functions.
 
-The default ~C-x c~ is quite close to =C-x C-c=, which quits Emacs. Changed to =C-c h=. We must set =C-c h=
-globally, because we cannot change =helm-command-prefix-key= once =helm-config= is loaded. [[[https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el][source]]]
+The default ~C-x c~ is quite close to =C-x C-c=, which quits Emacs. Changed to =C-c h=. We must set =C-c h= globally, because we cannot change =helm-command-prefix-key= once =helm-config= is loaded. ([[https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el][source]])
 
 We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC= et al.).
 
@@ -524,13 +518,13 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 ** [[https://github.com/ShingoFukuyama/helm-swoop][Helm-swoop]]
 
 Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for =C-M-s= which is bound to
-~vr/isearch-forward~.  [[https://github.com/ShingoFukuyama/helm-swoop/issues/25][Source]] for =helm-swoop-pre-input-function=.
+~vr/isearch-forward~.
 
 *Tip*: You can edit =helm-swoop= buffers by pressing =C-c C-e=.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/helm-swoop-pre-fill ()
-  (thing-at-point 'symbol)) ;; I’m going back and forth which one I like
+  (thing-at-point 'symbol)) ;; I’m going back and forth what I prefer
 
 (setq malb/helm-swoop-ignore-major-mode
       '(dired-mode paradox-menu-mode))
@@ -668,7 +662,7 @@ Make sure auto automatically rescan for imenu change
 - =C-c p r=   ~projectile-replace~
 - =C-c p s s= ~helm-projectile-ag~
 
-*Note*: =next-error= has nothing to do with projectile, but =<f5>= and =<f6>= kind of go together.
+*Note*: =next-error= has nothing to do with projectile, but =<f5>= and =<f6>= kind of go together. ~previous-error~ is bound to =M-g p=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
@@ -696,6 +690,7 @@ Make sure auto automatically rescan for imenu change
                                                   (projectile-project-name))))
 
             (projectile-global-mode)))
+
 #+END_SRC
 
 ** [[https://tuhdo.github.io/helm-projectile.html][Helm-projectile]]
@@ -716,11 +711,12 @@ When switching projects use:
 - ~C-c @~ insert the current file that highlight bar is on as an org link.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package helm-projectile
-    :ensure t)
+(use-package helm-projectile
+  :ensure t)
 #+END_SRC
 
 * Git
+
 ** Magit
 
 We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
@@ -812,7 +808,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 * Email
 ** General
 
-E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by mu. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][Mu4e]].
+E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][Mu4e]].
 
 - use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]
 - also allow =format=flowed= ([[https://github.com/djcb/mu/issues/569][source]])
@@ -834,7 +830,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                 (add-hook 'message-mode-hook #'turn-on-orgstruct++)
                 (add-hook 'message-mode-hook #'turn-on-orgtbl)
                 (add-hook 'message-mode-hook #'typo-mode)
-          )
+                )
   :config (progn
             (setq mu4e-maildir malb/mu4e-maildir
                   mu4e-drafts-folder "/[Google Mail]/.Drafts"
@@ -931,15 +927,13 @@ Enable spell checking in comments and documentation.
 
 *** Flycheck
 
-Use flycheck to run static checkers on code. We use clang’s checker for flycheck for which we can
-load per directory configuration using =.dir-locals.el=, e.g.
+Use flycheck to run static checkers on code. We use clang’s checker for flycheck for which we can load per directory configuration using =.dir-locals.el=, e.g.
 
 #+BEGIN_SRC emacs-lisp :tangle no
 ((c-mode . ((flycheck-clang-include-path . ("/FULL/PATH/TO/DIR1" "/FULL/PATH/TO/DIR2" ) ))))
 #+END_SRC
 
-- We use [[https://github.com/flycheck/flycheck-pos-tip][flycheck-pos-tip]] to display hints about potential issues.
-- We make flycheck prettier based on what spacemacs does.
+Make flycheck prettier based on what spacemacs does.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-pos-tip
@@ -1033,8 +1027,7 @@ Comments, as I mean, using [[https://github.com/remyferre/comment-dwim-2][commen
 
 *** [[https://github.com/Bruce-Connor/aggressive-indent-mode][Aggressive indenting]]
 
-Enable it on a per-project basis in order to keep RC check ins clean: use it in own projects but not
-necessarily in projects where not the main contributor. Use =.dir-locals.el= to enable it, e.g.:
+Enable it on a per-project basis in order to keep RC check ins clean: use it in own projects but not necessarily in projects where not the main contributor. Use =.dir-locals.el= to enable it, e.g.:
 
 #+BEGIN_SRC emacs-lisp :tangle no
 ((c-mode . ((aggressive-indent-mode t))))
@@ -1102,8 +1095,7 @@ We only enable it in ~markdown-mode~ for now.
 ** C/C++ development
 *** Semantic
 
-Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]] for C and C++ (cf. =malb/inhibit-semantic-p=). Also enable some useful minor modes
-(documentation from =C-h v RET semantic-default-submodes=):
+Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]] for C and C++ (cf. =malb/inhibit-semantic-p=). Also enable some useful minor modes (documentation from =C-h v RET semantic-default-submodes=):
 
 - ~global-semanticdb-minor-mode~  Maintain tag database.
 - ~global-semantic-idle-scheduler-mode~ Reparse buffer when idle.
@@ -1190,7 +1182,7 @@ The default key bindings of semantic are a bit awkward, rebind them.
 
 **** Force semantic parsing
 
-The following code (stolen from this [[https://stackoverflow.com/questions/18230838/semantic-cedet-how-to-force-parsing-of-source-files][sx answer]]) parses a complete project with semantic. This is useful for exploring a new project.
+The following code parses a complete project with semantic. This is useful for exploring a new project. ([[https://stackoverflow.com/questions/18230838/semantic-cedet-how-to-force-parsing-of-source-files][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defvar malb/c-files-regex ".*\\.\\(c\\|cpp\\|h\\|hpp\\)"
@@ -1239,7 +1231,6 @@ The following code (stolen from this [[https://stackoverflow.com/questions/18230
      under the directory"
   (interactive (list (read-directory-name "Provide the directory to search in:")))
   (malb/semantic-parse-dir (expand-file-name dir) malb/c-files-regex))
-
 #+END_SRC
 
 *** Doxygen skeletons
@@ -1284,7 +1275,7 @@ Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/
 ** Python
 *** General
 
-We use ipython if we have it. We use the “onetwo” style to fill docstrings in Python, i.e.:
+We use the “onetwo” style to fill docstrings in Python, i.e.:
 
 #+BEGIN_SRC python :tangle no
 """Process foo, return bar."""
@@ -1297,15 +1288,15 @@ If processing fails throw ProcessingError.
 """
 #+END_SRC
 
+Drop Python ffap stuff because it interacts badly with ~helm-find-files~ ([[https://answers.launchpad.net/python-mode/+question/221144][source]])
+
 #+BEGIN_SRC emacs-lisp
 (use-package python-mode
   :config (progn
             (setq-default python-indent 4
                           py-docstring-style 'SYMMETRIC)
 
-            ;; https://answers.launchpad.net/python-mode/+question/221144
             (defun malb/remove-python-ffap ()
-              ;; remove python-mode's ffap things that slow down find-file
               (setq ffap-alist (remove '(python-mode . py-ffap-module-path) ffap-alist))
               (setq ffap-alist (remove '(python-mode . py-module-path) ffap-alist))
               (setq ffap-alist (remove '(inferior-python-mode . py-ffap-module-path) ffap-alist))
@@ -1414,9 +1405,7 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 
 *** Sage
 
-Use [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time.
-
-To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top. However, we usually don’t do that but use python-mode directly. For this, our setup is as follows.
+Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top. However, we usually don’t do that but use python-mode directly. For this, our setup is as follows.
 
 In =.emacs.d= create a directory =sage-python/bin= which contains a file called =python= with the following content:
 
@@ -1428,8 +1417,6 @@ sage -python "$@"
 Then, in each project where we want to use Sage, we can add a =.dir-locals.el= file at the top level with
 
 #+BEGIN_SRC emacs-lisp  :tangle no
-;;; Directory Local Variables
-;;; See Info node `(emacs) Directory Variables' for more information.
 ((python-mode . ((python-shell-virtualenv-path . (concat user-emacs-directory "sage-devel-python")))))
 #+END_SRC
 
@@ -1468,7 +1455,7 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             ))
 #+END_SRC
 
-*** [[https://github.com/tkf/emacs-ipython-notebook][iPython]]
+*** [[https://github.com/tkf/emacs-ipython-notebook][iPython Notebook]]
 
 On our system port 8888 is already taken.
 
@@ -1555,7 +1542,7 @@ Automatically revert buffers.
   (global-auto-revert-mode 1)
 #+END_SRC
 
-** [[https://github.com/Vifon/focus-autosave-mode.el][Saving buffers when loosing focus]]
+** [[https://github.com/Vifon/focus-autosave-mode.el][Save buffer when loosing focus]]
 
 This can be dangerous, so only enable on per project basis, e.g.
 
@@ -1572,8 +1559,7 @@ This can be dangerous, so only enable on per project basis, e.g.
 
 ** Regexp
 
-Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regular expressions and use [[https://github.com/benma/visual-regexp-steroids.el/][visual-regexp-steroids]] for modern regexps.
-This makes Emacs regexp actually usable for me.
+Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regular expressions and use [[https://github.com/benma/visual-regexp-steroids.el/][visual-regexp-steroids]] for modern regexps. This makes Emacs regexp actually usable for me.
 
 #+BEGIN_SRC emacs-lisp
 (use-package visual-regexp-steroids
@@ -1607,7 +1593,7 @@ This makes Emacs regexp actually usable for me.
 #+END_SRC
 
 ** [#A] Selecting
-*** Recursively narrow
+*** [#A] Recursively narrow
 
 #+BEGIN_SRC emacs-lisp
 (use-package recursive-narrow
@@ -1766,7 +1752,7 @@ A [[https://github.com/jorgenschaefer/typoel][minor mode]] that will change a nu
             (add-hook 'rst-mode-hook #'typo-mode)))
 #+END_SRC
 
-Replace ~’~ with ' before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]])
+Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]])
 
 #+BEGIN_SRC emacs-lisp
   (use-package ispell
@@ -1791,7 +1777,7 @@ Replace ~’~ with ' before sending it to ispell ([[http://endlessparentheses.co
 
 *** Olivetti
 
-Narrow text to nice to read/edit width.
+Adapt text width to nice to read/edit width.
 
 #+BEGIN_SRC emacs-lisp
 (use-package olivetti
@@ -1853,7 +1839,7 @@ Diminish ~flyspell-mode~ as we always use it.
   '(diminish 'flyspell-mode))
 #+END_SRC
 
-**** ~abbrev-mode~
+**** abbrev-mode
 
 #+BEGIN_SRC emacs-lisp
 (setq-default abbrev-mode t)
@@ -1874,7 +1860,7 @@ Diminish ~flyspell-mode~ as we always use it.
 
 *** [#A] Dictionary
 
-[[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
+Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
 
 #+BEGIN_SRC emacs-lisp
 (use-package define-word
@@ -1967,8 +1953,7 @@ Currently, enabling pandoc mode causes problems with emacsclient
 
 ** ReST
 
-Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt= or =README= in ReST. Hence, we add =README.txt= as
-the kind of file which wants ReST and use [[http://docutils.sourceforge.net/docs/user/emacs.html][rst-mode]] to edit it.
+Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt= or =README= in ReST. Hence, we add =README.txt= as the kind of file which wants ReST and use [[http://docutils.sourceforge.net/docs/user/emacs.html][rst-mode]] to edit it.
 
 #+BEGIN_SRC emacs-lisp
   (use-package rst-mode
@@ -2038,8 +2023,7 @@ Parse BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-r
 
 My standard BibTeX sources are
 
-- =crypto_crossref.bib= and =abbrev3.bib= are from [[http://cryptobib.di.ens.fr/][crypto.bib]] which has most references relevant to
-  crypto,
+- =crypto_crossref.bib= and =abbrev3.bib= are from [[http://cryptobib.di.ens.fr/][crypto.bib]] which has most references relevant to crypto,
 - =jacm.bib= is for the Journal of the ACM provided by the [[http://ftp.math.utah.edu/pub/tex/bib/jacm.html][University of Utah]],
 - =rfc.bib= is for RFCs and provided by [[http://tm.uka.de/~bless/bibrfcindex.html][Roland Bless]].
 
@@ -2112,12 +2096,12 @@ If buffer type is not included, 'default' will be used. Used by malb/smart-other
 *** [[https://github.com/jsinglet/latex-preview-pane][LaTeX preview pane]]
 
 #+BEGIN_SRC emacs-lisp
-  (use-package latex-preview-pane
-    :diminish latex-preview-pane-mode
-    :ensure t)
+(use-package latex-preview-pane
+  :diminish latex-preview-pane-mode
+  :ensure t)
 #+END_SRC
 
-*** Catch all
+*** Setup everything
 
 Setup everything for LaTeX (this can be slow, hence we call it manually)
 
@@ -2317,17 +2301,14 @@ If we are in a project we might add a TODO entry to the appropriate entry in "pr
 
 *Template Expansions*
 
-=- %[file]= Insert the contents of the file given by file.
-=- %(sexp)= Evaluate Elisp sexp and replace with the result. For convenience, =%:keyword= (see below)
-          placeholders within the expression will be expanded prior to this. The sexp must return a
-          string.
+- =%[file]= Insert the contents of the file given by file.
+- =%(sexp)= Evaluate Elisp sexp and replace with the result. For convenience, =%:keyword= (see below) placeholders within the expression will be expanded prior to this. The sexp must return a string.
 - =%<...>= The result of format-time-string on the ... format specification.
 - =%t= Timestamp, date only.
 - =%T= Timestamp, with date and time.
 - =%u, %U= Like the above, but inactive timestamps.
-- =%i= Initial content, the region when capture is called while the region is active. The entire text
-  will be indented like =%i= itself.
-=- %a= Annotation, normally the link created with ~org-store-link~.
+- =%i= Initial content, the region when capture is called while the region is active. The entire text will be indented like =%i= itself.
+- =%a= Annotation, normally the link created with ~org-store-link~.
 - =%A= Like =%a=, but prompt for the description part.
 - =%l= Like =%a=, but only insert the literal link.
 - =%c= Current kill ring head.
@@ -2340,14 +2321,11 @@ If we are in a project we might add a TODO entry to the appropriate entry in "pr
 - =%:keyword= Specific information for certain link types, see below.
 - =%^g= Prompt for tags, with completion on tags in target file.
 - =%^G= Prompt for tags, with completion all tags in all agenda files.
-- =%^t= Like %t, but prompt for date. Similarly =%^T=, =%^u=, =%^U=. You may define a prompt like
-  =%^{Birthday}t=.
+- =%^t= Like %t, but prompt for date. Similarly =%^T=, =%^u=, =%^U=. You may define a prompt like =%^{Birthday}t=.
 - =%^L= Like %^C, but insert as link.
 - =%^C= Interactive selection of which kill or clip to use.
 - =%^{prop}p= Prompt the user for a value for property prop.
-- =%^{prompt}= prompt the user for a string and replace this sequence with it. You may specify a
-  default value and a completion table with =%^{prompt|default|completion2|completion3...}=. The arrow
-  keys access a prompt-specific history.
+- =%^{prompt}= prompt the user for a string and replace this sequence with it. You may specify a default value and a completion table with =%^{prompt|default|completion2|completion3...}=. The arrow keys access a prompt-specific history.
 - =%\n= Insert the text entered at the nth =%^{prompt}=, where n is a number, starting from 1.
 - =%?= After completing the template, position cursor here.
 
@@ -2389,7 +2367,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in "pr
 
 | ~F~         | ~(org-agenda-follow-mode)~           | Toggle Follow mode                                     |
 | ~L~         | ~(org-agenda-recenter)~              | Display original location and recenter that window.    |
-| ~o~         |                                    | Delete other windows.                                  |
+| ~o~         |                                      | Delete other windows.                                  |
 | ~f~         | ~(org-agenda-later)~                 | Go forward in time to display                          |
 | ~b~         | ~(org-agenda-earlier)~               | Go backward in time to display earlier dates           |
 | r and ~g~   | ~(org-agenda-redo)~                  | Recreate the agenda buffer.                            |
@@ -2411,11 +2389,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in "pr
 
 *** Style
 
-In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =verbatim=, and ~code~.
-
-But this breaks if the character just inside the styling code is a non-smart single or double quote. =C-c ;= is styled; =C-c '= is not.
-
-We can fix that by inserting a zero-width space between the apostrophe and the = . The first time, we can put the cursor between the apostrophe and the = and enter ~C-x 8 RET ZERO WIDTH SPACE RET~, at which point =C-c '​= will display correctly.
+In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =verbatim=, and ~code~. But this breaks if the character just inside the styling code is a non-smart single or double quote. =C-c ;= is styled; =C-c '= is not. We can fix that by inserting a zero-width space between the apostrophe and the = . The first time, we can put the cursor between the apostrophe and the = and enter ~C-x 8 RET ZERO WIDTH SPACE RET~, at which point =C-c '​= will display correctly.
 
 * Dired
 
@@ -2496,7 +2470,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                   ranger-cleanup-eagerly t)))
 #+END_SRC
 
-* EDiff
+* Diff
 
 #+BEGIN_SRC emacs-lisp
 (use-package ediff
@@ -2597,9 +2571,8 @@ Kill whole line not just content on =C-k=.
 (setq kill-whole-line t)
 #+END_SRC
 
-#+BEGIN_QUOTE
+
 In emacs minibuffer prompt, when you press the left arrow key, the cursor will move back all the way over the prompt text. This is annoying because user often will hold down ~Alt+b~ to move back by word to edit, and when user starts to type something, emacs will say ’This is read-only’. Then you have to manually move cursor out of the prompt. You can try it now by calling query-replace or shell-command. Here's how to set the cursor not going into prompt. ([[http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html][source]])
-#+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
 (setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
@@ -2772,8 +2745,7 @@ Easily change the text size:
   (bind-key "C-<mouse-5>" #'text-scale-decrease)
 #+END_SRC
 
-Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the
-line above it in a reasonable manner for the type of file you're editing.
+Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
 
 #+BEGIN_SRC emacs-lisp
 (bind-key "M-j" #'join-line)
@@ -2796,7 +2768,7 @@ line above it in a reasonable manner for the type of file you're editing.
 #+END_SRC
 
 * Look
-** Mode line
+** Powerline
 
 #+BEGIN_SRC emacs-lisp
 (use-package powerline
@@ -2928,7 +2900,8 @@ When only one window is open, center it using [[https://github.com/anler/centere
 ** TODO [[https://github.com/gregsexton/ob-ipython][org-ipython]]
 ** TODO [[https://github.com/bastibe/annotate.el][annotate]]
 ** TODO [[https://github.com/danielsz/Palimpsest][palimpsest]]
-
+** TODO [[https://github.com/m00natic/vlfi][vlf]]
+** TODO [[https://github.com/arbox/org-sync][org-sync]]
 * Notes
 ** Compile .emacs
 
@@ -2968,7 +2941,6 @@ Directory variables are evaluated after the mode has been set, so you can actual
 #+END_SRC
 
 And Emacs will change the mode to ~c++-mode~ whenever it had initially set it to ~c-mode~.
-
 * Local Config
 
 # Local Variables:
