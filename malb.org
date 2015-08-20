@@ -53,6 +53,7 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
   - ~f r~ filters by regexp (occur)
   - ~f u~ display only packages with upgrades
   - ~f k~ filters by keyword
+  - ~f c~ clear filter
 - Hit ~h~ to see all keys
 
 #+BEGIN_SRC emacs-lisp
