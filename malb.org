@@ -2496,6 +2496,13 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (setq dired-garbage-files-regexp malb/unimportant-files)
             (setq dired-omit-files malb/unimportant-files)
 
+            ;; For the few times I’m using Dired, I prefer it not spawning an endless amount of
+            ;; buffers. In fact, I’d prefer it using one buffer unless another one is explicitly
+            ;; created, but you can’t have everything.
+            ;; https://github.com/wasamasa/dotemacs/blob/master/init.org
+
+            (bind-key "RET" #'dired-find-alternate-file dired-mode-map)
+
             (put 'dired-find-alternate-file 'disabled nil)
 
             (bind-key "F" 'find-name-dired dired-mode-map)
