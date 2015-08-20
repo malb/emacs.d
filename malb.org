@@ -936,14 +936,6 @@ Use flycheck to run static checkers on code. We use clang’s checker for flyche
 Make flycheck prettier based on what spacemacs does.
 
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck-pos-tip
-  :ensure t)
-
-(use-package helm-flycheck
-  :ensure t
-  :config (progn
-            (bind-key "C-c f l" #'helm-flycheck flycheck-mode-map)))
-
 (use-package flycheck
   :ensure t
   :commands global-flycheck-mode
@@ -955,12 +947,6 @@ Make flycheck prettier based on what spacemacs does.
 
             (setq flycheck-check-syntax-automatically '(save mode-enabled))
             (setq flycheck-standard-error-navigation nil)
-            ;; flycheck errors on a tooltip (doesnt work on console)
-            (when (display-graphic-p (selected-frame))
-              (eval-after-load 'flycheck
-                '(custom-set-variables
-                  '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
-              )
 
             (setq flycheck-mode-line
                   '(:eval
@@ -1012,6 +998,31 @@ Make flycheck prettier based on what spacemacs does.
               :overlay-category 'flycheck-info-overlay
               :fringe-bitmap 'my-flycheck-fringe-indicator
               :fringe-face 'flycheck-fringe-info)
+            ))
+#+END_SRC
+
+Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-flycheck
+  :ensure t
+  :config (progn
+            (bind-key "C-c f l" #'helm-flycheck flycheck-mode-map)))
+
+#+END_SRC
+
+Use [[https://github.com/flycheck/flycheck-pos-tip][flycheck-pos-tip]] to display hints about potential issues.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-pos-tip
+  :ensure t
+  :config (progn
+            ;; flycheck errors on a tooltip (doesnt work on console)
+            (when (display-graphic-p (selected-frame))
+              (eval-after-load 'flycheck
+                '(custom-set-variables
+                  '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
+              )
             ))
 #+END_SRC
 
