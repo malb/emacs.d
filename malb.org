@@ -2552,10 +2552,14 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 #+BEGIN_SRC emacs-lisp
 (use-package ediff
   :init (progn
-          (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-          (setq ediff-split-window-function 'split-window-horizontally)
-          (setq ediff-diff-options "-w")
-          (setq-default ediff-auto-refine t)))
+          (setq ediff-window-setup-function 'ediff-setup-windows-plain
+                ediff-split-window-function 'split-window-horizontally
+                ediff-diff-options "-w")
+          ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq diff-switches "-u")
 #+END_SRC
 
 * EShell
