@@ -1685,17 +1685,6 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
   :bind ("C-`" . er/expand-region))
 #+END_SRC
 
-*** [#A] [[https://github.com/magnars/change-inner.el][Change-inner]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package change-inner
-  :ensure t
-  :bind (("M-i". change-inner)
-         ("M-o" . change-outer)))
-#+END_SRC
-
-**** TODO undecided if I like this one
-
 *** [#A] Smart parens
 
 #+BEGIN_SRC emacs-lisp
