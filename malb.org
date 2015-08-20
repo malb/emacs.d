@@ -838,10 +838,10 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   mu4e-trash-folder  "/[Google Mail]/.Bin")
 
             (setq mu4e-maildir-shortcuts
-                  '( ("/INBOX"               . ?i)
-                     ("/[Google Mail]/Sent Mail"   . ?s)
-                     ("/[Google Mail]/Bin"         . ?t)
-                     ("/[Google Mail]/All Mail"    . ?a)))
+                  '(("/INBOX"                     . ?i)
+                    ("/[Google Mail]/.Drafts"     . ?d)
+                    ("/[Google Mail]/.Sent Mail"  . ?s)
+                    ("/[Google Mail]/.Bin"        . ?t)))
 
             (setq mu4e-sent-messages-behavior 'delete ; don't save message, Gmail takes care of this
                   mu4e-headers-skip-duplicates t
