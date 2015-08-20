@@ -2096,13 +2096,17 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
 
 (use-package helm-bibtex
   :ensure t
-  :init (progn
-          (setq helm-bibtex-bibliography (list (expand-file-name "crypto_crossref.bib" malb/crypto-bib)
-                                               (expand-file-name "abbrev3.bib" malb/crypto-bib)
-                                               (expand-file-name "rfc.bib" malb/common-latex)
-                                               (expand-file-name "jacm.bib" malb/common-latex)))
-          (setq helm-bibtex-library-path malb/literature-dir)
-          (setq helm-bibtex-notes-path malb/literature-notes-dir)))
+  :config (progn
+            (setq helm-bibtex-bibliography (list (expand-file-name "crypto_crossref.bib" malb/crypto-bib)
+                                                 (expand-file-name "abbrev3.bib" malb/crypto-bib)
+                                                 (expand-file-name "rfc.bib" malb/common-latex)
+                                                 (expand-file-name "jacm.bib" malb/common-latex))
+                  helm-bibtex-library-path malb/literature-dir
+                  helm-bibtex-notes-path malb/literature-notes-dir)
+
+            (helm-delete-action-from-source "Insert BibTeX key" helm-source-bibtex)
+            (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key helm-source-bibtex 0)
+            ))
 #+END_SRC
 
 *** [[https://github.com/politza/pdf-tools][Pdf tools]]
