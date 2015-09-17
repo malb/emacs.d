@@ -2424,25 +2424,40 @@ A [[https://github.com/jorgenschaefer/typoel][minor mode]] that will change a nu
 Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ispell
-    :config (progn
-              ;; Don't send ’ to the subprocess.
-              (defun malb/replace-apostrophe (args)
+(use-package ispell
+  :config (progn
+            ;; Don't send ’ to the subprocess.
+            (defun malb/replace-apostrophe (args)
+              (cons (replace-regexp-in-string
+                     "’" "'" (car args))
+                    (cdr args)))
+
+            (advice-add #'ispell-send-string :filter-args #'malb/replace-apostrophe)
+
+            ;; Convert ' back to ’ from the subprocess.
+            (defun malb/replace-quote (args)
+              (if (not (or (derived-mode-p 'org-mode)
+                           (derived-mode-p 'markdown-mode)
+                           (derived-mode-p 'rst-mode)))
+                  args
                 (cons (replace-regexp-in-string
-                       "’" "'" (car args))
-                      (cdr args)))
+                       "'" "’" (car args))
+                      (cdr args))))
 
-              (advice-add #'ispell-send-string :filter-args #'malb/replace-apostrophe)
-
-              ;; Convert ' back to ’ from the subprocess.
-              (defun malb/replace-quote (args)
-                (if (not (or (derived-mode-p 'org-mode) (derived-mode-p 'markdown-mode)))
-                    args
-                  (cons (replace-regexp-in-string
-                         "'" "’" (car args))
-                        (cdr args))))
-              (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)))
+            (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)))
 #+END_SRC
+
+**** TODO fix typography vs ispell
+
+The fix above seems broken without. But enabling that breaks choosing the dictionary for ispell.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+;; Tell ispell.el that ’ can be part of a word.
+(setq ispell-local-dictionary-alist
+      `((nil "[[:alpha:]]" "[^[:alpha:]]"
+             "['\x2019]" nil ("-B") nil utf-8)))
+#+END_SRC
+
 
 *** Olivetti
 
@@ -3355,8 +3370,10 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
                   (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
                   (set-face-attribute 'org-block-background nil :background "#FDF8EC")
 
-                  (set-face-attribute 'mmm-default-submode-face nil :background "#FDF8EC")
-                  (set-face-attribute 'hl-sentence-face nil :background "#FDF9EF")
+                  (when (boundp 'mmm-mode)
+                    (set-face-attribute 'mmm-default-submode-face nil :background "#FDF8EC"))
+                  (when (boundp 'hl-sentence-mode)
+                    (set-face-attribute 'hl-sentence-face nil :background "#FDF9EF"))
 
                   ;; steal spacemacs flycheck style
                   (eval-after-load "fylcheck"
