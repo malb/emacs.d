@@ -1594,13 +1594,36 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 
 *** Which function
 
-Show function in mode-line.
+Show function in mode-line ([[https://github.com/howardabrams/dot-files/blob/master/emacs-mode-line.org][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package which-func
   :config (progn
-            (setq which-func-unknown "n/a")
-            (which-function-mode 1)))
+            (which-function-mode 1)
+            (setq which-func-unknown ""
+                  which-func-maxout 1024
+                  which-func-modes '(latex-mode
+                                     markdown-mode
+                                     c-mode
+                                     emacs-lisp-mode
+                                     org-mode
+                                     c++-mode))
+
+            (setq which-func-format
+                  `(" "
+                    (:propertize which-func-current local-map
+                                 (keymap
+                                  (mode-line keymap
+                                             (mouse-3 . end-of-defun)
+                                             (mouse-2 . narrow-to-defun)
+                                             (mouse-1 . beginning-of-defun)))
+                                 face which-func
+                                 mouse-face mode-line-highlight
+                                 help-echo "mouse-1: go to beginning\n\
+mouse-2: toggle rest visibility\n\
+mouse-3: go to end")
+                    " "))
+            ))
 #+END_SRC
 
 *** Line numbers
