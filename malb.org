@@ -3161,12 +3161,17 @@ Make use of page break characters by using [[https://github.com/purcell/page-bre
 We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
 
 #+BEGIN_SRC emacs-lisp
+(define-prefix-command 'f2-global-map)
+(bind-key "<f2>" #'f2-global-map)
+
 (defun malb/set-menu-key (char func)
-  (bind-key (concat "s-" char) func))
+  (bind-key (concat "s-" char) func)
+  (bind-key char func f2-global-map))
 
 (malb/set-menu-key "a" #'helm-imenu-anywhere)
 (malb/set-menu-key "b" #'malb/helm-omni)
 (malb/set-menu-key "c" #'helm-calcul-expression)
+(malb/set-menu-key "e" #'malb/eshell-here)
 (malb/set-menu-key "f" #'helm-find-files)
 (malb/set-menu-key "g" #'magit-status)
 (malb/set-menu-key "i" #'helm-semantic-or-imenu)
@@ -3175,6 +3180,7 @@ We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
 (malb/set-menu-key "l" #'helm-bibtex)
 (malb/set-menu-key "m" #'mu4e)
 (malb/set-menu-key "o" #'helm-org-agenda-files-headings)
+(malb/set-menu-key "p" #'pandoc-main-hydra/body)
 (malb/set-menu-key "s" #'helm-swoop)
 (malb/set-menu-key "w" #'olivetti-mode)
 (malb/set-menu-key "x" #'helm-M-x)
