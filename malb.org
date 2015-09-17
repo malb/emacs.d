@@ -3046,6 +3046,12 @@ We don’t want the *scratch* buffer to be killed ever.
   :ensure t)
 #+END_SRC
 
+*** We know what scratch is for
+
+#+BEGIN_SRC emacs-lisp
+(setq initial-scratch-message "")
+#+END_SRC
+
 ** [[https://github.com/Malabarba/elisp-bug-hunter][Bug-hunter]]
 
 Debug startup failures. If your Emacs init file signals an error during startup, but you don't know why, simply issue ~M-x bug-hunter-init-file RET RET~ and The Bug Hunter will find it for you.
