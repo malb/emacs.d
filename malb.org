@@ -677,6 +677,68 @@ Make sure auto automatically rescan for imenu change
 #+END_SRC
 
 ** TODO do we need ~helm-imenu-anywhere~ or is ~helm-imenu-in-all-buffers~ sufficient?
+* [#A] Smartparens
+
+#+BEGIN_SRC emacs-lisp
+(use-package smartparens
+  :ensure t
+  :diminish smartparens-mode
+  :init (progn (smartparens-global-mode t))
+  :config (progn
+            (require 'smartparens-config)
+            (require 'smartparens-latex)
+
+            (setq sp-autodelete-wrap t)
+            (setq sp-autoescape-string-quote nil) ;; don't escape quotes in strings
+            (bind-key "C-M-d" 'sp-down-sexp sp-keymap)
+            (bind-key "C-M-u" 'sp-backward-up-sexp sp-keymap)
+
+            (bind-key "C-M-a" 'sp-beginning-of-sexp sp-keymap)
+            (bind-key "C-M-e" 'sp-end-of-sexp sp-keymap)
+
+            (bind-key "M-<right>" 'sp-next-sexp sp-keymap)
+            (bind-key "M-<left>" 'sp-previous-sexp sp-keymap)
+
+            (bind-key "C-M-t" 'sp-transpose-sexp sp-keymap)
+            (bind-key "M-d" 'sp-kill-sexp sp-keymap)
+            (bind-key "M-<backspace>" 'sp-backward-unwrap-sexp sp-keymap)
+
+            (bind-key "C-<right>" 'sp-forward-slurp-sexp sp-keymap)
+            (bind-key "C-<left>" 'sp-forward-barf-sexp sp-keymap)
+
+            (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward sp-keymap)
+            (bind-key "C-S-<backspace>" 'sp-splice-sexp-killing-around sp-keymap)
+
+            (add-to-list 'sp-ignore-modes-list 'org-mode) ; too slow
+            (add-to-list 'sp-ignore-modes-list 'python-mode) ; too slow
+            (add-to-list 'sp-ignore-modes-list 'cython-mode) ; too slow
+            (add-to-list 'sp-navigate-consider-stringlike-sexp 'latex-mode)
+            ))
+#+END_SRC
+
+** Misc
+
+A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/beginning-of-line-dwim ()
+  "Toggles between moving point to the first non-whitespace character, and
+  the start of the line."
+  (interactive)
+  (let ((start-position (point)))
+    ;; Move to the first non-whitespace character.
+    (back-to-indentation)
+
+    ;; If we haven't moved position, go to start of the line.
+    (when (= (point) start-position)
+      (move-beginning-of-line nil))))
+
+
+(bind-key "C-a" #'malb/beginning-of-line-dwim)
+(bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
+(bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
+
+#+END_SRC
 
 * Projects ([[https://github.com/bbatsov/projectile][Projectile]])
 
@@ -746,7 +808,426 @@ When switching projects use:
 (use-package helm-projectile
   :ensure t)
 #+END_SRC
+* [[http://orgmode.org/][Org-mode all the things!]]
+** General
 
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :ensure org-plus-contrib
+  :bind (("C-c l" . org-store-link)
+         ("C-c a" . org-agenda))
+  :mode ("\\.org$" . org-mode)
+  :config (progn
+            ;; files
+            (setq org-directory malb/org-files-dir)
+            (setq org-agenda-files malb/org-files)
+            (setq org-default-notes-file malb/inbox-org)
+
+            ;; behaviour
+            (setq org-src-fontify-natively t                  ; fontify code blocks
+                  org-hide-emphasis-markers nil               ; hide markers for like *foo*
+                  org-enforce-todo-dependencies t             ; enforce todo dependencies
+                  org-habit-graph-column 128
+                  org-tags-column -120
+                  org-startup-folded 'fold
+                  org-log-into-drawer t
+                  org-log-done t
+                  org-use-speed-commands t
+                  org-catch-invisible-edits 'smart
+                  org-agenda-tags-column -128
+                  org-agenda-include-diary nil
+                  org-agenda-dim-blocked-tasks t
+                  org-agenda-skip-deadline-prewarning-if-scheduled t
+                  org-agenda-ignore-drawer-properties '(effort appt category)
+                  org-agenda-window-setup 'current-window     ; Overwrite the current window with the agenda
+                  org-agenda-sticky t                         ; Use sticky agenda's so they persist
+                  org-agenda-compact-blocks t                 ; Compact the block agenda view
+                  org-export-coding-system 'utf-8
+                  org-clock-persist 'history
+                  org-highlight-latex-and-related '(latex)
+                  org-return-follows-link t                   ; follow links by pressing ENTER on them
+                  org-edit-src-content-indentation 0          ; don't indent source code
+                  org-src-preserve-indentation t              ; preserve the indentation inside of source blocks
+                  org-special-ctrl-a/e t                      ; special begin/end of line to skip tags and stars
+                  org-special-ctrl-k t                        ; special keys for killing a headline
+                  org-src-window-setup 'current-window        ; how org-src windows are set up when hitting C-c '
+                  org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory)
+                  org-ellipsis " […]"
+                  )
+
+            ;; load more languages for org-babel
+            (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((python . t)
+               (sh . t)
+               (ditaa . t)
+               (clojure . t)
+               (plantuml . t)))
+
+            (setq org-confirm-babel-evaluate nil
+                  org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
+
+            (add-to-list 'org-src-lang-modes (quote ("plantuml" . puml)))
+
+            ;; http://doc.norang.ca/org-mode.html
+            (defun malb/display-inline-images ()
+              (condition-case nil
+                  (org-display-inline-images)
+                (error nil)))
+
+            (add-hook 'org-babel-after-execute-hook #'malb/display-inline-images 'append)
+
+            (setq org-todo-keywords
+                  '((sequence "TODO(t)" "WAITING(w@)" "|" "DELEGATED(e@/!)" "DONE(d)" "CANCELLED(c@/!)")
+                    (sequence "WRITE" "TRANSLATE(!)" "FEEDBACK(@/!)" "REVISE(!)"
+                              "COAUTHOR(!/@)" "NATIVE(@)" "PUBLISH(!)" "SENDOUT(!)" "WAITING(@/!)"
+                              "|"  "PUBLISHED(!)")
+                    (sequence "REPLY(r)" "|" "SENT")
+                    (sequence "PLAY" "LOAD" "|" "SEEN")))
+
+            (org-clock-persistence-insinuate)
+
+            ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+            (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9))))
+            ;; Stop using paths for refile targets - we file directly with IDO
+            (setq org-refile-use-outline-path nil)
+            ;; Allow refile to create parent tasks with confirmation
+            (setq org-refile-allow-creating-parent-nodes '(confirm))
+
+            (defun malb/verify-refile-target () ; Exclude DONE state tasks from refile targets
+              (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+
+            (setq org-refile-target-verify-function 'malb/verify-refile-target)
+            (setq org-reverse-note-order t)
+
+            ;; delete SCHEDULED if WAITING
+            (defun malb/org-after-todo-state-change ()
+              (when (or
+                     (string-equal org-state "WAITING")
+                     (string-equal org-state "COAUTHOR")
+                     (string-equal org-state "NATIVE")
+                     (string-equal org-state "SUBMITTED"))
+                (org-remove-timestamp-with-keyword org-scheduled-string)))
+
+            (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
+
+            ;; source http://endlessparentheses.com/ispell-and-org-mode.html
+            (defun malb/org-ispell ()
+              "Configure `ispell-skip-region-alist' for `org-mode'."
+              (make-local-variable 'ispell-skip-region-alist)
+              (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+              (add-to-list 'ispell-skip-region-alist '("~" "~"))
+              (add-to-list 'ispell-skip-region-alist '("=" "="))
+              (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+
+            (add-hook 'org-mode-hook #'malb/org-ispell)
+            (add-hook 'org-mode-hook #'flyspell-mode)
+
+            (defun malb/diminish-org-indent-mode ()
+              (ignore-errors
+                (diminish 'org-indent-mode)))
+
+            (add-hook 'org-mode-hook #'malb/diminish-org-indent-mode)
+
+            (bind-key "<home>" #'org-beginning-of-line org-mode-map)
+            (bind-key "<end>" #'org-end-of-line org-mode-map)
+
+            ;; http://orgmode.org/worg/org-hacks.html
+            (defun malb/org-inherited-no-file-tags ()
+              (let ((tags (org-entry-get nil "ALLTAGS" 'selective))
+                    (ltags (org-entry-get nil "TAGS")))
+                (mapc (lambda (tag)
+                        (setq tags
+                              (replace-regexp-in-string (concat tag ":") "" tags)))
+                      (append org-file-tags (when ltags (split-string ltags ":" t))))
+                (if (string= ":" tags) nil tags)))
+
+            (defadvice org-archive-subtree (around malb/org-archive-subtree-low-level activate)
+              (let ((tags (malb/org-inherited-no-file-tags))
+                    (org-archive-location
+                     (if (save-excursion (org-back-to-heading)
+                                         (> (org-outline-level) 1))
+                         (concat (car (split-string org-archive-location "::"))
+                                 "::* "
+                                 (car (org-get-outline-path)))
+                       org-archive-location)))
+                ad-do-it
+                (with-current-buffer (find-file-noselect (org-extract-archive-file))
+                  (save-excursion
+                    (while (org-up-heading-safe))
+                    (org-set-tags-to tags)))))
+            ))
+#+END_SRC
+
+** Habit
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-habit
+  :init (add-to-list 'org-modules 'org-habit))
+#+END_SRC
+
+** Protocol
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-protocol)
+#+END_SRC
+
+** Bullets
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-bullets
+  :ensure t
+  :commands org-bullets-mode
+  :init  (progn
+
+           (defun malb/enable-org-bullets ()
+             (org-bullets-mode 1))
+
+           (add-hook 'org-mode-hook #'malb/enable-org-bullets)
+           (setq org-bullets-bullet-list '("◉" "✸" "○" "○"))))
+#+END_SRC
+
+** Export
+*** iCalendar
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-icalendar
+  :config (progn
+            (setq org-icalendar-include-todo t
+                  org-icalendar-combined-agenda-file malb/org-mode-ics
+                  org-icalendar-categories '(category)
+                  org-icalendar-use-scheduled '(todo-start event-if-not-todo)
+                  org-icalendar-use-deadline '(todo-due)
+                  org-icalendar-with-timestamps 'active
+                  org-export-with-timestamps 'active)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defvar malb/org-icalendar-export-timer nil
+  "Timer that `malb/org-icalendar-export-timer' used to reschedule itself, or nil.")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/org-icalendar-export-with-delay (secs)
+  (when malb/org-icalendar-export-timer
+    (cancel-timer malb/org-icalendar-export-timer))
+  (setq malb/org-icalendar-export-timer
+        (run-with-idle-timer   (* 1 secs) nil (lambda ()
+                                                (org-icalendar-combine-agenda-files t) ; async, check org-export-init.el for config
+                                                (org-agenda-redo)
+                                                ))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/ox-export-after-save-hook ()
+  (if (eq major-mode 'org-mode)
+      (malb/org-icalendar-export-with-delay 600)))
+
+(add-hook 'after-save-hook 'malb/ox-export-after-save-hook)
+#+END_SRC
+
+*** Markdown
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-md)
+#+END_SRC
+
+*** LaTeX
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-latex
+  :config (progn
+            (setq org-latex-listings 't)
+            (add-to-list 'org-latex-packages-alist '("" "listings"))
+            (add-to-list 'org-latex-packages-alist '("" "color"))
+            (setq org-latex-pdf-process
+                  '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                    "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                    "xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+            (setq org-latex-default-packages-alist
+                  (remove* '("T1" "fontenc" t) org-latex-default-packages-alist :test 'equal))
+            (add-to-list 'org-latex-classes
+                         '("tuftehandout"
+                           "\\documentclass{tufte-handout}
+\\usepackage{color}
+\\usepackage{amssymb}
+\\usepackage{amsmath}
+\\usepackage{gensymb}
+\\usepackage{nicefrac}
+\\usepackage{units}"
+                           ("\\section{%s}" . "\\section*{%s}")
+                           ("\\subsection{%s}" . "\\subsection*{%s}")
+                           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
+#+END_SRC
+
+** Capture
+
+If we are in a project we might add a TODO entry to the appropriate entry in "projects.org".
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/org-capture-projectile ()
+  (if (projectile-project-p)
+      (progn
+        (let ((malb/projectile-name
+               (projectile-project-name)))
+          (find-file (expand-file-name "projects.org" malb/org-files-dir))
+          (goto-char (point-min))
+          (if (re-search-forward (concat "^\* " malb/projectile-name ".*\n") nil t)
+              (newline 1)
+            (progn
+              (goto-char (point-max))
+              (insert (concat "* " malb/projectile-name))
+              (newline 1)
+              ))))
+    (progn
+      (find-file malb/private-org)
+      (goto-char (point-min))
+      (re-search-forward "^\* Tasks" nil t)
+      (newline 1))
+    ))
+#+END_SRC
+
+*Template Expansions*
+
+- =%[file]= Insert the contents of the file given by file.
+- =%(sexp)= Evaluate Elisp sexp and replace with the result. For convenience, =%:keyword= (see below) placeholders within the expression will be expanded prior to this. The sexp must return a string.
+- =%<...>= The result of format-time-string on the ... format specification.
+- =%t= Timestamp, date only.
+- =%T= Timestamp, with date and time.
+- =%u, %U= Like the above, but inactive timestamps.
+- =%i= Initial content, the region when capture is called while the region is active. The entire text will be indented like =%i= itself.
+- =%a= Annotation, normally the link created with ~org-store-link~.
+- =%A= Like =%a=, but prompt for the description part.
+- =%l= Like =%a=, but only insert the literal link.
+- =%c= Current kill ring head.
+- =%x= Content of the X clipboard.
+- =%K= Link to the currently clocked task.
+- =%k= Title of the currently clocked task.
+- =%n= User name (taken from user-full-name).
+- =%f= File visited by current buffer when org-capture was called.
+- =%F= Full path of the file or directory visited by current buffer.
+- =%:keyword= Specific information for certain link types, see below.
+- =%^g= Prompt for tags, with completion on tags in target file.
+- =%^G= Prompt for tags, with completion all tags in all agenda files.
+- =%^t= Like %t, but prompt for date. Similarly =%^T=, =%^u=, =%^U=. You may define a prompt like =%^{Birthday}t=.
+- =%^L= Like %^C, but insert as link.
+- =%^C= Interactive selection of which kill or clip to use.
+- =%^{prop}p= Prompt the user for a value for property prop.
+- =%^{prompt}= prompt the user for a string and replace this sequence with it. You may specify a default value and a completion table with =%^{prompt|default|completion2|completion3...}=. The arrow keys access a prompt-specific history.
+- =%\n= Insert the text entered at the nth =%^{prompt}=, where n is a number, starting from 1.
+- =%?= After completing the template, position cursor here.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-capture
+  :bind ("<f9>" . org-capture)
+  :config (setq org-capture-templates
+                '(("t" "task"
+                   entry (file malb/inbox-org)
+                   "** TODO %?\n%i" :prepend t)
+
+                  ("p" "project task" plain (function malb/org-capture-projectile)
+                   "** TODO %?\n%a\n" :prepend t)
+
+                  ("k" "reply to e-mail (KMail)"
+                   entry (file+headline malb/inbox-org "Email")
+                   "* REPLY to [[mailto:%link][%:description]]\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n\n[[mailto:%:link][%:link]] wrote:\n#+BEGIN_QUOTE\n%x\n#+END_QUOTE\n\n" :immediate-finish t :prepend t)
+
+                  ("r" "reply to e-mail (mu4e)"
+                   entry (file+headline malb/inbox-org "Email")
+                   "* REPLY to %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n" :immediate-finish t :prepend t)
+
+                  ("n" "note"
+                   entry (file+headline malb/private-org "Notes" :prepend t)
+                   "* %?\n  %i")
+
+                  ("m" "music"
+                   entry (file+headline malb/private-org "Music")
+                   "* %?\n  %i")
+
+                  ("j" "journal entry"
+                   entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
+                   "** research\n%?\n** critique\n\n"))))
+
+#+END_SRC
+
+** Meeting Notes
+
+#+BEGIN_QUOTE
+I've notice that while I really like taking notes in a meeting, I don't always like the multiple
+windows I have opened, so I created this function that I can easily call to eliminate distractions
+enduring a meeting. ([[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][source]])
+#+END_QUOTE
+
+    #+BEGIN_SRC elisp
+(defun meeting-notes ()
+  "Call this after creating an org-mode heading for where the notes for the meeting
+  should be. After calling this function, call 'meeting-done' to reset the environment."
+  (interactive)
+  (outline-mark-subtree)                              ;; Select org-mode section
+  (narrow-to-region (region-beginning) (region-end))  ;; Only show that region
+  (deactivate-mark)
+  (delete-other-windows)                              ;; Get rid of other windows
+  (text-scale-set 2)                                  ;; Text is now readable by others
+  (fringe-mode 0)
+  (olivetti-mode 1)
+  (olivetti-set-width 110)
+  (olivetti-toggle-hide-modeline)
+  (message "When finished taking your notes, run meeting-done."))
+    #+END_SRC
+
+    #+BEGIN_SRC elisp
+(defun meeting-done ()
+  "Attempt to 'undo' the effects of taking meeting notes."
+  (interactive)
+  (widen)                                       ;; Opposite of narrow-to-region
+  (text-scale-set 0)                            ;; Reset the font size increase
+  (fringe-mode 1)
+  (olivetti-toggle-hide-modeline)
+  (olivetti-mode 0)
+  (winner-undo))                                ;; Put the windows back in place
+    #+END_SRC
+
+** Org Tree Slide
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-tree-slide
+  :ensure t
+  :config (progn
+            (bind-key "C-<left>"  #'org-tree-slide-move-previous-tree org-tree-slide-mode-map)
+            (bind-key "C-<right>" #'org-tree-slide-move-next-tree org-tree-slide-mode-map)
+            (bind-key "<f11>"   #'org-tree-slide-content org-tree-slide-mode-map)
+            (setq org-tree-slide-skip-outline-level 2)))
+#+END_SRC
+
+** Tips
+*** Agenda Commands
+
+| ~F~         | ~(org-agenda-follow-mode)~           | Toggle Follow mode                                     |
+| ~L~         | ~(org-agenda-recenter)~              | Display original location and recenter that window.    |
+| ~o~         |                                      | Delete other windows.                                  |
+| ~f~         | ~(org-agenda-later)~                 | Go forward in time to display                          |
+| ~b~         | ~(org-agenda-earlier)~               | Go backward in time to display earlier dates           |
+| r and ~g~   | ~(org-agenda-redo)~                  | Recreate the agenda buffer.                            |
+| ~C-c C-s~   | ~(org-agenda-schedule)~              | Schedule this item.                                    |
+| ~C-c C-d~   | ~(org-agenda-deadline)~              | Set a deadline for this item.                          |
+| ~S-<right>~ | ~(org-agenda-do-date-later)~         | Change the timestamp by one day into the future.       |
+| ~S-<left>~  | ~(org-agenda-do-date-earlier)~       | Change the timestamp by one day into the past.         |
+| ~>~         | ~(org-agenda-date-prompt)~           | Change the timestamp associated with the current line. |
+| ~m~         | ~(org-agenda-bulk-mark)~             | Mark the entry at point for bulk action.               |
+| ~*~         | ~(org-agenda-bulk-mark-all)~         | Mark all visible agenda entries for bulk action.       |
+| ~u~         | ~(org-agenda-bulk-unmark)~           | Unmark entry at point for bulk action.                 |
+| ~U~         | ~(org-agenda-bulk-remove-all-marks)~ | Unmark all marked entries for bulk action.             |
+| ~B~         | ~(org-agenda-bulk-action)~           | Bulk action: act on all marked entries in the agenda.  |
+
+*** Commands I easily forget
+
+- =C-c C-j= calls ~(org-goto)~ which jumps to headlines in a file
+- =C-c /= calls ~(org-sparse-tree)~ which reduces the tree to the nodes with some attribute
+
+*** Style
+
+-In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =verbatim=, and ~code~. But this breaks if the character just inside the styling code is a non-smart single or double quote. =C-c ;= is styled; =C-c '= is not. We can fix that by inserting a zero-width space between the apostrophe and the = . The first time, we can put the cursor between the apostrophe and the = and enter ~C-x 8 RET ZERO WIDTH SPACE RET~, at which point =C-c '​= will display correctly.
 * Git
 
 ** Magit
@@ -836,7 +1317,6 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 #+END_SRC
 
 *** TODO Check out [[https://github.com/theanalyst/ix.el][ix]]
-
 * Email
 ** General
 
@@ -855,7 +1335,6 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 (use-package mu4e
   :commands mu4e-compose-mode-hook
-  :bind ("<f2>" . mu4e)
   :init  (progn (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
                 (add-hook 'message-mode-hook #'flyspell-mode)
                 (add-hook 'message-mode-hook #'turn-on-orgstruct)
@@ -914,7 +1393,6 @@ Link to mu4e messages and threads.
     :ensure t
     :config (bind-key "s" 'helm-mu mu4e-main-mode-map))
 #+END_SRC
-
 * Programming (languages)
 ** General
 *** REPL (comint)
@@ -1571,9 +2049,10 @@ On our system port 8888 is already taken.
 
             (defun malb/elisp-hook ()
               (elisp-slime-nav-mode)
-              (turn-on-eldoc-mode))
+              (smartparens-strict-mode)
+              (eldoc-mode))
 
-            (setq eldoc-idle-delay 0.1)
+            (setq eldoc-idle-delay 0.3)
 
             (add-hook 'emacs-lisp-mode-hook #'malb/elisp-hook)
             (add-hook 'lisp-interaction-mode-hook #'malb/elisp-hook)
@@ -1716,70 +2195,6 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
   :ensure t
   :bind ("C-`" . er/expand-region))
 #+END_SRC
-
-*** [#A] Smart parens
-
-#+BEGIN_SRC emacs-lisp
-(use-package smartparens
-  :ensure t
-  :diminish smartparens-mode
-  :init (progn (smartparens-global-mode t))
-  :config (progn
-            (require 'smartparens-config)
-            (require 'smartparens-latex)
-
-            (setq sp-autodelete-wrap t)
-            (setq sp-autoescape-string-quote nil) ;; don't escape quotes in strings
-            (bind-key "C-M-d" 'sp-down-sexp sp-keymap)
-            (bind-key "C-M-u" 'sp-backward-up-sexp sp-keymap)
-
-            (bind-key "C-M-a" 'sp-beginning-of-sexp sp-keymap)
-            (bind-key "C-M-e" 'sp-end-of-sexp sp-keymap)
-
-            (bind-key "M-<right>" 'sp-next-sexp sp-keymap)
-            (bind-key "M-<left>" 'sp-previous-sexp sp-keymap)
-
-            (bind-key "C-M-t" 'sp-transpose-sexp sp-keymap)
-            (bind-key "M-d" 'sp-kill-sexp sp-keymap)
-            (bind-key "M-<backspace>" 'sp-backward-unwrap-sexp sp-keymap)
-
-            (bind-key "C-<right>" 'sp-forward-slurp-sexp sp-keymap)
-            (bind-key "C-<left>" 'sp-forward-barf-sexp sp-keymap)
-
-            (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward sp-keymap)
-            (bind-key "C-S-<backspace>" 'sp-splice-sexp-killing-around sp-keymap)
-
-            (add-to-list 'sp-ignore-modes-list 'org-mode) ; too slow
-            (add-to-list 'sp-ignore-modes-list 'python-mode) ; too slow
-            (add-to-list 'sp-ignore-modes-list 'cython-mode) ; too slow
-            (add-to-list 'sp-navigate-consider-stringlike-sexp 'latex-mode)
-            ))
-#+END_SRC
-
-** Misc
-
-A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/beginning-of-line-dwim ()
-  "Toggles between moving point to the first non-whitespace character, and
-  the start of the line."
-  (interactive)
-  (let ((start-position (point)))
-    ;; Move to the first non-whitespace character.
-    (back-to-indentation)
-
-    ;; If we haven't moved position, go to start of the line.
-    (when (= (point) start-position)
-      (move-beginning-of-line nil))))
-
-(bind-key "C-a" #'malb/beginning-of-line-dwim)
-(bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-map)
-(bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
-(bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
-
-#+END_SRC
-
 * Prose
 ** General
 *** Tab completion
@@ -2208,289 +2623,6 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
   (olivetti-mode 1)
   (latex-preview-pane-mode 1))
 #+END_SRC
-
-* [[http://orgmode.org/][Org-mode all the things]]
-** General
-
-#+BEGIN_SRC emacs-lisp
-(use-package org
-  :ensure t
-  :bind (("\C-cl" . org-store-link)
-         ("\C-ca" . org-agenda))
-  :mode ("\\.org$" . org-mode)
-  :config (progn
-            ;; files
-            (setq org-directory malb/org-files-dir)
-            (setq org-agenda-files malb/org-files)
-            (setq org-default-notes-file malb/inbox-org)
-
-            ;; behaviour
-            (setq org-src-fontify-natively t                                   ; fontify code blocks
-                  org-hide-emphasis-markers nil                                ; hide markers for like *foo*
-                  org-enforce-todo-dependencies t                              ; enforce todo dependencies
-                  org-habit-graph-column 128
-                  org-tags-column -120
-                  org-startup-folded 'fold
-                  org-log-into-drawer t
-                  org-log-done t
-                  org-use-speed-commands t
-                  org-catch-invisible-edits 'smart
-                  org-agenda-tags-column -128
-                  org-agenda-include-diary nil
-                  org-agenda-dim-blocked-tasks t
-                  org-agenda-skip-deadline-prewarning-if-scheduled t
-                  org-agenda-ignore-drawer-properties '(effort appt category)
-                  org-agenda-window-setup 'current-window                      ; Overwrite the current window with the agenda
-                  org-agenda-sticky t                                          ; Use sticky agenda's so they persist
-                  org-agenda-compact-blocks t                                  ; Compact the block agenda view
-                  org-export-coding-system 'utf-8
-                  org-clock-persist 'history
-                  org-highlight-latex-and-related '(latex)
-                  org-return-follows-link t                                    ; follow links by pressing ENTER on them
-                  org-edit-src-content-indentation 0                           ; don't indent source code
-                  org-src-preserve-indentation t                               ; preserve the indentation inside of source blocks
-                  org-special-ctrl-a/e t                                       ; special begin/end of line to skip tags and stars
-                  org-special-ctrl-k t                                         ; special keys for killing a headline
-                  org-src-window-setup 'current-window                         ; how org-src windows are set up when hitting C-c '
-                  org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory)
-                  org-ellipsis " […]"
-                  )
-
-            ;; load more languages for org-babel
-            (org-babel-do-load-languages
-             'org-babel-load-languages
-             '((python . t)
-               (sh . t)))
-
-            (setq org-todo-keywords
-                  '((sequence "TODO(t)" "WAITING(w@)" "|" "DELEGATED(e@/!)" "DONE(d)" "CANCELLED(c@/!)")
-                    (sequence "WRITE" "TRANSLATE(!)" "FEEDBACK(@/!)" "REVISE(!)"
-                              "COAUTHOR(!/@)" "NATIVE(@)" "PUBLISH(!)" "SENDOUT(!)" "WAITING(@/!)"
-                              "|"  "PUBLISHED(!)")
-                    (sequence "REPLY(r)" "|" "SENT")
-                    (sequence "PLAY" "LOAD" "|" "SEEN")))
-
-            (org-clock-persistence-insinuate)
-
-            ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-            (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9))))
-            ;; Stop using paths for refile targets - we file directly with IDO
-            (setq org-refile-use-outline-path nil)
-            ;; Allow refile to create parent tasks with confirmation
-            (setq org-refile-allow-creating-parent-nodes '(confirm))
-
-            (defun malb/verify-refile-target () ; Exclude DONE state tasks from refile targets
-              (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-
-            (setq org-refile-target-verify-function 'malb/verify-refile-target)
-            (setq org-reverse-note-order t)
-
-            ;; delete SCHEDULED if WAITING
-            (defun malb/org-after-todo-state-change ()
-              (when (or
-                     (string-equal org-state "WAITING")
-                     (string-equal org-state "COAUTHOR")
-                     (string-equal org-state "NATIVE")
-                     (string-equal org-state "SUBMITTED"))
-                (org-remove-timestamp-with-keyword org-scheduled-string)))
-
-            (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
-
-            (defun malb/diminish-org-indent-mode ()
-              (ignore-errors
-                (diminish 'org-indent-mode)))
-
-            (add-hook 'org-mode-hook #'malb/diminish-org-indent-mode)
-
-            (bind-key "<home>" #'org-beginning-of-line org-mode-map)
-            (bind-key "<end>" #'org-end-of-line org-mode-map)
-            ))
-#+END_SRC
-
-** Habit
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-habit
-  :init (add-to-list 'org-modules 'org-habit))
-#+END_SRC
-
-** Protocol
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-protocol)
-#+END_SRC
-
-** Bullets
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-bullets
-  :ensure t
-  :commands org-bullets-mode
-  :init  (progn
-
-           (defun malb/enable-org-bullets ()
-             (org-bullets-mode 1))
-
-           (add-hook 'org-mode-hook #'malb/enable-org-bullets)
-           (setq org-bullets-bullet-list '("◉" "✸" "○" "○"))))
-#+END_SRC
-
-** iCalendar export
-
-#+BEGIN_SRC emacs-lisp
-(use-package ox-icalendar
-  :config (progn
-            (setq org-icalendar-include-todo t
-                  org-icalendar-combined-agenda-file malb/org-mode-ics
-                  org-icalendar-categories '(category)
-                  org-icalendar-use-scheduled '(todo-start event-if-not-todo)
-                  org-icalendar-use-deadline '(todo-due)
-                  org-icalendar-with-timestamps 'active
-                  org-export-with-timestamps 'active)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defvar malb/org-icalendar-export-timer nil
-  "Timer that `malb/org-icalendar-export-timer' used to reschedule itself, or nil.")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/org-icalendar-export-with-delay (secs)
-  (when malb/org-icalendar-export-timer
-    (cancel-timer malb/org-icalendar-export-timer))
-  (setq malb/org-icalendar-export-timer
-        (run-with-idle-timer   (* 1 secs) nil (lambda ()
-                                                (org-icalendar-combine-agenda-files t) ; async, check org-export-init.el for config
-                                                (org-agenda-redo)
-                                                ))))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/ox-export-after-save-hook ()
-  (if (eq major-mode 'org-mode)
-      (malb/org-icalendar-export-with-delay 600)))
-
-(add-hook 'after-save-hook 'malb/ox-export-after-save-hook)
-#+END_SRC
-
-** Capture
-
-If we are in a project we might add a TODO entry to the appropriate entry in "projects.org".
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/org-capture-projectile ()
-  (if (projectile-project-p)
-      (progn
-        (let ((malb/projectile-name
-               (projectile-project-name)))
-          (find-file (expand-file-name "projects.org" malb/org-files-dir))
-          (goto-char (point-min))
-          (if (re-search-forward (concat "^\* " malb/projectile-name ".*\n") nil t)
-              (newline 1)
-            (progn
-              (goto-char (point-max))
-              (insert (concat "* " malb/projectile-name))
-              (newline 1)
-              ))))
-    (progn
-      (find-file malb/private-org)
-      (goto-char (point-min))
-      (re-search-forward "^\* Tasks" nil t)
-      (newline 1))
-    ))
-#+END_SRC
-
-*Template Expansions*
-
-- =%[file]= Insert the contents of the file given by file.
-- =%(sexp)= Evaluate Elisp sexp and replace with the result. For convenience, =%:keyword= (see below) placeholders within the expression will be expanded prior to this. The sexp must return a string.
-- =%<...>= The result of format-time-string on the ... format specification.
-- =%t= Timestamp, date only.
-- =%T= Timestamp, with date and time.
-- =%u, %U= Like the above, but inactive timestamps.
-- =%i= Initial content, the region when capture is called while the region is active. The entire text will be indented like =%i= itself.
-- =%a= Annotation, normally the link created with ~org-store-link~.
-- =%A= Like =%a=, but prompt for the description part.
-- =%l= Like =%a=, but only insert the literal link.
-- =%c= Current kill ring head.
-- =%x= Content of the X clipboard.
-- =%K= Link to the currently clocked task.
-- =%k= Title of the currently clocked task.
-- =%n= User name (taken from user-full-name).
-- =%f= File visited by current buffer when org-capture was called.
-- =%F= Full path of the file or directory visited by current buffer.
-- =%:keyword= Specific information for certain link types, see below.
-- =%^g= Prompt for tags, with completion on tags in target file.
-- =%^G= Prompt for tags, with completion all tags in all agenda files.
-- =%^t= Like %t, but prompt for date. Similarly =%^T=, =%^u=, =%^U=. You may define a prompt like =%^{Birthday}t=.
-- =%^L= Like %^C, but insert as link.
-- =%^C= Interactive selection of which kill or clip to use.
-- =%^{prop}p= Prompt the user for a value for property prop.
-- =%^{prompt}= prompt the user for a string and replace this sequence with it. You may specify a default value and a completion table with =%^{prompt|default|completion2|completion3...}=. The arrow keys access a prompt-specific history.
-- =%\n= Insert the text entered at the nth =%^{prompt}=, where n is a number, starting from 1.
-- =%?= After completing the template, position cursor here.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package org-capture
-    :bind ("<f9>" . org-capture)
-    :config (setq org-capture-templates
-                  '(("t" "task"
-                     entry (file malb/inbox-org)
-                     "** TODO %?\n%i" :prepend t)
-
-                    ("p" "project task" plain (function malb/org-capture-projectile)
-                     "** TODO %?\n%a\n" :prepend t)
-
-                    ("k" "reply to e-mail (KMail)"
-                     entry (file+headline malb/inbox-org "Email")
-                     "* REPLY to \"%:description\"\n[[mailto:%:link][%:link]] wrote:\n#+BEGIN_QUOTE\n%x\n#+END_QUOTE\n\n" :prepend t)
-
-                    ("r" "reply to e-mail (mu4e)"
-                     entry (file+headline malb/inbox-org "Email")
-                     "* REPLY to %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n" :immediate-finish t :prepend t)
-
-                    ("n" "note"
-                     entry (file+headline malb/private-org "Notes" :prepend t)
-                     "* %?\n  %i")
-
-                    ("m" "music"
-                     entry (file+headline malb/private-org "Music")
-                     "* %?\n  %i")
-
-                    ("j" "journal entry"
-                     entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
-                     "** research\n%?\n** critique\n\n"))))
-
-#+END_SRC
-
-** Tips
-*** Agenda Commands
-
-| ~F~         | ~(org-agenda-follow-mode)~           | Toggle Follow mode                                     |
-| ~L~         | ~(org-agenda-recenter)~              | Display original location and recenter that window.    |
-| ~o~         |                                      | Delete other windows.                                  |
-| ~f~         | ~(org-agenda-later)~                 | Go forward in time to display                          |
-| ~b~         | ~(org-agenda-earlier)~               | Go backward in time to display earlier dates           |
-| r and ~g~   | ~(org-agenda-redo)~                  | Recreate the agenda buffer.                            |
-| ~C-c C-s~   | ~(org-agenda-schedule)~              | Schedule this item.                                    |
-| ~C-c C-d~   | ~(org-agenda-deadline)~              | Set a deadline for this item.                          |
-| ~S-<right>~ | ~(org-agenda-do-date-later)~         | Change the timestamp by one day into the future.       |
-| ~S-<left>~  | ~(org-agenda-do-date-earlier)~       | Change the timestamp by one day into the past.         |
-| ~>~         | ~(org-agenda-date-prompt)~           | Change the timestamp associated with the current line. |
-| ~m~         | ~(org-agenda-bulk-mark)~             | Mark the entry at point for bulk action.               |
-| ~*~         | ~(org-agenda-bulk-mark-all)~         | Mark all visible agenda entries for bulk action.       |
-| ~u~         | ~(org-agenda-bulk-unmark)~           | Unmark entry at point for bulk action.                 |
-| ~U~         | ~(org-agenda-bulk-remove-all-marks)~ | Unmark all marked entries for bulk action.             |
-| ~B~         | ~(org-agenda-bulk-action)~           | Bulk action: act on all marked entries in the agenda.  |
-
-*** Commands I easily forget
-
-- =C-c C-j= calls ~(org-goto)~ which jumps to headlines in a file
-- =C-c /= calls ~(org-sparse-tree)~ which reduces the tree to the nodes with some attribute
-
-*** Style
-
-In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =verbatim=, and ~code~. But this breaks if the character just inside the styling code is a non-smart single or double quote. =C-c ;= is styled; =C-c '= is not. We can fix that by inserting a zero-width space between the apostrophe and the = . The first time, we can put the cursor between the apostrophe and the = and enter ~C-x 8 RET ZERO WIDTH SPACE RET~, at which point =C-c '​= will display correctly.
 
 * Dired
 
