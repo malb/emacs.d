@@ -299,6 +299,14 @@ Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mention
             (setq avy-background t)))
 #+END_SRC
 
+** Jumping to links
+
+#+BEGIN_SRC emacs-lisp
+(use-package ace-link
+  :ensure t
+  :config (ace-link-setup-default))
+#+END_SRC
+
 * [[https://github.com/capitaomorte/yasnippet][Yasnippet]]
 
 Call ~yas-decribe-tables~ to see currently defined snippets.
