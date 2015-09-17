@@ -3349,17 +3349,23 @@ Vastly easier to read tables and friends. We apply this [[https://github.com/sab
 * ToDos
 ** TODO AucTeX
 - ~\begin{comment}…\end{comment}~ does not work as expected
-** TODO [[http://emacs.stackexchange.com/q/8069][.el.gpg]]
-** TODO [[https://github.com/rejeep/prodigy.el][prodigy]]
-** TODO [[https://github.com/wasamasa/firestarter][firestarter]]
+** TODO check out [[http://emacs.stackexchange.com/q/8069][.el.gpg]]
+** TODO check out [[https://github.com/rejeep/prodigy.el][prodigy]]
+** TODO check out [[https://github.com/wasamasa/firestarter][firestarter]]
 :PROPERTIES:
 :ID:       01e6ff33-8437-4b06-967c-85dd8df6e7b6
 :END:
-** TODO [[https://github.com/gregsexton/ob-ipython][org-ipython]]
-** TODO [[https://github.com/bastibe/annotate.el][annotate]]
-** TODO [[https://github.com/danielsz/Palimpsest][palimpsest]]
-** TODO [[https://github.com/m00natic/vlfi][vlf]]
-** TODO [[https://github.com/arbox/org-sync][org-sync]]
+** TODO check out [[https://github.com/bastibe/annotate.el][annotate]]
+** Org Mode
+- [[https://github.com/gregsexton/ob-ipython][org-ipython]] - org babel with ipython
+- [[https://github.com/arbox/org-sync][org-sync]] - sync with bitbucket, github …
+- [[https://org-trello.github.io/trello-setup.html][org-trello]] - sync with trello
+- [[https://github.com/christopherjwhite/org-toodledo][org-toodledo]] - sync with toodledo
+- [[https://github.com/howardabrams/dot-files/blob/master/emacs-mail.org][org-mime]] - reading and sending email
+- [[https://github.com/IvanMalison/org-projectile][org-projectile]] - per project todo lists
+- [[https://github.com/rexim/org-cliplink][org-cliplink]] - insert URL’s with titles
+- [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-screen.html][org-babel-screen]] - interactive shells and org-mode
+*** TODO reorganise org-files config
 * Notes
 ** Compile .emacs
 
