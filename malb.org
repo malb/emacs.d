@@ -1897,6 +1897,7 @@ Drop Python ffap stuff because it interacts badly with ~helm-find-files~ ([[http
 
 #+BEGIN_SRC emacs-lisp
 (use-package python-mode
+  :ensure t
   :config (progn
             (setq-default python-indent 4
                           py-docstring-style 'SYMMETRIC)
