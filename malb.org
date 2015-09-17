@@ -235,7 +235,7 @@ In case we just want to kill the bottom window, set a shortcut do to this.
   (dolist (window (window-at-side-list))
     (quit-window nil window)))
 
-(bind-key "C-q" #'malb/quit-bottom-side-windows)
+(bind-key "C-§" #'malb/quit-bottom-side-windows)
 #+END_SRC
 
 *** Compilation window
