@@ -1718,11 +1718,12 @@ The default key bindings of semantic are a bit awkward, rebind them.
   :config (progn
             (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
 
-            (bind-key "M-?"   'semantic-analyze-proto-impl-toggle c-mode-base-map)
-            (bind-key "M-."   'semantic-ia-fast-jump c-mode-base-map)
-            (bind-key "C-M-." 'semantic-complete-jump c-mode-base-map)
-            (bind-key "M-r"   'semantic-symref-symbol c-mode-base-map)
-            (bind-key "M-,"   'pop-global-mark c-mode-base-map)
+            (bind-key "M-?"   #'semantic-analyze-proto-impl-toggle c-mode-base-map)
+            (bind-key "M-."   #'semantic-ia-fast-jump c-mode-base-map)
+            (bind-key "C-M-." #'semantic-complete-jump c-mode-base-map)
+            (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)
+            (bind-key "M-,"   #'pop-global-mark c-mode-base-map)
+            (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-map)
             ))
 #+END_SRC
 
