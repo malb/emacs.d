@@ -2148,7 +2148,7 @@ On our system port 8888 is already taken.
             (add-hook 'ein:notebook-multilang-mode-hook #'auto-complete-mode)))
 #+END_SRC
 
-** Elisp
+** Emacs Lisp
 
 #+BEGIN_SRC emacs-lisp
 (use-package elisp-slime-nav
