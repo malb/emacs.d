@@ -2101,6 +2101,13 @@ On our system port 8888 is already taken.
 (bind-key "C-c C-z" #'ielm emacs-lisp-mode-map)
 #+END_SRC
 
+** JavaScript
+
+#+BEGIN_SRC emacs-lisp
+(use-package json-mode
+    :ensure t)
+#+END_SRC
+
 ** Clojure
 
 ([[https://github.com/howardabrams/dot-files/blob/master/emacs-clojure.org][source]])
