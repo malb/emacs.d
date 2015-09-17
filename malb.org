@@ -175,6 +175,17 @@ Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'display-buffer-alist
+             `(,(rx bos "*Flycheck errors*" eos)
+               (display-buffer-reuse-window
+                display-buffer-in-side-window)
+               (reusable-frames . visible)
+               (side            . bottom)
+               (window-height   . 0.3)))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'display-buffer-alist
              `(,(rx bos "*helm projectile*" eos)
                (display-buffer-reuse-window
                 display-buffer-in-side-window)
