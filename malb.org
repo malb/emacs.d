@@ -2875,12 +2875,52 @@ directory to make multiple eshell windows easier."
             ))
 #+END_SRC
 
+* Diagrams
+** [[http://plantuml.com/][PlantUML]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package puml-mode
+  :ensure t
+  :init (progn
+            (setq puml-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")))
+#+END_SRC
+
+*Example*
+
+#+BEGIN_SRC plantuml :file foo.svg :tangle no
+skinparam monochrome true
+skinparam dpi 150
+skinparam backgroundColor transparent
+skinparam classBackgroundColor transparent
+skinparam style strictuml
+skinparam handwritten true
+
+title Example Sequence Diagram
+activate Client
+Client -> Server: Session Initiation
+note right: Client requests new session
+activate Server
+Client <-- Server: Authorization Request
+note left: Server requires authentication
+Client -> Server: Authorization Response
+note right: Client provides authentication
+Server --> Client: Session Token
+note left: Session established
+deactivate Server
+Client -> Client: Saves token
+deactivate Client
+#+END_SRC
+
+- [[http://plantuml.com/latex.html][TikZ export]]
+- See also https://github.com/josteink/wsd-mode for https://www.websequencediagrams.com/
+
 * Misc
 ** Settings
 
 Use the built-in ~show-paren-mode~ to highlight matching parentheses.
 
 #+BEGIN_SRC emacs-lisp
+(setq show-paren-delay 0.2)
 (show-paren-mode 1)
 #+END_SRC
 
