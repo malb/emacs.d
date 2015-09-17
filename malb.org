@@ -2376,7 +2376,9 @@ Adapt text width to nice to read/edit width.
 (use-package olivetti
   :ensure t
   :bind (("C-M-S-<right>" . olivetti-expand)
-         ("C-M-S-<left>" . olivetti-shrink)))
+         ("C-M-S-<left>" . olivetti-shrink))
+  :config (progn
+            (setq olivetti-body-width 100)))
 #+END_SRC
 
 *** Sentences
