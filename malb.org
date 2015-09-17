@@ -3409,5 +3409,4 @@ And Emacs will change the mode to ~c++-mode~ whenever it had initially set it to
 
 # Local Variables:
 # eval: (ws-butler-mode 1)
-# eval: (stripe-table-mode 0)
 # End:
