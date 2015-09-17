@@ -330,7 +330,7 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
 
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
-                  company-idle-delay 0.1   ; disable delay before autocompletion popup shows
+                  company-idle-delay 0.3   ; disable delay before autocompletion popup shows
                   company-echo-delay 0     ; remove blinking
                   company-show-numbers t   ; show numbers for easy selection
                   company-selection-wrap-around t
