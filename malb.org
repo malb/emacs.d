@@ -1819,6 +1819,14 @@ Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/
   (bind-key "C-c M-d" #'malb/doxygen c-mode-base-map)
 #+END_SRC
 
+*** GDB
+
+#+BEGIN_SRC emacs-lisp
+(setq gdb-find-source-frame t
+      gdb-many-windows t)
+#+END_SRC
+
+
 *** [[http://valgrind.org/][Valgrind]]
 
 This code allows to run valgrind and step through warnings/errors. We set =--error-errorcode=1= because we bury compilation buffers that finish with exit code zero automatically. By default, valgrind returns the exit code of the program it runs. ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
