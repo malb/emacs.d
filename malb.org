@@ -1,4 +1,5 @@
 #+STARTUP: overview indent
+#+SETUPFILE: theme-readtheorg.setup
 #+TODO: TEST(t) IMPLEMENT(i) TODO(o) | DONE(d)
 #+TODO: | DISABLED(d)
 
