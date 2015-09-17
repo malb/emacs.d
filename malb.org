@@ -2827,7 +2827,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 * EShell
 
-Open eshell at point and clean up when closing with =q= ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]])
+Open eshell at point and clean up when closing with =q= ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]) and other stuff ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
+
 
 #+BEGIN_SRC emacs-lisp
 (use-package eshell
@@ -2852,7 +2853,13 @@ directory to make multiple eshell windows easier."
             (bind-key "C-!" #'malb/eshell-here)
             (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
 
+            (setenv "PAGER" "cat") ;; https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org
             (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
+
+            (defun malb/eshell-add-visual-commands ()
+              (add-to-list 'eshell-visual-commands "htop"))
+
+            (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
 
             (defun eshell/q ()
               (delete-window)
@@ -2863,6 +2870,8 @@ directory to make multiple eshell windows easier."
               (setq-local company-idle-delay nil))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
+
+            (setq eshell-scroll-to-bottom-on-input t)
             ))
 #+END_SRC
 
