@@ -587,10 +587,14 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 ** [[https://github.com/syohex/emacs-helm-ag][Helm-ag]]
 
 #+BEGIN_SRC emacs-lisp
-  (use-package helm-ag
-    :ensure t
-    :config (progn (setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case")
-                   (setq helm-ag-command-option "--all-text")))
+(use-package helm-ag
+  :ensure t
+  :config (setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case"
+                helm-ag-command-option "--all-text"
+                helm-ag-insert-at-point 'symbol
+                helm-ag-fuzzy-match t
+                helm-ag-use-grep-ignore-list t
+                helm-ag-use-agignore t))
 #+END_SRC
 
 ** Helm-themes
