@@ -2448,7 +2448,7 @@ Diminish ~flyspell-mode~ as we always use it.
   :ensure t
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
-                                                               (file-name-as-directory "langtool"))
+                                                               (concat user-emacs-directory "langtool"))
                   langtool-default-language "en-GB"))
   )
 #+END_SRC
