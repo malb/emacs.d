@@ -59,7 +59,10 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 #+BEGIN_SRC emacs-lisp
 (use-package paradox
   :ensure paradox
-  :config (setq paradox-github-token malb/paradox-github-token))
+  :config (setq paradox-github-token malb/paradox-github-token
+                paradox-automatically-star t))
+#+END_SRC
+
 #+END_SRC
 
 * Fullscreen
