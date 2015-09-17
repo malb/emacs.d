@@ -3070,6 +3070,14 @@ Debug startup failures. If your Emacs init file signals an error during startup,
             (edit-server-start)))
 #+END_SRC
 
+** Logs
+
+#+BEGIN_SRC emacs-lisp
+(use-package logview
+  :ensure t
+  :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
+#+END_SRC
+
 * X11
 
 #+BEGIN_SRC emacs-lisp
