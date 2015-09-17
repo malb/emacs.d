@@ -817,52 +817,86 @@ When switching projects use:
   :ensure t)
 #+END_SRC
 * [[http://orgmode.org/][Org-mode all the things!]]
-** General
+
+*Note* Ideally, we’d want to put all org-mode stuff into one big =:config= blog, but that makes it harder to read/explain.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org
   :ensure org-plus-contrib
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda))
-  :mode ("\\.org$" . org-mode)
+  :mode ("\\.org$" . org-mode))
+#+END_SRC
+
+** Files
+
+#+BEGIN_SRC emacs-lisp
+(setq org-directory malb/org-files-dir)
+(setq org-agenda-files malb/org-files)
+(setq org-default-notes-file malb/inbox-org)
+#+END_SRC
+
+** Options
+
+#+BEGIN_SRC emacs-lisp
+(setq org-hide-emphasis-markers nil            ; hide markers for like *foo*
+      org-ellipsis " […]"
+      org-enforce-todo-dependencies t          ; enforce todo dependencies
+      org-habit-graph-column 128
+      org-use-speed-commands t
+      org-catch-invisible-edits 'smart
+      org-tags-column -120
+      org-startup-folded 'fold
+      org-log-into-drawer t
+      org-log-done t
+      org-highlight-latex-and-related '(latex)
+      org-return-follows-link t          ; follow links by pressing ENTER on them
+      org-clock-persist 'history
+      org-special-ctrl-a/e t                   ; special begin/end of line to skip starts …
+      org-special-ctrl-k t                     ; special keys for killing a headline
+      org-src-fontify-natively t               ; fontify code blocks
+      org-agenda-tags-column -128
+      org-agenda-include-diary nil
+      org-agenda-dim-blocked-tasks t
+      org-agenda-skip-deadline-prewarning-if-scheduled t
+      org-agenda-ignore-drawer-properties '(effort appt category)
+      org-agenda-window-setup 'current-window  ; Overwrite the current window with the agenda
+      org-agenda-sticky t                      ; Use sticky agenda's so they persist
+      org-agenda-compact-blocks t              ; Compact the block agenda view
+      org-edit-src-content-indentation 0       ; don't indent source code
+      org-src-preserve-indentation t           ; preserve indentation inside of source blocks
+      org-src-window-setup 'current-window     ; org-src windows set up when hitting C-c '
+      org-reverse-note-order t
+      )
+
+(bind-key "<home>" #'org-beginning-of-line org-mode-map)
+(bind-key "<end>" #'org-end-of-line org-mode-map)
+#+END_SRC
+
+**** TODO move org config to respective sections
+
+** Images
+
+Display images inline ([[http://doc.norang.ca/org-mode.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+;;
+(defun malb/display-inline-images ()
+  (condition-case nil
+      (org-display-inline-images)
+    (error nil)))
+
+(add-hook 'org-babel-after-execute-hook #'malb/display-inline-images 'append)
+#+END_SRC
+
+** Org Babel
+
+Working with source code in org-mode.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ob
+
   :config (progn
-            ;; files
-            (setq org-directory malb/org-files-dir)
-            (setq org-agenda-files malb/org-files)
-            (setq org-default-notes-file malb/inbox-org)
-
-            ;; behaviour
-            (setq org-src-fontify-natively t                  ; fontify code blocks
-                  org-hide-emphasis-markers nil               ; hide markers for like *foo*
-                  org-enforce-todo-dependencies t             ; enforce todo dependencies
-                  org-habit-graph-column 128
-                  org-tags-column -120
-                  org-startup-folded 'fold
-                  org-log-into-drawer t
-                  org-log-done t
-                  org-use-speed-commands t
-                  org-catch-invisible-edits 'smart
-                  org-agenda-tags-column -128
-                  org-agenda-include-diary nil
-                  org-agenda-dim-blocked-tasks t
-                  org-agenda-skip-deadline-prewarning-if-scheduled t
-                  org-agenda-ignore-drawer-properties '(effort appt category)
-                  org-agenda-window-setup 'current-window     ; Overwrite the current window with the agenda
-                  org-agenda-sticky t                         ; Use sticky agenda's so they persist
-                  org-agenda-compact-blocks t                 ; Compact the block agenda view
-                  org-export-coding-system 'utf-8
-                  org-clock-persist 'history
-                  org-highlight-latex-and-related '(latex)
-                  org-return-follows-link t                   ; follow links by pressing ENTER on them
-                  org-edit-src-content-indentation 0          ; don't indent source code
-                  org-src-preserve-indentation t              ; preserve the indentation inside of source blocks
-                  org-special-ctrl-a/e t                      ; special begin/end of line to skip tags and stars
-                  org-special-ctrl-k t                        ; special keys for killing a headline
-                  org-src-window-setup 'current-window        ; how org-src windows are set up when hitting C-c '
-                  org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory)
-                  org-ellipsis " […]"
-                  )
-
             ;; load more languages for org-babel
             (org-babel-do-load-languages
              'org-babel-load-languages
@@ -875,96 +909,117 @@ When switching projects use:
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
 
-            (add-to-list 'org-src-lang-modes (quote ("plantuml" . puml)))
+            (add-to-list 'org-src-lang-modes (quote ("plantuml" . puml)))))
+#+END_SRC
 
-            ;; http://doc.norang.ca/org-mode.html
-            (defun malb/display-inline-images ()
-              (condition-case nil
-                  (org-display-inline-images)
-                (error nil)))
+** ToDo Keywords & Scheduling
 
-            (add-hook 'org-babel-after-execute-hook #'malb/display-inline-images 'append)
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "WAITING(w@)" "|" "DELEGATED(e@/!)" "DONE(d)" "CANCELLED(c@/!)")
+        (sequence "WRITE" "TRANSLATE(!)" "FEEDBACK(@/!)" "REVISE(!)"
+                  "COAUTHOR(!/@)" "NATIVE(@)" "PUBLISH(!)" "SENDOUT(!)" "WAITING(@/!)"
+                  "|"  "PUBLISHED(!)")
+        (sequence "REPLY(r)" "|" "SENT")
+        (sequence "PLAY" "LOAD" "|" "SEEN")))
 
-            (setq org-todo-keywords
-                  '((sequence "TODO(t)" "WAITING(w@)" "|" "DELEGATED(e@/!)" "DONE(d)" "CANCELLED(c@/!)")
-                    (sequence "WRITE" "TRANSLATE(!)" "FEEDBACK(@/!)" "REVISE(!)"
-                              "COAUTHOR(!/@)" "NATIVE(@)" "PUBLISH(!)" "SENDOUT(!)" "WAITING(@/!)"
-                              "|"  "PUBLISHED(!)")
-                    (sequence "REPLY(r)" "|" "SENT")
-                    (sequence "PLAY" "LOAD" "|" "SEEN")))
+(org-clock-persistence-insinuate)
+#+END_SRC
 
-            (org-clock-persistence-insinuate)
+delete SCHEDULED if new state is WAITING
 
-            ;; Targets include this file and any file contributing to the agenda - up to 9 levels deep
-            (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9))))
-            ;; Stop using paths for refile targets - we file directly with IDO
-            (setq org-refile-use-outline-path nil)
-            ;; Allow refile to create parent tasks with confirmation
-            (setq org-refile-allow-creating-parent-nodes '(confirm))
+#+BEGIN_SRC emacs-lisp
+(defun malb/org-after-todo-state-change ()
+  (when (or
+         (string-equal org-state "WAITING")
+         (string-equal org-state "COAUTHOR")
+         (string-equal org-state "NATIVE")
+         (string-equal org-state "SUBMITTED"))
+    (org-remove-timestamp-with-keyword org-scheduled-string)))
 
-            (defun malb/verify-refile-target () ; Exclude DONE state tasks from refile targets
-              (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+(add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
+#+END_SRC
 
-            (setq org-refile-target-verify-function 'malb/verify-refile-target)
-            (setq org-reverse-note-order t)
+** Refiling
 
-            ;; delete SCHEDULED if WAITING
-            (defun malb/org-after-todo-state-change ()
-              (when (or
-                     (string-equal org-state "WAITING")
-                     (string-equal org-state "COAUTHOR")
-                     (string-equal org-state "NATIVE")
-                     (string-equal org-state "SUBMITTED"))
-                (org-remove-timestamp-with-keyword org-scheduled-string)))
+Targets include this file and any file contributing to the agenda - up to 9 levels deep
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9))))
+#+END_SRC
 
-            (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
+Stop using paths for refile targets - we file directly with helm
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-use-outline-path nil)
+#+END_SRC
 
-            ;; source http://endlessparentheses.com/ispell-and-org-mode.html
-            (defun malb/org-ispell ()
-              "Configure `ispell-skip-region-alist' for `org-mode'."
-              (make-local-variable 'ispell-skip-region-alist)
-              (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
-              (add-to-list 'ispell-skip-region-alist '("~" "~"))
-              (add-to-list 'ispell-skip-region-alist '("=" "="))
-              (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
+Allow refile to create parent tasks with confirmation
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-allow-creating-parent-nodes '(confirm))
+#+END_SRC
 
-            (add-hook 'org-mode-hook #'malb/org-ispell)
-            (add-hook 'org-mode-hook #'flyspell-mode)
+#+BEGIN_SRC emacs-lisp
+(defun malb/verify-refile-target () ; Exclude DONE state tasks from refile targets
+  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
 
-            (defun malb/diminish-org-indent-mode ()
-              (ignore-errors
-                (diminish 'org-indent-mode)))
+(setq org-refile-target-verify-function 'malb/verify-refile-target)
+#+END_SRC
 
-            (add-hook 'org-mode-hook #'malb/diminish-org-indent-mode)
+** Spell Checking
 
-            (bind-key "<home>" #'org-beginning-of-line org-mode-map)
-            (bind-key "<end>" #'org-end-of-line org-mode-map)
+#+BEGIN_SRC emacs-lisp
+;; source http://endlessparentheses.com/ispell-and-org-mode.html
+(defun malb/org-ispell ()
+  "Configure `ispell-skip-region-alist' for `org-mode'."
+  (make-local-variable 'ispell-skip-region-alist)
+  (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+  (add-to-list 'ispell-skip-region-alist '("~" "~"))
+  (add-to-list 'ispell-skip-region-alist '("=" "="))
+  (add-to-list 'ispell-skip-region-alist '("^#\\+BEGIN_SRC" . "^#\\+END_SRC")))
 
-            ;; http://orgmode.org/worg/org-hacks.html
-            (defun malb/org-inherited-no-file-tags ()
-              (let ((tags (org-entry-get nil "ALLTAGS" 'selective))
-                    (ltags (org-entry-get nil "TAGS")))
-                (mapc (lambda (tag)
-                        (setq tags
-                              (replace-regexp-in-string (concat tag ":") "" tags)))
-                      (append org-file-tags (when ltags (split-string ltags ":" t))))
-                (if (string= ":" tags) nil tags)))
+(add-hook 'org-mode-hook #'malb/org-ispell)
+(add-hook 'org-mode-hook #'flyspell-mode)
+#+END_SRC
 
-            (defadvice org-archive-subtree (around malb/org-archive-subtree-low-level activate)
-              (let ((tags (malb/org-inherited-no-file-tags))
-                    (org-archive-location
-                     (if (save-excursion (org-back-to-heading)
-                                         (> (org-outline-level) 1))
-                         (concat (car (split-string org-archive-location "::"))
-                                 "::* "
-                                 (car (org-get-outline-path)))
-                       org-archive-location)))
-                ad-do-it
-                (with-current-buffer (find-file-noselect (org-extract-archive-file))
-                  (save-excursion
-                    (while (org-up-heading-safe))
-                    (org-set-tags-to tags)))))
-            ))
+** Diminish Minor Modes
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/diminish-org-indent-mode ()
+  (ignore-errors
+    (diminish 'org-indent-mode)))
+
+(add-hook 'org-mode-hook #'malb/diminish-org-indent-mode)
+#+END_SRC
+
+** Archiving
+
+Archive with tags intact and some order in target file preserved. ([[http://orgmode.org/worg/org-hacks.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+;;
+(defun malb/org-inherited-no-file-tags ()
+  (let ((tags (org-entry-get nil "ALLTAGS" 'selective))
+        (ltags (org-entry-get nil "TAGS")))
+    (mapc (lambda (tag)
+            (setq tags
+                  (replace-regexp-in-string (concat tag ":") "" tags)))
+          (append org-file-tags (when ltags (split-string ltags ":" t))))
+    (if (string= ":" tags) nil tags)))
+
+(defadvice org-archive-subtree (around malb/org-archive-subtree-low-level activate)
+  (let ((tags (malb/org-inherited-no-file-tags))
+        (org-archive-location
+         (if (save-excursion (org-back-to-heading)
+                             (> (org-outline-level) 1))
+             (concat (car (split-string org-archive-location "::"))
+                     "::* "
+                     (car (org-get-outline-path)))
+           org-archive-location)))
+    ad-do-it
+    (with-current-buffer (find-file-noselect (org-extract-archive-file))
+      (save-excursion
+        (while (org-up-heading-safe))
+        (org-set-tags-to tags)))))
+
 #+END_SRC
 
 ** Habit
@@ -996,6 +1051,11 @@ When switching projects use:
 #+END_SRC
 
 ** Export
+
+#+BEGIN_SRC emacs-lisp
+(setq org-export-coding-system 'utf-8)
+#+END_SRC
+
 *** iCalendar
 
 #+BEGIN_SRC emacs-lisp
@@ -1007,7 +1067,8 @@ When switching projects use:
                   org-icalendar-use-scheduled '(todo-start event-if-not-todo)
                   org-icalendar-use-deadline '(todo-due)
                   org-icalendar-with-timestamps 'active
-                  org-export-with-timestamps 'active)))
+                  org-export-with-timestamps 'active
+                  org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1021,7 +1082,8 @@ When switching projects use:
     (cancel-timer malb/org-icalendar-export-timer))
   (setq malb/org-icalendar-export-timer
         (run-with-idle-timer   (* 1 secs) nil (lambda ()
-                                                (org-icalendar-combine-agenda-files t) ; async, check org-export-init.el for config
+                                                ;; async, check org-export-init.el
+                                                (org-icalendar-combine-agenda-files t)
                                                 (org-agenda-redo)
                                                 ))))
 #+END_SRC
