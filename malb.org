@@ -92,7 +92,6 @@ Disable cluttler
 #+END_SRC
 
 * Window Management
-
 ** Splitting
 
 When splitting windows open the previous buffer in it.
@@ -424,7 +423,6 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
 #+END_SRC
 
 * [[https://github.com/emacs-helm/helm][Helm]]
-
 ** General
 
 Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many sources to create =malb/helm-omni.= ([[http://stackoverflow.com/a/19284509][source]])
@@ -2954,7 +2952,6 @@ Kill whole line not just content on =C-k=.
 #+BEGIN_SRC emacs-lisp
 (setq kill-whole-line t)
 #+END_SRC
-
 
 In emacs minibuffer prompt, when you press the left arrow key, the cursor will move back all the way over the prompt text. This is annoying because user often will hold down ~Alt+b~ to move back by word to edit, and when user starts to type something, emacs will say ’This is read-only’. Then you have to manually move cursor out of the prompt. You can try it now by calling query-replace or shell-command. Here's how to set the cursor not going into prompt. ([[http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html][source]])
 
