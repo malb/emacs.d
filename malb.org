@@ -2984,8 +2984,7 @@ Smoother scrolling and better defaults for recentering with =C-l=
 
 #+BEGIN_SRC emacs-lisp
 (setq scroll-conservatively 10000
-      scroll-preserve-screen-position t
-      recenter-positions '(top middle bottom))
+      scroll-preserve-screen-position t)
 #+END_SRC
 
 Use ~kill -pUSR1~ to kill Emacs. ([[https://github.com/wasamasa/dotemacs/blob/master/init.org][source]])
