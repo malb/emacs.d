@@ -2660,6 +2660,7 @@ A reasonable PDF viewer for Emacs
 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
+  :ensure t
   :init (progn
           (add-hook 'pdf-view-mode-hook 'auto-revert-mode))
   :config (progn
