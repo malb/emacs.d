@@ -426,7 +426,7 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
 
 Helm is incremental completion and selection narrowing framework for Emacs.
 
-https://tuhdo.github.io/static/helm_projectile.gif ([[https://tuhdo.github.io/helm-intro.html][source]])
+[[https://tuhdo.github.io/static/helm_projectile.gif]] ([[https://tuhdo.github.io/helm-intro.html][source]])
 
 See [[https://tuhdo.github.io/helm-intro.html][A Package in a league of its own: Helm]] for a nice introduction.
 
