@@ -555,7 +555,7 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
   (thing-at-point 'symbol)) ;; I’m going back and forth what I prefer
 
 (setq malb/helm-swoop-ignore-major-mode
-      '(dired-mode paradox-menu-mode))
+      '(dired-mode paradox-menu-mode doc-view-mode pdf-view-mode))
 
 (defun malb/swoop-or-search ()
   (interactive)
