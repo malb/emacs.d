@@ -2643,6 +2643,12 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
                   helm-bibtex-library-path malb/literature-dir
                   helm-bibtex-notes-path malb/literature-notes-dir)
 
+            (defun helm-bibtex-find-pdf (key)
+              "Searches in all directories in `helm-bibtex-library-path' for a PDF whose name is KEY + \".pdf\".  Returns the first matching PDF."
+              (-first 'f-exists?
+                      (--map (f-join it (s-concat (s-replace ":" "_" key) ".pdf"))
+                             (-flatten (list helm-bibtex-library-path)))))
+
             (helm-delete-action-from-source "Insert BibTeX key" helm-source-bibtex)
             (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key helm-source-bibtex 0)
             ))
