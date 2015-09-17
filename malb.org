@@ -23,8 +23,6 @@ We assume that the following variables are defined:
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/sage-executable~ - full path of Sage executable
 
-** TODO ~malb/private-org~ should be redundant
-
 * Package Management
 
 Configure package repositories
