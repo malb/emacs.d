@@ -2038,7 +2038,7 @@ Manually fixed bugs:
             (add-hook 'python-mode-hook #'python-docstring-mode)))
 #+END_SRC
 
-**** DISABLED MMM mode for ReST in Python
+**** COMMENT MMM mode for ReST in Python
 
 Disabled for now in favour of ~python-docstring-mode~.
 
