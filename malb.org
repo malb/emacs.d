@@ -423,7 +423,14 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
 #+END_SRC
 
 * [[https://github.com/emacs-helm/helm][Helm]]
-** General
+
+Helm is incremental completion and selection narrowing framework for Emacs.
+
+https://tuhdo.github.io/static/helm_projectile.gif ([[https://tuhdo.github.io/helm-intro.html][source]])
+
+See [[https://tuhdo.github.io/helm-intro.html][A Package in a league of its own: Helm]] for a nice introduction.
+
+** Bufers, Files
 
 Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many sources to create =malb/helm-omni.= ([[http://stackoverflow.com/a/19284509][source]])
 
@@ -545,6 +552,9 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for =C-M-s= which is bound to
 ~vr/isearch-forward~.
+
+https://raw.githubusercontent.com/ShingoFukuyama/images/master/helm-swoop.gif ([[https://github.com/ShingoFukuyama/helm-swoop][source]])
+
 
 *Tip*: You can edit =helm-swoop= buffers by pressing =C-c C-e=.
 
@@ -1545,6 +1555,9 @@ Comments, as I mean, using [[https://github.com/remyferre/comment-dwim-2][commen
 #+END_SRC
 
 *** [[https://github.com/Bruce-Connor/aggressive-indent-mode][Aggressive indenting]]
+
+https://github.com/Malabarba/aggressive-indent-mode/raw/master/c-example.gif ([[https://github.com/Malabarba/aggressive-indent-mode/raw/master/c-example.gif][source]])
+
 
 Enable it on a per-project basis in order to keep RC check ins clean: use it in own projects but not necessarily in projects where not the main contributor. Use =.dir-locals.el= to enable it, e.g.:
 
