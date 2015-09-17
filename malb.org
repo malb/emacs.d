@@ -3333,9 +3333,9 @@ When only one window is open, center it using [[https://github.com/anler/centere
 
 *** TODO I don’t think I use centred-window-mode ever
 
-** Stripe buffer
+** [[https://github.com/sabof/stripe-buffer][Stripe Buffer]]
 
-[[https://github.com/sabof/stripe-buffer][stripe-buffer]] to make it easier to work with tables and table like data.
+Vastly easier to read tables and friends. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
 
 #+BEGIN_SRC emacs-lisp
   (use-package stripe-buffer
