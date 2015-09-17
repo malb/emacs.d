@@ -2289,7 +2289,7 @@ Use less tab completion in prose. ([[http://endlessparentheses.com/tab-completio
 (defun malb/config-prose-completion ()
   "Make auto-complete less agressive in this buffer."
   (setq-local company-minimum-prefix-length 3)
-  (setq-local company-idle-delay 0.2))
+  (setq-local company-idle-delay 0.5))
 
 (add-hook 'text-mode-hook #'malb/config-prose-completion)
 #+END_SRC
