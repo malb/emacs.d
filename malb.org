@@ -2274,9 +2274,10 @@ Kill everything up to character, e.g. if we have “Lorem| ipsum” typing ~M-z 
 Automatically revert buffers.
 
 #+BEGIN_SRC emacs-lisp
-  (setq global-auto-revert-non-file-buffers t)
-  (setq auto-revert-verbose nil)
-  (global-auto-revert-mode 1)
+(setq global-auto-revert-non-file-buffers t
+      auto-revert-verbose nil)
+
+(global-auto-revert-mode 1)
 #+END_SRC
 
 ** [[https://github.com/Vifon/focus-autosave-mode.el][Save buffer when loosing focus]]
