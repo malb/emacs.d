@@ -63,6 +63,15 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
                 paradox-automatically-star t))
 #+END_SRC
 
+* Memory
+
+We have RAM, lots of it.
+
+#+BEGIN_SRC emacs-lisp
+(setq global-mark-ring-max 100
+      mark-ring-max 100
+      kill-ring-max 100
+      gc-cons-threshold 16777216)
 #+END_SRC
 
 * Fullscreen
@@ -2634,16 +2643,7 @@ Pressing =y= or =n= is sufficent.
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
-We have RAM, lots of it.
-
-#+BEGIN_SRC emacs-lisp
-  (setq gc-cons-threshold 20000000
-        global-mark-ring-max 100
-        mark-ring-max 100
-        kill-ring-max 100)
-#+END_SRC
-
-Overwrie a selection by typing over it.
+Overwrite a selection by typing over it.
 
 #+BEGIN_SRC emacs-lisp
 (pending-delete-mode t)
