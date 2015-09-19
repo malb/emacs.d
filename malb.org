@@ -167,65 +167,29 @@ Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
 
 ** Special windows
 
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'display-buffer-alist
-             `(,(rx bos "*helm flycheck*" eos)
-               (display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (reusable-frames . visible)
-               (side            . bottom)
-               (window-height   . 0.3)))
-#+END_SRC
+Some buffers should behave like pop ups:
+
+- display at the bottom with 0.3 height
+- display as a side-window
+
+We then use =malb/quit-bottom-side-windows= to close them.
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'display-buffer-alist
-             `(,(rx bos "*Flycheck errors*" eos)
-               (display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (reusable-frames . visible)
-               (side            . bottom)
-               (window-height   . 0.3)))
-#+END_SRC
+(defvar malb/popup-windows '("\\`\\*helm flycheck\\*\\'"
+                             "\\`\\*Flycheck errors\\*\\'"
+                             "\\`\\*helm projectile\\*\\'"
+                             "\\`\\*Helm all the things\\*\\'"
+                             "\\`\\*Help\\*\\'"
+                             "\\`\\*anaconda-doc\\*\\'"))
 
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'display-buffer-alist
-             `(,(rx bos "*helm projectile*" eos)
-               (display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (reusable-frames . visible)
-               (side            . bottom)
-               (window-height   . 0.3)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'display-buffer-alist
-             `(,(rx bos "*Helm all the things*" eos)
-               (display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (reusable-frames . visible)
-               (side            . bottom)
-               (window-height   . 0.4)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'display-buffer-alist
-             `(,(rx bos "*Help*" eos)
-               (display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (reusable-frames . visible)
-               (side            . bottom)
-               (window-height   . 0.3)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'display-buffer-alist
-             `(,(rx bos "*anaconda-doc*" eos)
-               (display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (reusable-frames . visible)
-               (side            . bottom)
-               (window-height   . 0.3)))
+(dolist (name malb/popup-windows)
+  (add-to-list 'display-buffer-alist
+               `(,name
+                 (display-buffer-reuse-window
+                  display-buffer-in-side-window)
+                 (reusable-frames . visible)
+                 (side            . bottom)
+                 (window-height   . 0.3))))
 #+END_SRC
 
 *** Closing side windows
