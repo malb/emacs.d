@@ -273,7 +273,6 @@ If you change the variable ~compilation-scroll-output~ to a non-nil value, the c
 #+BEGIN_SRC emacs-lisp
 (setq compilation-scroll-output 'first-error)
 #+END_SRC
-
 * Clean up Mode Line
 
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as I’m using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
@@ -2067,6 +2066,7 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 #+END_SRC
 
 *** Docstrings
+
 **** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]]
 
 Python docstring mode provides syntax highlighting for docstrings in both ReStructuredText and Epydoc formats, as well as an override for the fill-paragraph function when editing such a docstring that will wrap things according to Python community convention.
@@ -3546,6 +3546,7 @@ Directory variables are evaluated after the mode has been set, so you can actual
 #+END_SRC
 
 And Emacs will change the mode to ~c++-mode~ whenever it had initially set it to ~c-mode~.
+
 * Local Config
 
 # Local Variables:
