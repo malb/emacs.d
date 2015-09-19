@@ -1199,13 +1199,17 @@ If we are in a project we might add a TODO entry to the appropriate entry in "pr
                   ("p" "project task" plain (function malb/org-capture-projectile)
                    "** TODO %?\n%a\n" :prepend t)
 
-                  ("k" "reply to e-mail (KMail)"
+                  ("k" "respond to e-mail (KMail)"
                    entry (file+headline malb/inbox-org "Email")
-                   "* REPLY to [[mailto:%link][%:description]]\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n\n[[mailto:%:link][%:link]] wrote:\n#+BEGIN_QUOTE\n%x\n#+END_QUOTE\n\n" :immediate-finish t :prepend t)
+                   "* REPLY to [[mailto:%link][%:description]]\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n\n[[mailto:%:link][%:link]] wrote:\n#+BEGIN_QUOTE\n%x\n#+END_QUOTE\n\n"
+                   :immediate-finish t
+                   :prepend t)
 
-                  ("r" "reply to e-mail (mu4e)"
+                  ("r" "respond ro e-mail (mu4e)"
                    entry (file+headline malb/inbox-org "Email")
-                   "* REPLY to %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n" :immediate-finish t :prepend t)
+                   "* REPLY to %:from on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
+                   :immediate-finish nil
+                   :prepend t)
 
                   ("n" "note"
                    entry (file+headline malb/private-org "Notes" :prepend t)
@@ -1405,14 +1409,15 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 (use-package mu4e
   :commands mu4e-compose-mode-hook
-  :init  (progn (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
-                (add-hook 'message-mode-hook #'flyspell-mode)
-                (add-hook 'message-mode-hook #'turn-on-orgstruct)
-                (add-hook 'message-mode-hook #'turn-on-orgstruct++)
-                (add-hook 'message-mode-hook #'turn-on-orgtbl)
-                (add-hook 'message-mode-hook #'typo-mode)
-                )
   :config (progn
+            (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
+            (add-hook 'message-mode-hook #'flyspell-mode)
+            (add-hook 'message-mode-hook #'turn-on-orgstruct)
+            (add-hook 'message-mode-hook #'turn-on-orgstruct++)
+            (add-hook 'message-mode-hook #'turn-on-orgtbl)
+            (add-hook 'message-mode-hook #'typo-mode)
+            (add-hook 'message-mode-hook #'olivetti-mode)
+
             (setq mu4e-maildir malb/mu4e-maildir
                   mu4e-drafts-folder "/[Google Mail]/.Drafts"
                   mu4e-sent-folder   "/[Google Mail]/.Sent Mail"
@@ -1431,16 +1436,56 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   message-kill-buffer-on-exit t
                   mu4e-hide-index-messages t
                   mu4e-auto-retrieve-keys t
-                  mu4e-compose-dont-reply-to-self t)
+                  mu4e-compose-dont-reply-to-self t
+                  mu4e-compose-complete-only-personal t
+                  mu4e-split-view 'horizontal
+                  mu4e-headers-visible-columns 122
+                  mu4e-headers-visible-lines 16)
 
             ;; use imagemagick, if available
             (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
 
+            (defun malb/render-html-message ()
+              (let ((dom (libxml-parse-html-region (point-min) (point-max))))
+                (erase-buffer)
+                (shr-insert-document dom)
+                (goto-char (point-min))))
+
+            (defun malb/preview-message ()
+              (interactive)
+              (mu4e-headers-view-message)
+              (sleep-for 0.05) ;; this is a HACK
+              (select-window (previous-window)))
+
+            (require 'mu4e-view)
+            (require 'mu4e-headers)
+
+            ;; based on (mu4e-select-other-view)
+            (defun malb/close-message-view ()
+              (interactive)
+              (let* ((other-buf mu4e~view-buffer)
+                     (other-win (and other-buf (get-buffer-window other-buf))))
+                (if (window-live-p other-win)
+                    (progn
+                      (select-window other-win)
+                      (sleep-for 0.05)
+                      (mu4e~view-quit-buffer))
+                  (mu4e~headers-quit-buffer))
+                ))
+
+            (bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
+            (bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
+            (bind-key "z" #'malb/close-message-view mu4e-headers-mode-map)
+
             ;; allow for updating mail using 'U' in the main view:
             (setq mu4e-get-mail-command "mbsync googlemail"
-                  mu4e-update-interval 3600
-                  mu4e-html2text-command "html2text -utf8 -width 80")
+                  mu4e-update-interval 1200
+                  mu4e-html2text-command #'malb/render-html-message)
 
+            (add-hook 'mu4e-view-mode-hook #'olivetti-mode)
+
+            (add-to-list 'mu4e-view-actions
+                         '("browser" . mu4e-action-view-in-browser) t)
             ;; PGP
             (setq mml2015-encrypt-to-self t)
             (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
