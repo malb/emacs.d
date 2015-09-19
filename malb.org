@@ -2579,9 +2579,9 @@ Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparent
             (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)))
 #+END_SRC
 
-**** TODO fix typography vs ispell
+**** COMMENT fix typography vs ispell
 
-The fix above seems broken without. But enabling that breaks choosing the dictionary for ispell.
+This was included in [[http://endlessparentheses.com/ispell-and-apostrophes.html][source]] but breaks dictionary selection.
 
 #+BEGIN_SRC emacs-lisp :tangle no
 ;; Tell ispell.el that ’ can be part of a word.
