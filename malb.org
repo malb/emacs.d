@@ -708,9 +708,9 @@ IMenu items for all buffers with the same major mode as the current one.
 
 ** TODO do we need ~helm-imenu-anywhere~ or is ~helm-imenu-in-all-buffers~ sufficient?
 
-* Smartparens
+* [[https://github.com/Fuco1/smartparens][Smartparens]]
 
-
+See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction.
 
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
