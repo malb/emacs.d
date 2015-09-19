@@ -264,6 +264,8 @@ keyword is not enough.
 
 [[https://raw.githubusercontent.com/wiki/nloyola/avy/images/avy-goto-char.png]] ([[https://github.com/abo-abo/avy][source]])
 
+See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is in ~ace-jump-mode~ which inspired ~avy~.
+
 
 #+BEGIN_SRC emacs-lisp
 (use-package avy
@@ -296,6 +298,8 @@ YASnippet is a template system for Emacs. It allows you to type an abbreviation 
 #+END_QUOTE
 
 [[http://blog.refu.co/wp-content/uploads/2015/07/wpid-yasnippet1.gif]] ([[http://blog.refu.co/?p=1355][source]])
+
+Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is in ~yasnippet~.
 
 Call ~yas-decribe-tables~ to see currently defined snippets.
 
@@ -2020,7 +2024,6 @@ Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/
       gdb-many-windows t)
 #+END_SRC
 
-
 *** [[http://valgrind.org/][Valgrind]]
 
 This code allows to run valgrind and step through warnings/errors. We set =--error-errorcode=1= because we bury compilation buffers that finish with exit code zero automatically. By default, valgrind returns the exit code of the program it runs. ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
@@ -2072,7 +2075,6 @@ and move to the source code that caused it."
 #+END_SRC
 
 ** Python
-*** General
 
 We use the “onetwo” style to fill docstrings in Python, i.e.:
 
@@ -2142,7 +2144,6 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 #+END_SRC
 
 *** Docstrings
-
 **** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]]
 
 Python docstring mode provides syntax highlighting for docstrings in both ReStructuredText and Epydoc formats, as well as an override for the fill-paragraph function when editing such a docstring that will wrap things according to Python community convention.
@@ -2196,12 +2197,12 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 *** Cython
 
 #+BEGIN_SRC emacs-lisp
-  (use-package cython-mode
-    :ensure t
-    :mode (("\\.pyx\\'"  . cython-mode)
-           ("\\.spyx\\'" . cython-mode)
-           ("\\.pxd\\'"  . cython-mode)
-           ("\\.pxi\\'"  . cython-mode)))
+(use-package cython-mode
+  :ensure t
+  :mode (("\\.pyx\\'"  . cython-mode)
+         ("\\.spyx\\'" . cython-mode)
+         ("\\.pxd\\'"  . cython-mode)
+         ("\\.pxi\\'"  . cython-mode)))
 #+END_SRC
 
 *** Sage
@@ -2341,7 +2342,7 @@ Enable CIDER in org-mode.
    :ensure t)
 #+END_SRC
 
-*** TODO [[https://github.com/losingkeys/4clojure.el][4clojure]]
+*** TODO check out [[https://github.com/losingkeys/4clojure.el][4clojure]] for learning Clojure
 
 ** JavaScript
 
@@ -2380,7 +2381,7 @@ Enable CIDER in org-mode.
   (use-package volatile-highlights
     :ensure t
     :commands volatile-highlights-mode
-    :init (volatile-highlights-mode t)
+    :config (volatile-highlights-mode t)
     :diminish volatile-highlights-mode)
 #+END_SRC
 
@@ -2437,7 +2438,11 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
          ("C-M-r" . vr/isearch-backward)))
 #+END_SRC
 
-** Multiple cursors
+** [[https://github.com/magnars/multiple-cursors.el][Multiple cursors]]
+
+[[http://i0.wp.com/pragmaticemacs.com/wp-content/uploads/2015/06/wpid-emacs-mc2.gif]] ([[http://i0.wp.com/pragmaticemacs.com/wp-content/uploads/2015/06/wpid-emacs-mc2.gif?zoom=2&w=620][source]])
+
+Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multiple-cursors~.
 
 *Tip:* When you have multiple active cursors, if you hit =C-' = it will hide lines that don't have an active cursor.
 
@@ -2474,6 +2479,8 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
 #+END_SRC
 
 *** [[https://github.com/magnars/expand-region.el][Expand-region]]
+
+See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to ~expand-region~.
 
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
