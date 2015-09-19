@@ -261,7 +261,10 @@ keyword is not enough.
   :ensure t)
 #+END_SRC
 
-* [#A] Jumping around
+* Jumping around
+
+[[https://camo.githubusercontent.com/758e665afb96464e20a3d26a44a75cff4930c5ee/687474703a2f2f6f72656d6163732e636f6d2f646f776e6c6f61642f6176692d676f746f2d776f72642d312e706e67]] ([[https://github.com/abo-abo/avy][source]])
+
 
 #+BEGIN_SRC emacs-lisp
 (use-package avy
