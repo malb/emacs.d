@@ -1434,8 +1434,6 @@ I don’t often use git-timemachine but when I do …
   :ensure t)
 #+END_SRC
 
-*** TODO orgit seems broken
-
 ** [[https://github.com/defunkt/gist.el][Gist]]
 
 To list gists, run ~gist-list~:
@@ -1462,12 +1460,13 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 
 *** TODO Check out [[https://github.com/theanalyst/ix.el][ix]]
 * Email
-** General
 
 E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][Mu4e]].
 
-- use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]
+- to use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]
 - also allow =format=flowed= ([[https://github.com/djcb/mu/issues/569][source]])
+- render HTML e-mails in =eww= == =shr=
+- use =<TAB>= to preview messages and =q= to close previews.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/compose-setup ()
@@ -1573,14 +1572,17 @@ Link to mu4e messages and threads.
 
 ** [[https://github.com/emacs-helm/helm-mu][Helm-mu]]
 
+Use =helm-mu= as default search for mu4e.
+
 #+BEGIN_SRC emacs-lisp
   (use-package helm-mu
     :ensure t
     :config (bind-key "s" 'helm-mu mu4e-main-mode-map))
 #+END_SRC
+
 * Programming (languages)
 ** General
-*** REPL (comint)
+*** REPL
 
 We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.com/questions/14072/replicate-ipython-history-behaviour-in-emacs][source]])
 
@@ -1596,7 +1598,7 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
                   )))
 #+END_SRC
 
-*** [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
+**** [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
 
 1. Open, say, *Sage*.
 
@@ -1620,7 +1622,7 @@ Enable spell checking in comments and documentation.
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
-*** Flycheck
+*** [[https://github.com/flycheck/flycheck][Flycheck]]
 
 Use flycheck to run static checkers on code. We use clang’s checker for flycheck for which we can load per directory configuration using =.dir-locals.el=, e.g.
 
