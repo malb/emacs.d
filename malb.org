@@ -1096,7 +1096,9 @@ Archive with tags intact and some order in target file preserved. ([[http://orgm
 (use-package org-protocol)
 #+END_SRC
 
-** Bullets
+** [[https://github.com/sabof/org-bullets][Bullets]]
+
+[[https://raw.githubusercontent.com/sabof/org-bullets/master/screenshot.png]] ([[https://raw.githubusercontent.com/sabof/org-bullets/master/screenshot.png][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets
