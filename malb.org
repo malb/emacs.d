@@ -842,10 +842,10 @@ When switching projects use:
 (setq org-hide-emphasis-markers nil            ; hide markers for like *foo*
       org-ellipsis " […]"
       org-enforce-todo-dependencies t          ; enforce todo dependencies
-      org-habit-graph-column 128
+      org-habit-graph-column 117
       org-use-speed-commands t
       org-catch-invisible-edits 'smart
-      org-tags-column -120
+      org-tags-column -110
       org-startup-folded 'fold
       org-log-into-drawer t
       org-log-done t
@@ -855,7 +855,7 @@ When switching projects use:
       org-special-ctrl-a/e t                   ; special begin/end of line to skip starts …
       org-special-ctrl-k t                     ; special keys for killing a headline
       org-src-fontify-natively t               ; fontify code blocks
-      org-agenda-tags-column -128
+      org-agenda-tags-column -117
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
       org-agenda-skip-deadline-prewarning-if-scheduled t
