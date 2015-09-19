@@ -1624,6 +1624,9 @@ Enable spell checking in comments and documentation.
 
 *** [[https://github.com/flycheck/flycheck][Flycheck]]
 
+[[http://www.flycheck.org/images/screencast.gif]] ([[http://www.flycheck.org/images/screencast.gif][source]])
+
+
 Use flycheck to run static checkers on code. We use clang’s checker for flycheck for which we can load per directory configuration using =.dir-locals.el=, e.g.
 
 #+BEGIN_SRC emacs-lisp :tangle no
