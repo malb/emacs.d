@@ -2137,6 +2137,10 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
 
 *** [[https://github.com/tkf/emacs-ipython-notebook][iPython Notebook]]
 
+An interface from Emacs to iPython.
+
+[[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png]] ([[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png][source]])
+
 On our system port 8888 is already taken.
 
 #+BEGIN_SRC emacs-lisp
