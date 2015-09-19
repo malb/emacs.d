@@ -2540,7 +2540,7 @@ For hard wraps, allow for a bit more characters per line.
 
 *** Typography
 
-A [[https://github.com/jorgenschaefer/typoel][minor mode]] that will change a number of normal keys to make them insert typographically useful unicode characters. Some of those keys can be used repeatedly to cycle through variations. This includes in particular quotation marks and dashes.
+[[https://github.com/jorgenschaefer/typoel][typo]] is a minor mode that will change a number of normal keys to make them insert typographically useful unicode characters. Some of those keys can be used repeatedly to cycle through variations. This includes in particular quotation marks and dashes.
 
 #+BEGIN_SRC emacs-lisp
 (use-package typo
