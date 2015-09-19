@@ -50,11 +50,11 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 - Visit the package's homepage with =v=
 - View a list of recent commits with =l=
 - Shortcuts for package filtering:
-  - ~f r~ filters by regexp (occur)
-  - ~f u~ display only packages with upgrades
-  - ~f k~ filters by keyword
-  - ~f c~ clear filter
-- Hit ~h~ to see all keys
+  - =f r= filters by regexp (occur)
+  - =f u= display only packages with upgrades
+  - =f k= filters by keyword
+  - =f c= clear filter
+- Hit =h= to see all keys
 
 #+BEGIN_SRC emacs-lisp
 (use-package paradox
