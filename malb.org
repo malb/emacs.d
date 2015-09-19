@@ -244,12 +244,17 @@ If you change the variable ~compilation-scroll-output~ to a non-nil value, the c
 #+END_SRC
 * Clean up Mode Line
 
-Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as I’m using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
+Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of
+them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter
+to =use-package=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package diminish
   :ensure t)
 #+END_SRC
+
+[[http://www.emacswiki.org/emacs/DelightedModes][delight.el]] allows us to rewrite mode-line statuses of minor modes. Which we use when the diminish
+keyword is not enough.
 
 #+BEGIN_SRC emacs-lisp
 (use-package delight
