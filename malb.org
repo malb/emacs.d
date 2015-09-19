@@ -122,8 +122,10 @@ When splitting windows open the previous buffer in it.
 
 Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
 
-- ~C-x o~ jump to window (rebound from =other-window=)
-- ~±~ jump to window
+[[http://oremacs.com/download/ace-window.gif]] ([[http://oremacs.com/download/ace-window.gif][source]])
+
+- =C-x o= jump to window (rebound from ~other-window~)
+- =±= jump to window (~other-window~)
 
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
