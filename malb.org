@@ -274,7 +274,15 @@ keyword is not enough.
             (setq avy-background t)))
 #+END_SRC
 
-** Jumping to links
+** [[https://github.com/abo-abo/ace-link][Jumping to links]]
+
+#+BEGIN_QUOTE
+Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or =org-mode= or
+=eww-mode= or =compilation-mode= buffer, you can tab through the links to select the one you want.
+This is an O(N) operation, where the N is the amount of links. This package turns this into an O(1)
+operation, or at least O(log(N)) if you manage to squeeze thousands of links in one screen. It does
+so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/ace-link][source]])
+#+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
 (use-package ace-link
@@ -283,6 +291,12 @@ keyword is not enough.
 #+END_SRC
 
 * [[https://github.com/capitaomorte/yasnippet][Yasnippet]]
+
+#+BEGIN_QUOTE
+YASnippet is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. Bundled language templates include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. ([[https://github.com/capitaomorte/yasnippet][source]])
+#+END_QUOTE
+
+[[http://blog.refu.co/wp-content/uploads/2015/07/wpid-yasnippet1.gif]] ([[http://blog.refu.co/?p=1355][source]])
 
 Call ~yas-decribe-tables~ to see currently defined snippets.
 
