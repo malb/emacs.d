@@ -775,6 +775,32 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 
 * Projects ([[https://github.com/bbatsov/projectile][Projectile]])
 
+#+BEGIN_QUOTE
+Projectile is a project interaction library for Emacs. […]
+
+This library provides easy project management and navigation. The concept of a project is pretty basic – just a folder containing special file. Currently git, mercurial, darcs and bazaar repos are considered projects by default. So are lein, maven, sbt, scons, rebar and bundler projects. If you want to mark a folder manually as a project just create an empty =.projectile= file in it. Some of Projectile's features:
+
+- jump to a file in project
+- jump to files at point in project
+- jump to a directory in project
+- jump to a file in a directory
+- jump to a project buffer
+- jump to a test in project
+- toggle between files with same names but different extensions (e.g. =.h= <-> =.c/.cpp=, =Gemfile= <-> =Gemfile.lock=)
+- toggle between code and its test (e.g. =main.service.js= <-> =main.service.spec.js=)
+- jump to recently visited files in the project
+- switch between projects you have worked on
+- kill all project buffers
+- replace in project
+- =multi-occur= in project buffers
+- grep in project
+- regenerate project =etags= or =gtags= (requires =ggtags=).
+- visit project in =dired=
+- run make in a project with a single key chord
+#+END_QUOTE
+
+[[https://raw.githubusercontent.com/bbatsov/projectile/master/screenshots/projectile.png]] ([[https://github.com/bbatsov/projectile/blob/master/screenshots/projectile.png][source]])
+
 *Commands:*
 
 - =C-c p D=   ~projectile-dired~
@@ -788,6 +814,16 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 - =C-c p p=   ~helm-projectile-switch-project~
 - =C-c p r=   ~projectile-replace~
 - =C-c p s s= ~helm-projectile-ag~
+
+*When switching projects:*
+
+- ~C-d~ open Dired in project's directory
+- ~M-g~ open project root in vc-dir or magit
+- ~M-e~ switch to Eshell: Open a project in Eshell.
+- ~C-s~ grep in projects (add prefix C-u to recursive grep)
+- ~C-c~ Compile project: Run a compile command at the project root.
+- ~M-D~ Remove project(s): Delete marked projects from the list of known projects.
+- ~C-c @~ insert the current file that highlight bar is on as an org link.
 
 *Note*: =next-error= has nothing to do with projectile, but =<f5>= and =<f6>= kind of go together. ~previous-error~ is bound to =M-g p=.
 
@@ -822,26 +858,19 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 
 ** [[https://tuhdo.github.io/helm-projectile.html][Helm-projectile]]
 
-Use
+*Commands:*
 
 - =C-c p h= for =helm-projectile= which combines buffer, file and project switching
 - =C-c p F= for =helm-projectile-find-file-in-known-projects=
-
-When switching projects use:
-
-- ~C-d~ open Dired in project's directory
-- ~M-g~ open project root in vc-dir or magit
-- ~M-e~ switch to Eshell: Open a project in Eshell.
-- ~C-s~ grep in projects (add prefix C-u to recursive grep)
-- ~C-c~ Compile project: Run a compile command at the project root.
-- ~M-D~ Remove project(s): Delete marked projects from the list of known projects.
-- ~C-c @~ insert the current file that highlight bar is on as an org link.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-projectile
   :ensure t)
 #+END_SRC
+
 * [[http://orgmode.org/][Org-mode all the things!]]
+
+See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to org-mode.
 
 *Note* Ideally, we’d want to put all org-mode stuff into one big =:config= blog, but that makes it harder to read/explain.
 
@@ -1136,6 +1165,10 @@ Archive with tags intact and some order in target file preserved. ([[http://orgm
 
 *** LaTeX
 
+- We use [[http://www.xelatex.org][XeLaTeX]] because UTF-8 and fonts.
+- We drop =\usepackage[T1]{fontenc}= because XeLaTeX doesn’t need it.
+- We add [[https://www.ctan.org/pkg/tufte-latex?lang=en][tufte-handout]] as a class for our … handouts.
+
 #+BEGIN_SRC emacs-lisp
 (use-package ox-latex
   :config (progn
@@ -1165,7 +1198,7 @@ Archive with tags intact and some order in target file preserved. ([[http://orgm
 
 ** Capture
 
-If we are in a project we might add a TODO entry to the appropriate entry in "projects.org".
+If we are in a project we might add a TODO entry to the appropriate entry in =projects.org=.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/org-capture-projectile ()
@@ -1260,9 +1293,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in "pr
 ** Meeting Notes
 
 #+BEGIN_QUOTE
-I've notice that while I really like taking notes in a meeting, I don't always like the multiple
-windows I have opened, so I created this function that I can easily call to eliminate distractions
-enduring a meeting. ([[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][source]])
+I've notice that while I really like taking notes in a meeting, I don't always like the multiple windows I have opened, so I created this function that I can easily call to eliminate distractions enduring a meeting. ([[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][source]])
 #+END_QUOTE
 
     #+BEGIN_SRC elisp
@@ -1307,7 +1338,7 @@ enduring a meeting. ([[https://github.com/howardabrams/dot-files/blob/master/ema
 #+END_SRC
 
 ** Tips
-*** Agenda Commands
+*** Agenda commands
 
 | ~F~         | ~(org-agenda-follow-mode)~           | Toggle Follow mode                                     |
 | ~L~         | ~(org-agenda-recenter)~              | Display original location and recenter that window.    |
@@ -1335,8 +1366,11 @@ enduring a meeting. ([[https://github.com/howardabrams/dot-files/blob/master/ema
 
 -In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =verbatim=, and ~code~. But this breaks if the character just inside the styling code is a non-smart single or double quote. =C-c ;= is styled; =C-c '= is not. We can fix that by inserting a zero-width space between the apostrophe and the = . The first time, we can put the cursor between the apostrophe and the = and enter ~C-x 8 RET ZERO WIDTH SPACE RET~, at which point =C-c '​= will display correctly.
 * Git
+** [[http://magit.vc][Magit]]
 
-** Magit
+Magit is a very nice Git interface.
+
+[[http://magit.vc/img/shot/top.png]] ([[http://magit.vc][source]])
 
 We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
@@ -1359,6 +1393,8 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 #+END_SRC
 
 ** [[https://github.com/sigma/magit-gh-pulls][Github pull requests]]
+
+*Commands:*
 
 - Press ~# g g~ to refresh the list of pull requests.
 - Highlighting the desired PR and pressing ~# g f~ will fetch the commits associated with the PR.
