@@ -159,7 +159,7 @@ Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
 
 ** Restoring configurations
 
-[[http://www.emacswiki.org/emacs/WinnerMode][Winner Mode]] is a global minor mode. When activated, it allows you to “undo” (and “redo”) changes in the window configuration with the key commands =C-c left= and =C-c right=.
+[[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows you to “undo” (and “redo”) changes in the window configuration with the key commands =C-c left= and =C-c right=.
 
 #+BEGIN_SRC emacs-lisp
 (winner-mode 1)
@@ -237,11 +237,12 @@ If there is no compilation window, open one at the bottom, spanning the complete
 (setq compilation-exit-message-function #'malb/compilation-exit-autoclose)
 #+END_SRC
 
-If you change the variable ~compilation-scroll-output~ to a non-nil value, the compilation buffer scrolls automatically to follow the output. If the value is ~first-error~, scrolling stops when the first error appears, leaving point at that error. For any other non-nil value, scrolling continues until there is no more output.
+If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the compilation buffer scrolls automatically to follow the output. If the value is ~first-error~, scrolling stops when the first error appears, leaving point at that error. For any other non-nil value, scrolling continues until there is no more output.
 
 #+BEGIN_SRC emacs-lisp
 (setq compilation-scroll-output 'first-error)
 #+END_SRC
+
 * Clean up Mode Line
 
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of
@@ -261,9 +262,9 @@ keyword is not enough.
   :ensure t)
 #+END_SRC
 
-* Jumping around
+* [[https://github.com/abo-abo/avy][Jumping around]]
 
-[[https://camo.githubusercontent.com/758e665afb96464e20a3d26a44a75cff4930c5ee/687474703a2f2f6f72656d6163732e636f6d2f646f776e6c6f61642f6176692d676f746f2d776f72642d312e706e67]] ([[https://github.com/abo-abo/avy][source]])
+[[https://raw.githubusercontent.com/wiki/nloyola/avy/images/avy-goto-char.png]] ([[https://github.com/abo-abo/avy][source]])
 
 
 #+BEGIN_SRC emacs-lisp
@@ -311,6 +312,11 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
 
 * [[https://github.com/company-mode/company-mode][Complete anything]]
 
+Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-completion.
+
+[[https://company-mode.github.io/images/company-elisp.png]] ([[https://company-mode.github.io/images/company-elisp.png][source]])
+
+
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :ensure t
@@ -349,6 +355,17 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
             (bind-key "M-/"   #'company-complete-common org-mode-map)))
 #+END_SRC
 
+
+Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-quickhelp
+  :ensure t
+  :init (company-quickhelp-mode 1))
+#+END_SRC
+
+** C/C++
+
 For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] (and [[https://github.com/randomphrase/company-c-headers][company-c-headers]]) which can be a bit tricky to set up, but works very well once that is done.
 
 #+BEGIN_SRC emacs-lisp
@@ -364,12 +381,16 @@ For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company
             ))
 #+END_SRC
 
+** Python
+
 For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-anaconda
   :ensure t)
 #+END_SRC
+
+** LaTeX
 
 For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but insert unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
 
@@ -387,13 +408,7 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but 
             (setq company-math-disallow-unicode-symbols-in-faces nil)))
 #+END_SRC
 
-Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-quickhelp
-  :ensure t
-  :init (company-quickhelp-mode 1))
-#+END_SRC
+** YaSnippet
 
 Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
 
