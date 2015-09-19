@@ -63,17 +63,6 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
                 paradox-automatically-star t))
 #+END_SRC
 
-* Memory
-
-We have RAM, lots of it.
-
-#+BEGIN_SRC emacs-lisp
-(setq global-mark-ring-max 100
-      mark-ring-max 100
-      kill-ring-max 100
-      gc-cons-threshold 16777216)
-#+END_SRC
-
 * Fullscreen
 
 Maximise the window as soon as possible
@@ -90,6 +79,20 @@ Disable cluttler
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 #+END_SRC
+
+* Memory
+
+We have RAM, lots of it.
+
+#+BEGIN_SRC emacs-lisp
+(setq global-mark-ring-max 100
+      mark-ring-max 100
+      kill-ring-max 100
+      gc-cons-threshold 16777216)
+#+END_SRC
+
+*Note* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
+for a long-ish time.
 
 * Window Management
 ** Splitting
