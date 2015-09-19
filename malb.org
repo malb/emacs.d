@@ -245,9 +245,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 * Clean up Mode Line
 
-Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of
-them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter
-to =use-package=.
+Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package diminish
@@ -537,9 +535,12 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (add-to-list 'helm-boring-file-regexp-list "\\.out" t)
             (add-to-list 'helm-boring-file-regexp-list "\\.snm" t)
 
-            (bind-key "<tab>" 'helm-execute-persistent-action helm-map) ; rebihnd tab to do persistent action
-            (bind-key "C-i"   'helm-execute-persistent-action helm-map) ; make TAB works in terminal
-            (bind-key "C-z"   'helm-select-action             helm-map) ; list actions using C-z
+            ;; rebind tab to do persistent action
+            (bind-key "<tab>" 'helm-execute-persistent-action helm-map)
+            ;; make TAB works in terminal
+            (bind-key "C-i"   'helm-execute-persistent-action helm-map)
+            ;; list actions using C-z
+            (bind-key "C-z"   'helm-select-action             helm-map)
             )
   )
 #+END_SRC
@@ -555,8 +556,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 ** [[https://github.com/ShingoFukuyama/helm-swoop][Helm-swoop]]
 
-Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for =C-M-s= which is bound to
-~vr/isearch-forward~.
+Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for =C-M-s= which is bound to ~vr/isearch-forward~.
 
 [[https://raw.githubusercontent.com/ShingoFukuyama/images/master/helm-swoop.gif]] ([[https://github.com/ShingoFukuyama/helm-swoop][source]])
 
@@ -599,6 +599,12 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 
 ** [[https://github.com/syohex/emacs-helm-ag][Helm-ag]]
 
+[[http://beyondgrep.com][Ack]] is “a tool like grep, optimized for programmers“. [[https://github.com/ggreer/the_silver_searcher][Ag]] is like =ack=, but faster. =Helm-ag= is a helm-based Emacs frontend to =ag=. We use =helm-ag= mainly via =helm-projectile-ag=, which allows us to =grep= through all project files quickly.
+
+[[https://raw.githubusercontent.com/syohex/emacs-helm-ag/master/image/helm-do-ag.gif]] ([[https://raw.githubusercontent.com/syohex/emacs-helm-ag/master/image/helm-do-ag.gif][source]])
+
+*Note* You can switch to edit mode with =C-c C-e=.
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
   :ensure t
@@ -612,6 +618,8 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 
 ** Helm-themes
 
+Switch themes with helm.
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-themes
   :ensure t)
@@ -619,12 +627,16 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 
 ** [[https://github.com/xuchunyang/helm-commandlinefu][Helm-commandlinefu]]
 
+Helm interface to http://www.commandlinefu.com/.
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-commandlinefu
   :ensure t)
 #+END_SRC
 
 ** Helm-baloo
+
+[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below we implement a tiny helm interface to it.
 
 #+BEGIN_SRC emacs-lisp
 (defcustom helm-baloo-file-limit 100
@@ -646,8 +658,9 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
                                          "[0;32m"
                                          "[0;0m")))
     (mapcar (function (lambda (c)
-                        (replace-regexp-in-string  (rx (seq bol (+ space))) ""
-                                                   (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
+                        (replace-regexp-in-string
+                         (rx (seq bol (+ space))) ""
+                         (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
             cs)))
 
 (defvar helm-source-baloo
@@ -665,6 +678,8 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 
 * Recentf
 
+Don’t include boring or remote stuff in list of recently visited files.
+
 #+BEGIN_SRC emacs-lisp
 (use-package recentf
   :config  (setq recentf-max-saved-items 50
@@ -678,11 +693,13 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 
 * [[https://github.com/vspinu/imenu-anywhere][IMenu-anywhere]]
 
-Make sure auto automatically rescan for imenu change
+Make sure to auto automatically rescan for imenu change.
 
 #+BEGIN_SRC emacs-lisp
 (set-default 'imenu-auto-rescan t)
 #+END_SRC
+
+IMenu items for all buffers with the same major mode as the current one.
 
 #+BEGIN_SRC emacs-lisp
 (use-package imenu-anywhere
@@ -690,7 +707,10 @@ Make sure auto automatically rescan for imenu change
 #+END_SRC
 
 ** TODO do we need ~helm-imenu-anywhere~ or is ~helm-imenu-in-all-buffers~ sufficient?
-* [#A] Smartparens
+
+* Smartparens
+
+
 
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
@@ -2934,25 +2954,25 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 *Commands*
 
 - =C-p=    toggle ranger in dired buffer
-- =j=	     navigate down
-- =k=	     navigate up
+- =j=      navigate down
+- =k=      navigate up
 - =C-j=    scroll preview window down
 - =C-k=    scroll preview window up
-- =f=	     search for file names
-- =i=	     show preview of current file
-- =H=	     search through history
+- =f=      search for file names
+- =i=      show preview of current file
+- =H=      search through history
 - =zi=     toggle showing literal / full-text previews
 - =zh=     toggle showing dotfiles
-- =o=	     sort options
-- =h=	     go up directory
+- =o=      sort options
+- =h=      go up directory
 - =1/ RET= find file / enter directory
-- =q=	     quit
-- =r=	     revert buffer
+- =q=      quit
+- =r=      revert buffer
 - =z-=     reduce number of parents
 - =z+=     increment number of parents
-- =v=	     toggle all marks
-- =V=	     visually select lines
-- =S=	     enter shell
+- =v=      toggle all marks
+- =V=      visually select lines
+- =S=      enter shell
 - =C-SPC=  mark current file
 
 #+BEGIN_SRC emacs-lisp
