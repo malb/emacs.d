@@ -3005,6 +3005,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 ** [[https://github.com/ralesi/ranger][Ranger]]
 
+[[https://github.com/ralesi/ranger.el/raw/master/screenshots/hello-ranger.gif]] ([[https://github.com/ralesi/ranger.el/raw/master/screenshots/hello-ranger.gif][source]])
+
 *Commands*
 
 - =C-p=    toggle ranger in dired buffer
