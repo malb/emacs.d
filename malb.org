@@ -3300,7 +3300,7 @@ Debug startup failures. If your Emacs init file signals an error during startup,
             (edit-server-start)))
 #+END_SRC
 
-** Logs
+** [[https://github.com/doublep/logview][Logs]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package logview
