@@ -3143,6 +3143,15 @@ deactivate Client
 - [[http://plantuml.com/latex.html][TikZ export]]
 - See also https://github.com/josteink/wsd-mode for https://www.websequencediagrams.com/
 
+* [[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
+
+[[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png]] ([[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png][source]])
+
+#+BEGIN_SRC emacs-lisp
+  (use-package sx
+    :ensure t)
+#+END_SRC
+
 * Misc
 ** Settings
 
@@ -3246,15 +3255,6 @@ Add a function for renaming the file being edited ([[https://github.com/bodil/oh
           (set-buffer-modified-p nil)
           (message "File '%s' successfully renamed to '%s'"
                    name (file-name-nondirectory new-name)))))))
-#+END_SRC
-
-** [[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
-
-[[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png]] ([[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png][source]])
-
-#+BEGIN_SRC emacs-lisp
-  (use-package sx
-    :ensure t)
 #+END_SRC
 
 ** Scratch
