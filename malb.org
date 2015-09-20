@@ -2352,7 +2352,7 @@ Enable CIDER in org-mode.
 #+END_SRC
 
 * Editing
-** Dragging lines around
+** [[https://github.com/rejeep/drag-stuff.el][Dragging lines around]]
 
 #+BEGIN_SRC emacs-lisp
   (use-package drag-stuff
@@ -2362,7 +2362,9 @@ Enable CIDER in org-mode.
            ("M-<down>" . drag-stuff-down)))
 #+END_SRC
 
-** Visualise the undo tree
+** [[http://www.dr-qubit.org/undo-tree/undo-tree.el][Visualise the undo tree]]
+
+*Tip:* Did you know that Emacs has undo in a region?
 
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
@@ -2375,7 +2377,7 @@ Enable CIDER in org-mode.
   )
 #+END_SRC
 
-** Highlight last edits
+** [[https://github.com/k-talo/volatile-highlights.el][Highlight last edits]]
 
 #+BEGIN_SRC emacs-lisp
   (use-package volatile-highlights
