@@ -2700,6 +2700,9 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 
 ** Notes ([[http://jblevins.org/projects/deft/][deft]])
 
+[[http://jblevins.org/projects/deft/deft-v0.6.gif]] ([[http://jblevins.org/projects/deft/deft-v0.6.gif][source]])
+
+
 #+BEGIN_SRC emacs-lisp
 (use-package deft
   :ensure t
@@ -2783,7 +2786,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 ** AUCTeX
 
-Parse BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-reftex-tab-completion-in-emacs][source]])
+Force a parse of the BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-reftex-tab-completion-in-emacs][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/get-bibtex-keys (file)
@@ -2840,6 +2843,8 @@ Parse BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-r
 #+END_SRC
 
 *** [[https://github.com/tmalsburg/helm-bibtex/][Helm-bibtex]]
+
+[[https://github.com/tmalsburg/helm-bibtex/raw/master/screenshot.png]] ([[https://github.com/tmalsburg/helm-bibtex/][source]])
 
 My standard BibTeX sources are
 
