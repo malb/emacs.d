@@ -929,6 +929,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 (bind-key "<home>" #'org-beginning-of-line org-mode-map)
 (bind-key "<end>" #'org-end-of-line org-mode-map)
+(bind-key "C-c C-." #'org-time-stamp org-mode-map) ; ede binds C-c . too
+(bind-key "C-c C-," #'org-time-stamp-inactive org-mode-map) ; fylcheck binds C-c ! too
 #+END_SRC
 
 **** TODO move org config to respective sections
