@@ -3291,7 +3291,7 @@ Debug startup failures. If your Emacs init file signals an error during startup,
     :ensure t)
 #+END_SRC
 
-** Emacs from Chrome
+** [[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package edit-server
