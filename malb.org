@@ -3469,6 +3469,10 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 ** Theme
 
+It looks like this:
+
+[[./screenshot.png]]
+
 #+BEGIN_SRC emacs-lisp
 (if malb/solarized-p
     (progn
@@ -3567,7 +3571,9 @@ When only one window is open, center it using [[https://github.com/anler/centere
 
 ** [[https://github.com/sabof/stripe-buffer][Stripe Buffer]]
 
-Vastly easier to read tables and friends. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
+[[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png]] ([[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png][source]])
+
+Makes it vastly easier to read tables and friends. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
 
 #+BEGIN_SRC emacs-lisp
   (use-package stripe-buffer
