@@ -2557,9 +2557,18 @@ For hard wraps, allow for a bit more characters per line.
 
 Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]])
 
+*Note* Below, we adapt "en_GB" (our default) instead of =nil= (the global default) because otherwise we [[http://endlessparentheses.com/ispell-and-apostrophes.html#comment-2258586606][can’t change dictionaries]].
+
 #+BEGIN_SRC emacs-lisp
 (use-package ispell
   :config (progn
+            (setq ispell-dictionary "en_GB")
+
+            ;; Tell ispell.el that ’ can be part of a word. ;
+            (setq ispell-local-dictionary-alist
+                  '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]"
+                     "['\x2019]" nil ("-d" "en_GB") nil utf-8)))
+
             ;; Don't send ’ to the subprocess.
             (defun malb/replace-apostrophe (args)
               (cons (replace-regexp-in-string
@@ -2580,18 +2589,6 @@ Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparent
 
             (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)))
 #+END_SRC
-
-**** COMMENT fix typography vs ispell
-
-This was included in [[http://endlessparentheses.com/ispell-and-apostrophes.html][source]] but breaks dictionary selection.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-;; Tell ispell.el that ’ can be part of a word.
-(setq ispell-local-dictionary-alist
-      `((nil "[[:alpha:]]" "[^[:alpha:]]"
-             "['\x2019]" nil ("-B") nil utf-8)))
-#+END_SRC
-
 
 *** Olivetti
 
