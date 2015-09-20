@@ -363,7 +363,7 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
 #+BEGIN_SRC emacs-lisp
 (use-package company-quickhelp
   :ensure t
-  :init (company-quickhelp-mode 1))
+  :config (company-quickhelp-mode 1))
 #+END_SRC
 
 ** C/C++
@@ -720,11 +720,11 @@ See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction.
 (use-package smartparens
   :ensure t
   :diminish smartparens-mode
-  :init (progn (smartparens-global-mode t))
   :config (progn
             (require 'smartparens-config)
             (require 'smartparens-latex)
 
+            (smartparens-global-mode t)
             (setq sp-autodelete-wrap t)
             (setq sp-autoescape-string-quote nil) ;; don't escape quotes in strings
             (bind-key "C-M-d" 'sp-down-sexp sp-keymap)
@@ -1091,7 +1091,7 @@ Archive with tags intact and some order in target file preserved. ([[http://orgm
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-habit
-  :init (add-to-list 'org-modules 'org-habit))
+  :config (add-to-list 'org-modules 'org-habit))
 #+END_SRC
 
 ** Protocol
@@ -1643,8 +1643,8 @@ Make flycheck prettier based on what spacemacs does.
 (use-package flycheck
   :ensure t
   :commands global-flycheck-mode
-  :init (global-flycheck-mode)
   :config (progn
+            (global-flycheck-mode)
 
             (bind-key "C-c f n" #'flycheck-next-error flycheck-mode-map)
             (bind-key "C-c f p" #'flycheck-previous-error flycheck-mode-map)
@@ -1754,10 +1754,10 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 #+BEGIN_SRC emacs-lisp
 (use-package aggressive-indent
   :ensure t
-  :init (progn
-          (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
-          (add-hook 'clojure-mode-hook #'aggressive-indent-mode))
-  :config (unbind-key "C-c C-q" aggressive-indent-mode-map)
+  :config (progn
+            (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+            (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+            (unbind-key "C-c C-q" aggressive-indent-mode-map))
   :diminish aggressive-indent-mode)
 #+END_SRC
 
@@ -1769,14 +1769,14 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 (use-package ws-butler
   :ensure t
   :diminish ws-butler-mode
-  :init (progn
-          ;; adding it to prog-mode-hook causes problems for emacsclient
-          (add-hook 'c-mode-common-hook #'ws-butler-mode)
-          (add-hook 'python-mode-hook #'ws-butler-mode)
-          (add-hook 'cython-mode-hook #'ws-butler-mode)
-          (add-hook 'emacs-lisp-mode-hook #'ws-butler-mode)
-          (add-hook 'text-mode-hook #'ws-butler-mode)
-          ))
+  :config (progn
+            ;; adding it to prog-mode-hook causes problems for emacsclient
+            (add-hook 'c-mode-common-hook #'ws-butler-mode)
+            (add-hook 'python-mode-hook #'ws-butler-mode)
+            (add-hook 'cython-mode-hook #'ws-butler-mode)
+            (add-hook 'emacs-lisp-mode-hook #'ws-butler-mode)
+            (add-hook 'text-mode-hook #'ws-butler-mode)
+            ))
 #+END_SRC
 
 *** Highlight FIXME and friends
@@ -2227,9 +2227,9 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
 #+BEGIN_SRC emacs-lisp
 (use-package auto-complete
   :ensure t
-  :init (progn
-          (setq ac-delay 0.3
-                ac-auto-start 2)))
+  :config (progn
+            (setq ac-delay 0.3
+                  ac-auto-start 2)))
 
 (use-package auto-complete-sage
   :ensure t)
@@ -2643,9 +2643,9 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
 (use-package ace-flyspell
   :ensure t
   :bind ("C-." . ace-flyspell-dwim)
-  :init (progn
-          (eval-after-load "flyspell"
-            '(bind-key  "C-." #'ace-flyspell-dwim flyspell-mode-map)))
+  :config (progn
+            (eval-after-load "flyspell"
+              '(bind-key  "C-." #'ace-flyspell-dwim flyspell-mode-map)))
   )
 #+END_SRC
 
@@ -3041,11 +3041,11 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+BEGIN_SRC emacs-lisp
 (use-package ediff
-  :init (progn
-          (setq ediff-window-setup-function 'ediff-setup-windows-plain
-                ediff-split-window-function 'split-window-horizontally
-                ediff-diff-options "-w")
-          ))
+  :config (progn
+            (setq ediff-window-setup-function 'ediff-setup-windows-plain
+                  ediff-split-window-function 'split-window-horizontally
+                  ediff-diff-options "-w")
+            ))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -3545,8 +3545,8 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-mode
   :ensure t
-  :init (progn
-          (add-hook 'emacs-lisp-mode-hook #'rainbow-mode))
+  :config (progn
+            (add-hook 'emacs-lisp-mode-hook #'rainbow-mode))
   :diminish rainbow-mode)
 #+END_SRC
 
