@@ -3308,6 +3308,25 @@ Debug startup failures. If your Emacs init file signals an error during startup,
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
 #+END_SRC
 
+* Page Breaks
+
+Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][post]], make use of page break characters by using [[https://github.com/purcell/page-break-lines][page-break-lines]] and [[https://github.com/david-christiansen/helm-pages][helm-pages]]. ([[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][source]])
+
+- Insert a new page break with =C-q C-l=.
+
+- Use =C-x [= and =C-x ]= to move backward and forward through pages, respectively.
+
+#+BEGIN_SRC emacs-lisp
+(use-package page-break-lines
+  :ensure t
+  :config (progn
+            (global-page-break-lines-mode)
+            (diminish 'page-break-lines-mode)))
+
+(use-package helm-pages
+  :ensure t)
+#+END_SRC
+
 * X11
 
 #+BEGIN_SRC emacs-lisp
@@ -3365,25 +3384,6 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (setq default-input-method "rfc1345")
 
 (prefer-coding-system 'utf-8)
-#+END_SRC
-
-* Page Breaks
-
-Make use of page break characters by using [[https://github.com/purcell/page-break-lines][page-break-lines]] and [[https://github.com/david-christiansen/helm-pages][helm-pages]]. ([[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][source]])
-
-- Insert a new page break with =C-q C-l=.
-
-- Use =C-x [= and =C-x ]= to move backward and forward through pages, respectively.
-
-#+BEGIN_SRC emacs-lisp
-(use-package page-break-lines
-  :ensure t
-  :config (progn
-            (global-page-break-lines-mode)
-            (diminish 'page-break-lines-mode)))
-
-(use-package helm-pages
-  :ensure t)
 #+END_SRC
 
 * Key bindings
