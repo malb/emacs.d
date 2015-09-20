@@ -3248,7 +3248,9 @@ Add a function for renaming the file being edited ([[https://github.com/bodil/oh
                    name (file-name-nondirectory new-name)))))))
 #+END_SRC
 
-** [#A] [[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
+** [[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
+
+[[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png]] ([[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png][source]])
 
 #+BEGIN_SRC emacs-lisp
   (use-package sx
