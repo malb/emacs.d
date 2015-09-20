@@ -3594,6 +3594,7 @@ Makes it vastly easier to read tables and friends. We apply this [[https://githu
 :ID:       01e6ff33-8437-4b06-967c-85dd8df6e7b6
 :END:
 ** TODO check out [[https://github.com/bastibe/annotate.el][annotate]]
+** TODO check out [[https://github.com/bling/fzf.el][fzf]]
 ** Org Mode
 - [[https://org-trello.github.io/trello-setup.html][org-trello]] - sync with trello
 - [[https://github.com/christopherjwhite/org-toodledo][org-toodledo]] - sync with toodledo
@@ -3601,7 +3602,6 @@ Makes it vastly easier to read tables and friends. We apply this [[https://githu
 - [[https://github.com/IvanMalison/org-projectile][org-projectile]] - per project todo lists
 - [[https://github.com/rexim/org-cliplink][org-cliplink]] - insert URL’s with titles
 - [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-screen.html][org-babel-screen]] - interactive shells and org-mode
-*** TODO reorganise org-files config
 * Notes
 ** Compile .emacs
 
