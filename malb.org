@@ -2709,7 +2709,7 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
                   deft-directory (expand-file-name "deft" malb/sync-dir)
                   deft-text-mode 'org-mode
                   deft-use-filename-as-title nil
-                  deft-auto-save-interval 2.0
+                  deft-auto-save-interval 5.0
                   deft-use-filter-string-for-filename t
                   deft-current-sort-method 'title
                   deft-file-naming-rules '((noslash . "-")
