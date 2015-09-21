@@ -3372,12 +3372,13 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
 * X11
 
 #+BEGIN_SRC emacs-lisp
-(setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
-      save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
-      x-select-enable-primary t
-      mouse-yank-at-point t
-      mouse-autoselect-window    -1                 ; Focus follows mouse after 2 seconds without movement
-      )
+(when (display-graphic-p)
+  (setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
+        mouse-autoselect-window    -1                 ; Focus follows mouse after 2 seconds without movement
+        save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
+        mouse-yank-at-point t
+        x-select-enable-primary t
+        x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+END_SRC
 
 Use GTK printing interface.
