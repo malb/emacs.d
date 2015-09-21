@@ -131,8 +131,8 @@ Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
 (use-package ace-window
   :ensure t
   :bind (("C-x o" . ace-window)
-         ("±" . other-window)
-         ("M-p" . ace-window))
+         ("M-p" . ace-window)
+         ("±" . other-window))
   :config (progn
             (setq aw-keys   '(?a ?s ?d ?f ?j ?k ?l)
                   aw-dispatch-always t
