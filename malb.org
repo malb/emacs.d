@@ -3284,6 +3284,21 @@ Add a function for renaming the file being edited ([[https://github.com/bodil/oh
                    name (file-name-nondirectory new-name)))))))
 #+END_SRC
 
+Copy filename to clipboard ([[http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+#+END_SRC
+
+
 ** Scratch
 *** Unkillable scratch
 
