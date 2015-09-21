@@ -91,7 +91,7 @@ We have RAM, lots of it.
       gc-cons-threshold 16777216)
 #+END_SRC
 
-*Note* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
+*Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
 for a long-ish time.
 
 * Window Management
@@ -607,7 +607,7 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
 
 [[https://raw.githubusercontent.com/syohex/emacs-helm-ag/master/image/helm-do-ag.gif]] ([[https://raw.githubusercontent.com/syohex/emacs-helm-ag/master/image/helm-do-ag.gif][source]])
 
-*Note* You can switch to edit mode with =C-c C-e=.
+*Note:* You can switch to edit mode with =C-c C-e=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
@@ -2559,7 +2559,7 @@ For hard wraps, allow for a bit more characters per line.
 
 Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]])
 
-*Note* Below, we adapt "en_GB" (our default) instead of =nil= (the global default) because otherwise we [[http://endlessparentheses.com/ispell-and-apostrophes.html#comment-2258586606][can’t change dictionaries]].
+*Note:* Below, we adapt "en_GB" (our default) instead of =nil= (the global default) because otherwise we [[http://endlessparentheses.com/ispell-and-apostrophes.html#comment-2258586606][can’t change dictionaries]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package ispell
