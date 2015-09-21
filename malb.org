@@ -3685,7 +3685,7 @@ Directory variables are evaluated after the mode has been set, so you can actual
 
 And Emacs will change the mode to ~c++-mode~ whenever it had initially set it to ~c-mode~.
 
-* Local Config
+* Technical Artefacts
 
 # Local Variables:
 # eval: (ws-butler-mode 1)
