@@ -148,6 +148,17 @@ Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
                     (?r winner-redo)))))
 #+END_SRC
 
+Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered-29][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package windmove
+  :bind (("<f2> <right>" . windmove-right)
+         ("<f2> <left>" . windmove-left)
+         ("<f2> <up>" . windmove-up)
+         ("<f2> <down>" . windmove-down)))
+#+END_SRC
+
+
 ** Resizing
 
 #+BEGIN_SRC emacs-lisp
