@@ -447,11 +447,21 @@ Helm is incremental completion and selection narrowing framework for Emacs.
 
 See [[https://tuhdo.github.io/helm-intro.html][A Package in a league of its own: Helm]] for a nice introduction.
 
+| *Combo* | *Command*             |
+|---------+-----------------------|
+| =C-w=   | yanks word at point   |
+| =M-n=   | yanks symbol at point |
+| =C-h f= | ~describe-function~   |
+| =C-h v= | ~describe-variable~   |
+| =C-h w= | ~where-is~            |
+
 ** Bufers, Files
+
+[[https://github.com/emacs-helm/helm/raw/master/doc/helm-buffers-list.gif]] ([[https://github.com/emacs-helm/helm/raw/master/doc/helm-buffers-list.gif][source]])
 
 Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many sources to create =malb/helm-omni.= ([[http://stackoverflow.com/a/19284509][source]])
 
-*Tip:* Use =@foo= to search for content =foo= in buffers when in =helm-omni=.
+*Tip:* Use =@foo= to search for content =foo= in buffers when in =helm-omni=. Use =*lisp= to search for buffers in ~lisp-mode~. Use =*!list= to search for buffers not in ~lisp-mode~.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/helm-omni (&rest arg)
