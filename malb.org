@@ -2669,7 +2669,21 @@ Diminish ~flyspell-mode~ as we always use it.
   '(diminish 'flyspell-mode))
 #+END_SRC
 
-**** abbrev-mode
+**** Abbreviations
+
+([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered-45][source]])
+
+#+NAME: abbrev
+| Base | Expansion                             |
+|------+---------------------------------------|
+| bc   | because                               |
+| wo   | without                               |
+| qm   | martinralbrecht@googlemail.com        |
+| qb   | https://martinralbrecht.wordpress.com |
+
+#+BEGIN_SRC emacs-lisp :var data=abbrev
+(mapc (lambda (x) (define-global-abbrev (car x) (cadr x))) (cddr data))
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (setq-default abbrev-mode t)
