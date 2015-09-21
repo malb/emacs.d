@@ -887,7 +887,7 @@ This library provides easy project management and navigation. The concept of a p
 
 See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to org-mode.
 
-*Note* Ideally, we’d want to put all org-mode stuff into one big =:config= blog, but that makes it harder to read/explain.
+*Note:* Ideally, we’d want to put all org-mode stuff into one big =:config= blog, but that makes it harder to read/explain.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org
