@@ -118,6 +118,14 @@ When splitting windows open the previous buffer in it.
 (bind-key "C-x 3" 'malb/hsplit-last-buffer)
 #+END_SRC
 
+** Restoring configurations
+
+[[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows you to “undo” (and “redo”) changes in the window configuration with the key commands =C-c left= and =C-c right=.
+
+#+BEGIN_SRC emacs-lisp
+(winner-mode 1)
+#+END_SRC
+
 ** Switching
 
 Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
@@ -158,7 +166,6 @@ Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered
          ("<f2> <down>" . windmove-down)))
 #+END_SRC
 
-
 ** Resizing
 
 #+BEGIN_SRC emacs-lisp
@@ -166,14 +173,6 @@ Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered
 (bind-key "S-C-<right>" 'enlarge-window-horizontally)
 (bind-key "S-C-<down>" 'shrink-window)
 (bind-key "S-C-<up>" 'enlarge-window)
-#+END_SRC
-
-** Restoring configurations
-
-[[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows you to “undo” (and “redo”) changes in the window configuration with the key commands =C-c left= and =C-c right=.
-
-#+BEGIN_SRC emacs-lisp
-(winner-mode 1)
 #+END_SRC
 
 ** Special windows
