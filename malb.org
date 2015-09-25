@@ -2668,9 +2668,9 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
 (use-package ace-flyspell
   :ensure t
   :bind ("C-." . ace-flyspell-dwim)
-  :config (progn
-            (eval-after-load "flyspell"
-              '(bind-key  "C-." #'ace-flyspell-dwim flyspell-mode-map)))
+  :init (progn
+          (eval-after-load "flyspell"
+            '(bind-key  "C-." #'ace-flyspell-dwim flyspell-mode-map)))
   )
 #+END_SRC
 
