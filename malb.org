@@ -3531,68 +3531,88 @@ It looks like this:
 [[./screenshot.png]]
 
 #+BEGIN_SRC emacs-lisp
-(if malb/solarized-p
-    (progn
-      (use-package solarized
-        :ensure solarized-theme
-        :config (progn
-                  (setq solarized-use-variable-pitch nil
-                        solarized-high-contrast-mode-line nil
-                        solarized-height-minus-1 1.0
-                        solarized-height-plus-1  1.0
-                        solarized-height-plus-2  1.0
-                        solarized-height-plus-3  1.0
-                        solarized-height-plus-4  1.0
-                        solarized-use-less-bold nil
-                        solarized-emphasize-indicators t
-                        solarized-scale-org-headlines nil
-                        x-underline-at-descent-line t)
+(when (bound-and-true-p malb/solarized-p)
+  (use-package solarized
+    :ensure solarized-theme
+    :config (progn
+              (setq solarized-use-variable-pitch nil
+                    solarized-high-contrast-mode-line nil
+                    solarized-height-minus-1 1.0
+                    solarized-height-plus-1  1.0
+                    solarized-height-plus-2  1.0
+                    solarized-height-plus-3  1.0
+                    solarized-height-plus-4  1.0
+                    solarized-use-less-bold nil
+                    solarized-emphasize-indicators t
+                    solarized-scale-org-headlines nil
+                    x-underline-at-descent-line t)
 
-                  (load-theme 'solarized-light t)
+              (load-theme 'solarized-light t)
 
-                  (setq org-todo-keyword-faces
-                        '(("CANCELLED" :foreground "gray" :weight bold)
-                          ("DISABLED" :foreground "gray" :weight bold)
-                          ("SUBMITTED" :foreground "gray" :weight bold)
-                          ("DELEGATED" :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-                          ("WAITING"   :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-                          ("COAUTHOR"  :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-                          ("NATIVE"    :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-                          ))
-
-                  ;; steal org style from Leuven
-                  (set-face-attribute 'font-lock-doc-face nil :foreground "#93a1a1" :slant 'normal)
-                  (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
-                  (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
-                  (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
-                  (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
-                  (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
-                  (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-                  (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-                  (set-face-attribute 'org-block-background nil :background "#FDF8EC")
-
-                  (when (boundp 'mmm-mode)
-                    (set-face-attribute 'mmm-default-submode-face nil :background "#FDF8EC"))
-                  (when (boundp 'hl-sentence-mode)
-                    (set-face-attribute 'hl-sentence-face nil :background "#FDF9EF"))
-
-                  ;; steal spacemacs flycheck style
-                  (eval-after-load "fylcheck"
-                    (progn
-                      (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
-                      (set-face-attribute 'flycheck-warning nil :underline "#b58900")
-                      (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
-                      (set-face-attribute 'flycheck-fringe-error   nil :background "#fdf6e3" :foreground "#dc322f" :weight 'bold)
-                      (set-face-attribute 'flycheck-fringe-warning nil :background "#fdf6e3" :foreground "#DEB542" :weight 'bold)
-                      (set-face-attribute 'flycheck-fringe-info    nil :background "#fdf6e3" :foreground "#69B7F0" :weight 'bold)
+              (setq org-todo-keyword-faces
+                    '(("CANCELLED" :foreground "gray" :weight bold)
+                      ("DISABLED" :foreground "gray" :weight bold)
+                      ("SUBMITTED" :foreground "gray" :weight bold)
+                      ("DELEGATED" :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+                      ("WAITING"   :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+                      ("COAUTHOR"  :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+                      ("NATIVE"    :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
                       ))
-                  )))
-  (progn
-    ;; (use-package zenburn-theme
-    ;;   :ensure zenburn-theme
-    ;;   :init (load-theme 'zenburn t)
-    ;;   )
-    ))
+
+              ;; steal org style from Leuven
+              (set-face-attribute 'font-lock-doc-face nil :foreground "#93a1a1" :slant 'normal)
+              (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
+              (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
+              (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
+              (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
+              (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
+              (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
+              (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
+              (set-face-attribute 'org-block-background nil :background "#FDF8EC")
+
+              (when (boundp 'mmm-mode)
+                (set-face-attribute 'mmm-default-submode-face nil :background "#FDF8EC"))
+              (when (boundp 'hl-sentence-mode)
+                (set-face-attribute 'hl-sentence-face nil :background "#FDF9EF"))
+
+              ;; steal spacemacs flycheck style
+              (eval-after-load "fylcheck"
+                (progn
+                  (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
+                  (set-face-attribute 'flycheck-warning nil :underline "#b58900")
+                  (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
+                  (set-face-attribute 'flycheck-fringe-error   nil :background "#fdf6e3" :foreground "#dc322f" :weight 'bold)
+                  (set-face-attribute 'flycheck-fringe-warning nil :background "#fdf6e3" :foreground "#DEB542" :weight 'bold)
+                  (set-face-attribute 'flycheck-fringe-info    nil :background "#fdf6e3" :foreground "#69B7F0" :weight 'bold)
+                  ))
+              )))
+
+
+
+(when (bound-and-true-p malb/material-p)
+  (use-package material-theme
+    :ensure t
+    :config (progn
+              (load-theme 'material-light t)
+              (set-face-attribute 'org-level-1 nil :height 1.0)
+              (set-face-attribute 'org-level-2 nil :height 1.0 :background nil)
+              (set-face-attribute 'org-level-3 nil :height 1.0 :background nil)
+              (set-face-attribute 'org-document-info nil :height 1.0)
+              (set-face-attribute 'org-document-info-keyword nil :height 1.0)
+              (set-face-attribute 'org-document-title nil :height 1.0)
+
+              (eval-after-load "fylcheck"
+                (progn
+                  (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
+                  (set-face-attribute 'flycheck-warning nil :underline "#b58900")
+                  (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
+                  (set-face-attribute 'flycheck-fringe-error   nil :background "#fdf6e3" :foreground "#dc322f" :weight 'bold)
+                  (set-face-attribute 'flycheck-fringe-warning nil :background "#fdf6e3" :foreground "#DEB542" :weight 'bold)
+                  (set-face-attribute 'flycheck-fringe-info    nil :background "#fdf6e3" :foreground "#69B7F0" :weight 'bold)
+                  ))
+              ))
+
+  )
 #+END_SRC
 
 Set transparency because reasons ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
