@@ -889,9 +889,18 @@ This library provides easy project management and navigation. The concept of a p
 - =C-c p h= for =helm-projectile= which combines buffer, file and project switching
 - =C-c p F= for =helm-projectile-find-file-in-known-projects=
 
+We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8i5r/helmprojectile_quickly_findcreate_new_file_in/][source]]).
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-projectile
-  :ensure t)
+  :ensure t
+  :config (progn
+            (defvar malb/helm-source-file-not-found
+              (helm-build-dummy-source
+                  "Create file"
+                :action 'find-file))
+            (add-to-list 'helm-projectile-sources-list malb/helm-source-file-not-found t))
+  )
 #+END_SRC
 
 * Org-mode all the things!
