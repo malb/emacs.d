@@ -94,6 +94,21 @@ We have RAM, lots of it.
 *Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
 for a long-ish time.
 
+* Key Chords
+
+Key chords allow to execute actions by pressing one or two keys really fast. Sometimes we might want
+to use those. However, mostly, we don’t as the slight delay they introduce (to check if a key chord
+should be executed or the text inserted) is annoying.
+
+#+BEGIN_SRC emacs-lisp
+(use-package key-chord
+  :ensure t
+  :config (progn
+            (setq key-chord-one-key-delay 0.2)
+            (key-chord-mode 1)
+            ))
+#+END_SRC
+
 * Window Management
 ** Splitting
 
@@ -216,6 +231,7 @@ In case we just want to kill the bottom window, set a shortcut do to this.
     (quit-window nil window)))
 
 (bind-key "C-§" #'malb/quit-bottom-side-windows)
+(key-chord-define-global "qq" #'malb/quit-bottom-side-windows)
 #+END_SRC
 
 *** Compilation window
