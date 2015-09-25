@@ -272,11 +272,11 @@ keyword is not enough.
   :ensure t)
 #+END_SRC
 
-* [[https://github.com/abo-abo/avy][Jumping around]]
+* Jumping around
 
 [[https://raw.githubusercontent.com/wiki/nloyola/avy/images/avy-goto-char.png]] ([[https://github.com/abo-abo/avy][source]])
 
-See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is in ~ace-jump-mode~ which inspired ~avy~.
+See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is in ~ace-jump-mode~ which inspired [[https://github.com/abo-abo/avy][avy]].
 
 
 #+BEGIN_SRC emacs-lisp
@@ -303,10 +303,10 @@ so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/a
   :config (ace-link-setup-default))
 #+END_SRC
 
-* [[https://github.com/capitaomorte/yasnippet][Yasnippet]]
+* Yasnippet
 
 #+BEGIN_QUOTE
-YASnippet is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. Bundled language templates include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. ([[https://github.com/capitaomorte/yasnippet][source]])
+[[https://github.com/capitaomorte/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. Bundled language templates include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. ([[https://github.com/capitaomorte/yasnippet][source]])
 #+END_QUOTE
 
 [[http://blog.refu.co/wp-content/uploads/2015/07/wpid-yasnippet1.gif]] ([[http://blog.refu.co/?p=1355][source]])
@@ -324,7 +324,7 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
               (setq yas-verbosity 1)))
 #+END_SRC
 
-* [[https://github.com/company-mode/company-mode][Complete anything]]
+* Complete anything
 
 Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-completion.
 
@@ -441,9 +441,9 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
   (setq company-backends (mapcar #'malb/company-mode/backend-with-yas company-backends))
 #+END_SRC
 
-* [[https://github.com/emacs-helm/helm][Helm]]
+* Helm
 
-Helm is incremental completion and selection narrowing framework for Emacs.
+[[https://github.com/emacs-helm/helm][Helm]] is incremental completion and selection narrowing framework for Emacs.
 
 [[https://tuhdo.github.io/static/helm_projectile.gif]] ([[https://tuhdo.github.io/helm-intro.html][source]])
 
@@ -717,7 +717,7 @@ Don’t include boring or remote stuff in list of recently visited files.
                                    "/scp:")))
 #+END_SRC
 
-* [[https://github.com/vspinu/imenu-anywhere][IMenu-anywhere]]
+* IMenu-anywhere
 
 Make sure to auto automatically rescan for imenu change.
 
@@ -725,7 +725,7 @@ Make sure to auto automatically rescan for imenu change.
 (set-default 'imenu-auto-rescan t)
 #+END_SRC
 
-IMenu items for all buffers with the same major mode as the current one.
+[[https://github.com/vspinu/imenu-anywhere][IMenu items for all buffers]] with the same major mode as the current one.
 
 #+BEGIN_SRC emacs-lisp
 (use-package imenu-anywhere
@@ -734,9 +734,9 @@ IMenu items for all buffers with the same major mode as the current one.
 
 ** TODO do we need ~helm-imenu-anywhere~ or is ~helm-imenu-in-all-buffers~ sufficient?
 
-* [[https://github.com/Fuco1/smartparens][Smartparens]]
+* Smart Parenthesis
 
-See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction.
+See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction to [[https://github.com/Fuco1/smartparens][smartparens]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
@@ -799,10 +799,10 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 
 #+END_SRC
 
-* Projects ([[https://github.com/bbatsov/projectile][Projectile]])
+* Projects
 
 #+BEGIN_QUOTE
-Projectile is a project interaction library for Emacs. […]
+[[https://github.com/bbatsov/projectile][Projectile]] is a project interaction library for Emacs. […]
 
 This library provides easy project management and navigation. The concept of a project is pretty basic – just a folder containing special file. Currently git, mercurial, darcs and bazaar repos are considered projects by default. So are lein, maven, sbt, scons, rebar and bundler projects. If you want to mark a folder manually as a project just create an empty =.projectile= file in it. Some of Projectile's features:
 
@@ -894,9 +894,9 @@ This library provides easy project management and navigation. The concept of a p
   :ensure t)
 #+END_SRC
 
-* [[http://orgmode.org/][Org-mode all the things!]]
+* Org-mode all the things!
 
-See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to org-mode.
+See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to [[http://orgmode.org/][org-mode]].
 
 *Note:* Ideally, we’d want to put all org-mode stuff into one big =:config= blog, but that makes it harder to read/explain.
 
@@ -3182,7 +3182,9 @@ deactivate Client
 - [[http://plantuml.com/latex.html][TikZ export]]
 - See also https://github.com/josteink/wsd-mode for https://www.websequencediagrams.com/
 
-* [[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
+* SX
+
+[[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
 
 [[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png]] ([[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png][source]])
 
