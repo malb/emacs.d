@@ -1942,6 +1942,23 @@ Grey out ~#if 0~ blocks.
                            '((malb/c-mode-font-lock-if0 (0 font-lock-comment-face prepend))) 'add-to-end))
 #+END_SRC
 
+Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/27eqwm/highlighting_c_member_function_calls/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(dolist (major-mode '(c-mode c++-mode))
+  (font-lock-add-keywords major-mode
+                          `((,(concat
+                               "\\<[_a-zA-Z][_a-zA-Z0-9]*\\>"       ; Object identifier
+                               "\\s *"                              ; Optional white space
+                               "\\(?:\\.\\|->\\)"                   ; Member access
+                               "\\s *"                              ; Optional white space
+                               "\\<\\([_a-zA-Z][_a-zA-Z0-9]*\\)\\>" ; Member identifier
+                               "\\s *"                              ; Optional white space
+                               "(")                                 ; Paren for method invocation
+                             1 'font-lock-function-name-face t))))
+#+END_SRC
+
+
 The default key bindings of semantic are a bit awkward, rebind them.
 
 #+BEGIN_SRC emacs-lisp
