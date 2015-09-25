@@ -1559,7 +1559,6 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   mu4e-hide-index-messages t
                   mu4e-auto-retrieve-keys t
                   mu4e-compose-dont-reply-to-self t
-                  mu4e-compose-complete-only-personal t
                   mu4e-split-view 'horizontal
                   mu4e-headers-visible-columns 122
                   mu4e-headers-visible-lines 16)
