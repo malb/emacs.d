@@ -2634,7 +2634,7 @@ Adapt text width to nice to read/edit width.
   :bind (("C-M-S-<right>" . olivetti-expand)
          ("C-M-S-<left>" . olivetti-shrink))
   :config (progn
-            (setq olivetti-body-width 100)))
+            (setq-default olivetti-body-width 90)))
 #+END_SRC
 
 *** Sentences
