@@ -2719,7 +2719,13 @@ Diminish ~flyspell-mode~ as we always use it.
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
                                                                (concat user-emacs-directory "langtool"))
-                  langtool-default-language "en-GB"))
+                  langtool-default-language "en-GB")
+            (bind-key "C-x 4 w" #'langtool-check)
+            (bind-key "C-x 4 W" #'langtool-check-done)
+            (bind-key "C-x 4 l" #'langtool-switch-default-language)
+            (bind-key "C-x 4 4" #'langtool-show-message-at-point)
+            (bind-key "C-x 4 c" #'langtool-correct-buffer)
+            )
   )
 #+END_SRC
 
