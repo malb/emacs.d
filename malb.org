@@ -190,7 +190,9 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\`\\*helm projectile\\*\\'"
                              "\\`\\*Helm all the things\\*\\'"
                              "\\`\\*Help\\*\\'"
-                             "\\`\\*anaconda-doc\\*\\'"))
+                             "\\`\\*anaconda-doc\\*\\'"
+                             "\\`\\*Google Translate\\*\\'"
+                             "\\` \\*LanguageTool Errors\\* \\'"))
 
 (dolist (name malb/popup-windows)
   (add-to-list 'display-buffer-alist
