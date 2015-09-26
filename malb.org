@@ -1149,7 +1149,9 @@ Archive with tags intact and some order in target file preserved. ([[http://orgm
 (use-package org-protocol)
 #+END_SRC
 
-** [[https://github.com/sabof/org-bullets][Bullets]]
+** Bullets
+
+Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 
 [[https://raw.githubusercontent.com/sabof/org-bullets/master/screenshot.png]] ([[https://raw.githubusercontent.com/sabof/org-bullets/master/screenshot.png][source]])
 
