@@ -3297,10 +3297,17 @@ A file is large if it is 32MB in my world.
 (setq large-file-warning-threshold 33554432)
 #+END_SRC
 
-Make command history persistent
+Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
 
 #+BEGIN_SRC emacs-lisp
 (savehist-mode t)
+(setq history-length t)
+(setq history-delete-duplicates t)
+(setq savehist-save-minibuffer-history 1)
+(setq savehist-additional-variables
+      '(kill-ring
+        search-ring
+        regexp-search-ring))
 #+END_SRC
 
 Always prefer to load newer files, instead of giving precedence to the .elc files.
