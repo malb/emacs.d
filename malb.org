@@ -71,10 +71,16 @@ Maximise the window as soon as possible
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
 
-Disable cluttler
+* Startup
 
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
+(setq initial-buffer-choice malb/projects-dir)
+#+END_SRC
+
+* Disable cluttler
+
+#+BEGIN_SRC emacs-lisp
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
