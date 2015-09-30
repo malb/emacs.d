@@ -1555,7 +1555,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   mu4e-trash-folder  "/[Google Mail]/.Bin")
 
             (setq mu4e-maildir-shortcuts
-                  '(("/INBOX"                     . ?i)
+                  '(("/Inbox"                     . ?i)
                     ("/[Google Mail]/.Drafts"     . ?d)
                     ("/[Google Mail]/.Sent Mail"  . ?s)
                     ("/[Google Mail]/.Bin"        . ?t)))
