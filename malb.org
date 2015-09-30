@@ -1572,6 +1572,9 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   mu4e-headers-visible-columns 122
                   mu4e-headers-visible-lines 16)
 
+            (add-to-list 'mu4e-bookmarks
+                         '("mime:application/pdf"       "Messages with PDFs"     ?d) t)
+
             ;; use imagemagick, if available
             (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
 
