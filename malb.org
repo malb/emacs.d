@@ -3187,6 +3187,7 @@ directory to make multiple eshell windows easier."
 
             (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
 
+            ;; mapped to 'q' in eshell
             (defun eshell/q ()
               (delete-window)
               (eshell/exit))
