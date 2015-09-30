@@ -1608,7 +1608,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
             (bind-key "z" #'malb/close-message-view mu4e-headers-mode-map)
 
             ;; allow for updating mail using 'U' in the main view:
-            (setq mu4e-get-mail-command "mbsync googlemail"
+            (setq mu4e-get-mail-command "mbsync googlemail-default"
                   mu4e-update-interval 1200
                   mu4e-html2text-command #'malb/render-html-message)
 
