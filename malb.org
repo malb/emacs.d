@@ -1636,9 +1636,11 @@ Link to mu4e messages and threads.
 Use =helm-mu= as default search for mu4e.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package helm-mu
-    :ensure t
-    :config (bind-key "s" 'helm-mu mu4e-main-mode-map))
+(use-package helm-mu
+  :ensure t
+  :config (progn
+            (bind-key "s" #'helm-mu mu4e-main-mode-map)
+            (bind-key "S" #'mu4e-headers-search mu4e-main-mode-map)))
 #+END_SRC
 
 * Programming (languages)
