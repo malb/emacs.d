@@ -3083,6 +3083,10 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (setq dired-garbage-files-regexp malb/unimportant-files)
             (setq dired-omit-files malb/unimportant-files)
 
+            (setq dired-recursive-copies 'always)
+            (setq dired-recursive-deletes 'always)
+            (setq dired-dwim-target t)
+
             ;; For the few times I’m using Dired, I prefer it not spawning an endless amount of
             ;; buffers. In fact, I’d prefer it using one buffer unless another one is explicitly
             ;; created, but you can’t have everything.
