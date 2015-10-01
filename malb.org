@@ -78,7 +78,7 @@ Maximise the window as soon as possible
 (setq initial-buffer-choice malb/projects-dir)
 #+END_SRC
 
-* Disable cluttler
+* Disable Clutter
 
 #+BEGIN_SRC emacs-lisp
 (menu-bar-mode -1)
@@ -277,7 +277,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 (setq compilation-scroll-output 'first-error)
 #+END_SRC
 
-* Clean up Mode Line
+* Clean Mode Line
 
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
 
@@ -325,7 +325,7 @@ so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/a
   :config (ace-link-setup-default))
 #+END_SRC
 
-* Yasnippet
+* Snippets
 
 #+BEGIN_QUOTE
 [[https://github.com/capitaomorte/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. Bundled language templates include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. ([[https://github.com/capitaomorte/yasnippet][source]])
@@ -346,7 +346,7 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
               (setq yas-verbosity 1)))
 #+END_SRC
 
-* Complete anything
+* Auto Completion
 
 Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-completion.
 
@@ -725,7 +725,7 @@ Helm interface to http://www.commandlinefu.com/.
         :buffer "*helm baloo*"))
 #+END_SRC
 
-* Recentf
+* Recent Files
 
 Don’t include boring or remote stuff in list of recently visited files.
 
@@ -740,7 +740,7 @@ Don’t include boring or remote stuff in list of recently visited files.
                                    "/scp:")))
 #+END_SRC
 
-* IMenu-anywhere
+* IMenu
 
 Make sure to auto automatically rescan for imenu change.
 
@@ -757,7 +757,7 @@ Make sure to auto automatically rescan for imenu change.
 
 ** TODO do we need ~helm-imenu-anywhere~ or is ~helm-imenu-in-all-buffers~ sufficient?
 
-* Smart Parenthesis
+* Parenthesis
 
 See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction to [[https://github.com/Fuco1/smartparens][smartparens]].
 
@@ -3386,7 +3386,6 @@ Copy filename to clipboard ([[http://emacsredux.com/blog/2013/03/27/copy-filenam
       (message "Copied buffer file name '%s' to the clipboard." filename))))
 #+END_SRC
 
-
 ** Scratch
 *** Unkillable scratch
 
@@ -3475,7 +3474,7 @@ Use GTK printing interface.
 (setq lpr-command "gtklp")
 #+END_SRC
 
-* Autosaves & backups
+* Autosave & Backups
 
 Put autosave files (ie =#foo#=) in one place, not scattered across the file system.
 
@@ -3503,7 +3502,7 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (setq backup-directory-alist (list (cons "." backup-dir)))
 #+END_SRC
 
-* UTF-8 everywhere
+* UTF-8
 
 #+BEGIN_SRC emacs-lisp
 (setq locale-coding-system 'utf-8)
@@ -3517,7 +3516,7 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (prefer-coding-system 'utf-8)
 #+END_SRC
 
-* Key bindings
+* Key Bindings
 
 We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
 
