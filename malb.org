@@ -3603,20 +3603,38 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 * Look
 ** Powerline
 
+We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which customises [[https://github.com/milkypostman/powerline][Powerline]].
+
 #+BEGIN_SRC emacs-lisp
-(use-package powerline
-  :ensure t
-  :commands powerline-default-theme
-  :init (powerline-default-theme)
+;; (use-package powerline
+;;   :ensure t
+;;   :commands powerline-default-theme
+;;   :init (powerline-default-theme)
+;;   :config (progn
+;;             (if malb/solarized-p
+;;                 (progn
+;;                   (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
+;;                   (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
+;;                   (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
+;;                   (set-face-attribute 'powerline-inactive2 nil :background "grey65" :foreground "gainsboro")
+;;                   )
+;;               )
+;;             ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package spaceline-config
+  :ensure spaceline
   :config (progn
-            (if malb/solarized-p
-                (progn
-                  (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
-                  (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
-                  (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
-                  (set-face-attribute 'powerline-inactive2 nil :background "grey65" :foreground "gainsboro")
-                )
-              )))
+            (setq spaceline-workspace-numbers-unicode t)
+            (spaceline-spacemacs-theme)
+
+            (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
+            (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
+            (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
+            (set-face-attribute 'powerline-inactive2 nil :background "grey65" :foreground "gainsboro")
+            (powerline-reset)
+            ))
 #+END_SRC
 
 ** Theme
