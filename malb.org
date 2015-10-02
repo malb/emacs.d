@@ -3211,6 +3211,7 @@ directory to make multiple eshell windows easier."
 
             (bind-key "C-!" #'malb/eshell-here)
             (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
+            (bind-key "<home>" #'eshell-bol eshell-mode-map)
 
             (setenv "PAGER" "cat") ;; https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org
             (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
