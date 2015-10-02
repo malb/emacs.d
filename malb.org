@@ -75,7 +75,11 @@ Maximise the window as soon as possible
 
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-screen t)
-(setq initial-buffer-choice malb/projects-dir)
+(defun malb/display-org-agenda-at-startup ()
+  (org-agenda-list 7)
+  (get-buffer "*Org Agenda(a)*"))
+
+(setq initial-buffer-choice #'malb/display-org-agenda-at-startup)
 #+END_SRC
 
 * Disable Clutter
