@@ -149,6 +149,10 @@ When splitting windows open the previous buffer in it.
 
 ** Multiple Window Configurations
 
+[[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
+
+[[http://s22.postimg.org/aqd1em8xd/spacemacs_eyebrowse_demo.gif]] ([[https://www.reddit.com/r/emacs/comments/34htzr/eyebrowse_i3_window_manager_inside_emacs/][source]])
+
 #+BEGIN_SRC emacs-lisp
 (use-package eyebrowse
   :ensure t
