@@ -3591,10 +3591,10 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 Easily change the text size:
 
 #+BEGIN_SRC emacs-lisp
-  (bind-key "C-+" #'text-scale-increase)
-  (bind-key "C--" #'text-scale-decrease)
-  (bind-key "C-<mouse-4>" #'text-scale-increase)
-  (bind-key "C-<mouse-5>" #'text-scale-decrease)
+(bind-key "C-+" #'text-scale-increase)
+(bind-key "C--" #'text-scale-decrease)
+(bind-key "C-<mouse-4>" #'text-scale-increase)
+(bind-key "C-<mouse-5>" #'text-scale-decrease)
 #+END_SRC
 
 Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
