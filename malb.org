@@ -100,7 +100,20 @@ We have RAM, lots of it.
 *Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
 for a long-ish time.
 
-* Key Chords
+* Keyboard Shortcuts
+
+We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
+
+#+BEGIN_SRC emacs-lisp
+(define-prefix-command 'f2-global-map)
+(bind-key "<f2>" #'f2-global-map)
+
+(defun malb/set-menu-key (char func)
+  (bind-key (concat "s-" char) func)
+  (bind-key char func f2-global-map))
+#+END_SRC
+
+** Key Chords
 
 Key chords allow to execute actions by pressing one or two keys really fast. Sometimes we might want
 to use those. However, mostly, we don’t as the slight delay they introduce (to check if a key chord
@@ -3555,16 +3568,7 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 
 * Key Bindings
 
-We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
-
 #+BEGIN_SRC emacs-lisp
-(define-prefix-command 'f2-global-map)
-(bind-key "<f2>" #'f2-global-map)
-
-(defun malb/set-menu-key (char func)
-  (bind-key (concat "s-" char) func)
-  (bind-key char func f2-global-map))
-
 (malb/set-menu-key "a" #'helm-imenu-anywhere)
 (malb/set-menu-key "b" #'malb/helm-omni)
 (malb/set-menu-key "c" #'helm-calcul-expression)
