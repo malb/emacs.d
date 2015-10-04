@@ -237,12 +237,31 @@ Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered
 #+END_SRC
 
 ** Resizing
+*** Manual
+
+*Note* These only work when =golden-ratio-mode= is off.
 
 #+BEGIN_SRC emacs-lisp
 (bind-key "S-C-<left>" 'shrink-window-horizontally)
 (bind-key "S-C-<right>" 'enlarge-window-horizontally)
 (bind-key "S-C-<down>" 'shrink-window)
 (bind-key "S-C-<up>" 'enlarge-window)
+#+END_SRC
+
+*** Golden Ratio
+
+[[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows.
+
+[[https://camo.githubusercontent.com/26b1ac5fec67a2c557cfbe87382a0134d3443fd0/68747470733a2f2f7261772e6769746875622e636f6d2f726f6d616e2f676f6c64656e2d726174696f2e656c2f6173736574732f676f6c64656e5f726174696f5f656c2e676966]] ([[https://github.com/roman/golden-ratio.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package golden-ratio
+  :ensure t
+  :diminish golden-ratio-mode
+  :config (progn
+            (golden-ratio-mode t)
+            (golden-ratio-adjust 1.02)
+            ))
 #+END_SRC
 
 ** Special windows
@@ -271,6 +290,7 @@ We then use =malb/quit-bottom-side-windows= to close them.
                   display-buffer-in-side-window)
                  (reusable-frames . visible)
                  (side            . bottom)
+                 ;; height only applies when golden-ratio-mode is off
                  (window-height   . 0.3))))
 #+END_SRC
 
