@@ -3099,7 +3099,9 @@ If buffer type is not included, 'default' will be used. Used by malb/smart-other
 #+BEGIN_SRC emacs-lisp
 (use-package latex-preview-pane
   :diminish latex-preview-pane-mode
-  :ensure t)
+  :ensure t
+  :config (progn
+            (setq latex-preview-pane-multifile-mode (quote auctex))))
 #+END_SRC
 
 *** Setup everything
