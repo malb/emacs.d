@@ -190,9 +190,10 @@ When splitting windows open the previous buffer in it.
                   )))
 
             (malb/set-menu-key "["  #'malb/eyebrowse-new-window-config)
-            (malb/set-menu-key ","  #'eyebrowse-prev-window-config)
-            (malb/set-menu-key "."  #'eyebrowse-next-window-config)
-            (malb/set-menu-key "]"  #'eyebrowse-close-window-config)))
+            (malb/set-menu-key ";"  #'eyebrowse-prev-window-config)
+            (malb/set-menu-key "'"  #'eyebrowse-next-window-config)
+            (malb/set-menu-key "]"  #'eyebrowse-close-window-config)
+            (malb/set-menu-key "\\" #'eyebrowse-rename-window-config)))
 #+END_SRC
 
 ** Switching
