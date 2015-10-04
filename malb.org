@@ -259,7 +259,7 @@ Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered
   :ensure t
   :diminish golden-ratio-mode
   :config (progn
-            (golden-ratio-mode t)
+            ;; (golden-ratio-mode t)
             (golden-ratio-adjust 1.02)
             ))
 #+END_SRC
