@@ -1674,6 +1674,10 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
             (add-to-list 'mu4e-view-actions
                          '("browser" . mu4e-action-view-in-browser) t)
+
+            (bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
+            (bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
+
             ;; PGP
             (setq mml2015-encrypt-to-self t)
             (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
