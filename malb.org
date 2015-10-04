@@ -261,6 +261,13 @@ Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered
   :config (progn
             ;; (golden-ratio-mode t)
             (golden-ratio-adjust 1.02)
+
+            (defun malb/golden-ratio-inhibit-functions ()
+              (when (boundp 'which-key--current-page-n)
+                which-key--current-page-n))
+
+            (setq golden-ratio-inhibit-functions
+                  '(malb/golden-ratio-inhibit-functions))
             ))
 #+END_SRC
 
