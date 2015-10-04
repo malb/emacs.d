@@ -170,7 +170,7 @@ When splitting windows open the previous buffer in it.
 (use-package eyebrowse
   :ensure t
   :diminish eyebrowse-mode
-  :init (setq eyebrowse-keymap-prefix (kbd "C-c C-l"))
+  :init (setq eyebrowse-keymap-prefix (kbd "C-c C-\\"))
   :config (progn
             (setq eyebrowse-wrap-around t)
             (eyebrowse-mode t)
