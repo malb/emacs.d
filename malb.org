@@ -872,7 +872,6 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 
 
 (bind-key "C-a" #'malb/beginning-of-line-dwim)
-(bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
 (bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
 
 #+END_SRC
@@ -2254,6 +2253,7 @@ Drop Python ffap stuff because it interacts badly with ~helm-find-files~ ([[http
               )
 
             (add-hook 'python-mode-hook #'malb/remove-python-ffap)
+            (bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
             ))
 #+END_SRC
 
