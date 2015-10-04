@@ -3537,7 +3537,6 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
 #+BEGIN_SRC emacs-lisp
 (when (display-graphic-p)
   (setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
-        mouse-autoselect-window    -1                ; Focus follows mouse after 2 seconds without movement
         save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
         mouse-yank-at-point t
         x-select-enable-primary t
