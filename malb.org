@@ -385,7 +385,7 @@ keyword is not enough.
 
 [[https://raw.githubusercontent.com/wiki/nloyola/avy/images/avy-goto-char.png]] ([[https://github.com/abo-abo/avy][source]])
 
-See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is in ~ace-jump-mode~ which inspired [[https://github.com/abo-abo/avy][avy]].
+See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mode~ which inspired [[https://github.com/abo-abo/avy][avy]].
 
 
 #+BEGIN_SRC emacs-lisp
@@ -420,7 +420,7 @@ so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/a
 
 [[http://blog.refu.co/wp-content/uploads/2015/07/wpid-yasnippet1.gif]] ([[http://blog.refu.co/?p=1355][source]])
 
-Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is in ~yasnippet~.
+Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is on ~yasnippet~.
 
 Call ~yas-decribe-tables~ to see currently defined snippets.
 
@@ -525,7 +525,10 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but 
   :ensure t
   :config (progn
             (add-to-list 'company-backends
-                         '(company-auctex-macros company-auctex-environments company-math-symbols-unicode))
+                         '(company-auctex-macros
+                           company-auctex-environments
+                           company-math-symbols-unicode))
+
             (add-to-list 'company-backends #'company-auctex-labels)
             (add-to-list 'company-backends #'company-auctex-bibs)
             (setq company-math-disallow-unicode-symbols-in-faces nil)))
@@ -535,7 +538,7 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but 
 
 Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
 
-*Note:* Do this at the very end.
+*Note:* Do this at the end of =company-mode= config.
 
 #+BEGIN_SRC emacs-lisp
   (defvar malb/company-mode/enable-yas t
@@ -566,7 +569,7 @@ See [[https://tuhdo.github.io/helm-intro.html][A Package in a league of its own:
 | =C-h v= | ~describe-variable~   |
 | =C-h w= | ~where-is~            |
 
-** Bufers, Files
+** Buffers, Files
 
 [[https://github.com/emacs-helm/helm/raw/master/doc/helm-buffers-list.gif]] ([[https://github.com/emacs-helm/helm/raw/master/doc/helm-buffers-list.gif][source]])
 
@@ -1796,7 +1799,7 @@ Enable spell checking in comments and documentation.
 
 *** [[https://github.com/flycheck/flycheck][Flycheck]]
 
-[[http://www.flycheck.org/images/screencast.gif]] ([[http://www.flycheck.org/images/screencast.gif][source]])
+[[https://raw.githubusercontent.com/flycheck/flycheck/master/doc/images/flycheck-annotated.png]] ([[http://www.flycheck.org/images/screencast.gif][source]])
 
 
 Use flycheck to run static checkers on code. We use clang’s checker for flycheck for which we can load per directory configuration using =.dir-locals.el=, e.g.
