@@ -2820,6 +2820,9 @@ Use [[https://github.com/milkypostman/hl-sentence][hl-sentence-mode]] in ~markdo
 
 Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
+[[https://raw.githubusercontent.com/larstvei/Focus/master/demo-light.gif]] ([[https://github.com/larstvei/Focus][source]])
+
+
 #+BEGIN_SRC emacs-lisp
   (use-package focus
     :ensure t)
