@@ -189,6 +189,17 @@ When splitting windows open the previous buffer in it.
                       ))
                   )))
 
+            (require 'latex-preview-pane)
+            (defun malb/close-latex-preview-pane-before-eyebrowse-switch ()
+              ;; latex-preview-pane uses window-parameters which are not preserved by eyebrowse, so
+              ;; we close the preview pane before switching, it will be regenerated when we edit the
+              ;; TeX file.
+              (when (lpp/window-containing-preview)
+                (delete-window (lpp/window-containing-preview))))
+
+            (add-to-list 'eyebrowse-pre-window-switch-hook
+                         #'malb/close-latex-preview-pane-before-eyebrowse-switch)
+
             (malb/set-menu-key "["  #'malb/eyebrowse-new-window-config)
             (malb/set-menu-key ";"  #'eyebrowse-prev-window-config)
             (malb/set-menu-key "'"  #'eyebrowse-next-window-config)
