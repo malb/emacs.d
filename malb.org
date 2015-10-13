@@ -730,12 +730,11 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
          ("C-S-s" . helm-multi-swoop-all)
          ("C-r"   . helm-resume))
   :config (progn
-            (setq helm-swoop-pre-input-function
-                  #'malb/helm-swoop-pre-fill)
-            (setq helm-swoop-split-with-multiple-windows nil
+            (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
+                  helm-swoop-split-with-multiple-windows nil
                   helm-swoop-speed-or-color t)
-            (bind-key "C-S-s" #'helm-multi-swoop-all-from-helm-swoop helm-swoop-map)
 
+            (bind-key "C-S-s" #'helm-multi-swoop-all-from-helm-swoop helm-swoop-map)
             (bind-key "C-r" #'helm-previous-line helm-swoop-map)
             (bind-key "C-s" #'helm-next-line helm-swoop-map)
             (bind-key "C-r" 'helm-previous-line helm-multi-swoop-map)
