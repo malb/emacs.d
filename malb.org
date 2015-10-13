@@ -1665,10 +1665,21 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   mu4e-compose-dont-reply-to-self t
                   mu4e-split-view 'horizontal
                   mu4e-headers-visible-columns 122
-                  mu4e-headers-visible-lines 16)
+                  mu4e-headers-visible-lines 16
+                  mu4e-change-filenames-when-moving t)
+
+            (add-to-list 'mu4e-bookmarks
+                         '("flag:unread NOT flag:trashed AND flag:list" "Unread bulk messages" ?l))
+
+            (add-to-list 'mu4e-bookmarks
+                         '("flag:unread NOT flag:trashed AND NOT flag:list" "Unread messages addressed to me" ?i))
+
 
             (add-to-list 'mu4e-bookmarks
                          '("mime:application/pdf"       "Messages with PDFs"     ?d) t)
+
+            (add-to-list 'mu4e-bookmarks
+                         '("flag:flagged" "Flagged messages"           ?f) t)
 
             ;; use imagemagick, if available
             (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
