@@ -1721,19 +1721,9 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
             ;; PGP
             (setq mml2015-encrypt-to-self t)
             (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
-            (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
-            (add-hook 'message-send-hook #'mml-secure-message-sign-pgpmime)))
+            (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime))
+  (add-hook 'message-send-hook #'mml-secure-message-sign-pgpmime))
 #+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package mu4e-maildirs-extension
-  :ensure t
-  :config (progn
-            (setq mu4e-maildirs-extension-insert-before-str "\n ")
-            (setq mu4e-maildirs-extension-custom-list malb/mu4e-maildirs-custom-list)
-            (mu4e-maildirs-extension)))
-#+END_SRC
-
 
 ** Org-mu4e
 
