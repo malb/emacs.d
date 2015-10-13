@@ -1076,6 +1076,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-reverse-note-order t
       )
 
+(add-hook 'org-agenda-finalize-hook 'hl-line-mode)
+
 (bind-key "<home>" #'org-beginning-of-line org-mode-map)
 (bind-key "<end>" #'org-end-of-line org-mode-map)
 (bind-key "C-c C-." #'org-time-stamp org-mode-map) ; ede binds C-c . too
