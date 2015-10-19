@@ -3863,7 +3863,7 @@ We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which custo
 (use-package spaceline-config
   :ensure spaceline
   :config (progn
-            (setq spaceline-workspace-numbers-unicode t)
+            (setq spaceline-workspace-numbers-unicode nil)
             (spaceline-spacemacs-theme)
 
             (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
