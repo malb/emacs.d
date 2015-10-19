@@ -3599,15 +3599,26 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
 
 - Use =C-x [= and =C-x ]= to move backward and forward through pages, respectively.
 
+([[http://ericjmritz.name/2015/10/14/some-personal-hydras-for-gnu-emacs/][hydra source]])
+
 #+BEGIN_SRC emacs-lisp
 (use-package page-break-lines
   :ensure t
   :config (progn
             (global-page-break-lines-mode)
+            (add-to-list 'page-break-lines-modes 'c-mode)
             (diminish 'page-break-lines-mode)))
 
 (use-package helm-pages
-  :ensure t)
+  :ensure t
+  :config (progn
+            (defhydra hydra-page-breaks (global-map "C-x")
+              "pages"
+              ("[" backward-page "backward")
+              ("]" forward-page "forward")
+              ("M-p" helm-pages "helm" :color blue)
+              ("RET" nil "quit"))
+            ))
 #+END_SRC
 
 * X11
