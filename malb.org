@@ -2312,6 +2312,7 @@ It makes sense to [[https://github.com/antonj/Highlight-Indentation-for-Emacs/][
 #+BEGIN_SRC emacs-lisp
 (use-package highlight-indentation
   :ensure t
+  :diminish highlight-indentation-mode
   :config (progn
             (add-hook 'python-mode-hook #'highlight-indentation-mode)))
 #+END_SRC
@@ -2353,6 +2354,7 @@ Manually fixed bugs:
 #+BEGIN_SRC emacs-lisp
 (use-package python-docstring
   :ensure t
+  :diminish python-docstring-mode
   :config (progn
             (add-hook 'python-mode-hook #'python-docstring-mode)))
 #+END_SRC
