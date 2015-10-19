@@ -1824,6 +1824,7 @@ Make flycheck prettier based on what spacemacs does.
 
             (bind-key "C-c f n" #'flycheck-next-error flycheck-mode-map)
             (bind-key "C-c f p" #'flycheck-previous-error flycheck-mode-map)
+            (bind-key "C-c f l" #'flycheck-list-errors flycheck-mode-map)
 
             (setq flycheck-check-syntax-automatically '(save mode-enabled))
             (setq flycheck-standard-error-navigation nil)
@@ -1887,7 +1888,7 @@ Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
 (use-package helm-flycheck
   :ensure t
   :config (progn
-            (bind-key "C-c f l" #'helm-flycheck flycheck-mode-map)))
+            (bind-key "C-c f h" #'helm-flycheck flycheck-mode-map)))
 
 #+END_SRC
 
