@@ -3080,6 +3080,21 @@ Force a parse of the BibTeX database ([[http://stackoverflow.com/questions/96825
 
             (bind-key "C-<tab>" #'TeX-fold-dwim LaTeX-mode-map)
 
+
+            ;; http://endlessparentheses.com/improving-latex-equations-with-font-lock.html
+            (defface malb/unimportant-latex-face
+              '((t :height 0.8
+                   :inherit font-lock-comment-face))
+              "Face used on less relevant math commands.")
+
+            (font-lock-add-keywords
+             'latex-mode
+             `((,(rx "\\" (or (any ",.!;")
+                              (and (or "left" "right" "qquad")
+                                   symbol-end)))
+                0 'malb/unimportant-latex-face prepend))
+             'end)
+
             (setq TeX-auto-save t)
             (setq TeX-parse-self t)
             (setq-default TeX-master nil)
