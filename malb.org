@@ -3034,7 +3034,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
     :mode "README\\.txt")
 #+END_SRC
 
-** AUCTeX
+** LaTeX
 
 Force a parse of the BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-reftex-tab-completion-in-emacs][source]])
 
