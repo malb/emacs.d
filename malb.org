@@ -3609,6 +3609,25 @@ Debug startup failures. If your Emacs init file signals an error during startup,
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
 #+END_SRC
 
+** Wrap Region
+
+[[https://github.com/rejeep/wrap-region.el][Wrap Region]] is a minor mode for Emacs that wraps a region with punctuations. For "tagged" markup modes, such as HTML and XML, it wraps with tags.
+
+([[http://pragmaticemacs.com/emacs/wrap-text-in-custom-characters/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package wrap-region
+  :ensure t
+  :config (wrap-region-add-wrappers
+           '(("*" "*" nil org-mode)
+             ("~" "~" nil org-mode)
+             ("/" "/" nil org-mode)
+             ("=" "=" nil org-mode)
+             ("_" "_" nil org-mode)
+             ("$" "$" nil org-mode)))
+  (add-hook 'org-mode-hook 'wrap-region-mode))
+#+END_SRC
+
 * Page Breaks
 
 Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][post]], make use of page break characters by using [[https://github.com/purcell/page-break-lines][page-break-lines]] and [[https://github.com/david-christiansen/helm-pages][helm-pages]]. ([[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][source]])
