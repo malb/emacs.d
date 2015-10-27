@@ -4054,6 +4054,21 @@ Makes it vastly easier to read tables and friends. We apply this [[https://githu
               ))
 #+END_SRC
 
+** Beacon
+
+Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps to make it easier to find the cursor.
+
+[[https://raw.githubusercontent.com/Malabarba/beacon/master/example-beacon.gif]] ([[https://github.com/Malabarba/beacon][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+  :ensure t
+  :config (progn
+            (setq beacon-color "#EEAD0E")
+            (beacon-mode t)))
+#+END_SRC
+
+
 * ToDos
 ** TODO AucTeX
 - ~\begin{comment}…\end{comment}~ does not work as expected
