@@ -3619,6 +3619,7 @@ Debug startup failures. If your Emacs init file signals an error during startup,
 #+BEGIN_SRC emacs-lisp
 (use-package wrap-region
   :ensure t
+  :diminish wrap-region-mode
   :config (wrap-region-add-wrappers
            '(("*" "*" nil org-mode)
              ("~" "~" nil org-mode)
