@@ -4065,6 +4065,7 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 #+BEGIN_SRC emacs-lisp
 (use-package beacon
   :ensure t
+  :diminish beacon-mode
   :config (progn
             (setq beacon-color "#EEAD0E")
             (beacon-mode t)))
