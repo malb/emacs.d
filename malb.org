@@ -2959,6 +2959,7 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
   :bind ("<f8>" . deft)
   :config (progn
             (setq deft-extensions '("org" "md")
+                  deft-default-extension "org"
                   deft-directory (expand-file-name "deft" malb/sync-dir)
                   deft-text-mode 'org-mode
                   deft-use-filename-as-title nil
