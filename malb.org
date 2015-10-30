@@ -1070,6 +1070,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-agenda-window-setup 'current-window  ; Overwrite the current window with the agenda
       org-agenda-sticky t                      ; Use sticky agenda's so they persist
       org-agenda-compact-blocks t              ; Compact the block agenda view
+      org-agenda-span 14                       ; span 14 days of agenda
+      org-agenda-start-on-weekday nil          ; start today not on Monday
       org-edit-src-content-indentation 0       ; don't indent source code
       org-src-preserve-indentation t           ; preserve indentation inside of source blocks
       org-src-window-setup 'current-window     ; org-src windows set up when hitting C-c '
