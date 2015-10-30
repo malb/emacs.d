@@ -3650,6 +3650,7 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
   :config (progn
             (global-page-break-lines-mode)
             (add-to-list 'page-break-lines-modes 'c-mode)
+            (add-to-list 'page-break-lines-modes 'python-mode)
             (diminish 'page-break-lines-mode)))
 
 (use-package helm-pages
