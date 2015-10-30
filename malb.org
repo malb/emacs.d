@@ -460,8 +460,6 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
                   company-minimum-prefix-length 2
                   company-global-modes '(not sage-shell:sage-mode
                                              sage-shell-mode
-                                             py-ipython-shell-mode
-                                             py-python-shell-mode
                                              ein:notebook-multilang-mode
                                              ein:notebook-python-mode)
                   company-lighter-base "")
@@ -2285,22 +2283,12 @@ If processing fails throw ProcessingError.
 """
 #+END_SRC
 
-Drop Python ffap stuff because it interacts badly with ~helm-find-files~ ([[https://answers.launchpad.net/python-mode/+question/221144][source]])
-
 #+BEGIN_SRC emacs-lisp
-(use-package python-mode
-  :ensure t
+(use-package python
   :config (progn
             (setq-default python-indent 4
-                          py-docstring-style 'SYMMETRIC)
+                          python-fill-docstring-style 'django)
 
-            (defun malb/remove-python-ffap ()
-              (setq ffap-alist (remove '(python-mode . py-ffap-module-path) ffap-alist))
-              (setq ffap-alist (remove '(python-mode . py-module-path) ffap-alist))
-              (setq ffap-alist (remove '(inferior-python-mode . py-ffap-module-path) ffap-alist))
-              )
-
-            (add-hook 'python-mode-hook #'malb/remove-python-ffap)
             (bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
             ))
 #+END_SRC
