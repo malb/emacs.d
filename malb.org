@@ -1731,6 +1731,22 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
             (bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
             (bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
 
+
+            (defun malb/mu4e-contact-rewrite-function (contact)
+              (let* ((name (or (plist-get contact :name) ""))
+                     (mail (plist-get contact :mail))
+                     (actual-name
+                      (cond
+                       ((string= name "jonh smiht") "John Smith")
+                       ;; other replacements
+                       (t name)))
+                     (cleaned-name
+                      (replace-regexp-in-string "\\(.*\\), \\(.*\\)" "\\2 \\1" actual-name)))
+                (list :name cleaned-name :mail mail)))
+
+            (setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
+
+
             ;; PGP
             (setq mml2015-encrypt-to-self t)
             (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
