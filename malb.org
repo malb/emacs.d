@@ -1047,7 +1047,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-emphasis-markers nil            ; hide markers for like *foo*
-      org-ellipsis " […]"
+      org-ellipsis "⤵"
       org-enforce-todo-dependencies t          ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
