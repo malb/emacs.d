@@ -2157,6 +2157,8 @@ The default key bindings of semantic are a bit awkward, rebind them.
             (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)
             (bind-key "M-,"   #'pop-global-mark c-mode-base-map)
             (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-map)
+
+            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))
             ))
 #+END_SRC
 
