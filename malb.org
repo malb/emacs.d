@@ -1076,6 +1076,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-src-preserve-indentation t           ; preserve indentation inside of source blocks
       org-src-window-setup 'current-window     ; org-src windows set up when hitting C-c '
       org-reverse-note-order t
+      org-footnote-auto-adjust t               ; renumber footnotes automagically
       )
 
 (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
