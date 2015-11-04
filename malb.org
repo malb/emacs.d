@@ -2054,7 +2054,6 @@ Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/928
         (downcase-region start end)))))
 #+END_SRC
 
-
 ** C/C++ development
 *** Semantic
 
