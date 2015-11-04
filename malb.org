@@ -2515,6 +2515,29 @@ On our system port 8888 is already taken.
             (add-hook 'ein:notebook-multilang-mode-hook #'auto-complete-mode)))
 #+END_SRC
 
+*** Virtual Environments
+
+[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] mulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package virtualenvwrapper
+  :ensure t
+  :config (progn
+            (venv-initialize-interactive-shells)
+            (venv-initialize-eshell)
+            (setq venv-location (expand-file-name ".virtualenvs" "~"))
+
+            (defun malb/activate-venv ()
+              (hack-local-variables)
+              (when (boundp 'project-venv-name)
+                (venv-workon project-venv-name)))
+
+            (add-hook 'python-mode-hook #'malb/activate-venv)
+            (add-hook 'cython-mode-hook #'malb/activate-venv)
+            (add-hook 'eshell-mode-hook #'malb/activate-venv)
+            ))
+#+END_SRC
+
 ** Emacs Lisp
 
 #+BEGIN_SRC emacs-lisp
