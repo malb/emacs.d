@@ -1979,7 +1979,7 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 #+BEGIN_SRC emacs-lisp
 (defun malb/fixme-highlight ()
   (font-lock-add-keywords nil
-                          '(("\\<\\(FIXME\\|TODO\\|HACK\\)" 1
+                          '(("\\<\\(FIXME\\|BUG\\|TODO\\|HACK\\)" 1
                              font-lock-warning-face t))))
 
 (add-hook 'prog-mode-hook #'malb/fixme-highlight)
