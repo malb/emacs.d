@@ -4136,10 +4136,18 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
   :ensure t
   :diminish beacon-mode
   :config (progn
+
+            (defun malb/beacon-disable-hl-line-mode ()
+              (bound-and-true-p hl-line-mode))
+
             (setq beacon-color "#EEAD0E")
+            (add-to-list 'beacon-dont-blink-major-modes 'eshell-mode)
+
+            (add-hook 'beacon-dont-blink-predicates
+                      #'malb/beacon-disable-hl-line-mode)
+
             (beacon-mode t)))
 #+END_SRC
-
 
 * ToDos
 ** TODO AucTeX
