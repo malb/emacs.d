@@ -3417,11 +3417,14 @@ directory to make multiple eshell windows easier."
                 (eshell-send-input)))
 
             (bind-key "C-!" #'malb/eshell-here)
-            (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
+
+            (defun malb/eshell-keys ()
+              (bind-key "<home>" #'eshell-bol eshell-mode-map)
+              (bind-key "M-l" #'helm-eshell-history eshell-mode-map))
+
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
-            (add-hook 'eshell-mode-hook ;; for some reason this needs to be a hook
-                      '(lambda ()
-                         (bind-key "<home>" #'eshell-bol eshell-mode-map)))
+            ;; for some reason this needs to be a hook
+            (add-hook 'eshell-mode-hook #'malb/eshell-keys)
 
 
             (setenv "PAGER" "cat") ;; https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org
