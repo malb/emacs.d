@@ -2385,6 +2385,16 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
             (add-hook 'python-mode-hook #'eldoc-mode)))
 #+END_SRC
 
+*** Pydoc
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-pydoc
+  :ensure t
+  :config (progn
+            (bind-key "C-c C-d" #'helm-pydoc python-mode-map)))
+#+END_SRC
+
+
 *** Docstrings
 **** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]]
 
