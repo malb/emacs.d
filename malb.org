@@ -637,8 +637,6 @@ The default ~C-x c~ is quite close to =C-x C-c=, which quits Emacs. Changed to =
 We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC= et al.).
 
 #+BEGIN_SRC emacs-lisp
-(require 'helm-config)
-
 (use-package helm
   :ensure helm
   :diminish helm-mode
@@ -647,7 +645,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
          ("C-x C-f" . helm-find-files)
          ("C-h <SPC>" . helm-all-mark-rings))
   :config (progn
-            (bind-key "C-c h" #'helm-command-prefix)
+         (require 'helm-config)
+         (bind-key "C-c h" #'helm-command-prefix)
             (unbind-key "C-x c")
 
             (setq helm-adaptive-mode t
