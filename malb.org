@@ -3691,7 +3691,12 @@ Use ~kill -pUSR1~ to kill Emacs. ([[https://github.com/wasamasa/dotemacs/blob/ma
 (define-key special-event-map (kbd "<sigusr1>") #'malb/quit-emacs-unconditionally)
 #+END_SRC
 
-** Functions
+Show key combos
+#+BEGIN_SRC emacs-lisp
+(setq echo-keystrokes 0.1)
+#+END_SRC
+
+* Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
 
