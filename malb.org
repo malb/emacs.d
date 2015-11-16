@@ -4001,7 +4001,7 @@ _<_ beginning of buffer _>_ end of buffer _m_: set mark _/_: jump to mark
 (malb/set-menu-key "a" #'helm-imenu-anywhere)
 (malb/set-menu-key "b" #'malb/helm-omni)
 (malb/set-menu-key "c" #'helm-calcul-expression)
-(malb/set-menu-key "C" #'compose-mail)
+(malb/set-menu-key "C" #'mu4e-compose-new)
 (malb/set-menu-key "e" #'malb/eshell-here)
 (malb/set-menu-key "f" #'helm-find-files)
 (malb/set-menu-key "g" #'malb/hydra-goto/body)
