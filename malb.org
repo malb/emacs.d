@@ -662,6 +662,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-input-idle-delay 0.01
                   helm-mode-fuzzy-match t
                   helm-org-headings-fontify t
+                  helm-quick-update t
                   helm-recentf-fuzzy-match t
                   helm-split-window-in-side-p t
                   helm-truncate-lines nil)
