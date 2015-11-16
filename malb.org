@@ -1795,9 +1795,21 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
               (bind-key key #'comint-previous-matching-input-from-input comint-mode-map))
             (dolist (key '("C-<down>" "M-<down>" "M-n"))
               (bind-key key #'comint-next-matching-input-from-input comint-mode-map))
+
+            (bind-key "M-r" #'helm-comint-input-ring comint-mode-map)
+
             (setq comint-scroll-to-bottom-on-input t  ; always insert at the bottom
                   comint-input-ignoredups t           ; no duplicates in command history
-                  )))
+                  comint-prompt-read-only t           ; don’t overwrite prompt
+                  )
+
+            (defun malb/kill-buffer-delete-window ()
+              (interactive)
+              (let ((kill-buffer-query-functions nil))
+                (kill-buffer)))
+
+            (bind-key "C-S-w" #'malb/kill-buffer-delete-window comint-mode-map)
+            ))
 #+END_SRC
 
 **** [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
