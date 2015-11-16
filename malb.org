@@ -1812,6 +1812,62 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
             ))
 #+END_SRC
 
+**** Comint History Across Sessions
+
+[[https://oleksandrmanzyuk.wordpress.com/2011/10/23/a-persistent-command-history-in-emacs/][source]]
+
+Directory where comint history will be stored
+
+  #+BEGIN_SRC emacs-lisp
+(defvar comint-history-dir (locate-user-emacs-file "comint-history"))
+
+(unless (file-exists-p comint-history-dir)
+  (make-directory comint-history-dir))
+  #+END_SRC
+
+Function to write comint history on exit
+
+  #+BEGIN_SRC emacs-lisp
+(defun comint-write-history-on-exit (process event)
+  (comint-write-input-ring)
+  (let ((buf (process-buffer process)))
+    (when (buffer-live-p buf)
+      (with-current-buffer buf
+        (insert (format "\nProcess %s %s" process event))))))
+  #+END_SRC
+
+Function to setup comint history
+
+  #+BEGIN_SRC emacs-lisp
+(defun turn-on-comint-history ()
+  (let ((process (get-buffer-process (current-buffer))))
+    (when process
+      (setq comint-input-ring-file-name
+            (expand-file-name (format "inferior-%s-history"
+                                      (process-name process))
+                              comint-history-dir))
+      (comint-read-input-ring t)
+      (add-hook 'kill-buffer-hook 'comint-write-input-ring t t)
+      (set-process-sentinel process
+                            #'comint-write-history-on-exit))))
+  #+END_SRC
+
+Setup comint history on comint start
+
+  #+BEGIN_SRC emacs-lisp
+(add-hook 'comint-mode-hook 'turn-on-comint-history)
+  #+END_SRC
+
+Save comint history when emacs is killed
+
+  #+BEGIN_SRC emacs-lisp
+(defun comint-write-input-ring-all-buffers ()
+  (mapc (lambda (buffer) (with-current-buffer buffer (comint-write-input-ring)))
+        (buffer-list)))
+
+(add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
+  #+END_SRC
+
 **** [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
 
 1. Open, say, *Sage*.
