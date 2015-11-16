@@ -1883,7 +1883,6 @@ Save comint history when emacs is killed
             ;; If you work with python scripts using iPython
             (add-hook 'isend-mode-hook #'isend-default-ipython-setup)))
 #+END_SRC
-
 *** Spell checking
 
 Enable spell checking in comments and documentation.
@@ -2484,7 +2483,6 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
   :config (progn
             (bind-key "C-c C-d" #'helm-pydoc python-mode-map)))
 #+END_SRC
-
 
 *** Docstrings
 **** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]]
