@@ -1677,6 +1677,9 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   mu4e-change-filenames-when-moving t)
 
             (add-to-list 'mu4e-bookmarks
+                         '("from:martinralbrecht@googlemail.com OR from:martin.albrecht@rhul.ac.uk" "Messages I sent" ?s))
+
+            (add-to-list 'mu4e-bookmarks
                          '("flag:unread NOT flag:trashed AND flag:list" "Unread bulk messages" ?l))
 
             (add-to-list 'mu4e-bookmarks
