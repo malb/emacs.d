@@ -2008,6 +2008,18 @@ Comments, as I mean, using [[https://github.com/remyferre/comment-dwim-2][commen
   :bind ("M-;" . comment-dwim-2))
 #+END_SRC
 
+Make links in comments and string clickable
+
+  #+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook #'goto-address-prog-mode)
+  #+END_SRC
+
+Make bug references in comments and string clickable
+
+  #+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+  #+END_SRC
+
 *** [[https://github.com/Bruce-Connor/aggressive-indent-mode][Aggressive indenting]]
 
 [[https://github.com/Malabarba/aggressive-indent-mode/raw/master/c-example.gif]] ([[https://github.com/Malabarba/aggressive-indent-mode/raw/master/c-example.gif][source]])
