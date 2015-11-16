@@ -1067,6 +1067,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-agenda-tags-column -117
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
+      org-agenda-default-appointment-duration 60
       org-agenda-skip-deadline-prewarning-if-scheduled t
       org-agenda-ignore-drawer-properties '(effort appt category)
       org-agenda-window-setup 'current-window  ; Overwrite the current window with the agenda
