@@ -3417,12 +3417,12 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (push ".snm" dired-latex-unclean-extensions)
             (push ".vrb" dired-latex-unclean-extensions)
 
-            (setq dired-garbage-files-regexp malb/unimportant-files)
-            (setq dired-omit-files malb/unimportant-files)
-
-            (setq dired-recursive-copies 'always)
-            (setq dired-recursive-deletes 'always)
-            (setq dired-dwim-target t)
+            (setq dired-garbage-files-regexp malb/unimportant-files
+                  dired-omit-files malb/unimportant-files
+                  dired-recursive-copies 'always
+                  dired-recursive-deletes 'always
+                  dired-dwim-target t
+                  dired-auto-revert-buffer t)
 
             ;; For the few times I’m using Dired, I prefer it not spawning an endless amount of
             ;; buffers. In fact, I’d prefer it using one buffer unless another one is explicitly
