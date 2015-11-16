@@ -1750,11 +1750,10 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                        ;; other replacements
                        (t name)))
                      (cleaned-name
-                      (replace-regexp-in-string "\\(.*\\), \\(.*\\)" "\\2 \\1" actual-name)))
+                      (replace-regexp-in-string "\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" actual-name)))
                 (list :name cleaned-name :mail mail)))
 
             (setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
-
 
             ;; PGP
             (setq mml2015-encrypt-to-self t)
