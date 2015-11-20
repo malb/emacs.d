@@ -3445,9 +3445,6 @@ them to a bib file.
             ))
 #+END_SRC
 
-
-
-
 *** [[https://github.com/politza/pdf-tools][Pdf tools]]
 
 A reasonable PDF viewer for Emacs
