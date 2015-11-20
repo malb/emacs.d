@@ -3430,6 +3430,24 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
             ))
 #+END_SRC
 
+*** Emacs Paper Online Search
+
+[[https://github.com/dimalik/empos][Emacs wrapper]] for [[https://github.com/dimalik/pyopl/][pyopl]] (python online paper locator) to search and fetch scientific citations online and add
+them to a bib file.
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package empos
+  :ensure t
+  :config (progn
+            (setq empos-available-engines '("arxiv" "crossref"))
+            (setq empos-bib-file (expand-file-name "common-latex/empos.bib" malb/projects-dir) )
+            ))
+#+END_SRC
+
+
+
+
 *** [[https://github.com/politza/pdf-tools][Pdf tools]]
 
 A reasonable PDF viewer for Emacs
