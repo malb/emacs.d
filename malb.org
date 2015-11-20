@@ -812,8 +812,8 @@ Helm interface to http://www.commandlinefu.com/.
   (helm-build-async-source "Baloo"
     :candidates-process #'helm-baloo-search
     :candidate-transformer #'helm-baloo-transform
-    :action '(("Open" . (lambda (x) (find-file x)
-                          )))))
+    :action '(("Open" . (lambda (x) (find-file x)))
+              ("Attach to E-Mail" . (lambda (x) (mml-attach-file x))))))
 
 (defun helm-baloo ()
   (interactive)
