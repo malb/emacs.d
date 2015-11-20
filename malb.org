@@ -1627,140 +1627,255 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 *** TODO Check out [[https://github.com/theanalyst/ix.el][ix]]
 * Email
 
-E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][Mu4e]].
+E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
 
-- to use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]
-- also allow =format=flowed= ([[https://github.com/djcb/mu/issues/569][source]])
-- render HTML e-mails in =eww= == =shr=
-- use =<TAB>= to preview messages and =q= to close previews.
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e
+  :config  (setq mu4e-sent-messages-behavior 'delete ; don't save message, Gmail takes care of this
+                 mu4e-headers-skip-duplicates t
+                 mu4e-use-fancy-chars t
+                 mu4e-view-show-images t
+                 message-kill-buffer-on-exit t
+                 mu4e-hide-index-messages t
+                 mu4e-auto-retrieve-keys t
+                 mu4e-compose-dont-reply-to-self t
+                 mu4e-split-view 'horizontal
+                 mu4e-headers-visible-columns 122
+                 mu4e-headers-visible-lines 16
+                 mu4e-change-filenames-when-moving t
+                 mu4e-confirm-quit nil))
+#+END_SRC
+
+Folders
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-maildir malb/mu4e-maildir
+      mu4e-drafts-folder "/[Google Mail]/.Drafts"
+      mu4e-sent-folder   "/[Google Mail]/.Sent Mail"
+      mu4e-trash-folder  "/[Google Mail]/.Bin")
+
+(setq mu4e-maildir-shortcuts
+      '(("/Inbox"                     . ?i)
+        ("/[Google Mail]/.Drafts"     . ?d)
+        ("/[Google Mail]/.Sent Mail"  . ?s)
+        ("/[Google Mail]/.Bin"        . ?t)))
+#+END_SRC
+
+Useful queries
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'mu4e-bookmarks
+             '("flag:unread NOT flag:trashed AND flag:list" "Unread bulk messages" ?l))
+(add-to-list 'mu4e-bookmarks
+             '("flag:unread NOT flag:trashed AND NOT flag:list" "Unread messages addressed to me" ?i))
+(add-to-list 'mu4e-bookmarks
+             '("mime:application/pdf"       "Messages with PDFs"     ?d) t)
+(add-to-list 'mu4e-bookmarks
+             '("flag:flagged" "Flagged messages"           ?f) t)
+#+END_SRC
+
+Allow for updating mail using =U= in the main view
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-get-mail-command "mbsync googlemail-default"
+      mu4e-update-interval 1200)
+#+END_SRC
+
+** Sending E-Mail
+
+Set =format=flowed= ([[https://github.com/djcb/mu/issues/569][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/compose-setup ()
   "Use hard newlines, so outgoing mails will have format=flowed."
   (use-hard-newlines t 'guess))
+#+END_SRC
 
+Set email width to 72 characters
+
+#+BEGIN_SRC emacs-lisp
 (defun malb/fill-column-72 ()
   (set-fill-column 72))
+#+END_SRC
 
-(use-package mu4e
-  :commands mu4e-compose-mode-hook
-  :config (progn
-            (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
-            (add-hook 'message-mode-hook #'flyspell-mode)
-            (add-hook 'message-mode-hook #'turn-on-orgstruct)
-            (add-hook 'message-mode-hook #'turn-on-orgstruct++)
-            (add-hook 'message-mode-hook #'turn-on-orgtbl)
-            (add-hook 'message-mode-hook #'typo-mode)
-            (add-hook 'message-mode-hook #'olivetti-mode)
+To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]].
 
-            (setq mu4e-maildir malb/mu4e-maildir
-                  mu4e-drafts-folder "/[Google Mail]/.Drafts"
-                  mu4e-sent-folder   "/[Google Mail]/.Sent Mail"
-                  mu4e-trash-folder  "/[Google Mail]/.Bin")
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
+(add-hook 'message-mode-hook #'flyspell-mode)
+(add-hook 'message-mode-hook #'turn-on-orgstruct)
+(add-hook 'message-mode-hook #'turn-on-orgstruct++)
+(add-hook 'message-mode-hook #'turn-on-orgtbl)
+(add-hook 'message-mode-hook #'typo-mode)
+(add-hook 'message-mode-hook #'olivetti-mode)
+#+END_SRC
 
-            (setq mu4e-maildir-shortcuts
-                  '(("/Inbox"                     . ?i)
-                    ("/[Google Mail]/.Drafts"     . ?d)
-                    ("/[Google Mail]/.Sent Mail"  . ?s)
-                    ("/[Google Mail]/.Bin"        . ?t)))
+#+BEGIN_SRC emacs-lisp
+;; https://github.com/iqbalansari/dotEmacs/blob/master/config/mail.org
+;; TODO: this means the header does not end
+;; (defun malb/strip-message-mode-problematic-text-props ()
+;;   (save-excursion
+;;     (goto-char (point-min))
+;;     (when (search-forward-regexp (concat "^" mail-heaqder-separator) nil t)
+;;       (remove-text-properties (match-beginning 0) (match-end 0) '(rear-nonsticky)))))
 
-            (setq mu4e-sent-messages-behavior 'delete ; don't save message, Gmail takes care of this
-                  mu4e-headers-skip-duplicates t
-                  mu4e-use-fancy-chars t
-                  mu4e-view-show-images t
-                  message-kill-buffer-on-exit t
-                  mu4e-hide-index-messages t
-                  mu4e-auto-retrieve-keys t
-                  mu4e-compose-dont-reply-to-self t
-                  mu4e-split-view 'horizontal
-                  mu4e-headers-visible-columns 122
-                  mu4e-headers-visible-lines 16
-                  mu4e-change-filenames-when-moving t)
+;; (add-hook 'message-mode-hook #'malb/strip-message-mode-problematic-text-props)
+;; (add-hook 'mu4e-compose-mode-hook #'malb/iqbal-strip-message-mode-problematic-text-props)
+#+END_SRC
 
-            (add-to-list 'mu4e-bookmarks
-                         '("from:martinralbrecht@googlemail.com OR from:martin.albrecht@rhul.ac.uk" "Messages I sent" ?s))
+My Uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
 
-            (add-to-list 'mu4e-bookmarks
-                         '("flag:unread NOT flag:trashed AND flag:list" "Unread bulk messages" ?l))
+#+BEGIN_SRC emacs-lisp
+;; fix contact names
+(defun malb/mu4e-contact-rewrite-function (contact)
+  (let* ((name (or (plist-get contact :name) ""))
+         (mail (plist-get contact :mail))
+         (actual-name
+          (cond
+           ((string= name "jonh smiht") "John Smith")
+           ;; other replacements
+           (t name)))
+         (cleaned-name
+          (replace-regexp-in-string "\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" actual-name)))
+    (list :name cleaned-name :mail mail)))
 
-            (add-to-list 'mu4e-bookmarks
-                         '("flag:unread NOT flag:trashed AND NOT flag:list" "Unread messages addressed to me" ?i))
+(setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
+#+END_SRC
 
+Useful in e-mail templates
 
-            (add-to-list 'mu4e-bookmarks
-                         '("mime:application/pdf"       "Messages with PDFs"     ?d) t)
+#+BEGIN_SRC emacs-lisp
+(defun malb/yas-get-first-name-from-to-field ()
+  (let ((rlt "NAME") str)
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^To: ")
+      (backward-char 4)
+      (setq str (buffer-substring-no-properties (point) (point-max))))
+    (if (string-match "^To: \\([^ ,]+\\)" str)
+        (setq rlt (match-string 1 str)))
+    (message "rlt=%s" rlt)
+    rlt))
+#+END_SRC
 
-            (add-to-list 'mu4e-bookmarks
-                         '("flag:flagged" "Flagged messages"           ?f) t)
+Don’t add an empty line when quoting e-mail ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
 
-            ;; use imagemagick, if available
-            (when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
+#+BEGIN_SRC emacs-lisp
+(defun malb/message-insert-citation-line ()
+  "Insert a simple citation line."
+  (when message-reply-headers
+    (newline)
+    (insert (mail-header-from message-reply-headers) " writes:")
+    (newline)))
 
-            (defun malb/render-html-message ()
-              (let ((dom (libxml-parse-html-region (point-min) (point-max))))
-                (erase-buffer)
-                (shr-insert-document dom)
-                (goto-char (point-min))))
-
-            (defun malb/preview-message ()
-              (interactive)
-              (mu4e-headers-view-message)
-              (sleep-for 0.05) ;; this is a HACK
-              (select-window (previous-window)))
-
-            (require 'mu4e-view)
-            (require 'mu4e-headers)
-
-            ;; based on (mu4e-select-other-view)
-            (defun malb/close-message-view ()
-              (interactive)
-              (let* ((other-buf mu4e~view-buffer)
-                     (other-win (and other-buf (get-buffer-window other-buf))))
-                (if (window-live-p other-win)
-                    (progn
-                      (select-window other-win)
-                      (sleep-for 0.05)
-                      (mu4e~view-quit-buffer))
-                  (mu4e~headers-quit-buffer))
-                ))
-
-            (bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
-            (bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
-            (bind-key "z" #'malb/close-message-view mu4e-headers-mode-map)
-
-            ;; allow for updating mail using 'U' in the main view:
-            (setq mu4e-get-mail-command "mbsync googlemail-default"
-                  mu4e-update-interval 1200
-                  mu4e-html2text-command #'malb/render-html-message)
-
-            (add-hook 'mu4e-view-mode-hook #'olivetti-mode)
-
-            (add-to-list 'mu4e-view-actions
-                         '("browser" . mu4e-action-view-in-browser) t)
-
-            (bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
-            (bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
+(setq message-citation-line-function #'malb/message-insert-citation-line)
+#+END_SRC
 
 
-            (defun malb/mu4e-contact-rewrite-function (contact)
-              (let* ((name (or (plist-get contact :name) ""))
-                     (mail (plist-get contact :mail))
-                     (actual-name
-                      (cond
-                       ((string= name "jonh smiht") "John Smith")
-                       ;; other replacements
-                       (t name)))
-                     (cleaned-name
-                      (replace-regexp-in-string "\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" actual-name)))
-                (list :name cleaned-name :mail mail)))
+** Viewing E-Mail
 
-            (setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
+Render HTML e-mails in =eww= = =shr=
 
-            ;; PGP
-            (setq mml2015-encrypt-to-self t)
-            (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
-            (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime))
-  (add-hook 'message-send-hook #'mml-secure-message-sign-pgpmime))
+#+BEGIN_SRC emacs-lisp
+;; use imagemagick, if available
+(when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
+
+(defun malb/render-html-message ()
+  (let ((dom (libxml-parse-html-region (point-min) (point-max))))
+    (erase-buffer)
+    (shr-insert-document dom)
+    (goto-char (point-min))))
+
+(setq mu4e-html2text-command #'malb/render-html-message)
+#+END_SRC
+
+Use =<TAB>= to preview messages and =q= to close previews.
+
+#+BEGIN_SRC emacs-lisp
+(require 'mu4e-view)
+(require 'mu4e-headers)
+
+(defun malb/preview-message ()
+  (interactive)
+  (mu4e-headers-view-message)
+  (sleep-for 0.05) ;; this is a HACK
+  (select-window (previous-window)))
+
+;; based on (mu4e-select-other-view)
+(defun malb/close-message-view ()
+  (interactive)
+  (let* ((other-buf mu4e~view-buffer)
+         (other-win (and other-buf (get-buffer-window other-buf))))
+    (if (window-live-p other-win)
+        (progn
+          (select-window other-win)
+          (sleep-for 0.05)
+          (mu4e~view-quit-buffer))
+      (mu4e~headers-quit-buffer))
+    ))
+
+(bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
+(bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
+(bind-key "z" #'malb/close-message-view mu4e-headers-mode-map)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-headers-fields '((:human-date . 12)
+                            (:flags . 6)
+                            (:mailing-list . 22)
+                            (:from . 32)
+                            (:subject)))
+#+END_SRC
+
+View emails with width restriction (110 so that HTML crap doesn’t break too easily either)
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-view-mode-hook ()
+  (setq olivetti-body-width 110)
+  (olivetti-mode))
+
+(add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'mu4e-view-actions
+             '("browser" . mu4e-action-view-in-browser) t)
+
+(bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
+(bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
+#+END_SRC
+
+** Dedicated E-mail Frame
+
+Create a new mu4e session in a new frame.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mail ()
+  (interactive)
+  (select-frame (make-frame-command))
+  (toggle-frame-maximized)
+  (set-frame-size (selected-frame) 200 64)
+  (mu4e))
+#+END_SRC
+
+Kill mu4e frame.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-quit-session ()
+  (interactive)
+  (kill-buffer)
+  (delete-frame))
+
+(bind-key "Q" #'malb/mu4e-quit-session mu4e-main-mode-map)
+#+END_SRC
+
+** PGP
+
+#+BEGIN_SRC emacs-lisp
+(setq mml2015-encrypt-to-self t)
+(define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
+(define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
+(add-hook 'message-send-hook #'mml-secure-message-sign-pgpmime)
 #+END_SRC
 
 ** Org-mu4e
