@@ -3414,7 +3414,8 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
             (setq helm-bibtex-bibliography (list (expand-file-name "crypto_crossref.bib" malb/crypto-bib)
                                                  (expand-file-name "abbrev3.bib" malb/crypto-bib)
                                                  (expand-file-name "rfc.bib" malb/common-latex)
-                                                 (expand-file-name "jacm.bib" malb/common-latex))
+                                                 (expand-file-name "jacm.bib" malb/common-latex)
+                                                 (expand-file-name "local.bib" malb/common-latex))
                   helm-bibtex-library-path malb/literature-dir
                   helm-bibtex-notes-path malb/literature-notes-dir)
 
