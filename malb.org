@@ -833,7 +833,8 @@ Don’t include boring or remote stuff in list of recently visited files.
                                    "/tmp/"
                                    "/ssh:"
                                    "/sudo:"
-                                   "/scp:")))
+                                   "/scp:"
+                                   malb/mu4e-maildir)))
 #+END_SRC
 
 * IMenu
