@@ -1533,6 +1533,7 @@ I've notice that while I really like taking notes in a meeting, I don't always l
 *** Style
 
 -In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =verbatim=, and ~code~. But this breaks if the character just inside the styling code is a non-smart single or double quote. =C-c ;= is styled; =C-c '= is not. We can fix that by inserting a zero-width space between the apostrophe and the = . The first time, we can put the cursor between the apostrophe and the = and enter ~C-x 8 RET ZERO WIDTH SPACE RET~, at which point =C-c '​= will display correctly.
+
 * Git
 ** [[http://magit.vc][Magit]]
 
