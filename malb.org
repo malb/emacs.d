@@ -3003,6 +3003,24 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to ~expand-r
   :ensure t
   :bind ("C-`" . er/expand-region))
 #+END_SRC
+
+* Blogging
+
+#+BEGIN_SRC emacs-lisp
+(use-package org2blog
+  :ensure t
+  :config (progn
+            (let (credentials)
+              (setq credentials (auth-source-user-and-password "martinralbrecht.wordpress.com"))
+              (setq org2blog/wp-blog-alist
+                    `(("martinralbrecht"
+                       :url "https://martinralbrecht.wordpress.com/xmlrpc.php"
+                       :username ,(car credentials)
+                       :password ,(cadr credentials)))))
+            (setq org2blog/wp-use-sourcecode-shortcode t
+                  org2blog/wp-show-post-in-browser 'show)))
+#+END_SRC
+
 * Prose
 ** General
 *** Tab completion
