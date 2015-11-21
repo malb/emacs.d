@@ -1639,6 +1639,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-hide-index-messages t
                  mu4e-auto-retrieve-keys t
                  mu4e-compose-dont-reply-to-self t
+                 mu4e-compose-in-new-frame t
                  mu4e-split-view 'horizontal
                  mu4e-headers-visible-columns 122
                  mu4e-headers-visible-lines 16
@@ -1698,10 +1699,19 @@ Set email width to 72 characters
   (set-fill-column 72))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-compose-frame ()
+  (toggle-frame-maximized)
+  (set-frame-size (selected-frame) 80 80)
+)
+#+END_SRC
+
+
 To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]].
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
+(add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
 (add-hook 'message-mode-hook #'flyspell-mode)
 (add-hook 'message-mode-hook #'turn-on-orgstruct)
 (add-hook 'message-mode-hook #'turn-on-orgstruct++)
