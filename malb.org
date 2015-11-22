@@ -2596,7 +2596,8 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
   :ensure t
   :diminish anaconda-mode
   :config (progn
-            (bind-key "M-," #'anaconda-nav-pop-marker anaconda-mode-map)
+            (bind-key "M-," #'anaconda-mode-go-back anaconda-mode-map)
+            (bind-key "M-*" #'anaconda-mode-find-assignments anaconda-mode-map)
 
             (add-hook 'python-mode-hook #'anaconda-mode)
             (add-hook 'python-mode-hook #'eldoc-mode)))
