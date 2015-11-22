@@ -2586,19 +2586,21 @@ It makes sense to [[https://github.com/antonj/Highlight-Indentation-for-Emacs/][
 
 Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-completion and stuff, it runs [[https://github.com/tkf/emacs-jedi][jedi]] for us. In particular it offers:
 
-- ~M-.~ Goto definition for thing at point.
-- ~M-,​~ Switch to buffer of most recent marker.
-- ~M-?~ Show documentation for context at point.
-- ~M-r~ Show usage for thing at point.
+|---------+----------------------------------|
+| ~C-M-i~ | =anaconda-mode-complete=         |
+| ~M-.~   | =anaconda-mode-find-definitions= |
+| ~M-,​~   | =anaconda-mode-find-assignments= |
+| ~M-r~   | =anaconda-mode-find-references=  |
+| ~M-*~   | =anaconda-mode-go-back=          |
+| ~M-?~   | =anaconda-mode-show-doc=         |
+|---------+----------------------------------|
+
 
 #+BEGIN_SRC emacs-lisp
 (use-package anaconda-mode
   :ensure t
   :diminish anaconda-mode
   :config (progn
-            (bind-key "M-," #'anaconda-mode-go-back anaconda-mode-map)
-            (bind-key "M-*" #'anaconda-mode-find-assignments anaconda-mode-map)
-
             (add-hook 'python-mode-hook #'anaconda-mode)
             (add-hook 'python-mode-hook #'eldoc-mode)))
 #+END_SRC
@@ -4446,7 +4448,8 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 
 - You can scroll the other window with ~C-M-v~ and ~C-M-S-v~.
 - =C-x SPC= rectangle-mark-mode
-- =C-x C-SPC= jump back
+- =C-u C-SPC= jump back locally
+- =C-x C-SPC= jump back globally
 - =C-x z= repeat last command (and again with just =z=)
 - =align-regexp= to align on regexp
 - =C-c == reftex-toc
@@ -4458,6 +4461,7 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 - =C-x 4 C-o= (~display-buffer~) opens another window, but instead if showing the same buffer, shows another one, the name of which is read from the minibuffer. Note that the newly opened window does not get selected!
 - =C-x 4 0= (~kill-buffer-and-window~), which not only deletes the current window (like ~C-x 0~), but also kills its buffer.
 - ~C-x 4 c~ (~clone-indirect-buffer-other-window~) splits the current window, clones the current buffer and visits the clone in the newly opened window.
+- =C-x <left>= and =C-x <right>= cycle through buffers
 
 ** TRAMP syntax
 
