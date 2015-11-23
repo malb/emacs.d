@@ -184,7 +184,7 @@ When splitting windows open the previous buffer in it.
                     (when (and (not done)
                                (not (eyebrowse--window-config-present-p j)))
                       (eyebrowse-switch-to-window-config j)
-                      (eyebrowse-rename-window-config j)
+                      (call-interactively 'eyebrowse-rename-window-config j)
                       (setq done t)
                       ))
                   )))
