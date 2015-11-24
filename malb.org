@@ -1737,7 +1737,6 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 My Uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
 
 #+BEGIN_SRC emacs-lisp
-;; fix contact names
 (defun malb/mu4e-contact-rewrite-function (contact)
   (let* ((name (or (plist-get contact :name) ""))
          (mail (plist-get contact :mail))
