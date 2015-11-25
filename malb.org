@@ -3466,20 +3466,18 @@ path of the first matching PDF is returned."
             ))
 #+END_SRC
 
-*** Emacs Paper Online Search
+*** Load BibTeX from Google Scholar et al.
 
-[[https://github.com/dimalik/empos][Emacs wrapper]] for [[https://github.com/dimalik/pyopl/][pyopl]] (python online paper locator) to search and fetch scientific citations online and add
-them to a bib file.
+[[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX from … Google Scholar.
 
 #+BEGIN_SRC emacs-lisp
-
-(use-package empos
+(use-package gscholar-bibtex
   :ensure t
-  :config (progn
-            (setq empos-available-engines '("arxiv" "crossref"))
-            (setq empos-bib-file (expand-file-name "common-latex/empos.bib" malb/projects-dir) )
+  :init (progn
+            (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))
             ))
 #+END_SRC
+
 
 *** [[https://github.com/politza/pdf-tools][Pdf tools]]
 
