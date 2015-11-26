@@ -397,7 +397,8 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
             (setq avy-background t)))
 #+END_SRC
 
-** [[https://github.com/abo-abo/ace-link][Jumping to links]]
+
+** Jumping to links
 
 #+BEGIN_QUOTE
 Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or =org-mode= or
