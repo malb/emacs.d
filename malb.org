@@ -1718,6 +1718,7 @@ Set email width to 72 characters
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-compose-frame ()
   (toggle-frame-maximized)
+  (sleep-for 0.25) ;; this is a HACK
   (set-frame-size (selected-frame) 80 80)
 )
 #+END_SRC
@@ -1838,7 +1839,7 @@ Use =<TAB>= to preview messages and =q= to close previews.
 (defun malb/preview-message ()
   (interactive)
   (mu4e-headers-view-message)
-  (sleep-for 0.05) ;; this is a HACK
+  (sleep-for 0.1) ;; this is a HACK
   (select-window (previous-window)))
 
 ;; based on (mu4e-select-other-view)
@@ -1849,7 +1850,7 @@ Use =<TAB>= to preview messages and =q= to close previews.
     (if (window-live-p other-win)
         (progn
           (select-window other-win)
-          (sleep-for 0.05)
+          (sleep-for 0.1)
           (mu4e~view-quit-buffer))
       (mu4e~headers-quit-buffer))
     ))
@@ -1894,6 +1895,7 @@ Create a new mu4e session in a new frame.
   (interactive)
   (select-frame (make-frame-command))
   (toggle-frame-maximized)
+  (sleep-for 0.1) ;; this is a HACK
   (set-frame-size (selected-frame) 200 64)
   (mu4e))
 #+END_SRC
