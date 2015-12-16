@@ -4470,6 +4470,14 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 - [[https://github.com/rexim/org-cliplink][org-cliplink]] - insert URL’s with titles
 - [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-screen.html][org-babel-screen]] - interactive shells and org-mode
 * Notes
+** Stuck Emacs
+
+#+BEGIN_QUOTE
+If your instance hangs and won't respond to =C-g=, you can use =pkill -SIGUSR2 emacs= to force emacs to stop whatever it's doing.
+#+END_QUOTE
+
+([[http://irreal.org/blog/?p=4763][source]])
+
 ** Compile .emacs
 
 #+BEGIN_SRC emacs-lisp :tangle no
