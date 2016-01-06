@@ -1925,7 +1925,9 @@ Kill mu4e frame.
 Link to mu4e messages and threads.
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-mu4e)
+(use-package org-mu4e
+  :config (setq org-mu4e-link-query-in-headers-mode nil
+                ))
 #+END_SRC
 
 ** [[https://github.com/emacs-helm/helm-mu][Helm-mu]]
