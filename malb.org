@@ -4522,6 +4522,12 @@ Directory variables are evaluated after the mode has been set, so you can actual
 
 And Emacs will change the mode to ~c++-mode~ whenever it had initially set it to ~c-mode~.
 
+** Macros ([[https://github.com/howardabrams/pdx-emacs-hackers/blob/master/workshops/keyboard-macros.org][source]])
+
+- =C-x C-k= prefix for macro actions
+- =C-x C-k C-c= sets a counter value, =F3= inserts a counter value when defining a macro
+- =C-x C-k C-e= to edit macros
+
 * Technical Artefacts
 
 # Local Variables:
