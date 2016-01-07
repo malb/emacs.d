@@ -22,7 +22,7 @@ We assume that the following variables are defined:
 - ~malb/common-file-targets~ - for helm
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/sage-executable~ - full path of Sage executable
-- ~malb/mu4e-maildirs-custom-list~ a list of maildirs to highlight in mu4e
+- ~malb/malb/mu4e-name-replacements~ - e-mail name replacements
 
 * Package Management
 
@@ -1755,15 +1755,11 @@ My Uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-contact-rewrite-function (contact)
   (let* ((name (or (plist-get contact :name) ""))
-         (mail (plist-get contact :mail))
-         (actual-name
-          (cond
-           ((string= name "jonh smiht") "John Smith")
-           ;; other replacements
-           (t name)))
-         (cleaned-name
-          (replace-regexp-in-string "\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" actual-name)))
-    (list :name cleaned-name :mail mail)))
+         (mail (plist-get contact :mail)))
+    (progn
+      (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
+      (setq name (replace-regexp-in-string "\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
+      (list :name name :mail mail))))
 
 (setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
 #+END_SRC
@@ -1784,6 +1780,29 @@ Useful in e-mail templates
           (setq rlt (match-string 1 fixed-str)))
       (message "rlt=%s" rlt)
       rlt)))
+
+(defun malb/yas-get-names-from-to-fields ()
+  (interactive)
+  (let (names
+        name
+        point-end-of-line)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^To: " nil t)
+        (save-excursion
+          (setq point-end-of-line (re-search-forward "$")))
+        (setq name (buffer-substring-no-properties (point) point-end-of-line))
+        (setq name (replace-regexp-in-string "\"\\(.*\\), \\([^ ]+\\)\".*" "\\2 \\1" name))
+        (setq name (replace-regexp-in-string "\\(.*\\) [^ ]+@.*" "\\1" name))
+        (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
+        (if (string-match "\\([^ ,]+\\)" name)
+            (progn
+              (setq name (match-string 1 name))
+              (if names
+                  (setq names (concat names ", " name))
+                (setq names name))
+              (message "names: %s" names))))
+      (if names names "there"))))
 #+END_SRC
 
 Don’t add an empty line when quoting e-mail ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
