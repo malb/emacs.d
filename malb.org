@@ -1647,8 +1647,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e
-  :config  (setq mu4e-sent-messages-behavior 'delete ; don't save message, Gmail takes care of this
-                 mu4e-headers-skip-duplicates t
+  :config  (setq mu4e-headers-skip-duplicates t
                  mu4e-use-fancy-chars t
                  mu4e-view-show-images t
                  message-kill-buffer-on-exit t
@@ -1661,6 +1660,31 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-headers-visible-lines 16
                  mu4e-change-filenames-when-moving t
                  mu4e-confirm-quit nil))
+#+END_SRC
+
+Accounts ([[http://www.djcbsoftware.nl/code/mu/mu4e/Multiple-accounts.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-set-account ()
+  "Set the account for composing a message."
+  (let* ((accounts (mapcar #'car malb/mu4e-account-alist))
+         (account
+          (or (and mu4e-compose-parent-message
+                   (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                     (string-match "/\\(.*?\\)/" maildir)
+                     (car (member (match-string 1 maildir) accounts))))
+              (completing-read (format "Compose with account: (%s) "
+                                       (mapconcat #'identity accounts "/"))
+                               accounts
+                               nil t nil nil (car accounts))))
+         (account-vars (cdr (assoc account malb/mu4e-account-alist))))
+    (if account-vars
+        (mapc #'(lambda (var)
+                  (set (car var) (cadr var)))
+              account-vars)
+      (error "No email account found"))))
+
+(add-hook 'mu4e-compose-pre-hook 'malb/mu4e-set-account)
 #+END_SRC
 
 Folders
