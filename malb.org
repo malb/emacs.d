@@ -1075,7 +1075,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-log-into-drawer t
       org-log-done t
       org-highlight-latex-and-related '(latex)
-      org-return-follows-link t          ; follow links by pressing ENTER on them
+      org-return-follows-link nil             ; don’t follow links by pressing ENTER on them
       org-clock-persist 'history
       org-special-ctrl-a/e t                   ; special begin/end of line to skip starts …
       org-special-ctrl-k t                     ; special keys for killing a headline
