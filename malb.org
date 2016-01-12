@@ -2622,6 +2622,15 @@ and move to the source code that caused it."
   (compilation-start command t))
 #+END_SRC
 
+*** Clang Format
+
+#+BEGIN_SRC emacs-lisp
+(use-package clang-format
+  :ensure t
+  )
+#+END_SRC
+
+
 ** Python
 
 We use the “onetwo” style to fill docstrings in Python, i.e.:
