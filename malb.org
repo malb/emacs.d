@@ -2630,7 +2630,6 @@ and move to the source code that caused it."
   )
 #+END_SRC
 
-
 ** Python
 
 We use the “onetwo” style to fill docstrings in Python, i.e.:
@@ -2731,28 +2730,6 @@ Manually fixed bugs:
   :diminish python-docstring-mode
   :config (progn
             (add-hook 'python-mode-hook #'python-docstring-mode)))
-#+END_SRC
-
-**** COMMENT MMM mode for ReST in Python
-
-Disabled for now in favour of ~python-docstring-mode~.
-
-#+BEGIN_SRC emacs-lisp
-(use-package mmm-mode
-  :ensure t
-  :init (progn
-          (setq mmm-global-mode nil))   ; mmm mode can be slow, so we don't enable it by default
-  :config  (progn (mmm-add-classes
-                   '((python-rst
-                      :submode rst-mode
-                      :front "^ *[ru]?\"\"\"[^\"]*$"
-                      :back "^ *\"\"\""
-                      :include-front t
-                      :include-back t
-                      :end-not-begin t)))
-                  (mmm-add-mode-ext-class 'python-mode nil 'python-rst)
-                  (mmm-add-mode-ext-class 'sage-shell:sage-mode nil 'python-rst)
-                  ))
 #+END_SRC
 
 **** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx-doc]]
