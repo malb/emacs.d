@@ -1815,7 +1815,7 @@ Useful in e-mail templates
       (backward-char 4)
       (setq str (buffer-substring-no-properties (point) (point-max))))
     (let ((fixed-str
-           (replace-regexp-in-string "^To: \"\\(.*\\), \\([^ ]+\\)\".*" "To: \\2 \\1" str)))
+           (replace-regexp-in-string "^To: \"\\(.*\\), \\([^ ]+\\).*\".*" "To: \\2 \\1" str)))
       (if (string-match "^To: \\([^ ,]+\\)" fixed-str)
           (setq rlt (match-string 1 fixed-str)))
       (setq rlt (capitalize rlt))
@@ -1833,7 +1833,7 @@ Useful in e-mail templates
         (save-excursion
           (setq point-end-of-line (re-search-forward "$")))
         (setq name (buffer-substring-no-properties (point) point-end-of-line))
-        (setq name (replace-regexp-in-string "\"\\(.*\\), \\([^ ]+\\)\".*" "\\2 \\1" name))
+        (setq name (replace-regexp-in-string "\"\\(.*\\), \\([^ ]+\\).*\".*" "\\2 \\1" name))
         (setq name (replace-regexp-in-string "\\(.*\\) [^ ]+@.*" "\\1" name))
         (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
         (if (string-match "\\([^ ,]+\\)" name)
