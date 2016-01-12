@@ -1685,9 +1685,10 @@ Accounts ([[http://www.djcbsoftware.nl/code/mu/mu4e/Multiple-accounts.html][sour
   (let* ((accounts (mapcar #'car malb/mu4e-account-alist))
          (account
           (or (and mu4e-compose-parent-message
-                   (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-                     (string-match "/\\(.*?\\)/" maildir)
-                     (car (member (match-string 1 maildir) accounts))))
+                   (let ((to-field (mu4e-message-field mu4e-compose-parent-message :to)))
+                     (setq to-field (cdr (car to-field)))
+                     (message "%s" to-field)
+                     (car (member to-field accounts))))
               (completing-read (format "Compose with account: (%s) "
                                        (mapconcat #'identity accounts "/"))
                                accounts
