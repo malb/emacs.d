@@ -2811,6 +2811,7 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             (bind-key "C-<down>" #'comint-next-matching-input-from-input sage-shell-mode-map)
             (bind-key "M-p" #'comint-previous-matching-input-from-input sage-shell-mode-map)
             (bind-key "M-n" #'comint-next-matching-input-from-input sage-shell-mode-map)
+            (bind-key "C-<return>" #'auto-complete sage-shell:sage-mode-map)
             ))
 #+END_SRC
 
