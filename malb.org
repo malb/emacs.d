@@ -3447,6 +3447,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
+
             (setq TeX-view-program-selection '(((output-dvi style-pstricks) "dvips and gv")
                                                (output-dvi "Okular")
                                                (output-pdf "Emacs")
@@ -3455,12 +3456,28 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (defun malb/latex-add-environments ()
               (LaTeX-add-environments
                '("lemma" LaTeX-env-label)
-               '("theorem" LaTeX-env-label)))
+               '("theorem" LaTeX-env-label)
+               '("algorithm" LaTeX-env-label)
+               '("corollary" LaTeX-env-label)
+               '("definition" LaTeX-env-label)
+               '("example" LaTeX-env-label)
+               '("proposition" LaTeX-env-label)
+               ))
+
+            (setq reftex-section-levels '(("part" . 0)
+                                          ("chapter" . 1)
+                                          ("section" . 2)
+                                          ("subsection" . 3)
+                                          ("subsubsection" . 4)
+                                          ("frametitle" . 5)
+                                          ("paragraph" . 6)
+                                          ("subparagraph" . 7)
+                                          ("addchap" . -1)
+                                          ("addsec" . -2)))
 
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
 
             (bind-key "C-<tab>" #'TeX-fold-dwim LaTeX-mode-map)
-
 
             ;; http://endlessparentheses.com/improving-latex-equations-with-font-lock.html
             (defface malb/unimportant-latex-face
@@ -3476,13 +3493,14 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                 0 'malb/unimportant-latex-face prepend))
              'end)
 
-            (setq TeX-auto-save t)
-            (setq TeX-parse-self t)
+            (setq TeX-auto-save t
+                  TeX-parse-self t
+                  reftex-plug-into-AUCTeX t
+                  TeX-PDF-mode t
+                  TeX-source-correlate-mode 1
+                  TeX-save-query nil)
+
             (setq-default TeX-master nil)
-            (setq reftex-plug-into-AUCTeX t)
-            (setq TeX-PDF-mode t)
-            (setq TeX-source-correlate-mode 1)
-            (setq TeX-save-query nil)
             (setq-default TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
 
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
