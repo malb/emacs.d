@@ -2747,6 +2747,14 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
          ("\\.pxi\\'"  . cython-mode)))
 #+END_SRC
 
+*** AutoPEP8
+
+#+BEGIN_SRC emacs-lisp
+(use-package py-autopep8
+  :ensure t
+  :config (progn
+            (setq py-autopep8-options '("--max-line-length=100"))))
+#+END_SRC
 *** Sage
 
 Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top. However, we usually don’t do that but use python-mode directly. For this, our setup is as follows.
