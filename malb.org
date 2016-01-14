@@ -2803,7 +2803,7 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             (add-hook 'sage-shell-mode-hook #'auto-complete-mode)
             (add-hook 'sage-shell-mode-hook #'eldoc-mode)
 
-            (setq sage-shell:input-history-cache-file (concat user-emacs-directory ".sage_shell_input_history")
+            (setq sage-shell:input-history-cache-file (concat user-emacs-directory "sage_shell_input_history")
                   sage-shell:sage-executable malb/sage-executable
                   ac-sage-show-quick-help t)
 
