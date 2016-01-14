@@ -1455,17 +1455,9 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
                   ("r" "respond ro e-mail (mu4e)"
                    entry (file+headline malb/inbox-org "Email")
-                   "* REPLY to %:from on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
-                   :immediate-finish nil
+                   "* REPLY to [[mailto%:fromaddress][%:fromname]] on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
+                   :immediate-finish t
                    :prepend t)
-
-                  ("n" "note"
-                   entry (file+headline malb/private-org "Notes" :prepend t)
-                   "* %?\n  %i")
-
-                  ("m" "music"
-                   entry (file+headline malb/private-org "Music")
-                   "* %?\n  %i")
 
                   ("j" "journal entry"
                    entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
