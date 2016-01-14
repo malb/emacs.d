@@ -1990,9 +1990,9 @@ Link to mu4e messages and threads.
                 ))
 #+END_SRC
 
-** [[https://github.com/emacs-helm/helm-mu][Helm-mu]]
+** Search
 
-Use =helm-mu= as default search for mu4e.
+Search Mu with [[https://github.com/emacs-helm/helm-mu][Helm-Mu]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-mu
