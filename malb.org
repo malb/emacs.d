@@ -1461,10 +1461,15 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                    :immediate-finish t
                    :prepend t)
 
+                  ("f" "file e-mail (mu4e)"
+                   entry (file+headline malb/inbox-org "Email")
+                   "* %a by [[mailto%:fromaddress][%:fromname]]\n%U\n\n%i%?\n"
+                   :immediate-finish nil
+                   :prepend nil)
+
                   ("j" "journal entry"
                    entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
                    "** research\n%?\n** critique\n\n"))))
-
 #+END_SRC
 
 ** Meeting Notes
