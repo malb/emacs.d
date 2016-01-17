@@ -1460,7 +1460,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
                   ("r" "respond ro e-mail (mu4e)"
                    entry (file+headline malb/inbox-org "Email")
-                   "* REPLY to [[mailto%:fromaddress][%:fromname]] on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
+                   "* REPLY to [[mailto:%:fromaddress][%:fromname]] on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
                    :immediate-finish t
                    :prepend t)
 
