@@ -1893,15 +1893,11 @@ Render HTML e-mails in =eww= = =shr=
 
 #+BEGIN_SRC emacs-lisp
 ;; use imagemagick, if available
-(when (fboundp 'imagemagick-register-types) (imagemagick-register-types))
+(when (fboundp 'imagemagick-register-types)
+  (imagemagick-register-types))
 
-(defun malb/render-html-message ()
-  (let ((dom (libxml-parse-html-region (point-min) (point-max))))
-    (erase-buffer)
-    (shr-insert-document dom)
-    (goto-char (point-min))))
-
-(setq mu4e-html2text-command #'malb/render-html-message)
+(use-package mu4e-contrib
+  :config (setq mu4e-html2text-command 'mu4e-shr2text))
 #+END_SRC
 
 Use =<TAB>= to preview messages and =q= to close previews.
