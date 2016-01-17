@@ -1723,14 +1723,25 @@ Folders
 Useful queries
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'mu4e-bookmarks
-             '("flag:unread NOT flag:trashed AND flag:list" "Unread bulk messages" ?l))
-(add-to-list 'mu4e-bookmarks
-             '("flag:unread NOT flag:trashed AND NOT flag:list AND (maildir:'/royal holloway' OR maildir:/INBOX)" "Unread messages addressed to me" ?i))
-(add-to-list 'mu4e-bookmarks
-             '("mime:'application/*' AND NOT mime:'application/pgp*' AND (maildir:'/royal holloway' OR maildir:/INBOX)" "Messages with attachments for me."     ?d) t)
-(add-to-list 'mu4e-bookmarks
-             '("flag:flagged" "Flagged messages"           ?d) t)
+(add-to-list
+ 'mu4e-bookmarks
+ '("flag:unread NOT flag:trashed AND flag:list"
+   "Unread bulk messages" ?l))
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("flag:unread NOT flag:trashed AND NOT flag:list AND (maildir:'/royal holloway' OR maildir:/INBOX)"
+   "Unread messages addressed to me" ?i))
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("mime:'application/*' AND NOT mime:'application/pgp*' AND (maildir:'/royal holloway' OR maildir:/INBOX)"
+   "Messages with attachments for me."     ?d) t)
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("flag:flagged"
+   "Flagged messages"           ?d) t)
 #+END_SRC
 
 Allow for updating mail using =U= in the main view
