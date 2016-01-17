@@ -365,6 +365,20 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 (setq compilation-scroll-output 'first-error)
 #+END_SRC
 
+** Switching Buffers
+
+([[http://www.emacswiki.org/emacs/SwitchingBuffers#toc4][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/switch-to-previous-buffer ()
+  "Switch to previously open buffer.
+Repeated invocations toggle between the two most recently open buffers."
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+
+(key-chord-define-global "jj" #'malb/switch-to-previous-buffer)
+#+END_SRC
+
 * Clean Mode Line
 
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
@@ -1396,6 +1410,15 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
                            ("\\subsection{%s}" . "\\subsection*{%s}")
                            ("\\paragraph{%s}" . "\\paragraph*{%s}")
                            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
+#+END_SRC
+
+*** ODT
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-odt
+  :init (progn
+          (setq org-odt-styles-file (expand-file-name "org-export-template.odt" user-emacs-directory))
+          ))
 #+END_SRC
 
 ** Capture
