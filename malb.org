@@ -2809,6 +2809,24 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
   :config (progn
             (setq py-autopep8-options '("--max-line-length=100"))))
 #+END_SRC
+
+*** ElPy
+
+#+BEGIN_QUOTE
+[[https://github.com/jorgenschaefer/elpy][Elpy]] is an Emacs package to bring powerful Python editing to Emacs. It combines a number of other packages, both written in Emacs Lisp as well as Python.
+#+END_QUOTE
+
+Elpy is quite opinionated and we don’t necessarily share all those opinions. Hence, we only enable a small subset, like =elpy-importmagic-fixup=
+
+#+BEGIN_SRC emacs-lisp
+(use-package elpy
+  :ensure t
+  :config (progn
+            (setq elpy-modules '(elpy-module-sane-defaults
+                                 elpy-module-yasnippet))
+            (elpy-enable)))
+#+END_SRC
+
 *** Sage
 
 Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top. However, we usually don’t do that but use python-mode directly. For this, our setup is as follows.
