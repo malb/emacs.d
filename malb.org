@@ -247,6 +247,18 @@ Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered
          ("<f2> <down>" . windmove-down)))
 #+END_SRC
 
+Quickly jump back and forth ([[http://www.emacswiki.org/emacs/SwitchingBuffers#toc4][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/switch-to-previous-buffer ()
+  "Switch to previously open buffer.
+Repeated invocations toggle between the two most recently open buffers."
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+
+(key-chord-define-global "jj" #'malb/switch-to-previous-buffer)
+#+END_SRC
+
 ** Resizing
 *** Manual
 
@@ -363,20 +375,6 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 #+BEGIN_SRC emacs-lisp
 (setq compilation-scroll-output 'first-error)
-#+END_SRC
-
-** Switching Buffers
-
-([[http://www.emacswiki.org/emacs/SwitchingBuffers#toc4][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/switch-to-previous-buffer ()
-  "Switch to previously open buffer.
-Repeated invocations toggle between the two most recently open buffers."
-  (interactive)
-  (switch-to-buffer (other-buffer (current-buffer) 1)))
-
-(key-chord-define-global "jj" #'malb/switch-to-previous-buffer)
 #+END_SRC
 
 * Clean Mode Line
