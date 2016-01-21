@@ -3568,7 +3568,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-parse-self t
                   reftex-plug-into-AUCTeX t
                   TeX-PDF-mode t
-                  TeX-source-correlate-mode 1
+                  TeX-source-correlate-mode t
                   TeX-save-query nil)
 
             (setq-default TeX-master nil)
