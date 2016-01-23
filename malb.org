@@ -1760,7 +1760,7 @@ Useful queries
 #+BEGIN_SRC emacs-lisp
 (add-to-list
  'mu4e-bookmarks
- '("flag:unread NOT flag:trashed AND flag:list"
+ '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)"
    "Unread bulk messages" ?l))
 
 (add-to-list
@@ -1771,12 +1771,13 @@ Useful queries
 (add-to-list
  'mu4e-bookmarks
  '("mime:'application/*' AND NOT mime:'application/pgp*' AND (maildir:'/royal holloway' OR maildir:/INBOX)"
-   "Messages with attachments for me."     ?d) t)
+   "Messages with attachments for me." ?d) t)
 
 (add-to-list
  'mu4e-bookmarks
  '("flag:flagged"
-   "Flagged messages"           ?d) t)
+   "Flagged messages" ?f) t)
+
 #+END_SRC
 
 Allow for updating mail using =U= in the main view
