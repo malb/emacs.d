@@ -1856,29 +1856,16 @@ My Uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
 Useful in e-mail templates
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/yas-get-first-name-from-to-field ()
-  (let ((rlt "NAME") str)
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^To: ")
-      (backward-char 4)
-      (setq str (buffer-substring-no-properties (point) (point-max))))
-    (let ((fixed-str
-           (replace-regexp-in-string "^To: \"\\(.*\\), \\([^ ]+\\).*\".*" "To: \\2 \\1" str)))
-      (if (string-match "^To: \\([^ ,]+\\)" fixed-str)
-          (setq rlt (match-string 1 fixed-str)))
-      (setq rlt (capitalize rlt))
-      (message "rlt=%s" rlt)
-      rlt)))
-
-(defun malb/yas-get-names-from-to-fields ()
-  (interactive)
+(defun malb/yas-get-names-from-fields (fields)
   (let (names
         name
-        point-end-of-line)
+        point-end-of-line
+        (search-regexp (mapconcat (lambda (arg)
+                                    (concat "^" arg ": "))
+                                  fields "\\|")))
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^To: " nil t)
+      (while (re-search-forward search-regexp nil t)
         (save-excursion
           (setq point-end-of-line (re-search-forward "$")))
         (setq name (buffer-substring-no-properties (point) point-end-of-line))
@@ -1894,6 +1881,11 @@ Useful in e-mail templates
                 (setq names name))
               (message "names: %s" names))))
       (if names names "there"))))
+
+(defun malb/yas-get-names-from-to-fields ()
+  (interactive)
+  (malb/yas-get-names-from-fields '("To")))
+
 #+END_SRC
 
 Don’t add an empty line when quoting e-mail ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
