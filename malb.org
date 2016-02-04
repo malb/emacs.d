@@ -3266,7 +3266,8 @@ Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparent
             (defun malb/replace-quote (args)
               (if (not (or (derived-mode-p 'org-mode)
                            (derived-mode-p 'markdown-mode)
-                           (derived-mode-p 'rst-mode)))
+                           (derived-mode-p 'rst-mode)
+                           (derived-mode-p 'message-mode)))
                   args
                 (cons (replace-regexp-in-string
                        "'" "’" (car args))
