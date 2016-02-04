@@ -1790,7 +1790,7 @@ Allow for updating mail using =U= in the main view
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-get-mail-command "mbsync googlemail-default"
-      mu4e-update-interval 1200)
+      mu4e-update-interval nil)
 #+END_SRC
 
 ** Sending E-Mail
