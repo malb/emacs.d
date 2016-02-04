@@ -1339,7 +1339,7 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
              (org-bullets-mode 1))
 
            (add-hook 'org-mode-hook #'malb/enable-org-bullets)
-           (setq org-bullets-bullet-list '("●" "▲" "■" "✸" "◉" "○" "○"))))
+           (setq org-bullets-bullet-list '("●" "▲" "■" "✶" "◉" "○" "○"))))
 #+END_SRC
 
 ** Export
