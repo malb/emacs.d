@@ -1830,6 +1830,7 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'turn-on-orgtbl)
 (add-hook 'message-mode-hook #'typo-mode)
 (add-hook 'message-mode-hook #'olivetti-mode)
+(add-hook 'message-mode-hook #'adict-guess-dictionary)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -3341,6 +3342,16 @@ Diminish ~flyspell-mode~ as we always use it.
 #+BEGIN_SRC emacs-lisp
 (eval-after-load "flyspell"
   '(diminish 'flyspell-mode))
+#+END_SRC
+
+Automatically pick dictionary.
+
+#+BEGIN_SRC emacs-lisp
+(use-package auto-dictionary
+  :ensure t
+  :config (progn
+            (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")
+            ))
 #+END_SRC
 
 **** Abbreviations
