@@ -3773,6 +3773,17 @@ If buffer type is not included, 'default' will be used. Used by malb/smart-other
             (auctex-latexmk-setup)))
 #+END_SRC
 
+*** Utility Functions
+
+([[http://pragmaticemacs.com/emacs/aligning-text/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/align-& (start end)
+  "Align columns by ampersand"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)&" 1 1 t))
+#+END_SRC
 
 *** Setup everything
 
