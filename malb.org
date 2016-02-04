@@ -679,20 +679,14 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (unbind-key "C-x c")
 
             (setq helm-adaptive-mode t
-                  helm-apropos-fuzzy-match t
                   helm-bookmark-show-location t
                   helm-buffer-max-length 48
-                  helm-buffers-fuzzy-matching t
-                  helm-completion-in-region-fuzzy-match t
                   helm-display-header-line t
                   helm-ff-skip-boring-files t
                   helm-lisp-fuzzy-completion t
-                  helm-imenu-fuzzy-match t
                   helm-input-idle-delay 0.01
-                  helm-mode-fuzzy-match t
                   helm-org-headings-fontify t
                   helm-quick-update t
-                  helm-recentf-fuzzy-match t
                   helm-split-window-in-side-p t
                   helm-truncate-lines nil)
 
@@ -720,6 +714,29 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (assq-delete-all 'find-file helm-completing-read-handlers-alist)
             )
   )
+#+END_SRC
+
+** Helm Flx
+
+[[https://github.com/PythonNut/helm-flx][helm-flx]]  implements intelligent helm fuzzy sorting, provided by [[https://github.com/lewang/flx][flx]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-flx
+  :ensure t
+  :config (progn
+            ;; these are helm configs, but they kind of fit here nicely
+            (setq helm-M-x-fuzzy-match                  t
+                  helm-bookmark-show-location           t
+                  helm-buffers-fuzzy-matching           t
+                  helm-completion-in-region-fuzzy-match t
+                  helm-file-cache-fuzzy-match           t
+                  helm-imenu-fuzzy-match                t
+                  helm-mode-fuzzy-match                 t
+                  helm-locate-fuzzy-match               t
+                  helm-quick-update                     t
+                  helm-recentf-fuzzy-match              t
+                  helm-semantic-fuzzy-match             t)
+            (helm-flx-mode +1)))
 #+END_SRC
 
 ** Helm-ring
