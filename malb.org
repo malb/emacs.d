@@ -91,10 +91,23 @@ Maximise the window as soon as possible
 We have RAM, lots of it.
 
 #+BEGIN_SRC emacs-lisp
-(setq global-mark-ring-max 100
-      mark-ring-max 100
-      kill-ring-max 100
-      gc-cons-threshold 16777216)
+(setq global-mark-ring-max 128
+      mark-ring-max 128
+      kill-ring-max 128)
+#+END_SRC
+
+([[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][source]])
+
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/minibuffer-setup-hook ()
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun malb/minibuffer-exit-hook ()
+  (setq gc-cons-threshold 1048576))
+
+(add-hook 'minibuffer-setup-hook #'malb/minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'malb/minibuffer-exit-hook)
 #+END_SRC
 
 *Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
