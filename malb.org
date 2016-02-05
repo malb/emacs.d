@@ -1771,12 +1771,12 @@ Useful queries
 
 (add-to-list
  'mu4e-bookmarks
- '("flag:unread NOT flag:trashed AND NOT flag:list AND (maildir:'/royal holloway' OR maildir:/INBOX)"
+ '("flag:unread NOT flag:trashed AND NOT flag:list AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
    "Unread messages addressed to me" ?i))
 
 (add-to-list
  'mu4e-bookmarks
- '("mime:'application/*' AND NOT mime:'application/pgp*' AND (maildir:'/royal holloway' OR maildir:/INBOX)"
+ '("mime:application/* AND NOT mime:application/pgp* AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
    "Messages with attachments for me." ?d) t)
 
 (add-to-list
@@ -1784,6 +1784,10 @@ Useful queries
  '("flag:flagged"
    "Flagged messages" ?f) t)
 
+(add-to-list
+ 'mu4e-bookmarks
+ '("(maildir:\"/[Google Mail]/.Sent Mail\" OR maildir:\"/royal holloway/.sent\") AND date:7d..now"
+   "Sent in last 7 days" ?s) t)
 #+END_SRC
 
 Allow for updating mail using =U= in the main view
