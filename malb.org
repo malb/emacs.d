@@ -715,6 +715,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (add-to-list 'helm-boring-file-regexp-list "\\.nav" t)
             (add-to-list 'helm-boring-file-regexp-list "\\.out" t)
             (add-to-list 'helm-boring-file-regexp-list "\\.snm" t)
+            (add-to-list 'helm-boring-file-regexp-list "\\.synctex.gz" t)
 
             ;; rebind tab to do persistent action
             (bind-key "<tab>" 'helm-execute-persistent-action helm-map)
@@ -903,14 +904,18 @@ Don’t include boring or remote stuff in list of recently visited files.
 
 #+BEGIN_SRC emacs-lisp
 (use-package recentf
-  :config  (setq recentf-max-saved-items 50
-                 recentf-exclude '("COMMIT_EDITMSG"
-                                   "~$"
-                                   "/tmp/"
-                                   "/ssh:"
-                                   "/sudo:"
-                                   "/scp:"
-                                   malb/mu4e-maildir)))
+  :config  (progn
+             (setq recentf-max-saved-items 50
+                   recentf-exclude '("COMMIT_EDITMSG"
+                                     "~$"
+                                     "/tmp/"
+                                     "/ssh:"
+                                     "/sudo:"
+                                     "/scp:"
+                                     (expand-file-name malb/mu4e-maildir)))
+             (loop for ext in helm-boring-file-regexp-list
+                   do (add-to-list 'recentf-exclude ext t))
+             ))
 #+END_SRC
 
 * IMenu
