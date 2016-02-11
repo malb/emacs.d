@@ -1825,7 +1825,8 @@ Set email width to 72 characters
   (toggle-frame-maximized)
   (sleep-for 0.25) ;; this is a HACK
   (set-frame-size (selected-frame) 80 80)
-)
+  (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+  )
 #+END_SRC
 
 
