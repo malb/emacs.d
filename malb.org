@@ -4451,7 +4451,7 @@ _<_ beginning of buffer _>_ end of buffer _m_: set mark _/_: jump to mark
 (malb/set-menu-key "s" #'helm-swoop)
 (malb/set-menu-key "w" #'olivetti-mode)
 (malb/set-menu-key "x" #'helm-M-x)
-(malb/set-menu-key "z" #'ace-jump-zap-up-to-char-dwim)
+(malb/set-menu-key "z" #'ansi-term)
 #+END_SRC
 
 Easily change the text size:
