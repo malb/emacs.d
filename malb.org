@@ -489,17 +489,18 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
-                  company-idle-delay 0.3   ; disable delay before autocompletion popup shows
+                  company-idle-delay 0.4   ; disable delay before autocompletion popup shows
                   company-echo-delay 0     ; remove blinking
                   company-show-numbers t   ; show numbers for easy selection
                   company-selection-wrap-around t
+                  company-require-match nil
                   company-dabbrev-ignore-case t
                   company-dabbrev-ignore-invisible t
                   company-dabbrev-other-buffers t
                   company-dabbrev-downcase nil
                   company-dabbrev-code-everywhere t
                   company-tooltip-align-annotations t
-                  company-minimum-prefix-length 2
+                  company-minimum-prefix-length 1
                   company-global-modes '(not sage-shell:sage-mode
                                              sage-shell-mode
                                              ein:notebook-multilang-mode
