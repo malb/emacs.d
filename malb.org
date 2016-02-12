@@ -2413,6 +2413,34 @@ Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/928
         (downcase-region start end)))))
 #+END_SRC
 
+*** Looking Stuff Up
+
+[[https://github.com/areina/helm-dash][helm-dash]] package uses Dash docsets inside emacs to browse documentation.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-dash
+  :ensure t
+  :config (progn
+            (setq helm-dash-common-docsets '("Bash"
+                                             "C"
+                                             "C++"
+                                             "Emacs Lisp"
+                                             "Go"
+                                             "HTML"
+                                             "LaTeX"
+                                             "Markdown"
+                                             "NumPy"
+                                             "Python 2"
+                                             "Python 3"
+                                             "Vagrant"
+                                             "VMware vSphere"
+                                             )
+                  helm-dash-browser-func 'eww)
+            ))
+#+END_SRC
+
+[[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
+
 ** C/C++ development
 *** Semantic
 
