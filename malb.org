@@ -2823,7 +2823,6 @@ Python docstring mode provides syntax highlighting for docstrings in both ReStru
 Manually fixed bugs:
 
 - [[https://github.com/glyph/python-docstring-mode/issues/9][Problems locating `docstring_wrap.py` #9]]
-- [[https://github.com/glyph/python-docstring-mode/issues/6][Using python-docstring- prefix consistently is not done yet? #6]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package python-docstring
