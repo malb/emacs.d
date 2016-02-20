@@ -3366,7 +3366,7 @@ We [[http://bug-gnu-emacs.gnu.narkive.com/SOVjcGqY/kill-sentence-trailing-whites
     (delete-horizontal-space))
 #+END_SRC
 
-*** [#A] Highlighting sentences & paragraphs
+*** Highlighting Sentences & Paragraphs
 
 Use [[https://github.com/milkypostman/hl-sentence][hl-sentence-mode]] in ~markdown-mode~.
 
@@ -3386,7 +3386,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
     :ensure t)
 #+END_SRC
 
-*** Spell Checking
+*** Spell Check
 
 Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typos. I find myself pressing =C-.= in other programs these days just to be frustrated that it doesn’t just work™
 
@@ -3438,7 +3438,7 @@ Automatically pick dictionary.
 (diminish 'abbrev-mode)
 #+END_SRC
 
-*** Grammar check
+*** Grammar Check
 
 #+BEGIN_SRC emacs-lisp
 (use-package langtool
@@ -3484,7 +3484,9 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
                   '(("de" . "en") ("en" . "de") ("de" . "fr") ("fr" . "de")))))
 #+END_SRC
 
-** Notes ([[http://jblevins.org/projects/deft/][deft]])
+** Note Taking
+
+We use [[http://jblevins.org/projects/deft/][deft]].
 
 [[http://jblevins.org/projects/deft/deft-v0.6.gif]] ([[http://jblevins.org/projects/deft/deft-v0.6.gif][source]])
 
@@ -3509,9 +3511,9 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
             (add-hook 'deft-mode-hook #'hl-line-mode)))
 #+END_SRC
 
-** [[http://jblevins.org/projects/markdown-mode/][Markdown]]
+** Markdown
 
-Standard setup and also a quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-markdown.el][source]])
+Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-markdown.el][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
