@@ -1610,6 +1610,17 @@ I've notice that while I really like taking notes in a meeting, I don't always l
             (setq org-tree-slide-skip-outline-level 2)))
 #+END_SRC
 
+** Org References
+
+#+BEGIN_QUOTE
+[[https://github.com/jkitchin/org-ref][Org-ref]] is a library for org-mode that provides rich support for citations, labels and cross-references in org-mode. org-ref is especially suitable for org-mode documents destined for LaTeX export and scientific publication. org-ref is also extremely useful for research documents and notes. org-ref bundles several other libraries that provide functions to create and modify bibtex entries from a variety of sources, but most notably from a DOI.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-ref
+    :ensure t)
+#+END_SRC
+
 ** Tips
 *** Agenda commands
 
