@@ -1874,7 +1874,8 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 ;; (add-hook 'mu4e-compose-mode-hook #'malb/iqbal-strip-message-mode-problematic-text-props)
 #+END_SRC
 
-My Uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
+- My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
+- Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-contact-rewrite-function (contact)
@@ -1883,6 +1884,7 @@ My Uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
     (progn
       (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
       (setq name (replace-regexp-in-string "\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
+      (setq name (replace-regexp-in-string "\\([A-Z]+\\) \\([^ ]+\\).*" "\\2 \\1" name))
       (list :name name :mail mail))))
 
 (setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
@@ -1905,6 +1907,7 @@ Useful in e-mail templates
           (setq point-end-of-line (re-search-forward "$")))
         (setq name (buffer-substring-no-properties (point) point-end-of-line))
         (setq name (replace-regexp-in-string "\"\\(.*\\), \\([^ ]+\\).*\".*" "\\2 \\1" name))
+        (setq name (replace-regexp-in-string "\\([A-Z]+\\) \\([^ ]+\\).*" "\\2 \\1" name))
         (setq name (replace-regexp-in-string "\\(.*\\) [^ ]+@.*" "\\1" name))
         (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
         (if (string-match "\\([^ ,]+\\)" name)
