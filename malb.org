@@ -1891,11 +1891,12 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-contact-rewrite-function (contact)
   (let* ((name (or (plist-get contact :name) ""))
-         (mail (plist-get contact :mail)))
+         (mail (plist-get contact :mail))
+         (case-fold-search nil))
     (progn
       (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
       (setq name (replace-regexp-in-string "\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
-      (setq name (replace-regexp-in-string "\\([A-Z]+\\) \\([^ ]+\\).*" "\\2 \\1" name))
+      (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(\\<.*\\>\\) .*" "\\2 \\1" name))
       (list :name name :mail mail))))
 
 (setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
@@ -1910,7 +1911,8 @@ Useful in e-mail templates
         point-end-of-line
         (search-regexp (mapconcat (lambda (arg)
                                     (concat "^" arg ": "))
-                                  fields "\\|")))
+                                  fields "\\|"))
+        (case-fold-search nil))
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward search-regexp nil t)
@@ -1918,7 +1920,7 @@ Useful in e-mail templates
           (setq point-end-of-line (re-search-forward "$")))
         (setq name (buffer-substring-no-properties (point) point-end-of-line))
         (setq name (replace-regexp-in-string "\"\\(.*\\), \\([^ ]+\\).*\".*" "\\2 \\1" name))
-        (setq name (replace-regexp-in-string "\\([A-Z]+\\) \\([^ ]+\\).*" "\\2 \\1" name))
+        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(\\<.*\\>\\) .*" "\\2 \\1" name))
         (setq name (replace-regexp-in-string "\\(.*\\) [^ ]+@.*" "\\1" name))
         (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
         (if (string-match "\\([^ ,]+\\)" name)
