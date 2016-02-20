@@ -3461,6 +3461,25 @@ Automatically pick dictionary.
   )
 #+END_SRC
 
+*** Style Check
+
+Prose linting using … [[http://proselint.com][proselint]].
+
+([[http://unconj.ca/blog/linting-prose-in-emacs.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(flycheck-define-checker proselint
+  "A linter for prose."
+  :command ("proselint" source-inplace)
+  :error-patterns
+  ((warning line-start (file-name) ":" line ":" column ": "
+        (id (one-or-more (not (any " "))))
+        (message) line-end))
+  :modes (text-mode markdown-mode gfm-mode org-mode))
+
+(add-to-list 'flycheck-checkers 'proselint)
+#+END_SRC
+
 *** [#A] Dictionary
 
 Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
