@@ -780,12 +780,11 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
     :bind (("M-y" . helm-show-kill-ring)))
 #+END_SRC
 
-** [[https://github.com/ShingoFukuyama/helm-swoop][Helm-swoop]]
+** Helm-Swoop
 
-Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for =C-M-s= which is bound to ~vr/isearch-forward~.
+Use [[https://github.com/ShingoFukuyama/helm-swoop][helm-swoop]] for most of buffer searching. If =isearch= is needed, reach for =C-M-s= which is bound to ~vr/isearch-forward~.
 
 [[https://raw.githubusercontent.com/ShingoFukuyama/images/master/helm-swoop.gif]] ([[https://github.com/ShingoFukuyama/helm-swoop][source]])
-
 
 *Tip*: You can edit =helm-swoop= buffers by pressing =C-c C-e=.
 
@@ -823,9 +822,9 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
             ))
 #+END_SRC
 
-** [[https://github.com/syohex/emacs-helm-ag][Helm-ag]]
+** Helm-ag
 
-[[http://beyondgrep.com][Ack]] is “a tool like grep, optimized for programmers“. [[https://github.com/ggreer/the_silver_searcher][Ag]] is like =ack=, but faster. =Helm-ag= is a helm-based Emacs frontend to =ag=. We use =helm-ag= mainly via =helm-projectile-ag=, which allows us to =grep= through all project files quickly.
+[[http://beyondgrep.com][Ack]] is “a tool like grep, optimized for programmers“. [[https://github.com/ggreer/the_silver_searcher][Ag]] is like =ack=, but faster. =Helm-ag= is a helm-based Emacs frontend to =ag=. [[https://github.com/syohex/emacs-helm-ag][Helm-ag]] is a helm interface to ag. We use =helm-ag= mainly via =helm-projectile-ag=, which allows us to =grep= through all project files quickly.
 
 [[https://raw.githubusercontent.com/syohex/emacs-helm-ag/master/image/helm-do-ag.gif]] ([[https://raw.githubusercontent.com/syohex/emacs-helm-ag/master/image/helm-do-ag.gif][source]])
 
@@ -855,7 +854,6 @@ Use =helm-swoop= for most of buffer searching. If =isearch= is needed, reach for
   )
 #+END_SRC
 
-
 ** Helm-themes
 
 Switch themes with helm.
@@ -865,9 +863,9 @@ Switch themes with helm.
   :ensure t)
 #+END_SRC
 
-** [[https://github.com/xuchunyang/helm-commandlinefu][Helm-commandlinefu]]
+** Helm-commandlinefu
 
-Helm interface to http://www.commandlinefu.com/.
+[[https://github.com/xuchunyang/helm-commandlinefu][Helm-commandlinefu]] is a helm interface to http://www.commandlinefu.com/.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-commandlinefu
