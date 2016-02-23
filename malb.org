@@ -576,6 +576,15 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but 
             (setq company-math-disallow-unicode-symbols-in-faces nil)))
 #+END_SRC
 
+** Shell
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-shell
+  :ensure t
+  :config (progn
+            (add-to-list 'company-backends 'company-shell)))
+#+END_SRC
+
 ** YaSnippet
 
 Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
