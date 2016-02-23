@@ -1893,60 +1893,6 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 ;; (add-hook 'mu4e-compose-mode-hook #'malb/iqbal-strip-message-mode-problematic-text-props)
 #+END_SRC
 
-- My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
-- Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mu4e-contact-rewrite-function (contact)
-  (let* ((name (or (plist-get contact :name) ""))
-         (mail (plist-get contact :mail))
-         (case-fold-search nil))
-    (progn
-      (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
-      (setq name (replace-regexp-in-string "\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
-      (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(\\<.*\\>\\) .*" "\\2 \\1" name))
-      (list :name name :mail mail))))
-
-(setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
-#+END_SRC
-
-Useful in e-mail templates
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/yas-get-names-from-fields (fields)
-  (let (names
-        name
-        point-end-of-line
-        (search-regexp (mapconcat (lambda (arg)
-                                    (concat "^" arg ": "))
-                                  fields "\\|"))
-        (case-fold-search nil))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward search-regexp nil t)
-        (save-excursion
-          (setq point-end-of-line (re-search-forward "$")))
-        (setq name (buffer-substring-no-properties (point) point-end-of-line))
-        (setq name (replace-regexp-in-string "\"\\(.*\\), \\([^ ]+\\).*\".*" "\\2 \\1" name))
-        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(\\<.*\\>\\) .*" "\\2 \\1" name))
-        (setq name (replace-regexp-in-string "\\(.*\\) [^ ]+@.*" "\\1" name))
-        (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name))
-        (if (string-match "\\([^ ,]+\\)" name)
-            (progn
-              (setq name (match-string 1 name))
-              (setq name (capitalize name))
-              (if names
-                  (setq names (concat names ", " name))
-                (setq names name))
-              (message "names: %s" names))))
-      (if names names "there"))))
-
-(defun malb/yas-get-names-from-to-fields ()
-  (interactive)
-  (malb/yas-get-names-from-fields '("To")))
-
-#+END_SRC
-
 Don’t add an empty line when quoting e-mail ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
 
 #+BEGIN_SRC emacs-lisp
@@ -2041,6 +1987,71 @@ View emails with width restriction (110 so that HTML crap doesn’t break too ea
 
 (bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
 (bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
+#+END_SRC
+
+** Contacts
+
+- My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
+- Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/canonicalise-contact-name (name)
+  (let ((case-fold-search nil))
+    (setq name (or name ""))
+    (if (string-match-p "^[^ ]+@[^ ]+\.[^ ]" name)
+        ""
+      (progn
+        (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop e-mail address
+        (setq name (replace-regexp-in-string "^\"\\(.*\\)\"" "\\1" name)) ;; strip quotes
+        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
+        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)) ;; Foo, Bar becomes Bar Foo
+        (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name)) ;; look up names and replace
+        ))))
+
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-contact-rewrite-function (contact)
+  (let* ((name (or (plist-get contact :name) ""))
+         (mail (plist-get contact :mail))
+         (case-fold-search nil))
+    (plist-put contact :name (malb/canonicalise-contact-name name))
+    contact))
+
+(setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
+#+END_SRC
+
+Useful in e-mail templates
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/yas-get-names-from-fields (fields)
+  (let (names
+        name
+        point-end-of-line
+        (search-regexp (mapconcat (lambda (arg)
+                                    (concat "^" arg ": "))
+                                  fields "\\|"))
+        (case-fold-search nil))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward search-regexp nil t)
+        (save-excursion
+          (setq point-end-of-line (re-search-forward "$")))
+        (setq name (buffer-substring-no-properties (point) point-end-of-line))
+        (setq name (malb/canonicalise-contact-name name))
+        (if (string-match "\\([^ ,]+\\)" name)
+            (progn
+              (setq name (match-string 1 name))
+              (setq name (capitalize name))
+              (if names
+                  (setq names (concat names ", " name))
+                (setq names name))
+              (message "names: %s" names))))
+      (if names names "there"))))
+
+(defun malb/yas-get-names-from-to-fields ()
+  (interactive)
+  (malb/yas-get-names-from-fields '("To")))
 #+END_SRC
 
 ** Dedicated E-mail Frame
