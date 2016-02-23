@@ -914,6 +914,16 @@ Switch themes with helm.
         :buffer "*helm baloo*"))
 #+END_SRC
 
+** Helm-yasnippet
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-c-yasnippet
+  :ensure t
+  :bind ("C-c y" .  helm-yas-complete)
+  :config (progn
+            (setq helm-yas-space-match-any-greedy t)))
+#+END_SRC
+
 * Recent Files
 
 Don’t include boring or remote stuff in list of recently visited files.
