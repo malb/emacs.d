@@ -315,6 +315,22 @@ Repeated invocations toggle between the two most recently open buffers."
             ))
 #+END_SRC
 
+** Purpose
+
+[[https://github.com/bmag/emacs-purpose][purpose]] allows to dedicate windows to certain purposes. We dedicate mu4e windows.
+
+#+BEGIN_SRC emacs-lisp
+(use-package window-purpose
+  :ensure t
+  :config (progn
+            (purpose-mode)
+            (add-to-list 'purpose-user-mode-purposes '(mu4e-main-mode   . mu4e))
+            (add-to-list 'purpose-user-mode-purposes '(mu4e-view-mode   . mu4e))
+            (add-to-list 'purpose-user-mode-purposes '(mu4e-headers-mode   . mu4e))
+            (purpose-compile-user-configuration)
+            ))
+#+END_SRC
+
 ** Special windows
 
 Some buffers should behave like pop ups:
@@ -336,6 +352,7 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\` \\*LanguageTool Errors\\* \\'"))
 
 (dolist (name malb/popup-windows)
+  (add-to-list 'purpose-action-function-ignore-buffer-names name)
   (add-to-list 'display-buffer-alist
                `(,name
                  (display-buffer-reuse-window
@@ -2110,7 +2127,8 @@ Create a new mu4e session in a new frame.
   (toggle-frame-maximized)
   (sleep-for 0.1) ;; this is a HACK
   (set-frame-size (selected-frame) 200 64)
-  (mu4e))
+  (mu4e)
+  (purpose-set-window-purpose 'mu4e))
 #+END_SRC
 
 Kill mu4e frame.
