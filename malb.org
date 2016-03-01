@@ -1562,7 +1562,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
                   ("f" "file e-mail (mu4e)"
                    entry (file+headline malb/inbox-org "Email")
-                   "* %a by [[mailto%:fromaddress][%:fromname]]\n%U\n\n%i%?\n"
+                   "* %a by [[mailto:%:fromaddress][%:fromname]]\n%U\n\n%i%?\n"
                    :immediate-finish nil
                    :prepend nil)
 
