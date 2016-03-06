@@ -2288,21 +2288,6 @@ Make flycheck prettier based on what spacemacs does.
             (setq flycheck-check-syntax-automatically '(save mode-enabled))
             (setq flycheck-standard-error-navigation nil)
 
-            ;; (setq flycheck-mode-line
-            ;;       '(:eval
-            ;;         (pcase flycheck-last-status-change
-            ;;           (`not-checked nil)
-            ;;           (`no-checker (propertize " " ))
-            ;;           (`running (propertize " "))
-            ;;           (`errored (propertize " "))
-            ;;           (`finished
-            ;;            (let* ((error-counts (flycheck-count-errors flycheck-current-errors))
-            ;;                   (no-errors (cdr (assq 'error error-counts)))
-            ;;                   (no-warnings (cdr (assq 'warning error-counts))))
-            ;;              (propertize (format " [%s/%s]" (or no-errors 0) (or no-warnings 0)))))
-            ;;           (`interrupted " ")
-            ;;           (`suspicious '(propertize " ")))))
-
             (when (fboundp 'define-fringe-bitmap)
               (define-fringe-bitmap 'my-flycheck-fringe-indicator
                 (vector #b00000000
