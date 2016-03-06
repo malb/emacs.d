@@ -669,10 +669,7 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
        (candidates . malb/common-file-targets)
        (action . (("Open" . (lambda (x) (find-file (eval x))))))))
 
-    (if (projectile-project-p)
-        '(helm-source-projectile-files-list
-          helm-source-files-in-current-dir)
-      '(helm-source-files-in-current-dir)) ;; files in current directory
+    '(helm-source-files-in-current-dir) ;; files in current directory
 
     '(helm-source-locate               ;; file anywhere
       helm-source-baloo                ;; baloo search
