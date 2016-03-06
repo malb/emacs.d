@@ -1475,6 +1475,12 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
           ))
 #+END_SRC
 
+*** Beamer
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-beamer)
+#+END_SRC
+
 ** Capture
 
 If we are in a project we might add a TODO entry to the appropriate entry in =projects.org=.
