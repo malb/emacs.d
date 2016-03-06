@@ -3073,6 +3073,12 @@ On our system port 8888 is already taken.
 (bind-key "C-c C-z" #'ielm emacs-lisp-mode-map)
 #+END_SRC
 
+[[http://emacsredux.com/blog/2016/03/02/pimp-my-minibuffer/][Eldoc in minibuffer eval]].
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
+#+END_SRC
+
 ** Clojure
 
 ([[https://github.com/howardabrams/dot-files/blob/master/emacs-clojure.org][source]])
