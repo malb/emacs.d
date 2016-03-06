@@ -3842,6 +3842,8 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
                   helm-bibtex-library-path malb/literature-dir
                   helm-bibtex-notes-path malb/literature-notes-dir)
 
+            (setq reftex-default-bibliography helm-bibtex-bibliography)
+
             (defun helm-bibtex-find-pdf-in-library (key-or-entry)
               "Searches the directories in `helm-bibtex-library-path' for a
 PDF whose names is composed of the BibTeX key plus \".pdf\".  The
