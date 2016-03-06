@@ -1572,7 +1572,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 I've notice that while I really like taking notes in a meeting, I don't always like the multiple windows I have opened, so I created this function that I can easily call to eliminate distractions enduring a meeting. ([[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][source]])
 #+END_QUOTE
 
-    #+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 (defun meeting-notes ()
   "Call this after creating an org-mode heading for where the notes for the meeting
   should be. After calling this function, call 'meeting-done' to reset the environment."
@@ -1587,9 +1587,9 @@ I've notice that while I really like taking notes in a meeting, I don't always l
   (olivetti-set-width 110)
   (olivetti-toggle-hide-modeline)
   (message "When finished taking your notes, run meeting-done."))
-    #+END_SRC
+#+END_SRC
 
-    #+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 (defun meeting-done ()
   "Attempt to 'undo' the effects of taking meeting notes."
   (interactive)
@@ -1599,7 +1599,7 @@ I've notice that while I really like taking notes in a meeting, I don't always l
   (olivetti-toggle-hide-modeline)
   (olivetti-mode 0)
   (winner-undo))                                ;; Put the windows back in place
-    #+END_SRC
+#+END_SRC
 
 ** Org Tree Slide
 
