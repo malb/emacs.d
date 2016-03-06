@@ -1,6 +1,6 @@
 * emacs.d
 
-These are the relevant bits of my emacs config. Some stuff not suitable for general consumption is missing.
+These are the relevant bits of my emacs config. Some stuff not suitable for general consumption is missing. Hence, you cannot just clone this repository and try it. I have no intention of changing this.
 
 ** Obligatory screenshot 
 
