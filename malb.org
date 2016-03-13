@@ -1709,7 +1709,7 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
   :ensure t)
 #+END_SRC
 
-*** TODO check if magit-gh-pulls can be enabled by default without causing delay
+*** TEST if magit-gh-pulls can be enabled by default without causing delay
 
 ** [[https://github.com/pidu/git-timemachine#start-of-content][Git-timemachine]]
 
@@ -1758,7 +1758,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
             (setq gist-ask-for-description t)))
 #+END_SRC
 
-*** TODO Check out [[https://github.com/theanalyst/ix.el][ix]]
+*** TRY Check out [[https://github.com/theanalyst/ix.el][ix]]
 * Email
 
 E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
@@ -4814,9 +4814,9 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 * ToDos
 ** TODO AucTeX
 - ~\begin{comment}…\end{comment}~ does not work as expected
-** TODO check out [[http://emacs.stackexchange.com/q/8069][.el.gpg]]
-** TODO check out [[https://github.com/rejeep/prodigy.el][prodigy]]
-** TODO check out [[https://github.com/wasamasa/firestarter][firestarter]]
+** TRY [[http://emacs.stackexchange.com/q/8069][.el.gpg]]
+** TRY [[https://github.com/rejeep/prodigy.el][prodigy]]
+** TRY [[https://github.com/wasamasa/firestarter][firestarter]]
 :PROPERTIES:
 :ID:       01e6ff33-8437-4b06-967c-85dd8df6e7b6
 :END:
