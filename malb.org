@@ -1199,20 +1199,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 **** TODO move org config to respective sections
 
-** Images
-
-Display images inline ([[http://doc.norang.ca/org-mode.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-;;
-(defun malb/display-inline-images ()
-  (condition-case nil
-      (org-display-inline-images)
-    (error nil)))
-
-(add-hook 'org-babel-after-execute-hook #'malb/display-inline-images 'append)
-#+END_SRC
-
 ** Org Babel
 
 Working with source code in org-mode.
