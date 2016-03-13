@@ -1247,12 +1247,10 @@ Working with source code in org-mode.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "WAITING(w@)" "|" "DELEGATED(e@/!)" "DONE(d)" "CANCELLED(c@/!)")
-        (sequence "WRITE" "TRANSLATE(!)" "FEEDBACK(@/!)" "REVISE(!)"
-                  "COAUTHOR(!/@)" "NATIVE(@)" "PUBLISH(!)" "SENDOUT(!)" "WAITING(@/!)"
-                  "|"  "PUBLISHED(!)")
-        (sequence "REPLY(r)" "|" "SENT")
-        (sequence "PLAY" "LOAD" "|" "SEEN")))
+      '((sequence "TODO(t)" "WAITING(w@)" "|" "DELEGATED(e@/!)" "DONE(d)" "CANCELLED(c@/!)") ;;generic
+        (sequence "EXPLORE" "WRITEUP" "READ(r)" "COAUTHOR(!)" "REWRITE(!)" "SUBMITTED(@/!)" "|" "PUBLISHED(p!)" "ONHOLD(h@/!)" "STALLED(s)") ;; papers
+        (sequence "REVIEW(v)" "INFO(i@/!)" "|" "REVIEWED(V!)") ;; reviews
+        (type "BLOG(b)" "REPLY(r)" "TALK(k)" "STUDY(y)" "LOAD" "|" "DONE") ))
 
 (org-clock-persistence-insinuate)
 #+END_SRC
@@ -4668,6 +4666,8 @@ It looks like this:
               (setq org-todo-keyword-faces
                     '(("CANCELLED" :foreground "gray" :weight bold)
                       ("DISABLED" :foreground "gray" :weight bold)
+                      ("ONHOLD" :foreground "gray" :weight bold)
+                      ("STALLED" :foreground "gray" :weight bold)
                       ("SUBMITTED" :foreground "gray" :weight bold)
                       ("DELEGATED" :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
                       ("WAITING"   :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
