@@ -1882,7 +1882,7 @@ Set email width to 72 characters
 #+END_SRC
 
 
-To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]].
+To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]. To add a footnote try =C-c ! a=
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
