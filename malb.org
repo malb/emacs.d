@@ -349,7 +349,8 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\`\\*Help\\*\\'"
                              "\\`\\*anaconda-doc\\*\\'"
                              "\\`\\*Google Translate\\*\\'"
-                             "\\` \\*LanguageTool Errors\\* \\'"))
+                             "\\` \\*LanguageTool Errors\\* \\'"
+                             "\\`\\*Edit footnote .*\\*\\'"))
 
 (dolist (name malb/popup-windows)
   (add-to-list 'display-buffer-alist
