@@ -1269,6 +1269,16 @@ delete SCHEDULED if new state is WAITING
 (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
 #+END_SRC
 
+** Tags
+
+#+BEGIN_SRC emacs-lisp
+(setq org-tag-persistent-alist '((:startgroup)
+                                 ("@office" . ?o)
+                                 ("@train" . ?t)
+                                 ("quick" . q)
+                                 (:endgroup)))
+#+END_SRC
+
 ** Refiling
 
 Targets include this file and any file contributing to the agenda - up to 9 levels deep
