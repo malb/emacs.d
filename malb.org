@@ -1280,7 +1280,7 @@ delete SCHEDULED if new state is WAITING
 (setq org-tag-persistent-alist '((:startgroup)
                                  ("@office" . ?o)
                                  ("@train" . ?t)
-                                 ("quick" . q)
+                                 ("quick" . ?q)
                                  (:endgroup)))
 #+END_SRC
 
