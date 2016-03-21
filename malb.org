@@ -2544,6 +2544,48 @@ Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/928
 #+END_SRC
 
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
+*** GNU Global
+
+Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package ggtags
+  :ensure t
+  :config (progn  (add-hook 'c-mode-common-hook
+                            (lambda ()
+                              (when (derived-mode-p 'java-mode)
+                                (ggtags-mode t))))
+
+                  (bind-key "C-c g s" #'ggtags-find-other-symbol ggtags-mode-map)
+                  (bind-key "C-c g h" #'ggtags-view-tag-history ggtags-mode-map)
+                  (bind-key "C-c g r" #'ggtags-find-reference ggtags-mode-map)
+                  (bind-key "C-c g f" #'ggtags-find-file ggtags-mode-map)
+                  (bind-key "C-c g c" #'ggtags-create-tags ggtags-mode-map)
+                  (bind-key "C-c g u" #'ggtags-update-tags ggtags-mode-map)
+                  (bind-key "M-," #'pop-tag-mark ggtags-mode-map)))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-gtags
+  :ensure t
+  :config (progn  (setq helm-gtags-ignore-case t
+                        helm-gtags-auto-update t
+                        helm-gtags-use-input-at-cursor t
+                        helm-gtags-pulse-at-cursor t
+                        helm-gtags-prefix-key "\C-cg"
+                        helm-gtags-suggested-key-mapping t
+                        )
+
+                  (add-hook 'java-mode-hook #'helm-gtags-mode)
+
+                  (bind-key "C-c g a" #'helm-gtags-tags-in-this-function helm-gtags-mode-map)
+                  (bind-key "C-j"     #'helm-gtags-select helm-gtags-mode-map)
+                  (bind-key "M-."     #'helm-gtags-dwim helm-gtags-mode-map)
+                  (bind-key "M-,"     #'helm-gtags-pop-stack helm-gtags-mode-map)
+                  (bind-key "C-c <"   #'helm-gtags-previous-history helm-gtags-mode-map)
+                  (bind-key "C-c >"   #'helm-gtags-next-history helm-gtags-mode-map)))
+#+END_SRC
 
 ** C/C++ development
 *** Semantic
