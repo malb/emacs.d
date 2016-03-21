@@ -1857,7 +1857,7 @@ Useful queries
 Allow for updating mail using =U= in the main view
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-get-mail-command "timelimit -t 60 -T 60 mbsync googlemail-default"
+(setq mu4e-get-mail-command "timelimit -t 120 -T 120 mbsync googlemail-default"
       mu4e-update-interval nil)
 #+END_SRC
 
