@@ -2930,7 +2930,7 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
   :diminish anaconda-mode
   :config (progn
             (add-hook 'python-mode-hook #'anaconda-mode)
-            (add-hook 'python-mode-hook #'eldoc-mode)))
+            (add-hook 'python-mode-hook #'anaconda-eldoc-mode)))
 #+END_SRC
 
 *** Pydoc
