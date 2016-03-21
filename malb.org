@@ -174,7 +174,7 @@ When splitting windows open the previous buffer in it.
 
 
 #+BEGIN_SRC emacs-lisp
-(setq split-width-threshold 100)
+(setq split-width-threshold  80)
 (setq split-height-threshold 40)
 
 (defun malb/split-window-prefer-horizonally (window)
