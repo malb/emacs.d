@@ -2483,15 +2483,12 @@ mouse-3: go to end")
             ))
 #+END_SRC
 
-*** Line numbers
 
-We only enable it in ~markdown-mode~ for now.
+*** Line numbers
 
 #+BEGIN_SRC emacs-lisp
 (use-package nlinum
-  :ensure t
-  :config (progn
-            (add-hook 'markdown-mode-hook #'nlinum-mode)))
+  :ensure t)
 #+END_SRC
 
 *** CamelCase
