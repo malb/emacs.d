@@ -2531,6 +2531,7 @@ Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/928
                                              "Emacs Lisp"
                                              "Go"
                                              "HTML"
+                                             "Java"
                                              "LaTeX"
                                              "Markdown"
                                              "NumPy"
