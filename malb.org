@@ -1011,6 +1011,10 @@ See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction to [
             (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward sp-keymap)
             (bind-key "C-S-<backspace>" 'sp-splice-sexp-killing-around sp-keymap)
 
+
+            (sp-pair "(" ")" :wrap "C-(") ;; how do people live without this?
+            (sp-pair "{" "}" :wrap "C-{")
+
             (add-to-list 'sp-ignore-modes-list 'org-mode) ; too slow
             (add-to-list 'sp-ignore-modes-list 'python-mode) ; too slow
             (add-to-list 'sp-ignore-modes-list 'cython-mode) ; too slow
