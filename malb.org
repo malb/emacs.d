@@ -491,12 +491,12 @@ Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is on ~yasni
 Call ~yas-decribe-tables~ to see currently defined snippets.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package yasnippet
-    :ensure t
-    :diminish yas-minor-mode
-    :config (progn
-              (yas-global-mode)
-              (setq yas-verbosity 1)))
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :config (progn
+            (yas-global-mode)
+            (setq yas-verbosity 1)))
 #+END_SRC
 
 * Auto Completion
