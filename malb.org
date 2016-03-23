@@ -2126,6 +2126,7 @@ Useful in e-mail templates
 #+BEGIN_SRC emacs-lisp
 (defun malb/yas-get-names-from-fields (fields)
   (let (names
+        ret
         name
         point-end-of-line
         (search-regexp (mapconcat (lambda (arg)
@@ -2138,16 +2139,18 @@ Useful in e-mail templates
         (save-excursion
           (setq point-end-of-line (re-search-forward "$")))
         (setq name (buffer-substring-no-properties (point) point-end-of-line))
+        (setq name (split-string name "[^ ]+@[^ ]+," t " ")) ;; split on email@address,
+        (setq names (append names name)))
+      (dolist (name names)
         (setq name (malb/canonicalise-contact-name name))
         (if (string-match "\\([^ ,]+\\)" name)
             (progn
               (setq name (match-string 1 name))
               (setq name (capitalize name))
-              (if names
-                  (setq names (concat names ", " name))
-                (setq names name))
-              (message "names: %s" names))))
-      (if names names "there"))))
+              (if ret
+                  (setq ret (concat ret ", " name))
+                (setq ret name)))))
+      (if ret ret "there"))))
 
 (defun malb/yas-get-names-from-to-fields ()
   (interactive)
