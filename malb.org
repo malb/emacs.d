@@ -631,6 +631,32 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
   (setq company-backends (mapcar #'malb/company-mode/backend-with-yas company-backends))
 #+END_SRC
 
+** Tab DWIM
+
+([[http://emacs.stackexchange.com/q/21182/8930][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/indent-or-complete (&optional arg)
+  (interactive "P")
+  (cond
+   ((use-region-p)
+    (indent-region (region-beginning)
+                   (region-end)))
+   ((or (looking-back " ")
+        (looking-at " ")
+        (looking-at "^")
+        buffer-read-only)
+    (if (not (called-interactively-p))
+        (indent-for-tab-command arg)
+      (setq this-command 'indent-for-tab-command)
+      (call-interactively 'indent-for-tab-command)))
+   (t
+    (company-complete-common)))
+  )
+
+(bind-key "C-<tab>" #'malb/indent-or-complete)
+#+END_SRC
+
 * Helm
 
 [[https://github.com/emacs-helm/helm][Helm]] is incremental completion and selection narrowing framework for Emacs.
