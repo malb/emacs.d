@@ -646,15 +646,22 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
         (looking-at " ")
         (looking-at "^")
         buffer-read-only)
-    (if (not (called-interactively-p))
-        (indent-for-tab-command arg)
-      (setq this-command 'indent-for-tab-command)
-      (call-interactively 'indent-for-tab-command)))
+    (let ((fn (or (lookup-key (current-local-map) (kbd "TAB"))
+                  'indent-for-tab-command)))
+      (message "fn: %s" fn)
+      (if (not (called-interactively-p 'any))
+          (fn arg)
+        (setq this-command fn)
+        (call-interactively fn))
+      )
+    )
    (t
     (company-complete-common)))
   )
 
-(bind-key "C-<tab>" #'malb/indent-or-complete)
+(bind-key "<tab>" #'malb/indent-or-complete)
+(bind-key "<tab>" nil yas-minor-mode-map)
+(bind-key "TAB"   nil yas-minor-mode-map)
 #+END_SRC
 
 * Helm
