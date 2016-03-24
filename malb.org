@@ -3080,9 +3080,15 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 (use-package elpy
   :ensure t
   :config (progn
-            (setq elpy-modules '(elpy-module-sane-defaults
-                                 elpy-module-yasnippet))
-            (elpy-enable)))
+            ;; (setq elpy-modules '(elpy-module-sane-defaults
+            ;;                      elpy-module-yasnippet))
+
+            ;; (elpy-enable)
+            (elpy-module-yasnippet 'global-init)
+            (defun malb/elpy-sane-defaults ()
+              (elpy-module-sane-defaults 'buffer-init))
+            (add-hook 'python-mode-hook #'malb/elpy-sane-defaults)
+            ))
 #+END_SRC
 
 *** PIP
