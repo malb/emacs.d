@@ -1549,8 +1549,6 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 
 *** JSON
 
-Text
-
 ([[https://github.com/mattduck/org-toggl-py/blob/master/org-export-json.el][source]])
 
 #+BEGIN_SRC emacs-lisp
