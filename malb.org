@@ -1188,7 +1188,7 @@ This library provides easy project management and navigation. The concept of a p
 - =C-c p h= for =helm-projectile= which combines buffer, file and project switching
 - =C-c p F= for =helm-projectile-find-file-in-known-projects=
 
-We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8i5r/helmprojectile_quickly_findcreate_new_file_in/][source]]).
+We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8i5r/helmprojectile_quickly_findcreate_new_file_in/][source]]) and replace =grep= by =ag=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-projectile
@@ -1198,7 +1198,9 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
               (helm-build-dummy-source
                   "Create file"
                 :action 'find-file))
-            (add-to-list 'helm-projectile-sources-list malb/helm-source-file-not-found t))
+            (add-to-list 'helm-projectile-sources-list malb/helm-source-file-not-found t)
+            (helm-delete-action-from-source "Grep in projects `C-s'" helm-source-projectile-projects)
+            (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-projects 4))
   )
 #+END_SRC
 
