@@ -1578,7 +1578,11 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 *** Beamer
 
 #+BEGIN_SRC emacs-lisp
-(use-package ox-beamer)
+(use-package ox-beamer
+  :config (progn
+            (add-to-list 'org-beamer-environments-extra
+                         '("lemma" "l" "\\begin{lemma}%a" "\\end{lemma}"))
+            ))
 #+END_SRC
 
 ** Capture
