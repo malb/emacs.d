@@ -505,12 +505,11 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
 [[https://company-mode.github.io/images/company-elisp.png]] ([[https://company-mode.github.io/images/company-elisp.png][source]])
 
-
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :ensure t
-  :bind (("C-<return>" . company-complete)
-         ("M-/"        . company-dabbrev))
+  :bind (("C-<tab>"    . company-complete)
+         ("M-/"        . company-complete))
 
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
@@ -633,35 +632,54 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
 
 ** Tab DWIM
 
-([[http://emacs.stackexchange.com/q/21182/8930][source]])
+=yas-expand= is run first and does what it has to, then it calls =malb/indent-or-complete=.
+
+This function then hopefully does what I want:
+
+- if a region is active, just indent
+- if we’re looking at a space after a non-whitespace character, we try some company-expansion
+- otherwise call whatever would have been called otherwise.
+
+([[http://emacs.stackexchange.com/q/21182/8930][source]], [[http://emacs.stackexchange.com/q/7908/8930][source]])
 
 #+BEGIN_SRC emacs-lisp
+;; (defun malb/do-yas-expand ()
+;;   (let ((yas-fallback-behavior 'return-nil))
+;;     (yas-expand-from-trigger-key)))
+
 (defun malb/indent-or-complete (&optional arg)
   (interactive "P")
   (cond
+   ;; if a region is active, indent
    ((use-region-p)
     (indent-region (region-beginning)
                    (region-end)))
-   ((or (looking-back " ")
-        (looking-at " ")
-        (looking-at "^")
-        buffer-read-only)
+   ;; if the next char is space or eol, but prev char not whitespace
+   ((and (or (looking-at " ")
+             (looking-at "$"))
+         (looking-back "[^[:space:]]")
+         (not (looking-back "^")))
+
+    ;; snippets are handled before calling this function
+    ;; (if (or (not yas/minor-mode)
+    ;;         (null (malb/do-yas-expand)))
+    ;;     ;; otherwise complete
+    ;;     (company-complete-common)))
+    (company-complete-common))
+   ;; by default just call whatever was bound
+   (t
     (let ((fn (or (lookup-key (current-local-map) (kbd "TAB"))
                   'indent-for-tab-command)))
-      (message "fn: %s" fn)
       (if (not (called-interactively-p 'any))
           (fn arg)
         (setq this-command fn)
         (call-interactively fn))
       )
     )
-   (t
-    (company-complete-common)))
+   )
   )
 
 (bind-key "<tab>" #'malb/indent-or-complete)
-(bind-key "<tab>" nil yas-minor-mode-map)
-(bind-key "TAB"   nil yas-minor-mode-map)
 #+END_SRC
 
 * Helm
