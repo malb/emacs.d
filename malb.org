@@ -1732,6 +1732,14 @@ I've notice that while I really like taking notes in a meeting, I don't always l
     :ensure t)
 #+END_SRC
 
+** Auto Completion
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/org-mode-complete-hook ()
+  (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+(add-hook 'org-mode-hook #'malb/org-mode-complete-hook)
+#+END_SRC
+
 ** Tips
 *** Agenda commands
 
