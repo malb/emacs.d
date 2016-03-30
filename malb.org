@@ -1519,7 +1519,7 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
             (setq org-latex-listings 't)
             (add-to-list 'org-latex-packages-alist '("" "listings"))
             (add-to-list 'org-latex-packages-alist '("" "color"))
-            (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf -quiet %f")
+            (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf %f")
                   org-latex-caption-above nil)
             (setq org-latex-default-packages-alist
                   (remove* '("T1" "fontenc" t) org-latex-default-packages-alist :test 'equal))
