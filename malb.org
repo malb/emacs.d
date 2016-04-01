@@ -3236,6 +3236,16 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             ))
 #+END_SRC
 
+**** Org Babel
+
+#+BEGIN_SRC emacs-lisp
+(use-package ob-sagemath
+  :ensure t
+  :config (progn
+            (setq org-babel-default-header-args:sage '((:session . t)
+                                                       (:results . "output")))))
+#+END_SRC
+
 *** [[https://github.com/tkf/emacs-ipython-notebook][iPython Notebook]]
 
 An interface from Emacs to iPython.
