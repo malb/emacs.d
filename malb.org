@@ -3135,6 +3135,15 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
          ("\\.pxi\\'"  . cython-mode)))
 #+END_SRC
 
+**** Flycheck
+
+[[https://github.com/lbolla/emacs-flycheck-cython][Flycheck for Cython]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-cython
+  :ensure t)
+#+END_SRC
+
 *** AutoPEP8
 
 #+BEGIN_SRC emacs-lisp
