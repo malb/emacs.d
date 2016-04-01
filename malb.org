@@ -661,7 +661,8 @@ This function then hopefully does what I want:
     (indent-region (region-beginning)
                    (region-end)))
    ;; if the next char is space or eol, but prev char not whitespace
-   ((and (or (looking-at " ")
+   ((and (not (active-minibuffer-window))
+         (or (looking-at " ")
              (looking-at "$"))
          (looking-back "[^[:space:]]")
          (not (looking-back "^")))
