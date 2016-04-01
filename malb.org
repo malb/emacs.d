@@ -3173,6 +3173,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 (use-package pip-requirements
    :ensure t)
 #+END_SRC
+
 *** Sage
 
 Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top. However, we usually don’t do that but use python-mode directly. For this, our setup is as follows.
