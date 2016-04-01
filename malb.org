@@ -1983,12 +1983,51 @@ Set email width to 72 characters
   (set-fill-column 72))
 #+END_SRC
 
+I patched mu4e to be way less clever about window management after sending an e-mail, my local =mu4e~compose-handler= looks like this:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun* mu4e~compose-handler (compose-type &optional original-msg includes)
+  …
+  (when mu4e-compose-in-new-frame
+    ;; make sure to close the frame when we're done with the message these are
+    ;; all buffer-local;
+    ;; (push 'delete-frame message-exit-actions)
+    ;; (push 'delete-frame message-postpone-actions)
+    )
+)
+#+END_SRC
+
+and my =mu4e-message-kill-buffer= looks like this:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun mu4e-message-kill-buffer ()
+  "Wrapper around `message-kill-buffer'.
+It restores mu4e window layout after killing the compose-buffer."
+  (interactive)
+  (let ((current-buffer (current-buffer)))
+    (message-kill-buffer)
+    ;; Compose buffer killed
+    (when (not (equal current-buffer (current-buffer)))
+      ;; Restore mu4e
+      ;; (if mu4e-compose-in-new-frame
+      ;; 	  (delete-frame)
+      ;; 	(if (buffer-live-p mu4e~view-buffer)
+      ;; 	    (switch-to-buffer mu4e~view-buffer)
+      ;; 	  (if (buffer-live-p mu4e~headers-buffer)
+      ;; 	      (switch-to-buffer mu4e~headers-buffer)
+      ;; 	    ;; if all else fails, back to the main view
+      ;; 	    (when (fboundp 'mu4e) (mu4e)))))
+      )))
+#+END_SRC
+
+I set my compose frame to be a dedicated window, which then takes care of all window management for me.
+
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-compose-frame ()
   (toggle-frame-maximized)
   (sleep-for 0.25) ;; this is a HACK
   (set-frame-size (selected-frame) 80 80)
-  )
+  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
 #+END_SRC
 
 
