@@ -1403,7 +1403,6 @@ Allow refile to create parent tasks with confirmation
 Archive with tags intact and some order in target file preserved. ([[http://orgmode.org/worg/org-hacks.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-;;
 (defun malb/org-inherited-no-file-tags ()
   (let ((tags (org-entry-get nil "ALLTAGS" 'selective))
         (ltags (org-entry-get nil "TAGS")))
@@ -1427,7 +1426,6 @@ Archive with tags intact and some order in target file preserved. ([[http://orgm
       (save-excursion
         (while (org-up-heading-safe))
         (org-set-tags-to tags)))))
-
 #+END_SRC
 
 ** Habit
@@ -1488,8 +1486,10 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
   "Timer that `malb/org-icalendar-export-timer' used to reschedule itself, or nil.")
 #+END_SRC
 
+
 #+BEGIN_SRC emacs-lisp
 (defun malb/org-icalendar-export-with-delay (secs)
+  "Export after `secs' seconds unless the file changed in the mean time."
   (when malb/org-icalendar-export-timer
     (cancel-timer malb/org-icalendar-export-timer))
   (setq malb/org-icalendar-export-timer
@@ -1502,6 +1502,7 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/ox-export-after-save-hook ()
+  "Save after 600 seconds of no changes."
   (if (eq major-mode 'org-mode)
       (malb/org-icalendar-export-with-delay 600)))
 
@@ -1545,6 +1546,8 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
                            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
 #+END_SRC
 
+**** TODO using latexmk (like this) means we get less feedback than we’d like
+
 *** ODT
 
 #+BEGIN_SRC emacs-lisp
@@ -1553,6 +1556,8 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
           (setq org-odt-styles-file (expand-file-name "org-export-template.odt" user-emacs-directory))
           ))
 #+END_SRC
+
+**** TODO org-odt-style-file doesn’t seem to take
 
 *** JSON
 
@@ -1581,6 +1586,8 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
       (json-mode-beautify))
     ))
 #+END_SRC
+
+**** TODO the output of =malb/org-json-export-as-json= is way too messy
 
 *** Beamer
 
@@ -1683,7 +1690,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                    "** research\n%?\n** critique\n\n"))))
 #+END_SRC
 
-** Meeting Notes
+** [#C] Meeting Notes
 
 #+BEGIN_QUOTE
 I've notice that while I really like taking notes in a meeting, I don't always like the multiple windows I have opened, so I created this function that I can easily call to eliminate distractions enduring a meeting. ([[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][source]])
@@ -1718,7 +1725,7 @@ I've notice that while I really like taking notes in a meeting, I don't always l
   (winner-undo))                                ;; Put the windows back in place
 #+END_SRC
 
-** Org Tree Slide
+** [#C] Org Tree Slide
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-tree-slide
@@ -1785,10 +1792,11 @@ I've notice that while I really like taking notes in a meeting, I don't always l
 #+BEGIN_SRC sh :tangle no
 emacs --batch -l ~/.emacs.d/org-export-init.el file.org -f org-latex-export-to-pdf
 #+END_SRC
-* Git
-** [[http://magit.vc][Magit]]
 
-Magit is a very nice Git interface.
+* Git
+** Magit
+
+[[http://magit.vc][Magit]] is a very nice Git interface.
 
 [[http://magit.vc/img/shot/top.png]] ([[http://magit.vc][source]])
 
@@ -1827,11 +1835,11 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
   :ensure t)
 #+END_SRC
 
-*** TEST if magit-gh-pulls can be enabled by default without causing delay
+*** TEST if =magit-gh-pulls= can be enabled by default without causing delay
 
-** [[https://github.com/pidu/git-timemachine#start-of-content][Git-timemachine]]
+** Git-timemachine
 
-I don’t often use git-timemachine but when I do …
+I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][git-timemachine]] but when I do …
 
 #+BEGIN_SRC emacs-lisp
 (use-package git-timemachine
@@ -1852,9 +1860,9 @@ I don’t often use git-timemachine but when I do …
   :ensure t)
 #+END_SRC
 
-** [[https://github.com/defunkt/gist.el][Gist]]
+** Gists
 
-To list gists, run ~gist-list~:
+To list [[https://github.com/defunkt/gist.el][gists]], run ~gist-list~:
 
 - =g= - reload the gist list from server
 - =e= - edit current gist description
@@ -1900,7 +1908,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-confirm-quit nil))
 #+END_SRC
 
-Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
+** Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-headers-seen-mark '("S" . "☑")
@@ -1915,7 +1923,7 @@ Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][sourc
       mu4e-headers-default-prefix  '("|" . "○"))
 #+END_SRC
 
-Folders
+** Folders
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-maildir malb/mu4e-maildir
@@ -1930,7 +1938,7 @@ Folders
         ("/[Google Mail]/.Bin"        . ?t)))
 #+END_SRC
 
-Useful queries
+** Queries
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list
@@ -1959,7 +1967,7 @@ Useful queries
    "Sent in last 7 days" ?s) t)
 #+END_SRC
 
-Allow for updating mail using =U= in the main view
+** Retrieving Mail
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-get-mail-command "timelimit -t 120 -T 120 mbsync googlemail-default"
@@ -1982,54 +1990,6 @@ Set email width to 72 characters
 (defun malb/fill-column-72 ()
   (set-fill-column 72))
 #+END_SRC
-
-I patched mu4e to be way less clever about window management after sending an e-mail, my local =mu4e~compose-handler= looks like this:
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(defun* mu4e~compose-handler (compose-type &optional original-msg includes)
-  …
-  (when mu4e-compose-in-new-frame
-    ;; make sure to close the frame when we're done with the message these are
-    ;; all buffer-local;
-    ;; (push 'delete-frame message-exit-actions)
-    ;; (push 'delete-frame message-postpone-actions)
-    )
-)
-#+END_SRC
-
-and my =mu4e-message-kill-buffer= looks like this:
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(defun mu4e-message-kill-buffer ()
-  "Wrapper around `message-kill-buffer'.
-It restores mu4e window layout after killing the compose-buffer."
-  (interactive)
-  (let ((current-buffer (current-buffer)))
-    (message-kill-buffer)
-    ;; Compose buffer killed
-    (when (not (equal current-buffer (current-buffer)))
-      ;; Restore mu4e
-      ;; (if mu4e-compose-in-new-frame
-      ;; 	  (delete-frame)
-      ;; 	(if (buffer-live-p mu4e~view-buffer)
-      ;; 	    (switch-to-buffer mu4e~view-buffer)
-      ;; 	  (if (buffer-live-p mu4e~headers-buffer)
-      ;; 	      (switch-to-buffer mu4e~headers-buffer)
-      ;; 	    ;; if all else fails, back to the main view
-      ;; 	    (when (fboundp 'mu4e) (mu4e)))))
-      )))
-#+END_SRC
-
-I set my compose frame to be a dedicated window, which then takes care of all window management for me.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mu4e-compose-frame ()
-  (toggle-frame-maximized)
-  (sleep-for 0.25) ;; this is a HACK
-  (set-frame-size (selected-frame) 80 80)
-  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-#+END_SRC
-
 
 To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]. To add a footnote try =C-c ! a=
 
@@ -2293,6 +2253,55 @@ Kill mu4e frame.
 (bind-key "Q" #'malb/mu4e-quit-session mu4e-headers-mode-map)
 #+END_SRC
 
+** Window Management
+
+I patched mu4e to be way less clever about window management after sending an e-mail, my local =mu4e~compose-handler= looks like this:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun* mu4e~compose-handler (compose-type &optional original-msg includes)
+  …
+  (when mu4e-compose-in-new-frame
+    ;; make sure to close the frame when we're done with the message these are
+    ;; all buffer-local;
+    ;; (push 'delete-frame message-exit-actions)
+    ;; (push 'delete-frame message-postpone-actions)
+    )
+)
+#+END_SRC
+
+and my =mu4e-message-kill-buffer= looks like this:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun mu4e-message-kill-buffer ()
+  "Wrapper around `message-kill-buffer'.
+It restores mu4e window layout after killing the compose-buffer."
+  (interactive)
+  (let ((current-buffer (current-buffer)))
+    (message-kill-buffer)
+    ;; Compose buffer killed
+    (when (not (equal current-buffer (current-buffer)))
+      ;; Restore mu4e
+      ;; (if mu4e-compose-in-new-frame
+      ;; 	  (delete-frame)
+      ;; 	(if (buffer-live-p mu4e~view-buffer)
+      ;; 	    (switch-to-buffer mu4e~view-buffer)
+      ;; 	  (if (buffer-live-p mu4e~headers-buffer)
+      ;; 	      (switch-to-buffer mu4e~headers-buffer)
+      ;; 	    ;; if all else fails, back to the main view
+      ;; 	    (when (fboundp 'mu4e) (mu4e)))))
+      )))
+#+END_SRC
+
+I set my compose frame to be a dedicated window, which then takes care of all window management for me.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-compose-frame ()
+  (toggle-frame-maximized)
+  (sleep-for 0.25) ;; this is a HACK
+  (set-frame-size (selected-frame) 80 80)
+  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+#+END_SRC
+
 ** PGP
 
 #+BEGIN_SRC emacs-lisp
@@ -2302,7 +2311,7 @@ Kill mu4e frame.
 (add-hook 'message-send-hook #'mml-secure-message-sign-pgpmime)
 #+END_SRC
 
-** Org-mu4e
+** Org-MU4E
 
 Link to mu4e messages and threads.
 
@@ -2424,6 +2433,7 @@ Save comint history when emacs is killed
             ;; If you work with python scripts using iPython
             (add-hook 'isend-mode-hook #'isend-default-ipython-setup)))
 #+END_SRC
+
 *** Spell checking
 
 Enable spell checking in comments and documentation.
@@ -2432,12 +2442,11 @@ Enable spell checking in comments and documentation.
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
-*** [[https://github.com/flycheck/flycheck][Flycheck]]
+*** Flycheck
 
 [[https://raw.githubusercontent.com/flycheck/flycheck/master/doc/images/flycheck-annotated.png]] ([[http://www.flycheck.org/images/screencast.gif][source]])
 
-
-Use flycheck to run static checkers on code. We use clang’s checker for flycheck for which we can load per directory configuration using =.dir-locals.el=, e.g.
+Use [[https://github.com/flycheck/flycheck][Flycheck]] to run static checkers on code. We use clang’s checker for flycheck for which we can load per directory configuration using =.dir-locals.el=, e.g.
 
 #+BEGIN_SRC emacs-lisp :tangle no
 ((c-mode . ((flycheck-clang-include-path . ("/FULL/PATH/TO/DIR1" "/FULL/PATH/TO/DIR2" ) ))))
@@ -2549,7 +2558,6 @@ Make bug references in comments and string clickable
 
 [[https://github.com/Malabarba/aggressive-indent-mode/raw/master/c-example.gif]] ([[https://github.com/Malabarba/aggressive-indent-mode/raw/master/c-example.gif][source]])
 
-
 Enable it on a per-project basis in order to keep RC check ins clean: use it in own projects but not necessarily in projects where not the main contributor. Use =.dir-locals.el= to enable it, e.g.:
 
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -2637,34 +2645,11 @@ mouse-3: go to end")
   :ensure t)
 #+END_SRC
 
-*** Line numbers
+*** [#C] Line numbers
 
 #+BEGIN_SRC emacs-lisp
 (use-package nlinum
   :ensure t)
-#+END_SRC
-
-*** CamelCase
-
-Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/9288181/converting-from-camelcase-to-in-emacs][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/toggle-camelcase-underscores ()
-  "Toggle between camcelcase and underscore notation for the symbol at point."
-  (interactive)
-  (save-excursion
-    (let* ((bounds (bounds-of-thing-at-point 'symbol))
-           (start (car bounds))
-           (end (cdr bounds))
-           (currently-using-underscores-p (progn (goto-char start)
-                                                 (re-search-forward "_" end t))))
-      (if currently-using-underscores-p
-          (progn
-            (upcase-initials-region start end)
-            (replace-string "_" "" nil start end)
-            (downcase-region start (1+ start)))
-        (replace-regexp "\\([A-Z]\\)" "_\\1" nil (1+ start) end)
-        (downcase-region start end)))))
 #+END_SRC
 
 *** Looking Stuff Up
@@ -2736,6 +2721,29 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]])
                   (bind-key "M-,"     #'helm-gtags-pop-stack helm-gtags-mode-map)
                   (bind-key "C-c <"   #'helm-gtags-previous-history helm-gtags-mode-map)
                   (bind-key "C-c >"   #'helm-gtags-next-history helm-gtags-mode-map)))
+#+END_SRC
+
+*** CamelCase
+
+Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/9288181/converting-from-camelcase-to-in-emacs][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/toggle-camelcase-underscores ()
+  "Toggle between camcelcase and underscore notation for the symbol at point."
+  (interactive)
+  (save-excursion
+    (let* ((bounds (bounds-of-thing-at-point 'symbol))
+           (start (car bounds))
+           (end (cdr bounds))
+           (currently-using-underscores-p (progn (goto-char start)
+                                                 (re-search-forward "_" end t))))
+      (if currently-using-underscores-p
+          (progn
+            (upcase-initials-region start end)
+            (replace-string "_" "" nil start end)
+            (downcase-region start (1+ start)))
+        (replace-regexp "\\([A-Z]\\)" "_\\1" nil (1+ start) end)
+        (downcase-region start end)))))
 #+END_SRC
 
 ** C/C++ development
@@ -3003,6 +3011,8 @@ and move to the source code that caused it."
 #+END_SRC
 
 *** Clang Format
+
+Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format code.
 
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format
@@ -3362,7 +3372,7 @@ Enable CIDER in org-mode.
 
 *** TODO check out [[https://github.com/losingkeys/4clojure.el][4clojure]] for learning Clojure
 
-** JavaScript
+** JSON
 
 #+BEGIN_SRC emacs-lisp
 (use-package json-mode
