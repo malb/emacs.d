@@ -3556,7 +3556,8 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to ~expand-r
                        :username ,(car credentials)
                        :password ,(cadr credentials)))))
             (setq org2blog/wp-use-sourcecode-shortcode t
-                  org2blog/wp-show-post-in-browser 'show)))
+                  org2blog/wp-show-post-in-browser nil
+                  org2blog/wp-default-categories '("Cryptography" "Sage"))))
 #+END_SRC
 
 * Prose
