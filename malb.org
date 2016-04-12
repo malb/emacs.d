@@ -1971,7 +1971,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 ** Retrieving Mail
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-get-mail-command "timelimit -t 120 -T 120 mbsync googlemail-default"
+(setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync googlemail-default"
       mu4e-update-interval nil)
 #+END_SRC
 
