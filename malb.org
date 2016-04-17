@@ -3297,7 +3297,15 @@ On our system port 8888 is already taken.
             ))
 #+END_SRC
 
-** Emacs Lisp
+** Lisp
+*** General
+
+#+BEGIN_SRC emacs-lisp
+(use-package lispy
+  :ensure t)
+#+END_SRC
+
+*** Emacs Lisp
 
 #+BEGIN_SRC emacs-lisp
 (use-package elisp-slime-nav
@@ -3308,7 +3316,8 @@ On our system port 8888 is already taken.
             (defun malb/elisp-hook ()
               (elisp-slime-nav-mode)
               (smartparens-strict-mode)
-              (eldoc-mode))
+              (eldoc-mode)
+              (lispy-mode 1))
 
             (setq eldoc-idle-delay 0.3)
 
@@ -3330,7 +3339,7 @@ On our system port 8888 is already taken.
 (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
 #+END_SRC
 
-** Clojure
+*** Clojure
 
 ([[https://github.com/howardabrams/dot-files/blob/master/emacs-clojure.org][source]])
 
@@ -3339,10 +3348,11 @@ On our system port 8888 is already taken.
   :ensure t
   :config (progn
             (add-hook 'clojure-mode-hook #'eldoc-mode)
-            (add-hook 'clojure-mode-hook #'smartparens-strict-mode)))
+            (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
+            (add-hook 'clojure-mode-hook #'lispy-mode)))
 #+END_SRC
 
-*** CIDER
+**** CIDER
 
 #+BEGIN_SRC emacs-lisp
 (use-package cider
@@ -3355,7 +3365,7 @@ On our system port 8888 is already taken.
             (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)))
 #+END_SRC
 
-*** Org-Mode
+**** Org-Mode
 
 Enable CIDER in org-mode.
 
@@ -3364,14 +3374,23 @@ Enable CIDER in org-mode.
   :config (setq org-babel-clojure-backend 'cider))
 #+END_SRC
 
-*** Flycheck
+**** Flycheck
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-clojure
    :ensure t)
 #+END_SRC
 
-*** TODO check out [[https://github.com/losingkeys/4clojure.el][4clojure]] for learning Clojure
+**** TODO check out [[https://github.com/losingkeys/4clojure.el][4clojure]] for learning Clojure
+
+*** Hy
+
+#+BEGIN_SRC emacs-lisp
+(use-package hy-mode
+  :ensure t
+  :config (progn
+            (add-hook 'hy-mode-hook #'lispy-mode)))
+#+END_SRC
 
 ** JSON
 
@@ -4228,7 +4247,6 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
             (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))
             ))
 #+END_SRC
-
 
 * Dired
 
