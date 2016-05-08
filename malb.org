@@ -3551,9 +3551,9 @@ Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multi
    ("C-x n n" . recursive-narrow-or-widen-dwim)))
 #+END_SRC
 
-*** [[https://github.com/magnars/expand-region.el][Expand-region]]
+** Expand region
 
-See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to ~expand-region~.
+See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https://github.com/magnars/expand-region.el][expand-region]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
