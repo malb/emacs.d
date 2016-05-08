@@ -3540,8 +3540,7 @@ Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multi
   )
 #+END_SRC
 
-** [#A] Selecting
-*** [#A] Recursively narrow
+** Recursively narrow
 
 #+BEGIN_SRC emacs-lisp
 (use-package recursive-narrow
