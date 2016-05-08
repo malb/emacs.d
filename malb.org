@@ -5096,16 +5096,14 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 #+END_SRC
 
 * ToDos
+** TODO get better at jumping around
+- =avy-goto-word-1= (=C-c C-<SPC>=)
+- =pop-local-mark= (=C-u C-<SPC>=)
+- =pop-global-mark= (=C-x C-<SPC>=)
+- =helm-all-mark-rings= (=C-h C-<SPC>=)
+- next buffer/previous buffer: =C-x <left>= and =C-x <right>=
 ** TODO AucTeX
 - ~\begin{comment}…\end{comment}~ does not work as expected
-** TRY [[http://emacs.stackexchange.com/q/8069][.el.gpg]]
-** TRY [[https://github.com/rejeep/prodigy.el][prodigy]]
-** TRY [[https://github.com/wasamasa/firestarter][firestarter]]
-:PROPERTIES:
-:ID:       01e6ff33-8437-4b06-967c-85dd8df6e7b6
-:END:
-** TODO check out [[https://github.com/bastibe/annotate.el][annotate]]
-** TODO check out [[https://github.com/bling/fzf.el][fzf]]
 ** Org Mode
 - [[https://org-trello.github.io/trello-setup.html][org-trello]] - sync with trello
 - [[https://github.com/christopherjwhite/org-toodledo][org-toodledo]] - sync with toodledo
