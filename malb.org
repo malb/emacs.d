@@ -777,7 +777,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
   :bind (("M-x"     . helm-M-x)
          ("C-x C-b" . malb/helm-omni)
          ("C-x C-f" . helm-find-files)
-         ("C-h <SPC>" . helm-all-mark-rings))
+         ("C-h C-<SPC>" . helm-all-mark-rings))
   :config (progn
             (require 'helm-config)
             (bind-key "C-c h" #'helm-command-prefix)
