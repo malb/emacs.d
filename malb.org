@@ -1912,16 +1912,23 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 ** Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-headers-seen-mark '("S" . "☑")
-      mu4e-headers-new-mark '("N" .  "✉")
-      mu4e-headers-replied-mark '("R" . "↵")
-      mu4e-headers-passed-mark '("P" . "⇉")
-      mu4e-headers-encrypted-mark '("x" . "⚷")
-      mu4e-headers-signed-mark '("s" . "✍")
+(setq mu4e-use-fancy-chars t
+      mu4e-headers-draft-mark     '("D" . "⚒ ") ; draft
+      ;; mu4e-headers-seen-mark      '("S" . "☑ ")  ; seen
+      ;; mu4e-headers-unread-mark    '("u" . "☐ ")  ; unseen
+      mu4e-headers-new-mark       '("N" .  "")
+      mu4e-headers-seen-mark      '("S" . "")    ; seen
+      mu4e-headers-unread-mark    '("u" . "")    ; unseen
+      mu4e-headers-flagged-mark   '("F" .  "⚵ ") ; flagged
+      mu4e-headers-new-mark       '("N" .  "✉ ")  ; new
+      mu4e-headers-replied-mark   '("R" . "↵ ")  ; replied
+      mu4e-headers-passed-mark    '("P" . "⇉ ")  ; passed
+      mu4e-headers-encrypted-mark '("x" . "⚷ ")   ; encrypted
+      mu4e-headers-signed-mark    '("s" . "✍ ")  ; signed
       mu4e-headers-empty-parent-prefix '("-" . "○")
       mu4e-headers-first-child-prefix '("\\" . "━▶")
       mu4e-headers-has-child-prefix '("+" . "●")
-      mu4e-headers-default-prefix  '("|" . "○"))
+      )
 #+END_SRC
 
 ** Folders
