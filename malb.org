@@ -4930,6 +4930,22 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 #+END_SRC
 
 * Look
+** Stripe Buffer
+
+[[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png]] ([[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png][source]])
+
+[[https://github.com/sabof/stripe-buffer][Stripe Buffer]] makes it vastly easier to read tables and friends. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
+
+#+BEGIN_SRC emacs-lisp
+(use-package stripe-buffer
+  :ensure t
+  :config (progn
+            (add-hook 'dired-mode-hook 'turn-on-stripe-buffer-mode)
+            (add-hook 'org-mode-hook 'turn-on-stripe-table-mode)
+            (set-face-attribute 'stripe-highlight nil :background "gray93")
+            ))
+#+END_SRC
+
 ** Theme
 
 It looks like this:
@@ -4965,6 +4981,11 @@ It looks like this:
               (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
               (set-face-attribute 'org-block-background nil :background "#FDF8EC")
 
+              (when (boundp 'mmm-mode)
+                (set-face-attribute 'mmm-default-submode-face nil :background "#FDF8EC"))
+
+              (when (boundp 'hl-sentence-mode)
+                (set-face-attribute 'hl-sentence-face nil :background "#FDF9EF"))
 
               (when (boundp 'which-func-mode)
                 (set-face-attribute 'which-func nil :foreground "#b58900"))
@@ -4980,10 +5001,7 @@ It looks like this:
               (set-face-attribute 'org-level-3 nil :height 1.0 :background nil)
               (set-face-attribute 'org-document-info nil :height 1.0)
               (set-face-attribute 'org-document-info-keyword nil :height 1.0)
-              (set-face-attribute 'org-document-title nil :height 1.0)
-              ))
-
-  )
+              (set-face-attribute 'org-document-title nil :height 1.0))))
 
 (when (bound-and-true-p malb/dichromacy-p)
   (progn
@@ -4998,17 +5016,15 @@ It looks like this:
     (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
     (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
     (set-face-attribute 'org-block-background nil :background "#F4F4F4")
-    )
-  )
+    (when (boundp 'hl-sentence-mode)
+      (set-face-attribute 'hl-sentence-face nil :background "gray90"))
+    (when (boundp 'which-func-mode)
+      (set-face-attribute 'which-func nil :foreground "white"))
+    ))
 #+END_SRC
 
 
 #+BEGIN_SRC emacs-lisp
-(when (boundp 'mmm-mode)
-  (set-face-attribute 'mmm-default-submode-face nil :background "#FDF8EC"))
-(when (boundp 'hl-sentence-mode)
-  (set-face-attribute 'hl-sentence-face nil :background "#FDF9EF"))
-
 (set-face-attribute 'font-lock-doc-face nil :foreground "#93a1a1" :slant 'normal)
 
 (setq org-todo-keyword-faces
@@ -5074,21 +5090,6 @@ We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which custo
   :config (progn
             (add-hook 'emacs-lisp-mode-hook #'rainbow-mode))
   :diminish rainbow-mode)
-#+END_SRC
-
-** [[https://github.com/sabof/stripe-buffer][Stripe Buffer]]
-
-[[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png]] ([[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png][source]])
-
-Makes it vastly easier to read tables and friends. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package stripe-buffer
-    :ensure t
-    :config (progn
-              (add-hook 'dired-mode-hook 'turn-on-stripe-buffer-mode)
-              (add-hook 'org-mode-hook 'turn-on-stripe-table-mode)
-              ))
 #+END_SRC
 
 ** Beacon
