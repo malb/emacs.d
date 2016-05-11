@@ -5005,6 +5005,7 @@ It looks like this:
     (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
     (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
     (set-face-attribute 'org-block-background nil :background "#F4F4F4")
+    (set-face-attribute 'org-table nil :foreground "#d55e00")
     (when (boundp 'hl-sentence-mode)
       (set-face-attribute 'hl-sentence-face nil :background "gray90"))
     (when (boundp 'which-func-mode)
