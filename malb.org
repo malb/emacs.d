@@ -3013,7 +3013,9 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format c
 
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format
-  :ensure t)
+  :ensure t
+  :config (progn
+            (setq clang-format-executable "clang-format-3.8")))
 #+END_SRC
 
 ** Python
