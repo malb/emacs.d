@@ -2743,6 +2743,16 @@ Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/928
         (downcase-region start end)))))
 #+END_SRC
 
+*** Dump Jump
+
+zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for JavaScript, Emacs Lisp, Python, Go, Clojure, …
+
+#+BEGIN_SRC emacs-lisp
+(use-package dumb-jump
+  :ensure t
+  :config (dumb-jump-mode))
+#+END_SRC
+
 ** C/C++ development
 *** Semantic
 
