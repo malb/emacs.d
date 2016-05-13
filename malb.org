@@ -4980,70 +4980,69 @@ It looks like this:
                     solarized-scale-org-headlines nil
                     x-underline-at-descent-line t)
 
-              (load-theme 'solarized-light t)
+              (defun malb/load-main-theme ()
+                (load-theme 'solarized-light t)
 
-              (solarized-with-color-variables
-                'light
-                (setq malb/solarized-bg (solarized-color-blend base02 base03 0.25)))
+                (solarized-with-color-variables
+                  'light
+                  (setq malb/solarized-bg (solarized-color-blend base02 base03 0.25)))
 
-              ;; steal org style from Leuven
-              (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
-              (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
-              (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
-              (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
-              (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
-              (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-              (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-              (set-face-attribute 'org-block-background nil :background malb/solarized-bg)
+                ;; steal org style from Leuven
+                (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
+                (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
+                (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
+                (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
+                (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
+                (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
+                (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
+                (set-face-attribute 'org-block-background nil :background malb/solarized-bg)
+                (when (boundp 'hl-sentence-mode)
+                  (set-face-attribute 'hl-sentence-face nil :background  malb/solarized-bg))
+                (when (boundp 'which-func-mode)
+                  (set-face-attribute 'which-func nil :foreground "#b58900"))
 
-
-              (when (boundp 'mmm-mode)
-                (set-face-attribute 'mmm-default-submode-face nil :background malb/solarized-bg))
-
-              (when (boundp 'hl-sentence-mode)
-                (set-face-attribute 'hl-sentence-face nil :background  malb/solarized-bg))
-
-              (when (boundp 'which-func-mode)
-                (set-face-attribute 'which-func nil :foreground "#b58900"))
+                ;; steal spacemacs flycheck style
+                (eval-after-load "fylcheck"
+                  (progn
+                    (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
+                    (set-face-attribute 'flycheck-warning nil :underline "#b58900")
+                    (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
+                    (set-face-attribute 'flycheck-fringe-error   nil :background "white" :foreground "#dc322f" :weight 'bold)
+                    (set-face-attribute 'flycheck-fringe-warning nil :background "white" :foreground "#DEB542" :weight 'bold)
+                    (set-face-attribute 'flycheck-fringe-info    nil :background "white" :foreground "#69B7F0" :weight 'bold)
+                    )))
               )))
-
-(when (string-equal malb/theme "material")
-  (use-package material-theme
-    :ensure t
-    :config (progn
-              (load-theme 'material-light t)
-              (set-face-attribute 'org-level-1 nil :height 1.0)
-              (set-face-attribute 'org-level-2 nil :height 1.0 :background nil)
-              (set-face-attribute 'org-level-3 nil :height 1.0 :background nil)
-              (set-face-attribute 'org-document-info nil :height 1.0)
-              (set-face-attribute 'org-document-info-keyword nil :height 1.0)
-              (set-face-attribute 'org-document-title nil :height 1.0))))
 
 (when (string-equal malb/theme "dichromacy")
   (progn
-    (load-theme 'dichromacy t)
+    (defun malb/load-main-theme ()
+      (load-theme 'dichromacy t)
 
-    ;; steal org style from Leuven
-    (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
-    (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
-    (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
-    (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
-    (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
-    (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-    (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-    (set-face-attribute 'org-block-background nil :background "#F4F4F4")
-    (set-face-attribute 'org-table nil :foreground "#d55e00")
-    (when (boundp 'hl-sentence-mode)
-      (set-face-attribute 'hl-sentence-face nil :background "gray90"))
-    (when (boundp 'which-func-mode)
-      (set-face-attribute 'which-func nil :foreground "white"))
-    ))
+      ;; steal org style from Leuven
+      (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
+      (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
+      (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
+      (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
+      (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
+      (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
+      (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
+      (set-face-attribute 'org-block-background nil :background "#F4F4F4")
+      (set-face-attribute 'org-table nil :foreground "#d55e00")
+
+      ;; steal spacemacs flycheck style
+      (eval-after-load "fylcheck"
+        (progn
+          (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
+          (set-face-attribute 'flycheck-warning nil :underline "#b58900")
+          (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
+          (set-face-attribute 'flycheck-fringe-error   nil :background "white" :foreground "#dc322f" :weight 'bold)
+          (set-face-attribute 'flycheck-fringe-warning nil :background "white" :foreground "#DEB542" :weight 'bold)
+          (set-face-attribute 'flycheck-fringe-info    nil :background "white" :foreground "#69B7F0" :weight 'bold)))
+      )))
 #+END_SRC
 
 
 #+BEGIN_SRC emacs-lisp
-(set-face-attribute 'font-lock-doc-face nil :foreground "#93a1a1" :slant 'normal)
-
 (setq org-todo-keyword-faces
       '(("CANCELLED" :foreground "gray" :weight bold)
         ("DISABLED"  :foreground "gray" :weight bold)
@@ -5055,17 +5054,6 @@ It looks like this:
         ("COAUTHOR"  :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
         ("NATIVE"    :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
         ))
-
-;; steal spacemacs flycheck style
-(eval-after-load "fylcheck"
-  (progn
-    (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
-    (set-face-attribute 'flycheck-warning nil :underline "#b58900")
-    (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
-    (set-face-attribute 'flycheck-fringe-error   nil :background "white" :foreground "#dc322f" :weight 'bold)
-    (set-face-attribute 'flycheck-fringe-warning nil :background "white" :foreground "#DEB542" :weight 'bold)
-    (set-face-attribute 'flycheck-fringe-info    nil :background "white" :foreground "#69B7F0" :weight 'bold)
-    ))
 #+END_SRC
 
 Set transparency because reasons ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
@@ -5088,15 +5076,14 @@ We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which custo
 (use-package spaceline-config
   :ensure spaceline
   :config (progn
-            (setq spaceline-workspace-numbers-unicode nil)
-            (spaceline-spacemacs-theme)
-
-            (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
-            (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
-            (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
-            (set-face-attribute 'powerline-inactive2 nil :background "grey65" :foreground "gainsboro")
-            (powerline-reset)
-            ))
+            (defun malb/load-mode-line-theme ()
+              (setq spaceline-workspace-numbers-unicode nil)
+              (spaceline-spacemacs-theme)
+              (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
+              (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
+              (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
+              (set-face-attribute 'powerline-inactive2 nil :background "grey65" :foreground "gainsboro")
+              (powerline-reset))))
 #+END_SRC
 
 ** Rainbow mode
@@ -5131,6 +5118,23 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
                       #'malb/beacon-disable-hl-line-mode)
 
             (beacon-mode t)))
+#+END_SRC
+
+** Load Theme
+
+#+BEGIN_SRC emacs-lisp
+(defvar malb/theme-loaded nil)
+
+(defun malb/load-theme (frame)
+  (when (not malb/theme-loaded)
+    (select-frame frame)
+    (malb/load-main-theme)
+    (malb/load-mode-line-theme)
+    (setq malb/theme-loaded t)))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'malb/load-theme)
+  (malb/load-theme (selected-frame)))
 #+END_SRC
 
 * ToDos
