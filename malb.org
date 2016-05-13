@@ -303,29 +303,6 @@ Repeated invocations toggle between the two most recently open buffers."
 (bind-key "S-C-<up>" 'enlarge-window)
 #+END_SRC
 
-*** Golden Ratio
-
-[[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows.
-
-[[https://camo.githubusercontent.com/26b1ac5fec67a2c557cfbe87382a0134d3443fd0/68747470733a2f2f7261772e6769746875622e636f6d2f726f6d616e2f676f6c64656e2d726174696f2e656c2f6173736574732f676f6c64656e5f726174696f5f656c2e676966][screenshot]] ([[https://github.com/roman/golden-ratio.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package golden-ratio
-  :ensure t
-  :diminish golden-ratio-mode
-  :config (progn
-            (golden-ratio-mode t)
-            (setq golden-ratio-adjust-factor 1.0)
-
-            (defun malb/golden-ratio-inhibit-functions ()
-              (when (boundp 'which-key--current-page-n)
-                which-key--current-page-n))
-
-            (setq golden-ratio-inhibit-functions
-                  '(malb/golden-ratio-inhibit-functions))
-            ))
-#+END_SRC
-
 ** Special windows
 
 Some buffers should behave like pop ups:
@@ -410,6 +387,36 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 #+BEGIN_SRC emacs-lisp
 (setq compilation-scroll-output 'first-error)
+#+END_SRC
+
+** Golden Ratio
+
+[[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows.
+
+[[https://camo.githubusercontent.com/26b1ac5fec67a2c557cfbe87382a0134d3443fd0/68747470733a2f2f7261772e6769746875622e636f6d2f726f6d616e2f676f6c64656e2d726174696f2e656c2f6173736574732f676f6c64656e5f726174696f5f656c2e676966][screenshot]] ([[https://github.com/roman/golden-ratio.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package golden-ratio
+  :ensure t
+  :diminish golden-ratio-mode
+  :config (progn
+            (golden-ratio-mode t)
+            (setq golden-ratio-adjust-factor 1.0)
+
+            (defun malb/golden-ratio-inhibit-functions ()
+              (when (boundp 'which-key--current-page-n)
+                which-key--current-page-n)
+              (if (boundp 'helm-alive-p)
+                  (symbol-value 'helm-alive-p))
+              nil)
+
+            (setq golden-ratio-exclude-buffer-regexp malb/popup-windows)
+
+            (setq golden-ratio-exclude-modes '("eshell-mode"))
+
+            (setq golden-ratio-inhibit-functions
+                  '(malb/golden-ratio-inhibit-functions))
+            ))
 #+END_SRC
 
 * Clean Mode Line
