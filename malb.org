@@ -4031,7 +4031,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   reftex-plug-into-AUCTeX t
                   TeX-PDF-mode t
                   TeX-source-correlate-mode t
-                  TeX-save-query nil)
+                  TeX-save-query nil
+                  TeX-error-overview-open-after-TeX-run t)
 
             (setq-default TeX-master nil)
             (setq-default TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
