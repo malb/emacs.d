@@ -4985,7 +4985,7 @@ It looks like this:
 
                 (solarized-with-color-variables
                   'light
-                  (setq malb/solarized-bg (solarized-color-blend base02 base03 0.25)))
+                  (setq malb/solarized-bg (solarized-color-blend base02 base03 0.3)))
 
                 ;; steal org style from Leuven
                 (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
