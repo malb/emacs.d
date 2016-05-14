@@ -372,6 +372,7 @@ If there is no compilation window, open one at the bottom, spanning the complete
   (when (and (eq status 'exit) (zerop code))
     ;; and delete the *compilation* window
     (let ((compilation-window (get-buffer-window (get-buffer "*compilation*"))))
+
       (when (and (not (window-at-side-p compilation-window 'top))
                  (window-at-side-p compilation-window 'left)
                  (window-at-side-p compilation-window 'right))
@@ -403,16 +404,24 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
             (golden-ratio-mode t)
             (setq golden-ratio-adjust-factor 1.0)
 
+            (setq golden-ratio-exclude-modes '(eshell-mode))
+
             (defun malb/golden-ratio-inhibit-functions ()
               (when (boundp 'which-key--current-page-n)
                 which-key--current-page-n)
               (if (boundp 'helm-alive-p)
                   (symbol-value 'helm-alive-p))
-              nil)
+              (catch 'inhibit
+                (dolist (window (window-list))
+                  (with-current-buffer (window-buffer window)
+                    (if (or
+                         (memq major-mode golden-ratio-exclude-modes)
+                         (bound-and-true-p olivetti-mode))
+                        (throw 'inhibit t))))
+                (throw 'inhibit nil)))
 
             (setq golden-ratio-exclude-buffer-regexp malb/popup-windows)
 
-            (setq golden-ratio-exclude-modes '("eshell-mode"))
 
             (setq golden-ratio-inhibit-functions
                   '(malb/golden-ratio-inhibit-functions))
