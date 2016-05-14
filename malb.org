@@ -455,11 +455,7 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 ** Jumping to links
 
 #+BEGIN_QUOTE
-Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or =org-mode= or
-=eww-mode= or =compilation-mode= buffer, you can tab through the links to select the one you want.
-This is an O(N) operation, where the N is the amount of links. This package turns this into an O(1)
-operation, or at least O(log(N)) if you manage to squeeze thousands of links in one screen. It does
-so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/ace-link][source]])
+Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or =org-mode= or =eww-mode= or =compilation-mode= buffer, you can tab through the links to select the one you want. This is an O(N) operation, where the N is the amount of links. This package turns this into an O(1) operation, or at least O(log(N)) if you manage to squeeze thousands of links in one screen. It does so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/ace-link][source]])
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
@@ -517,7 +513,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
-                  company-idle-delay 0.4   ; disable delay before autocompletion popup shows
+                  company-idle-delay 0.4   ; delay for popup
                   company-echo-delay 0     ; remove blinking
                   company-show-numbers t   ; show numbers for easy selection
                   company-selection-wrap-around t
@@ -570,7 +566,8 @@ For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company
               (when ede-object
                 (ede-system-include-path ede-object)))
 
-            (setq company-c-headers-path-system #'malb/ede-object-system-include-path)
+            (setq company-c-headers-path-system
+                  #'malb/ede-object-system-include-path)
             ))
 #+END_SRC
 
@@ -622,16 +619,19 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
 *Note:* Do this at the end of =company-mode= config.
 
 #+BEGIN_SRC emacs-lisp
-  (defvar malb/company-mode/enable-yas t
-    "Enable yasnippet for all backends.")
+(defvar malb/company-mode/enable-yas t
+  "Enable yasnippet for all backends.")
 
-  (defun malb/company-mode/backend-with-yas (backend)
-    (if (or (not malb/company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
-        backend
-      (append (if (consp backend) backend (list backend))
-              '(:with company-yasnippet))))
+(defun malb/company-mode/backend-with-yas (backend)
+  (if (or (not malb/company-mode/enable-yas)
+          (and (listp backend)
+               (member 'company-yasnippet backend)))
+      backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
 
-  (setq company-backends (mapcar #'malb/company-mode/backend-with-yas company-backends))
+(setq company-backends
+      (mapcar #'malb/company-mode/backend-with-yas company-backends))
 #+END_SRC
 
 ** Tab DWIM
@@ -967,10 +967,11 @@ Switch themes with helm.
                                          (seq "[0;31m" (+ (not (any "["))) "[0;0m")
                                          "[0;32m"
                                          "[0;0m")))
-    (mapcar (function (lambda (c)
-                        (replace-regexp-in-string
-                         (rx (seq bol (+ space))) ""
-                         (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
+    (mapcar (function
+             (lambda (c)
+               (replace-regexp-in-string
+                (rx (seq bol (+ space))) ""
+                (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
             cs)))
 
 (defvar helm-source-baloo
@@ -1165,7 +1166,7 @@ This library provides easy project management and navigation. The concept of a p
             (require 'helm-projectile)
             (helm-projectile-on)
 
-            (defun malb/projectile-ignored-project-function (project-root)
+            (defun malb/projectile-ignore-projects (project-root)
               (progn
                 (or (file-remote-p project-root)
                     ;; don't litter project list with cryptobib subprojects
@@ -1176,7 +1177,7 @@ This library provides easy project management and navigation. The concept of a p
 
             (setq projectile-make-test-cmd "make check"
                   projectile-ignored-projects malb/projectile-ignored-projects
-                  projectile-ignored-project-function #'malb/projectile-ignored-project-function
+                  projectile-ignored-project-function #'malb/projectile-ignore-projects
                   projectile-switch-project-action 'helm-projectile
                   projectile-mode-line  '(:eval
                                           (format " [%s]"
@@ -1203,10 +1204,17 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
               (helm-build-dummy-source
                   "Create file"
                 :action 'find-file))
-            (add-to-list 'helm-projectile-sources-list malb/helm-source-file-not-found t)
-            (helm-delete-action-from-source "Grep in projects `C-s'" helm-source-projectile-projects)
-            (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-projects 4))
-  )
+            (add-to-list
+             'helm-projectile-sources-list
+             malb/helm-source-file-not-found t)
+
+            (helm-delete-action-from-source
+             "Grep in projects `C-s'"
+             helm-source-projectile-projects)
+
+            (helm-add-action-to-source
+             "Grep in projects `C-s'"
+             'helm-do-ag helm-source-projectile-projects 4)))
 #+END_SRC
 
 * Org-mode all the things!
@@ -1246,9 +1254,9 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-log-into-drawer t
       org-log-done t
       org-highlight-latex-and-related '(latex)
-      org-return-follows-link nil             ; don’t follow links by pressing ENTER on them
+      org-return-follows-link nil             ; don’t follow links by pressing ENTER
       org-clock-persist 'history
-      org-special-ctrl-a/e t                   ; special begin/end of line to skip starts …
+      org-special-ctrl-a/e t                   ; begin/end of line to skip starts …
       org-special-ctrl-k t                     ; special keys for killing a headline
       org-src-fontify-natively t               ; fontify code blocks
       org-agenda-tags-column -117
@@ -1257,14 +1265,14 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-agenda-default-appointment-duration 60
       org-agenda-skip-deadline-prewarning-if-scheduled t
       org-agenda-ignore-drawer-properties '(effort appt category)
-      org-agenda-window-setup 'current-window  ; Overwrite the current window with the agenda
+      org-agenda-window-setup 'current-window  ; Current window gets agenda
       org-agenda-sticky t                      ; Use sticky agenda's so they persist
       org-agenda-compact-blocks t              ; Compact the block agenda view
       org-agenda-span 14                       ; span 14 days of agenda
       org-agenda-start-on-weekday nil          ; start today not on Monday
       org-edit-src-content-indentation 0       ; don't indent source code
-      org-src-preserve-indentation t           ; preserve indentation inside of source blocks
-      org-src-window-setup 'current-window     ; org-src windows set up when hitting C-c '
+      org-src-preserve-indentation t           ; preserve indentation in code
+      org-src-window-setup 'current-window     ; when hitting C-c '
       org-reverse-note-order t
       org-footnote-auto-adjust t               ; renumber footnotes automagically
       org-confirm-elisp-link-function nil      ;
@@ -1275,7 +1283,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (bind-key "<home>" #'org-beginning-of-line org-mode-map)
 (bind-key "<end>" #'org-end-of-line org-mode-map)
 (bind-key "C-c C-." #'org-time-stamp org-mode-map) ; ede binds C-c . too
-(bind-key "C-c C-," #'org-time-stamp-inactive org-mode-map) ; fylcheck binds C-c ! too
+(bind-key "C-c C-," #'org-time-stamp-inactive org-mode-map) ; fylcheck binds C-c !
 #+END_SRC
 
 **** TODO move org config to respective sections
@@ -1315,10 +1323,34 @@ Working with source code in org-mode.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "WAITING(w@)" "|" "DELEGATED(e@/!)" "DONE(d)" "CANCELLED(c@/!)") ;;generic
-        (sequence "EXPLORE" "WRITEUP" "READ(r)" "COAUTHOR(!)" "REWRITE(!)" "SUBMITTED(@/!)" "|" "PUBLISHED(p!)" "ONHOLD(h@/!)" "STALLED(s)") ;; papers
-        (sequence "REVIEW(v)" "INFO(i@/!)" "|" "REVIEWED(V!)") ;; reviews
-        (type "BLOG(b)" "REPLY(r)" "TALK(k)" "STUDY(y)" "LOAD" "|" "DONE") ))
+      '((sequence "TODO(t)"
+                  "WAITING(w@)"
+                  "|"
+                  "DELEGATED(e@/!)"
+                  "DONE(d)"
+                  "CANCELLED(c@/!)") ;;generic
+        (sequence "EXPLORE"
+                  "WRITEUP"
+                  "READ(r)"
+                  "COAUTHOR(!)"
+                  "REWRITE(!)"
+                  "SUBMITTED(@/!)"
+                  "|"
+                  "PUBLISHED(p!)"
+                  "ONHOLD(h@/!)"
+                  "STALLED(s)") ;; papers
+
+        (sequence "REVIEW(v)"
+                  "INFO(i@/!)"
+                  "|"
+                  "REVIEWED(V!)") ;; reviews
+
+        (type "BLOG(b)"
+              "REPLY(r)"
+              "TALK(k)"
+              "STUDY(y)"
+              "LOAD"
+              "|" "DONE") ))
 
 (org-clock-persistence-insinuate)
 #+END_SRC
@@ -1492,11 +1524,12 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
   (when malb/org-icalendar-export-timer
     (cancel-timer malb/org-icalendar-export-timer))
   (setq malb/org-icalendar-export-timer
-        (run-with-idle-timer   (* 1 secs) nil (lambda ()
-                                                ;; async, check org-export-init.el
-                                                (org-icalendar-combine-agenda-files t)
-                                                (org-agenda-redo)
-                                                ))))
+        (run-with-idle-timer
+         (* 1 secs) nil (lambda ()
+                          ;; async, check org-export-init.el
+                          (org-icalendar-combine-agenda-files t)
+                          (org-agenda-redo)
+                          ))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1526,10 +1559,12 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
             (setq org-latex-listings 't)
             (add-to-list 'org-latex-packages-alist '("" "listings"))
             (add-to-list 'org-latex-packages-alist '("" "color"))
-            (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf %f")
+            (setq org-latex-pdf-process
+                  '("latexmk -xelatex -output-directory=%o -pdf %f")
                   org-latex-caption-above nil)
             (setq org-latex-default-packages-alist
-                  (remove* '("T1" "fontenc" t) org-latex-default-packages-alist :test 'equal))
+                  (remove* '("T1" "fontenc" t)
+                           org-latex-default-packages-alist :test 'equal))
             (add-to-list 'org-latex-classes
                          '("tuftehandout"
                            "\\documentclass{tufte-handout}
@@ -1552,7 +1587,8 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 #+BEGIN_SRC emacs-lisp
 (use-package ox-odt
   :init (progn
-          (setq org-odt-styles-file (expand-file-name "org-export-template.odt" user-emacs-directory))
+          (setq org-odt-styles-file
+                (expand-file-name "org-export-template.odt" user-emacs-directory))
           ))
 #+END_SRC
 
@@ -1629,7 +1665,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
 - =%[file]= Insert the contents of the file given by file.
 - =%(sexp)= Evaluate Elisp sexp and replace with the result. For convenience, =%:keyword= (see below) placeholders within the expression will be expanded prior to this. The sexp must return a string.
-- =%<...>= The result of format-time-string on the ... format specification.
+- =%<...>= The result of format-time-string on the … format specification.
 - =%t= Timestamp, date only.
 - =%T= Timestamp, with date and time.
 - =%u, %U= Like the above, but inactive timestamps.
@@ -1730,9 +1766,12 @@ I've notice that while I really like taking notes in a meeting, I don't always l
 (use-package org-tree-slide
   :ensure t
   :config (progn
-            (bind-key "C-<left>"  #'org-tree-slide-move-previous-tree org-tree-slide-mode-map)
-            (bind-key "C-<right>" #'org-tree-slide-move-next-tree org-tree-slide-mode-map)
-            (bind-key "<f11>"   #'org-tree-slide-content org-tree-slide-mode-map)
+            (bind-key "C-<left>"
+                      #'org-tree-slide-move-previous-tree org-tree-slide-mode-map)
+            (bind-key "C-<right>"
+                      #'org-tree-slide-move-next-tree org-tree-slide-mode-map)
+            (bind-key "<f11>"
+                      #'org-tree-slide-content org-tree-slide-mode-map)
             (setq org-tree-slide-skip-outline-level 2)))
 #+END_SRC
 
@@ -1774,6 +1813,7 @@ I've notice that while I really like taking notes in a meeting, I don't always l
 | ~u~         | ~(org-agenda-bulk-unmark)~           | Unmark entry at point for bulk action.                 |
 | ~U~         | ~(org-agenda-bulk-remove-all-marks)~ | Unmark all marked entries for bulk action.             |
 | ~B~         | ~(org-agenda-bulk-action)~           | Bulk action: act on all marked entries in the agenda.  |
+#+TBLFM:
 
 *** Commands I easily forget
 
@@ -5073,6 +5113,7 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
 #+END_SRC
 
 *** TODO clean up Solarized config
+
 ** Powerline
 
 We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which customises [[https://github.com/milkypostman/powerline][Powerline]].
@@ -5086,6 +5127,7 @@ We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which custo
             (defun malb/load-mode-line-theme ()
               (setq spaceline-workspace-numbers-unicode nil)
               (spaceline-spacemacs-theme)
+              (spaceline-helm-mode)
               (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
               (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
               (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
