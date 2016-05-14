@@ -407,25 +407,22 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
             (setq golden-ratio-exclude-modes '(eshell-mode))
 
             (defun malb/golden-ratio-inhibit-functions ()
-              (when (boundp 'which-key--current-page-n)
-                which-key--current-page-n)
-              (if (boundp 'helm-alive-p)
-                  (symbol-value 'helm-alive-p))
-              (catch 'inhibit
-                (dolist (window (window-list))
-                  (with-current-buffer (window-buffer window)
-                    (if (or
-                         (memq major-mode golden-ratio-exclude-modes)
-                         (bound-and-true-p olivetti-mode))
-                        (throw 'inhibit t))))
-                (throw 'inhibit nil)))
+              (cond ((bound-and-true-p which-key--current-page-n))
+                    ((bound-and-true-p helm-alive-p))
+                    ((eq this-command 'embrace-commander))
+                    (t (catch 'inhibit
+                         (dolist (window (window-list))
+                           (with-current-buffer (window-buffer window)
+                             (if (or (memq major-mode golden-ratio-exclude-modes)
+                                     (bound-and-true-p olivetti-mode))
+                                 (throw 'inhibit t))))
+                         (throw 'inhibit nil)))))
 
             (setq golden-ratio-exclude-buffer-regexp malb/popup-windows)
 
 
             (setq golden-ratio-inhibit-functions
-                  '(malb/golden-ratio-inhibit-functions))
-            ))
+                  '(malb/golden-ratio-inhibit-functions))))
 #+END_SRC
 
 * Clean Mode Line
@@ -3624,6 +3621,16 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 (use-package expand-region
   :ensure t
   :bind ("C-`" . er/expand-region))
+#+END_SRC
+
+** Embrace
+
+#+BEGIN_SRC emacs-lisp
+(use-package embrace
+  :ensure t
+  :config (progn
+            (bind-key "M-`" #'embrace-commander)
+            (add-hook 'org-mode-hook #'embrace-org-mode-hook)))
 #+END_SRC
 
 * Blogging
