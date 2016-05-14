@@ -5055,7 +5055,7 @@ The result looks like this:
                 (when (boundp 'hl-sentence-mode)
                   (set-face-attribute 'hl-sentence-face nil :background  malb/solarized-bg))
                 (when (boundp 'which-func-mode)
-                  (set-face-attribute 'which-func nil :foreground "#b58900"))
+                  (set-face-attribute 'which-func nil :foreground "#DEB542"))
 
                 ;; steal spacemacs flycheck style
                 (eval-after-load "fylcheck"
