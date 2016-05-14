@@ -4426,9 +4426,7 @@ directory to make multiple eshell windows easier."
               (eshell/exit))
 
             (defun malb/config-eshell-completion ()
-              "Don't do idle complete in eshell"
-              (setq-local company-idle-delay nil)
-              (bind-key "<tab>" #'company-complete eshell-mode-map))
+              (setq pcomplete-cycle-completions t))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
