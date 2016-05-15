@@ -172,6 +172,7 @@ When splitting windows open the previous buffer in it.
 (bind-key "C-x 3" 'malb/hsplit-last-buffer)
 #+END_SRC
 
+Don’t split horizontally.
 
 #+BEGIN_SRC emacs-lisp
 (setq split-width-threshold  160)
@@ -184,7 +185,7 @@ Resize windows to accommodate new ones.
 (setq window-combination-resize t)
 #+END_SRC
 
-** Restoring configurations
+** [#A] Restoring configurations
 
 [[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows you to “undo” (and “redo”) changes in the window configuration with the key commands =C-c left= and =C-c right=.
 
@@ -222,6 +223,7 @@ Resize windows to accommodate new ones.
                   )))
 
             (require 'latex-preview-pane)
+
             (defun malb/close-latex-preview-pane-before-eyebrowse-switch ()
               ;; latex-preview-pane uses window-parameters which are not preserved by eyebrowse, so
               ;; we close the preview pane before switching, it will be regenerated when we edit the
@@ -279,7 +281,7 @@ Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered
          ("<f2> <down>" . windmove-down)))
 #+END_SRC
 
-Quickly jump back and forth ([[http://www.emacswiki.org/emacs/SwitchingBuffers#toc4][source]])
+Quickly jump back and forth between buffers ([[http://www.emacswiki.org/emacs/SwitchingBuffers#toc4][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/switch-to-previous-buffer ()
@@ -380,7 +382,6 @@ If there is no compilation window, open one at the bottom, spanning the complete
   ;; Always return the anticipated result of compilation-exit-message-function
   (cons msg code))
 
-;; Specify my function (maybe I should have done a lambda function)
 (setq compilation-exit-message-function #'malb/compilation-exit-autoclose)
 #+END_SRC
 
@@ -392,7 +393,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 ** Golden Ratio
 
-[[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows.
+[[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows is enabled by default. We also inhibit when modes in =golden-ratio-exclude-modes= are active any window, not only in the target window.
 
 [[https://camo.githubusercontent.com/26b1ac5fec67a2c557cfbe87382a0134d3443fd0/68747470733a2f2f7261772e6769746875622e636f6d2f726f6d616e2f676f6c64656e2d726174696f2e656c2f6173736574732f676f6c64656e5f726174696f5f656c2e676966][screenshot]] ([[https://github.com/roman/golden-ratio.el][source]])
 
@@ -407,16 +408,22 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
             (setq golden-ratio-exclude-modes '(eshell-mode))
 
             (defun malb/golden-ratio-inhibit-functions ()
-              (cond ((bound-and-true-p which-key--current-page-n))
-                    ((bound-and-true-p helm-alive-p))
-                    ((eq this-command 'embrace-commander))
-                    (t (catch 'inhibit
-                         (dolist (window (window-list))
-                           (with-current-buffer (window-buffer window)
-                             (if (or (memq major-mode golden-ratio-exclude-modes)
-                                     (bound-and-true-p olivetti-mode))
-                                 (throw 'inhibit t))))
-                         (throw 'inhibit nil)))))
+              (cond
+               ;; which function is exempt
+               ((bound-and-true-p which-key--current-page-n))
+               ;; helm is exempt
+               ((bound-and-true-p helm-alive-p))
+               ;; embrace is exempt
+               ((eq this-command 'embrace-commander))
+               ;; any olivetti mode buffer disables gr
+               ;; we also block if any buffer has inhibit major-mode not only target
+               (t (catch 'inhibit
+                    (dolist (window (window-list))
+                      (with-current-buffer (window-buffer window)
+                        (if (or (memq major-mode golden-ratio-exclude-modes)
+                                (bound-and-true-p olivetti-mode))
+                            (throw 'inhibit t))))
+                    (throw 'inhibit nil)))))
 
             (setq golden-ratio-exclude-buffer-regexp malb/popup-windows)
 
@@ -653,10 +660,6 @@ This function then hopefully does what I want:
 ([[http://emacs.stackexchange.com/q/21182/8930][source]], [[http://emacs.stackexchange.com/q/7908/8930][source]])
 
 #+BEGIN_SRC emacs-lisp
-;; (defun malb/do-yas-expand ()
-;;   (let ((yas-fallback-behavior 'return-nil))
-;;     (yas-expand-from-trigger-key)))
-
 (defun malb/indent-or-complete (&optional arg)
   (interactive "P")
   (cond
@@ -671,11 +674,6 @@ This function then hopefully does what I want:
          (looking-back "[^[:space:]]")
          (not (looking-back "^")))
 
-    ;; snippets are handled before calling this function
-    ;; (if (or (not yas/minor-mode)
-    ;;         (null (malb/do-yas-expand)))
-    ;;     ;; otherwise complete
-    ;;     (company-complete-common)))
     (company-complete-common))
    ;; by default just call whatever was bound
    (t
@@ -684,11 +682,7 @@ This function then hopefully does what I want:
       (if (not (called-interactively-p 'any))
           (fn arg)
         (setq this-command fn)
-        (call-interactively fn))
-      )
-    )
-   )
-  )
+        (call-interactively fn))))))
 
 (bind-key "<tab>" #'malb/indent-or-complete)
 #+END_SRC
@@ -821,14 +815,12 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (bind-key "C-z"   'helm-select-action             helm-map)
 
             ;; see https://github.com/emacs-helm/helm/commit/1de1701c73b15a86e99ab1c5c53bd0e8659d8ede
-            (assq-delete-all 'find-file helm-completing-read-handlers-alist)
-            )
-  )
+            (assq-delete-all 'find-file helm-completing-read-handlers-alist)))
 #+END_SRC
 
 ** Helm Flx
 
-[[https://github.com/PythonNut/helm-flx][helm-flx]]  implements intelligent helm fuzzy sorting, provided by [[https://github.com/lewang/flx][flx]].
+[[https://github.com/PythonNut/helm-flx][helm-flx]] implements intelligent helm fuzzy sorting, provided by [[https://github.com/lewang/flx][flx]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-flx
@@ -893,16 +885,16 @@ Use [[https://github.com/ShingoFukuyama/helm-swoop][helm-swoop]] for most of buf
                   helm-swoop-speed-or-color t)
 
             (bind-key "C-S-s" #'helm-multi-swoop-all-from-helm-swoop helm-swoop-map)
-            (bind-key "C-r" #'helm-previous-line helm-swoop-map)
-            (bind-key "C-s" #'helm-next-line helm-swoop-map)
-            (bind-key "C-r" 'helm-previous-line helm-multi-swoop-map)
-            (bind-key "C-s" 'helm-next-line helm-multi-swoop-map)
+            (bind-key "C-r"   #'helm-previous-line helm-swoop-map)
+            (bind-key "C-s"   #'helm-next-line helm-swoop-map)
+            (bind-key "C-r"   #'helm-previous-line helm-multi-swoop-map)
+            (bind-key "C-s"   #'helm-next-line helm-multi-swoop-map)
             ))
 #+END_SRC
 
 ** Helm-ag
 
-[[http://beyondgrep.com][Ack]] is “a tool like grep, optimized for programmers“. [[https://github.com/ggreer/the_silver_searcher][Ag]] is like =ack=, but faster. =Helm-ag= is a helm-based Emacs frontend to =ag=. [[https://github.com/syohex/emacs-helm-ag][Helm-ag]] is a helm interface to ag. We use =helm-ag= mainly via =helm-projectile-ag=, which allows us to =grep= through all project files quickly.
+[[http://beyondgrep.com][Ack]] is “a tool like grep, optimized for programmers“. [[https://github.com/ggreer/the_silver_searcher][Ag]] is like =ack=, but faster. [[https://github.com/syohex/emacs-helm-ag][Helm-ag]] is a helm interface to =ag=. We use =helm-ag= mainly via =helm-projectile-ag=, which allows us to =grep= through all project files quickly.
 
 [[https://raw.githubusercontent.com/syohex/emacs-helm-ag/master/image/helm-do-ag.gif]] ([[https://raw.githubusercontent.com/syohex/emacs-helm-ag/master/image/helm-do-ag.gif][source]])
 
@@ -1300,7 +1292,6 @@ Working with source code in org-mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ob
-
   :config (progn
             ;; load more languages for org-babel
             (org-babel-do-load-languages
@@ -1318,7 +1309,9 @@ Working with source code in org-mode.
             (add-to-list 'org-src-lang-modes (quote ("plantuml" . puml)))))
 #+END_SRC
 
-*** [[https://github.com/gregsexton/ob-ipython][Org iPython]]
+*** Org iPython
+
+[[https://github.com/gregsexton/ob-ipython][source]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package ob-ipython
@@ -1335,6 +1328,7 @@ Working with source code in org-mode.
                   "DELEGATED(e@/!)"
                   "DONE(d)"
                   "CANCELLED(c@/!)") ;;generic
+
         (sequence "EXPLORE"
                   "WRITEUP"
                   "READ(r)"
@@ -1828,7 +1822,7 @@ I've notice that while I really like taking notes in a meeting, I don't always l
 
 *** Style
 
--In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =verbatim=, and ~code~. But this breaks if the character just inside the styling code is a non-smart single or double quote. =C-c ;= is styled; =C-c '= is not. We can fix that by inserting a zero-width space between the apostrophe and the = . The first time, we can put the cursor between the apostrophe and the = and enter ~C-x 8 RET ZERO WIDTH SPACE RET~, at which point =C-c '​= will display correctly.
+In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =verbatim=, and ~code~. But this breaks if the character just inside the styling code is a non-smart single or double quote. =C-c ;= is styled; =C-c '= is not. We can fix that by inserting a zero-width space between the apostrophe and the = . The first time, we can put the cursor between the apostrophe and the = and enter ~C-x 8 RET ZERO WIDTH SPACE RET~, at which point =C-c '​= will display correctly.
 
 *** Batch Exporting
 
@@ -2098,7 +2092,7 @@ Put attachments at end of buffer ([[http://mbork.pl/2015-11-28_Fixing_mml-attach
 (advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
 #+END_SRC
 
-([[http://mbork.pl/2016-02-06_An_attachment_reminder_in_mu4e][source]])
+Yell at me when I forget to attach attachment ([[http://mbork.pl/2016-02-06_An_attachment_reminder_in_mu4e][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/message-attachment-present-p ()
@@ -2373,7 +2367,7 @@ Link to mu4e messages and threads.
                 ))
 #+END_SRC
 
-** Search
+** Search in E-Mail
 
 Search Mu with [[https://github.com/emacs-helm/helm-mu][Helm-Mu]].
 
@@ -2383,6 +2377,8 @@ Search Mu with [[https://github.com/emacs-helm/helm-mu][Helm-Mu]].
   :config (progn
             (bind-key "S" #'helm-mu mu4e-main-mode-map)))
 #+END_SRC
+
+[[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
 
 * Programming (languages)
 ** General
@@ -2732,6 +2728,7 @@ mouse-3: go to end")
 #+END_SRC
 
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
+
 *** GNU Global
 
 Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]])
@@ -3310,7 +3307,9 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             ))
 #+END_SRC
 
-**** Org Babel
+**** Org Babel SageMath
+
+([[https://github.com/stakemori/ob-sagemath][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package ob-sagemath
@@ -3339,7 +3338,7 @@ On our system port 8888 is already taken.
 
 *** Virtual Environments
 
-[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] mulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]].
+[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package virtualenvwrapper
@@ -3362,6 +3361,22 @@ On our system port 8888 is already taken.
 
 ** Lisp
 *** General
+
+#+BEGIN_QUOTE
+short and sweet LISP editing ([[https://github.com/abo-abo/lispy][source]])
+#+END_QUOTE
+
+| command                       | binding | binding | command           |
+| =paredit-forward=             | =C-M-f= | =j=     | =lispy-down=      |
+| =paredit-backward=            | =C-M-b= | =k=     | =lispy-up=        |
+| =paredit-backward-up=         | =C-M-u= | =h=     | =lispy-left=      |
+| =paredit-forward-up=          | =C-M-n= | =l=     | =lispy-right=     |
+| =paredit-raise-sexp=          | =M-r=   | =r=     | =lispy-raise=     |
+| =paredit-convolute-sexp=      | =M-?=   | =C=     | =lispy-convolute= |
+| =paredit-forward-slurp-sexp=  | =C-)=   | =>=     | =lispy-slurp=     |
+| =paredit-forward-barf-sexp=   | =C-}=   | =<=     | =lispy-barf=      |
+| =paredit-backward-slurp-sexp= | =C-(=   | =>=     | =lispy-slurp=     |
+| =paredit-backward-barf-sexp=  | =C-{=   | =<=     | =lispy-barf=      |
 
 #+BEGIN_SRC emacs-lisp
 (use-package lispy
@@ -3564,10 +3579,6 @@ Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multi
 #+BEGIN_SRC emacs-lisp
 (use-package multiple-cursors
   :ensure t
-  ;; :bind
-  ;; (("C->" . mc/mark-next-like-this)
-  ;;  ("C-<" . mc/mark-previous-like-this)
-  ;;  ("C-*" . mc/mark-all-like-this-dwim))
   :config (progn
             (defun malb/mc-typo-mode ()
               (add-to-list 'mc/unsupported-minor-modes 'typo-mode))
@@ -3631,6 +3642,26 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
   :config (progn
             (bind-key "M-`" #'embrace-commander)
             (add-hook 'org-mode-hook #'embrace-org-mode-hook)))
+#+END_SRC
+
+** Wrap Region
+
+[[https://github.com/rejeep/wrap-region.el][Wrap Region]] is a minor mode for Emacs that wraps a region with punctuations. For "tagged" markup modes, such as HTML and XML, it wraps with tags.
+
+([[http://pragmaticemacs.com/emacs/wrap-text-in-custom-characters/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package wrap-region
+  :ensure t
+  :diminish wrap-region-mode
+  :config (wrap-region-add-wrappers
+           '(("*" "*" nil org-mode)
+             ("~" "~" nil org-mode)
+             ("/" "/" nil org-mode)
+             ("=" "=" nil org-mode)
+             ("_" "_" nil org-mode)
+             ("$" "$" nil org-mode)))
+  (add-hook 'org-mode-hook 'wrap-region-mode))
 #+END_SRC
 
 * Blogging
@@ -4635,7 +4666,7 @@ Show key combos
 (setq echo-keystrokes 0.1)
 #+END_SRC
 
-* Functions
+** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
 
@@ -4721,26 +4752,6 @@ Debug startup failures. If your Emacs init file signals an error during startup,
 (use-package logview
   :ensure t
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
-#+END_SRC
-
-** Wrap Region
-
-[[https://github.com/rejeep/wrap-region.el][Wrap Region]] is a minor mode for Emacs that wraps a region with punctuations. For "tagged" markup modes, such as HTML and XML, it wraps with tags.
-
-([[http://pragmaticemacs.com/emacs/wrap-text-in-custom-characters/][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package wrap-region
-  :ensure t
-  :diminish wrap-region-mode
-  :config (wrap-region-add-wrappers
-           '(("*" "*" nil org-mode)
-             ("~" "~" nil org-mode)
-             ("/" "/" nil org-mode)
-             ("=" "=" nil org-mode)
-             ("_" "_" nil org-mode)
-             ("$" "$" nil org-mode)))
-  (add-hook 'org-mode-hook 'wrap-region-mode))
 #+END_SRC
 
 * Page Breaks
