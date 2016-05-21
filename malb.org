@@ -4647,7 +4647,6 @@ Smoother scrolling and better defaults for recentering with =C-l=
 
 #+BEGIN_SRC emacs-lisp
 (setq scroll-conservatively 10
-      scroll-margin 5
       scroll-preserve-screen-position t)
 #+END_SRC
 
