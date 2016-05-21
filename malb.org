@@ -903,7 +903,7 @@ Use [[https://github.com/ShingoFukuyama/helm-swoop][helm-swoop]] for most of buf
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
   :ensure t
-  :config (setq helm-ag-base-command "ag --nocolor --nogroup --ignore-case"
+  :config (setq helm-ag-base-command "ag --nocolor --nogroup"
                 helm-ag-command-option "--all-text"
                 helm-ag-insert-at-point 'symbol
                 helm-ag-fuzzy-match t
