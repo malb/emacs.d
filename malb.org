@@ -5289,15 +5289,6 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 - =pop-global-mark= (=C-x C-<SPC>=)
 - =helm-all-mark-rings= (=C-h C-<SPC>=)
 - next buffer/previous buffer: =C-x <left>= and =C-x <right>=
-** TODO AucTeX
-- ~\begin{comment}…\end{comment}~ does not work as expected
-** Org Mode
-- [[https://org-trello.github.io/trello-setup.html][org-trello]] - sync with trello
-- [[https://github.com/christopherjwhite/org-toodledo][org-toodledo]] - sync with toodledo
-- [[https://github.com/howardabrams/dot-files/blob/master/emacs-mail.org][org-mime]] - reading and sending email
-- [[https://github.com/IvanMalison/org-projectile][org-projectile]] - per project todo lists
-- [[https://github.com/rexim/org-cliplink][org-cliplink]] - insert URL’s with titles
-- [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-screen.html][org-babel-screen]] - interactive shells and org-mode
 * Notes
 ** Stuck Emacs
 
