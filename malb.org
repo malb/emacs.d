@@ -405,7 +405,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
             (golden-ratio-mode t)
             (setq golden-ratio-adjust-factor 1.0)
 
-            (setq golden-ratio-exclude-modes '(eshell-mode))
+            (setq golden-ratio-exclude-modes '(eshell-mode pdf-view-mode))
 
             (defun malb/golden-ratio-inhibit-functions ()
               (cond
