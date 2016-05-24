@@ -5095,6 +5095,8 @@ The result looks like this:
 
 [[./screenshot.png]]
 
+*Note:* We don’t set colours directly but instead wait until the first frame is created because we typically run =emacs= as a daemon.
+
 #+BEGIN_SRC emacs-lisp
 (when (string-equal malb/theme "solarized")
   (use-package solarized
