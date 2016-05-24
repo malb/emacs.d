@@ -4951,7 +4951,7 @@ _n_: Navigate           _._: mark position _/_: jump to mark
   ("B" malb/helm-omni)
   ("m" helm-mini)
   ("R" helm-recentf)
-  ("n" hydra-navigate/body))
+  ("n" malb/hydra-navigate/body))
 #+END_SRC
 
 Navigation hydra ([[http://kitchingroup.cheme.cmu.edu/blog/2015/09/27/Upping-my-Emacs-navigation-game/][source]])
