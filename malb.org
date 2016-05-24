@@ -5173,7 +5173,6 @@ The result looks like this:
       )))
 #+END_SRC
 
-
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keyword-faces
       '(("CANCELLED" :foreground "gray" :weight bold)
@@ -5196,8 +5195,6 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
   (interactive "nTransparency Value 0 - 100 opaque:")
   (set-frame-parameter (selected-frame) 'alpha value))
 #+END_SRC
-
-*** TODO clean up Solarized config
 
 ** Powerline
 
