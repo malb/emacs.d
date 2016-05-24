@@ -3841,7 +3841,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
     :ensure t)
 #+END_SRC
 
-*** Spell Check
+*** Spell Checking
 
 Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typos. I find myself pressing =C-.= in other programs these days just to be frustrated that it doesn’t just work™
 
@@ -3901,7 +3901,9 @@ Automatically pick dictionary.
 (diminish 'abbrev-mode)
 #+END_SRC
 
-*** Grammar Check
+*** Grammar Checking
+
+([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package langtool
@@ -3924,7 +3926,7 @@ Automatically pick dictionary.
   )
 #+END_SRC
 
-*** Style Check
+*** Style Checking
 
 Prose linting using … [[http://proselint.com][proselint]].
 
@@ -3943,7 +3945,7 @@ Prose linting using … [[http://proselint.com][proselint]].
 (add-to-list 'flycheck-checkers 'proselint)
 #+END_SRC
 
-*** [#A] Dictionary
+*** Dictionary
 
 Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
 
@@ -3955,7 +3957,7 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
          ))
 #+END_SRC
 
-*** [#A] Translating
+*** Translating
 
 #+BEGIN_SRC emacs-lisp
 (use-package google-translate
