@@ -5153,6 +5153,17 @@ We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which custo
   :config (progn
             (defun malb/load-mode-line-theme ()
               (setq spaceline-workspace-numbers-unicode nil)
+
+              ;; https://github.com/TheBB/spaceline/issues/54
+              (spaceline-define-segment line-column
+                "The current line and column numbers."
+                (if (eq major-mode 'pdf-view-mode)
+                    (concat (number-to-string (pdf-view-current-page))
+                            "/"
+                            (number-to-string (pdf-cache-number-of-pages)))
+                  mode-line-position
+                  "%l:%2c"))
+
               (spaceline-spacemacs-theme)
               (spaceline-helm-mode)
               (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
