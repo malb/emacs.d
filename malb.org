@@ -5083,10 +5083,10 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 ** Theme
 
-We use a solarized patched to be less yellow by changing.
+Use a solarized patched to be less yellow by changing
 
 | color     | original  | malb      |
-| ~s-base2~ | ~#EEEBE0~ | ~#EEEDEA~ |
+| ~s-base2~ | ~#EEE8D5~ | ~#EEEDEA~ |
 | ~s-base3~ | ~#FDF6E3~ | ~#FDFCF9~ |
 
 We also [[./org-block-background.patch][patch]] org-mode to get background colours for source code blocks [[https://emacs.stackexchange.com/questions/14824/org-block-background-font-not-having-effect][back]].
