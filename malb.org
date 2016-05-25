@@ -4246,9 +4246,81 @@ path of the first matching PDF is returned."
             ))
 #+END_SRC
 
-*** PDF Viewer
+** Reference Management (BibTeX)
 
-[[https://github.com/politza/pdf-tools][PDF tools]] is a reasonable PDF viewer for Emacs
+I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] better, [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] covers mode bases.
+
+*** biblio.el
+
+[[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
+
+#+BEGIN_SRC emacs-lisp
+(use-package biblio
+  :ensure t)
+#+END_SRC
+
+*** gscholar bibtex
+
+[[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
+
+#+BEGIN_SRC emacs-lisp
+(use-package gscholar-bibtex
+  :ensure t
+  :init (progn
+            (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))
+            ))
+#+END_SRC
+
+** LatexMK
+
+#+BEGIN_SRC emacs-lisp
+(use-package auctex-latexmk
+  :ensure t
+  :config (progn
+            (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+            (auctex-latexmk-setup)))
+#+END_SRC
+
+** LaTeX preview pane
+
+[[https://github.com/jsinglet/latex-preview-pane][LaTeX preview pane]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package latex-preview-pane
+  :diminish latex-preview-pane-mode
+  :ensure t
+  :config (progn
+            (setq latex-preview-pane-multifile-mode (quote auctex))))
+#+END_SRC
+
+** Utility Functions
+
+([[http://pragmaticemacs.com/emacs/aligning-text/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/align-& (start end)
+  "Align columns by ampersand"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)&" 1 1 t))
+#+END_SRC
+
+** Setup everything
+
+Setup everything for LaTeX (this can be slow, hence we call it manually)
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/latex-init ()
+  (interactive)
+  (ignore-errors
+    (malb/latex-parse-bibtex))          ; don't die if there's no bibtex file
+  (olivetti-mode 1)
+  (latex-preview-pane-mode 1))
+#+END_SRC
+
+* PDF Viewer
+
+[[https://github.com/politza/pdf-tools][PDF tools]] is a reasonable PDF viewer for Emacs.
 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
@@ -4275,11 +4347,11 @@ If buffer type is not included, 'default' will be used. Used by malb/smart-other
   "Scroll the other window with appropriate function; `dir' should be :up or :down "
   (interactive)
   (let* ((other-buffer-mode (with-current-buffer (window-buffer (other-window-for-scrolling)) major-mode))
-	 (fun (or (plist-get (cdr (assoc other-buffer-mode malb/scroll-functions)) dir)
-		  (plist-get (cdr (assoc "default" malb/scroll-functions)) dir))))
+         (fun (or (plist-get (cdr (assoc other-buffer-mode malb/scroll-functions)) dir)
+                  (plist-get (cdr (assoc "default" malb/scroll-functions)) dir))))
     (if fun
-	(with-selected-window (other-window-for-scrolling)
-	  (call-interactively fun))
+        (with-selected-window (other-window-for-scrolling)
+          (call-interactively fun))
       )))
 
 (defun malb/other-scroll-up ()
@@ -4302,7 +4374,7 @@ Extract PDF annotations to temporary org-mode buffer, based on [[https://github.
 (use-package pdf-tools-org
   :config (progn
 
-            (defun malb/pdf-tools-org-export-as-org (compact)
+            (defun malb/pdf-annot-export-as-org (compact)
               "Export annotations to Org Buffer."
               (interactive "P")
               (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
@@ -4340,76 +4412,51 @@ Extract PDF annotations to temporary org-mode buffer, based on [[https://github.
                   annots)
                  )))
 
-            (bind-key "X" #'malb/pdf-tools-org-export-as-org pdf-view-mode-map)
-            ))
-#+END_SRC
+            (defun malb/pdf-annot-export-as-md (compact)
+              "Export annotations to Markdown buffer."
+              (interactive "P")
+              (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
+                     (source-buffer (current-buffer))
+                     (source-buffer-name (file-name-sans-extension (buffer-name)))
+                     (source-file-name (buffer-file-name source-buffer))
+                     (target-buffer-name (format "*Notes for %s*" source-buffer-name))
+                     (target-buffer (get-buffer-create target-buffer-name)))
+                (switch-to-buffer target-buffer)
+                (markdown-mode)
+                (erase-buffer)
+                (insert (format "---\ntitle: Notes for %s\n---\n\n" source-buffer-name))
+                (insert (format "source: [%s](%s)\n\n" source-buffer source-file-name))
+                (mapc
+                 (lambda (annot) ;; traverse all annotations
+                   (progn
+                     (insert (if compact
+                                 (format "- page %s: " (cdr (assoc 'page annot)))
+                               (format "On page %s:\n" (cdr (assoc 'page annot)))))
+                     ;; insert text from marked-up region in an org-mode quote
+                     (when (pdf-annot-get annot 'markup-edges)
+                       (let ((highlighted-text (with-current-buffer source-buffer
+                                                 (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                                   (pdf-tools-org-edges-to-region
+                                                                    (pdf-annot-get annot 'markup-edges))))))
+                         (if compact
+                             (insert (format "“%s”\n\n" (replace-regexp-in-string "\n" " " highlighted-text)))
+                           (insert (format "> %s\n\n" (replace-regexp-in-string "\n" "\n> " highlighted-text))))))
+                     (insert (pdf-annot-get annot 'contents)))
+                   )
+                 (cl-remove-if
+                  (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
+                  annots)
+                 )))
 
-*** [[https://github.com/jsinglet/latex-preview-pane][LaTeX preview pane]]
+            (defhydra malb/hydra-pdf-annot (:color blue)
+              "export annotations to"
+              ("o" (lambda () (interactive) (malb/pdf-annot-export-as-org 1)) "org-mode (compact)")
+              ("O" malb/pdf-annot-export-as-org "org-mode")
+              ("m" (lambda () (interactive) (malb/pdf-annot-export-as-md  1)) "markdown (compact)")
+              ("M" malb/pdf-annot-export-as-md "markdown")
+              ("q" nil "cancel"))
 
-#+BEGIN_SRC emacs-lisp
-(use-package latex-preview-pane
-  :diminish latex-preview-pane-mode
-  :ensure t
-  :config (progn
-            (setq latex-preview-pane-multifile-mode (quote auctex))))
-#+END_SRC
-
-*** LatexMK
-
-#+BEGIN_SRC emacs-lisp
-(use-package auctex-latexmk
-  :ensure t
-  :config (progn
-            (setq auctex-latexmk-inherit-TeX-PDF-mode t)
-            (auctex-latexmk-setup)))
-#+END_SRC
-
-*** Utility Functions
-
-([[http://pragmaticemacs.com/emacs/aligning-text/][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/align-& (start end)
-  "Align columns by ampersand"
-  (interactive "r")
-  (align-regexp start end
-                "\\(\\s-*\\)&" 1 1 t))
-#+END_SRC
-
-*** Setup everything
-
-Setup everything for LaTeX (this can be slow, hence we call it manually)
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/latex-init ()
-  (interactive)
-  (ignore-errors
-    (malb/latex-parse-bibtex))          ; don't die if there's no bibtex file
-  (olivetti-mode 1)
-  (latex-preview-pane-mode 1))
-#+END_SRC
-
-** Reference Management (BibTeX)
-
-*** biblio.el
-
-[[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
-
-#+BEGIN_SRC emacs-lisp
-(use-package biblio
-  :ensure t)
-#+END_SRC
-
-*** gscholar bibtex
-
-[[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
-
-#+BEGIN_SRC emacs-lisp
-(use-package gscholar-bibtex
-  :ensure t
-  :init (progn
-            (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))
-            ))
+            (bind-key "x" #'malb/hydra-pdf-annot/body pdf-view-mode-map)))
 #+END_SRC
 
 * Dired
