@@ -4423,8 +4423,9 @@ Extract PDF annotations to temporary org-mode buffer, based on [[https://github.
                            (insert (concat "\n\n#+BEGIN_QUOTE\n"
                                            highlighted-text
                                            "\n#+END_QUOTE\n\n")))))
-                     (insert (pdf-annot-get annot 'contents)))
-                   )
+                     (let ((note (pdf-annot-get annot 'contents)))
+                       (if (> (length note) 0)
+                           (insert (format "%s\n\n" note))))))
                  (cl-remove-if
                   (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
                   annots)
@@ -4449,7 +4450,7 @@ Extract PDF annotations to temporary org-mode buffer, based on [[https://github.
                    (progn
                      (insert (if compact
                                  (format "- page %s: " (cdr (assoc 'page annot)))
-                               (format "On page %s:\n" (cdr (assoc 'page annot)))))
+                               (format "On page %s:  \n" (cdr (assoc 'page annot)))))
                      ;; insert text from marked-up region in an org-mode quote
                      (when (pdf-annot-get annot 'markup-edges)
                        (let ((highlighted-text (with-current-buffer source-buffer
@@ -4459,8 +4460,10 @@ Extract PDF annotations to temporary org-mode buffer, based on [[https://github.
                          (if compact
                              (insert (format "“%s”\n\n" (replace-regexp-in-string "\n" " " highlighted-text)))
                            (insert (format "> %s\n\n" (replace-regexp-in-string "\n" "\n> " highlighted-text))))))
-                     (insert (pdf-annot-get annot 'contents)))
-                   )
+
+                     (let ((note (pdf-annot-get annot 'contents)))
+                       (if (> (length note) 0)
+                           (insert (format "%s\n\n" note))))))
                  (cl-remove-if
                   (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
                   annots)
