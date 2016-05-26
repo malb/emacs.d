@@ -850,7 +850,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
     :bind (("M-y" . helm-show-kill-ring)))
 #+END_SRC
 
-** Helm-Swoop
+** Helm Swoop
 
 [[https://github.com/ShingoFukuyama/helm-swoop][helm-swoop]] for buffer searching.
 
@@ -865,20 +865,19 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 (use-package helm-swoop
   :ensure t
   :bind (("C-c o" . helm-multi-swoop-org)
-         ("C-M-s" . helm-swoop)
-         ("C-S-s" . helm-multi-swoop-all)
+         ("C-S-s" . helm-swoop)
+         ("C-M-s" . helm-multi-swoop-all)
          ("C-r"   . helm-resume))
   :config (progn
             (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
                   helm-swoop-split-with-multiple-windows nil
                   helm-swoop-speed-or-color t)
-
+            (bind-key "C-S-s" #'helm-swoop-from-isearch isearch-mode-map)
             (bind-key "C-S-s" #'helm-multi-swoop-all-from-helm-swoop helm-swoop-map)
             (bind-key "C-r"   #'helm-previous-line helm-swoop-map)
             (bind-key "C-s"   #'helm-next-line helm-swoop-map)
             (bind-key "C-r"   #'helm-previous-line helm-multi-swoop-map)
             (bind-key "C-s"   #'helm-next-line helm-multi-swoop-map)
-            (bind-key "C-M-s" #'helm-swoop-from-isearch isearch-mode-map)
             ))
 #+END_SRC
 
