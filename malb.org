@@ -852,7 +852,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 ** Helm-Swoop
 
-Use [[https://github.com/ShingoFukuyama/helm-swoop][helm-swoop]] for most of buffer searching. If =isearch= is needed, reach for =C-M-s= which is bound to ~vr/isearch-forward~.
+[[https://github.com/ShingoFukuyama/helm-swoop][helm-swoop]] for buffer searching.
 
 [[https://raw.githubusercontent.com/ShingoFukuyama/images/master/helm-swoop.gif]] ([[https://github.com/ShingoFukuyama/helm-swoop][source]])
 
@@ -862,21 +862,10 @@ Use [[https://github.com/ShingoFukuyama/helm-swoop][helm-swoop]] for most of buf
 (defun malb/helm-swoop-pre-fill ()
   (thing-at-point 'symbol)) ;; I’m going back and forth what I prefer
 
-(setq malb/helm-swoop-ignore-major-mode
-      '(dired-mode paradox-menu-mode doc-view-mode pdf-view-mode mu4e-headers-mode))
-
-(defun malb/swoop-or-search ()
-  (interactive)
-  (if (or (> (buffer-size) 1048576) ;; helm-swoop can be slow on big buffers
-          (memq major-mode malb/helm-swoop-ignore-major-mode))
-      (isearch-forward)
-    (helm-swoop)
-    ))
-
 (use-package helm-swoop
   :ensure t
   :bind (("C-c o" . helm-multi-swoop-org)
-         ("C-s"   . malb/swoop-or-search)
+         ("C-M-s" . helm-swoop)
          ("C-S-s" . helm-multi-swoop-all)
          ("C-r"   . helm-resume))
   :config (progn
@@ -3566,9 +3555,8 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
 (use-package visual-regexp
   :ensure t
   :bind (("C-c m" . vr/mc-mark)
-         ("C-M-%" . vr/query-replace)
          ("M-%" . vr/query-replace)
-         ("C-M-s" . vr/isearch-forward)
+         ("C-s" . vr/isearch-forward)
          ("C-M-r" . vr/isearch-backward)))
 #+END_SRC
 
