@@ -3390,7 +3390,9 @@ short and sweet LISP editing ([[https://github.com/abo-abo/lispy][source]])
 
             (add-hook 'emacs-lisp-mode-hook #'malb/elisp-hook)
             (add-hook 'lisp-interaction-mode-hook #'malb/elisp-hook)
-            (add-hook 'ielm-mode-hook #'malb/elisp-hook)
+            (add-hook 'ielm-mode-hook #'elisp-slime-nav-mode)
+            (add-hook 'ielm-mode-hook #'smartparens-strict-mode)
+            (add-hook 'ielm-mode-hook #'eldoc-mode)
 
             (bind-key "M-?" #'elisp-slime-nav-describe-elisp-thing-at-point
                       emacs-lisp-mode-map)))
