@@ -4304,7 +4304,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 
 ** Utility Functions
 
-([[http://pragmaticemacs.com/emacs/aligning-text/][source]])
+([[https://sriramkswamy.github.io/dotemacs/][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/align-& (start end)
@@ -4312,6 +4312,24 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
   (interactive "r")
   (align-regexp start end
                 "\\(\\s-*\\)&" 1 1 t))
+
+(defun malb/align-whitespace (start end)
+  "Align columns by whitespace"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)\\s-" 1 0 t))
+
+(defun malb/align-= (start end)
+  "Align columns by equals sign"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\)=" 1 0 t))
+
+(defun malb/align-: (start end)
+  "Align columns by equals sign"
+  (interactive "r")
+  (align-regexp start end
+                "\\(\\s-*\\):" 1 0 t))
 #+END_SRC
 
 ** Setup everything
