@@ -415,6 +415,8 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
                ((bound-and-true-p helm-alive-p))
                ;; embrace is exempt
                ((eq this-command 'embrace-commander))
+               ;; if ispell is running let's not golden ratio
+               ((get-buffer ispell-choices-buffer))
                ;; any olivetti mode buffer disables gr
                ;; we also block if any buffer has inhibit major-mode not only target
                (t (catch 'inhibit
