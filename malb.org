@@ -848,8 +848,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 =helm-ring= makes the kill ring actually useful, let’s use it.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package helm-ring
-    :bind (("M-y" . helm-show-kill-ring)))
+(use-package helm-ring
+  :bind (("M-y" . helm-show-kill-ring)))
 #+END_SRC
 
 ** Helm Swoop
