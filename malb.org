@@ -976,6 +976,21 @@ Switch themes with helm.
         :buffer "*helm baloo*"))
 #+END_SRC
 
+** Helm Locate
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-locate
+  :config (progn
+            (setq helm-locate-command
+                  (let ((databases (concat
+                                    "/var/lib/mlocate/mlocate.db:"
+                                    (expand-file-name ".locate.db" (getenv "HOME")))))
+                    (concat "locate -d " databases  " %s -e --regex %s")))
+
+            (helm-add-action-to-source "Attach to E-Mail" #'mml-attach-file helm-source-locate)
+            ))
+#+END_SRC
+
 ** Helm-yasnippet
 
 #+BEGIN_SRC emacs-lisp
