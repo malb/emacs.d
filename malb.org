@@ -1737,6 +1737,14 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                    "** research\n%?\n** critique\n\n"))))
 #+END_SRC
 
+** Org EWW
+
+Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-eww)
+#+END_SRC
+
 ** [#C] Meeting Notes
 
 #+BEGIN_QUOTE
