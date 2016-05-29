@@ -4371,7 +4371,8 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
           (add-hook 'pdf-view-mode-hook 'auto-revert-mode))
   :config (progn
             (pdf-tools-install)
-            (setq-default pdf-view-display-size 'fit-page)))
+            (setq-default pdf-view-display-size 'fit-page)
+            (bind-key "d" #'dedicated-mode pdf-view-mode-map)))
 #+END_SRC
 
 We make ~scroll-other-window~ work for PDF tools ([[https://github.com/politza/pdf-tools/issues/55][source]])
