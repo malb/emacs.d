@@ -1781,17 +1781,6 @@ I've notice that while I really like taking notes in a meeting, I don't always l
             (setq org-tree-slide-skip-outline-level 2)))
 #+END_SRC
 
-** Org References
-
-#+BEGIN_QUOTE
-[[https://github.com/jkitchin/org-ref][Org-ref]] is a library for org-mode that provides rich support for citations, labels and cross-references in org-mode. org-ref is especially suitable for org-mode documents destined for LaTeX export and scientific publication. org-ref is also extremely useful for research documents and notes. org-ref bundles several other libraries that provide functions to create and modify bibtex entries from a variety of sources, but most notably from a DOI.
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-ref
-    :ensure t)
-#+END_SRC
-
 ** Auto Completion
 
 #+BEGIN_SRC emacs-lisp
@@ -4161,140 +4150,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+END_SRC
 
-*** BibTeX
-
-Force a parse of the BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-reftex-tab-completion-in-emacs][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/get-bibtex-keys (file)
-  (with-current-buffer (find-file-noselect file)
-    (mapcar #'car (bibtex-parse-keys))))
-
-(defun malb/latex-parse-bibtex ()
-  (interactive)
-  (mapc 'LaTeX-add-bibitems
-        (apply 'append
-               (mapcar #'malb/get-bibtex-keys (reftex-get-bibfile-list)))))
-#+END_SRC
-
-Alice15 or AliBobCha15 or ABCD15 ([[https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-emacs/#comment-2977][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package bibtex
-  :config (progn
-            (setq bibtex-align-at-equal-sign t
-                  bibtex-comma-after-last-field t
-                  bibtex-entry-format '(opts-or-alts
-                                        required-fields
-                                        sort-fields
-                                        page-dashes
-                                        whitespace
-                                        last-comma
-                                        delimiters
-                                        numerical-fields
-                                        realign
-                                        ))
-
-            (defun bibtex-generate-autokey ()
-              (let* ((bibtex-autokey-names nil)
-                     (bibtex-autokey-year-length 2)
-                     (bibtex-autokey-name-separator "\0")
-                     (names (split-string (bibtex-autokey-get-names) "\0"))
-                     (year (bibtex-autokey-get-year))
-                     (name-char (cond ((= (length names) 1)
-                                       (length (car names)))
-                                      ((<= (length names) 3)
-                                       3)
-                                      (t 1)))
-                     (existing-keys (bibtex-parse-keys))
-                     key)
-                (setq names (mapcar 'capitalize names))
-                (setq names (mapconcat (lambda (x)
-                                         (substring x 0 (min (length x) name-char)))
-                                       names
-                                       ""))
-                (setq key (format "%s%s" names year))
-                (let ((ret key))
-                  (loop for c from ?a to ?z
-                        while (assoc ret existing-keys)
-                        do (setq ret (format "%s%c" key c)))
-                  ret)))
-            ))
-#+END_SRC
-
-*** [[https://github.com/tmalsburg/helm-bibtex/][Helm-bibtex]]
-
-[[https://github.com/tmalsburg/helm-bibtex/raw/master/screenshot.png]] ([[https://github.com/tmalsburg/helm-bibtex/][source]])
-
-My standard BibTeX sources are
-
-- =crypto_crossref.bib= and =abbrev3.bib= are from [[http://cryptobib.di.ens.fr/][crypto.bib]] which has most references relevant to crypto,
-- =jacm.bib= is for the Journal of the ACM provided by the [[http://ftp.math.utah.edu/pub/tex/bib/jacm.html][University of Utah]],
-- =rfc.bib= is for RFCs and provided by [[http://tm.uka.de/~bless/bibrfcindex.html][Roland Bless]].
-
-These are stored in some =common-latex= folder which has my [[https://bitbucket.org/malb/paper-template][paper-template]] as a subfolder.
-
-#+BEGIN_SRC emacs-lisp
-(defvar malb/common-latex (concat (file-name-as-directory malb/projects-dir) "common-latex"))
-(defvar malb/crypto-bib (concat (file-name-as-directory
-                                 (concat
-                                  (file-name-as-directory malb/common-latex) "paper-template")) "cryptobib"))
-
-(use-package helm-bibtex
-  :ensure t
-  :config (progn
-            (setq helm-bibtex-bibliography (list (expand-file-name "crypto_crossref.bib" malb/crypto-bib)
-                                                 (expand-file-name "abbrev3.bib" malb/crypto-bib)
-                                                 (expand-file-name "rfc.bib" malb/common-latex)
-                                                 (expand-file-name "jacm.bib" malb/common-latex)
-                                                 (expand-file-name "local.bib" malb/common-latex))
-                  helm-bibtex-library-path malb/literature-dir
-                  helm-bibtex-notes-path malb/literature-notes-dir)
-
-            (setq reftex-default-bibliography helm-bibtex-bibliography)
-
-            (defun helm-bibtex-find-pdf-in-library (key-or-entry)
-              "Searches the directories in `helm-bibtex-library-path' for a
-PDF whose names is composed of the BibTeX key plus \".pdf\".  The
-path of the first matching PDF is returned."
-              (let* ((key (if (stringp key-or-entry)
-                              key-or-entry
-                            (helm-bibtex-get-value "=key=" key-or-entry)))
-                     (path (-first 'f-file?
-                                   (--map (f-join it (s-concat (s-replace ":" "_" key) ".pdf"))
-                                          (-flatten (list helm-bibtex-library-path))))))
-                (when path (list path))))
-
-            (helm-delete-action-from-source "Insert BibTeX key" helm-source-bibtex)
-            (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key helm-source-bibtex 0)
-            ))
-#+END_SRC
-
-** Reference Management (BibTeX)
-
-I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] better, [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] covers mode bases.
-
-*** biblio.el
-
-[[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
-
-#+BEGIN_SRC emacs-lisp
-(use-package biblio
-  :ensure t)
-#+END_SRC
-
-*** gscholar bibtex
-
-[[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
-
-#+BEGIN_SRC emacs-lisp
-(use-package gscholar-bibtex
-  :ensure t
-  :init (progn
-            (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))
-            ))
-#+END_SRC
-
 ** LatexMK
 
 #+BEGIN_SRC emacs-lisp
@@ -4358,6 +4213,156 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
     (malb/latex-parse-bibtex))          ; don't die if there's no bibtex file
   (olivetti-mode 1)
   (latex-preview-pane-mode 1))
+#+END_SRC
+
+* BibTeX
+
+Force a parse of the BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-reftex-tab-completion-in-emacs][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/get-bibtex-keys (file)
+  (with-current-buffer (find-file-noselect file)
+    (mapcar #'car (bibtex-parse-keys))))
+
+(defun malb/latex-parse-bibtex ()
+  (interactive)
+  (mapc 'LaTeX-add-bibitems
+        (apply 'append
+               (mapcar #'malb/get-bibtex-keys (reftex-get-bibfile-list)))))
+#+END_SRC
+
+Alice15 or AliBobCha15 or ABCD15 ([[https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-emacs/#comment-2977][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package bibtex
+  :config (progn
+            (setq bibtex-align-at-equal-sign t
+                  bibtex-comma-after-last-field t
+                  bibtex-entry-format '(opts-or-alts
+                                        required-fields
+                                        sort-fields
+                                        page-dashes
+                                        whitespace
+                                        last-comma
+                                        delimiters
+                                        numerical-fields
+                                        realign
+                                        ))
+
+            (defun bibtex-generate-autokey ()
+              (let* ((bibtex-autokey-names nil)
+                     (bibtex-autokey-year-length 2)
+                     (bibtex-autokey-name-separator "\0")
+                     (names (split-string (bibtex-autokey-get-names) "\0"))
+                     (year (bibtex-autokey-get-year))
+                     (name-char (cond ((= (length names) 1)
+                                       (length (car names)))
+                                      ((<= (length names) 3)
+                                       3)
+                                      (t 1)))
+                     (existing-keys (bibtex-parse-keys))
+                     key)
+                (setq names (mapcar 'capitalize names))
+                (setq names (mapconcat (lambda (x)
+                                         (substring x 0 (min (length x) name-char)))
+                                       names
+                                       ""))
+                (setq key (format "%s%s" names year))
+                (let ((ret key))
+                  (loop for c from ?a to ?z
+                        while (assoc ret existing-keys)
+                        do (setq ret (format "%s%c" key c)))
+                  ret)))
+            ))
+#+END_SRC
+
+** Helm BibTeX
+
+[[https://github.com/tmalsburg/helm-bibtex/][Helm-bibtex]] is a nice interface for BibTex.
+
+[[https://github.com/tmalsburg/helm-bibtex/raw/master/screenshot.png]] ([[https://github.com/tmalsburg/helm-bibtex/][source]])
+
+My standard BibTeX sources are
+
+- =crypto_crossref.bib= and =abbrev3.bib= are from [[http://cryptobib.di.ens.fr/][crypto.bib]] which has most references relevant to crypto,
+- =jacm.bib= is for the Journal of the ACM provided by the [[http://ftp.math.utah.edu/pub/tex/bib/jacm.html][University of Utah]],
+- =rfc.bib= is for RFCs and provided by [[http://tm.uka.de/~bless/bibrfcindex.html][Roland Bless]].
+
+These are stored in some =common-latex= folder which has my [[https://bitbucket.org/malb/paper-template][paper-template]] as a subfolder.
+
+#+BEGIN_SRC emacs-lisp
+(defvar malb/common-latex (concat (file-name-as-directory malb/projects-dir) "common-latex"))
+(defvar malb/crypto-bib (concat (file-name-as-directory
+                                 (concat
+                                  (file-name-as-directory malb/common-latex) "paper-template")) "cryptobib"))
+
+(use-package helm-bibtex
+  :ensure t
+  :config (progn
+            (setq helm-bibtex-bibliography (list (expand-file-name "crypto_crossref.bib" malb/crypto-bib)
+                                                 (expand-file-name "abbrev3.bib" malb/crypto-bib)
+                                                 (expand-file-name "rfc.bib" malb/common-latex)
+                                                 (expand-file-name "jacm.bib" malb/common-latex)
+                                                 (expand-file-name "local.bib" malb/common-latex))
+                  helm-bibtex-library-path malb/literature-dir
+                  helm-bibtex-notes-path malb/literature-notes-dir)
+
+            (setq reftex-default-bibliography helm-bibtex-bibliography)
+
+            (defun helm-bibtex-find-pdf-in-library (key-or-entry)
+              "Searches the directories in `helm-bibtex-library-path' for a
+PDF whose names is composed of the BibTeX key plus \".pdf\".  The
+path of the first matching PDF is returned."
+              (let* ((key (if (stringp key-or-entry)
+                              key-or-entry
+                            (helm-bibtex-get-value "=key=" key-or-entry)))
+                     (path (-first 'f-file?
+                                   (--map (f-join it (s-concat (s-replace ":" "_" key) ".pdf"))
+                                          (-flatten (list helm-bibtex-library-path))))))
+                (when path (list path))))
+
+            (helm-delete-action-from-source "Insert BibTeX key" helm-source-bibtex)
+            (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key helm-source-bibtex 0)
+            ))
+#+END_SRC
+
+** Adding References
+
+I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] better, [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] covers mode bases.
+
+*** biblio.el
+
+[[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
+
+#+BEGIN_SRC emacs-lisp
+(use-package biblio
+  :ensure t)
+#+END_SRC
+
+*** gscholar bibtex
+
+[[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
+
+#+BEGIN_SRC emacs-lisp
+(use-package gscholar-bibtex
+  :ensure t
+  :init (progn
+            (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))
+            ))
+#+END_SRC
+
+** References for Org Mode
+
+#+BEGIN_QUOTE
+[[https://github.com/jkitchin/org-ref][Org-ref]] is a library for org-mode that provides rich support for citations, labels and cross-references in org-mode. org-ref is especially suitable for org-mode documents destined for LaTeX export and scientific publication. org-ref is also extremely useful for research documents and notes. org-ref bundles several other libraries that provide functions to create and modify bibtex entries from a variety of sources, but most notably from a DOI.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-ref
+  :ensure t
+  :config (progn
+            (setq org-ref-default-bibliography reftex-default-bibliography)
+            ))
 #+END_SRC
 
 * PDF Viewer
