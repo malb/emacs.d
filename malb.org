@@ -3708,7 +3708,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                        :url "https://martinralbrecht.wordpress.com/xmlrpc.php"
                        :username ,(car credentials)
                        :password ,(cadr credentials)))))
-            (setq org2blog/wp-use-sourcecode-shortcode t
+            (setq org2blog/wp-use-sourcecode-shortcode nil
                   org2blog/wp-show-post-in-browser nil
                   org2blog/wp-default-categories '("Cryptography" "Sage"))))
 #+END_SRC
