@@ -4005,38 +4005,37 @@ Use [[http://jblevins.org/projects/deft/][deft]].
 (use-package deft
   :ensure t
   :bind ("<f8>" . malb/deft)
-  :config (progn
-            (setq deft-extensions '("org" "md")
-                  deft-default-extension "org"
-                  deft-directory (expand-file-name "deft" malb/sync-dir)
-                  deft-text-mode 'org-mode
-                  deft-use-filename-as-title nil
-                  deft-auto-save-interval 5.0
-                  deft-use-filter-string-for-filename t
-                  deft-current-sort-method 'title
-                  deft-file-naming-rules '((noslash . "-")
-                                           (nospace . "-")
-                                           (case-fn . downcase))
-                  )
+  :init (progn
+          (setq deft-extensions '("org" "md")
+                deft-default-extension "org"
+                deft-directory (expand-file-name "deft" malb/sync-dir)
+                deft-text-mode 'org-mode
+                deft-use-filename-as-title nil
+                deft-auto-save-interval 5.0
+                deft-use-filter-string-for-filename t
+                deft-current-sort-method 'title
+                deft-file-naming-rules '((noslash . "-")
+                                         (nospace . "-")
+                                         (case-fn . downcase))
+                )
 
 
-            (defun malb/deft-in-dir (dir)
-              "Run deft in directory DIR"
-              (setq deft-directory dir)
-              (switch-to-buffer "*Deft*")
-              (kill-this-buffer)
-              (deft))
+          (defun malb/deft-in-dir (dir)
+            "Run deft in directory DIR"
+            (setq deft-directory dir)
+            (switch-to-buffer "*Deft*")
+            (kill-this-buffer)
+            (deft))
 
-            (defun malb/blog ()
-              (interactive)
-              (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir)))
+          (defun malb/blog ()
+            (interactive)
+            (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir)))
 
-            (defun malb/deft ()
-              (interactive)
-              (malb/deft-in-dir (expand-file-name "deft" malb/sync-dir)))
+          (defun malb/deft ()
+            (interactive)
+            (malb/deft-in-dir (expand-file-name "deft" malb/sync-dir)))
 
-
-            (add-hook 'deft-mode-hook #'hl-line-mode)))
+          (add-hook 'deft-mode-hook #'hl-line-mode)))
 #+END_SRC
 
 ** Markdown
