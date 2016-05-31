@@ -326,7 +326,8 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\` \\*LanguageTool Errors\\* \\'"
                              "\\`\\*Edit footnote .*\\*\\'"
                              "\\`\\*TeX errors*\\*\\'"
-                             "\\`\\*mu4e-update*\\*\\'"))
+                             "\\`\\*mu4e-update*\\*\\'"
+                             "\\`\\*prodigy-.*\\*\\'"))
 
 (dolist (name malb/popup-windows)
   (add-to-list 'display-buffer-alist
@@ -408,7 +409,8 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
                                                pdf-view-mode
                                                mu4e-view-mode
                                                mu4e-main-mode
-                                               mu4e-headers-mode))
+                                               mu4e-headers-mode
+                                               calendar-mode))
             (golden-ratio-mode t)
 
             (defun malb/golden-ratio-inhibit-functions ()
@@ -806,6 +808,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
             ;; manipulating these lists must happen after helm-mode was called
             (add-to-list 'helm-boring-buffer-regexp-list "\\*CEDET Global\\*")
+            (add-to-list 'helm-boring-buffer-regexp-list "\\`\\*prodigy-.*\\*\\'")
 
             (delete "\\.bbl$" helm-boring-file-regexp-list)
             (add-to-list 'helm-boring-file-regexp-list "\\.nav" t)
