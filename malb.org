@@ -22,7 +22,7 @@ We assume that the following variables are defined:
 - ~malb/common-file-targets~ - for helm
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/sage-executable~ - full path of Sage executable
-- ~malb/malb/mu4e-name-replacements~ - e-mail name replacements
+- ~malb/malb/mu4e-name-replacements~ - email name replacements
 
 * Package Management
 
@@ -972,7 +972,7 @@ Switch themes with helm.
     :candidates-process #'helm-baloo-search
     :candidate-transformer #'helm-baloo-transform
     :action '(("Open" . (lambda (x) (find-file x)))
-              ("Attach to E-Mail" . (lambda (x) (mml-attach-file x))))))
+              ("Attach to Email" . (lambda (x) (mml-attach-file x))))))
 
 (defun helm-baloo ()
   (interactive)
@@ -991,7 +991,7 @@ Switch themes with helm.
                                     (expand-file-name ".locate.db" (getenv "HOME")))))
                     (concat "locate -d " databases  " %s -e --regex %s")))
 
-            (helm-add-action-to-source "Attach to E-Mail" #'mml-attach-file helm-source-locate)
+            (helm-add-action-to-source "Attach to Email" #'mml-attach-file helm-source-locate)
             ))
 #+END_SRC
 
@@ -1718,19 +1718,19 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                   ("p" "project task" plain (function malb/org-capture-projectile)
                    "** TODO %?\n%a\n" :prepend t)
 
-                  ("k" "respond to e-mail (KMail)"
+                  ("k" "respond to email (KMail)"
                    entry (file+headline malb/inbox-org "Email")
                    "* REPLY to [[mailto:%link][%:description]]\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n\n[[mailto:%:link][%:link]] wrote:\n#+BEGIN_QUOTE\n%x\n#+END_QUOTE\n\n"
                    :immediate-finish t
                    :prepend t)
 
-                  ("r" "respond ro e-mail (mu4e)"
+                  ("r" "respond ro email (mu4e)"
                    entry (file+headline malb/inbox-org "Email")
                    "* REPLY to [[mailto:%:fromaddress][%:fromname]] on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
                    :immediate-finish t
                    :prepend t)
 
-                  ("f" "file e-mail (mu4e)"
+                  ("f" "file email (mu4e)"
                    entry (file+headline malb/inbox-org "Email")
                    "* %a by [[mailto:%:fromaddress][%:fromname]]\n%U\n\n%i%?\n"
                    :immediate-finish nil
@@ -1939,7 +1939,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 *** TRY Check out [[https://github.com/theanalyst/ix.el][ix]]
 * Email
 
-E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
+Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e
@@ -2032,9 +2032,9 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
       mu4e-update-interval nil)
 #+END_SRC
 
-** Sending E-Mail
+** Sending Email
 
-E-mail is sent with [[https://www.opensmtpd.org][opensmtpd]]’s =sendmail=.
+email is sent with [[https://www.opensmtpd.org][opensmtpd]]’s =sendmail=.
 
 Set =format=flowed= ([[https://github.com/djcb/mu/issues/569][source]])
 
@@ -2079,7 +2079,7 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 ;; (add-hook 'mu4e-compose-mode-hook #'malb/iqbal-strip-message-mode-problematic-text-props)
 #+END_SRC
 
-Don’t add an empty line when quoting e-mail ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
+Don’t add an empty line when quoting email ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/message-insert-citation-line ()
@@ -2150,9 +2150,9 @@ there are no attachments."
 (add-hook 'message-send-hook #'malb/message-warn-if-no-attachments)
 #+END_SRC
 
-** Viewing E-Mail
+** Viewing Email
 
-Render HTML e-mails in =eww= = =shr=
+Render HTML emails in =eww= = =shr=
 
 #+BEGIN_SRC emacs-lisp
 ;; use imagemagick, if available
@@ -2231,7 +2231,7 @@ View emails with width restriction (110 so that HTML crap doesn’t break too ea
     (if (string-match-p "^[^ ]+@[^ ]+\.[^ ]" name)
         ""
       (progn
-        (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop e-mail address
+        (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop email address
         (setq name (replace-regexp-in-string "^\"\\(.*\\)\"" "\\1" name)) ;; strip quotes
         (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
         (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)) ;; Foo, Bar becomes Bar Foo
@@ -2251,7 +2251,7 @@ View emails with width restriction (110 so that HTML crap doesn’t break too ea
 (setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
 #+END_SRC
 
-Useful in e-mail templates
+Useful in email templates
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/yas-get-names-from-fields (fields)
@@ -2287,7 +2287,7 @@ Useful in e-mail templates
   (malb/yas-get-names-from-fields '("To")))
 #+END_SRC
 
-Ignore some e-mail addresses when auto completing:
+Ignore some email addresses when auto completing:
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-compose-complete-ignore-address-regexp (rx  (or (seq "no" (zero-or-one "-") "reply")
@@ -2296,7 +2296,7 @@ Ignore some e-mail addresses when auto completing:
                                                            (seq "do-not-reply" (zero-or-more char) "@"))))
 #+END_SRC
 
-** Dedicated E-mail Frame
+** Dedicated Email Frame
 
 Create a new mu4e session in a new frame.
 
@@ -2324,7 +2324,7 @@ Kill mu4e frame.
 
 ** Window Management
 
-I patched mu4e to be way less clever about window management after sending an e-mail, my local =mu4e~compose-handler= looks like this:
+I patched mu4e to be way less clever about window management after sending an email, my local =mu4e~compose-handler= looks like this:
 
 #+BEGIN_SRC emacs-lisp :tangle no
 (defun* mu4e~compose-handler (compose-type &optional original-msg includes)
@@ -2389,7 +2389,7 @@ Link to mu4e messages and threads.
   :config (setq org-mu4e-link-query-in-headers-mode nil))
 #+END_SRC
 
-** Search in E-Mail
+** Search in Email
 
 Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
@@ -4980,7 +4980,7 @@ exports.boxes = [ "INBOX"];
   :ensure t
   :init (prodigy-define-tag
           :name 'email
-          :ready-message "Checking E-Mail using IMAP IDLE. Ctrl-C to shutdown.")
+          :ready-message "Checking Email using IMAP IDLE. Ctrl-C to shutdown.")
   (prodigy-define-service
     :name "imapnotify"
     :command "imapnotify"
