@@ -404,6 +404,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
   :diminish golden-ratio-mode
   :config (progn
 
+            (require 'ispell)
             (setq golden-ratio-adjust-factor 1.0
                   golden-ratio-exclude-modes '(eshell-mode
                                                pdf-view-mode
