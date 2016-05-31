@@ -4002,16 +4002,17 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 #+BEGIN_SRC emacs-lisp
 (use-package helm-google
   :ensure t
-  :config (progn
-            (add-to-list 'helm-google-actions
-                         '("Copy URL" . (lambda (candidate)
-                                          (let ((url (replace-regexp-in-string "https://.*q=\\(.*\\)\&sa=.*" "\\1" candidate)))
-                                            (kill-new url)))) t)))
+  :bind ("C-c h g" . helm-google)
+  :config
+  (progn
+    (add-to-list 'helm-google-actions
+                 '("Copy URL" . (lambda (candidate)
+                                  (let ((url
+                                         (replace-regexp-in-string
+                                          "https://.*q=\\(.*\\)\&sa=.*"
+                                          "\\1" candidate)))
+                                    (kill-new url)))) t)))
 #+END_SRC
-
-
-
-
 
 ** Note Taking
 
