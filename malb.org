@@ -3999,6 +3999,8 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 
 [[https://github.com/steckerhalter/helm-google][helm-google]] is a simple interface for Google which comes in handy when we want to add a quick link for a term.
 
+[[https://raw.githubusercontent.com/steckerhalter/helm-google/master/screenshot.png]] ([[https://github.com/steckerhalter/helm-google/blob/master/screenshot.png][source]])
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-google
   :ensure t
