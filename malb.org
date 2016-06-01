@@ -1315,7 +1315,8 @@ Working with source code in org-mode.
                (latex . t)
                (ditaa . t)
                (clojure . t)
-               (plantuml . t)))
+               (plantuml . t)
+               (makefile . t)))
 
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
