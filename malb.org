@@ -4429,7 +4429,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
   :config (progn
             (pdf-tools-install)
             (setq-default pdf-view-display-size 'fit-page)
-            (bind-key "d" #'dedicated-mode pdf-view-mode-map)))
+            (bind-key "D" #'dedicated-mode pdf-view-mode-map)))
 #+END_SRC
 
 We make ~scroll-other-window~ work for PDF tools ([[https://github.com/politza/pdf-tools/issues/55][source]])
