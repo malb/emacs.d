@@ -1288,6 +1288,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-reverse-note-order t
       org-footnote-auto-adjust t               ; renumber footnotes automagically
       org-confirm-elisp-link-function nil      ;
+      org-image-actual-width '(1024)
       )
 
 (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
