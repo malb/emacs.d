@@ -412,14 +412,14 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
-  "
-Movement^^        ^Split^         ^Buffer^        ^Resize^         ^Eyebrowse^        ^Olivetti^
---------------------------------------------------------------------------------------------------
-_←_ ←         _v_ertical      _H_elm-omni      _q_ X←             _[_ \\/ new       Oli_V_etti
+"
+^Misc^        ^Split^         ^Buffer^         ^Resize^           ^Eyebrowse^      ^Olivetti^
+^----^--------^-----^---------^------^---------^------^-----------^---------^------^--------^
+_←_ ←         _v_ertical      _H_elm-omni      _q_ X←             _[_ \\/ new    oli_V_etti
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓             _;_ \\/ ←         _,_ O←
 _↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑             _'_ \\/ →         _._ O→
 _→_ →         _Z_ reset       _t_oggle buf     _r_ X→             _]_ \\/ close
-_F_ollow      _d_lt this      _a_ce 1       max_i_mize            _!_ \\/ rename
+_T_oggle ded  _d_lt this      _a_ce 1       max_i_mize            _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
 _j_ump        _o_nly this     _S_ave
 "
@@ -437,7 +437,7 @@ _j_ump        _o_nly this     _S_ave
   ("p" previous-buffer)
   ("n" next-buffer)
   ("t" malb/switch-to-previous-buffer :color blue)
-  ("F" follow-mode)
+  ("T" dedicated-mode)
   ("a" (lambda () (interactive) (ace-window 1)) :color blue)
   ("v" malb/vsplit-last-buffer)
   ("h" malb/hsplit-last-buffer)
@@ -494,7 +494,8 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
   :ensure t
   :bind ("C-c C-SPC" . avy-goto-word-1)
   :config (progn
-            (setq avy-background t)))
+            (setq avy-background t)
+            (key-chord-define-global "jj"  #'avy-goto-word-1)))
 #+END_SRC
 
 
