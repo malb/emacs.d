@@ -5027,15 +5027,33 @@ exports.boxes = [ "INBOX"];
 #+BEGIN_SRC emacs-lisp
 (use-package prodigy
   :ensure t
-  :init (prodigy-define-tag
-          :name 'email
-          :ready-message "Checking Email using IMAP IDLE. Ctrl-C to shutdown.")
-  (prodigy-define-service
-    :name "imapnotify"
-    :command "imapnotify"
-    :args (list "-c" (expand-file-name ".config/imapnotify.gmail.js" (getenv "HOME")))
-    :tags '(email)
-    :kill-signal 'sigkill))
+  :init (progn
+          (prodigy-define-tag
+            :name 'email
+            :ready-message "Checking Email using IMAP IDLE. Ctrl-C to shutdown.")
+
+          (prodigy-define-service
+            :name "imapnotify"
+            :command "imapnotify"
+            :args (list "-c" (expand-file-name ".config/imapnotify.gmail.js" (getenv "HOME")))
+            :tags '(email)
+            :kill-signal 'sigkill)
+
+          (prodigy-define-service
+            :name "malb.io"
+            :cwd (expand-file-name "web/malb.io" malb/projects-dir)
+            :command "jekyll"
+            :args '("serve" "-P" "4001")
+            :port 4001
+            :tags '(web))
+
+          (prodigy-define-service
+            :name "discrete-subgroup"
+            :cwd (expand-file-name "web/lattice-meetings" malb/projects-dir)
+            :command "jekyll"
+            :args '("serve" "-P" "4002")
+            :url "http://127.0.0.1:4002/discrete-subgroup/"
+            :tags '(web))))
 #+END_SRC
 
 * Page Breaks
