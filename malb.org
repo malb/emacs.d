@@ -143,12 +143,13 @@ should be executed or the text inserted) is annoying.
 (use-package key-chord
   :ensure t
   :config (progn
-            (setq key-chord-one-key-delay 0.2)
-            (key-chord-mode 1)
-            ))
+            (setq key-chord-one-key-delay 0.2
+                  key-chord-two-keys-delay 0.1)
+            (key-chord-mode 1)))
 #+END_SRC
 
 * Window Management
+
 ** Splitting
 
 When splitting windows open the previous buffer in it.
@@ -185,9 +186,11 @@ Resize windows to accommodate new ones.
 (setq window-combination-resize t)
 #+END_SRC
 
-** [#A] Restoring configurations
+*** TODO window splitting rules need more thought
 
-[[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows you to “undo” (and “redo”) changes in the window configuration with the key commands =C-c left= and =C-c right=.
+** Restoring Configurations
+
+[[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows to “undo” (and “redo”) changes in the window configuration.
 
 #+BEGIN_SRC emacs-lisp
 (winner-mode 1)
@@ -232,33 +235,21 @@ Resize windows to accommodate new ones.
                 (delete-window (lpp/window-containing-preview))))
 
             (add-to-list 'eyebrowse-pre-window-switch-hook
-                         #'malb/close-latex-preview-pane-before-eyebrowse-switch)
-
-            (malb/set-menu-key "["  #'malb/eyebrowse-new-window-config)
-            (malb/set-menu-key ";"  #'eyebrowse-prev-window-config)
-            (malb/set-menu-key "'"  #'eyebrowse-next-window-config)
-            (malb/set-menu-key "]"  #'eyebrowse-close-window-config)
-            (malb/set-menu-key "\\" #'eyebrowse-rename-window-config)))
+                         #'malb/close-latex-preview-pane-before-eyebrowse-switch)))
 #+END_SRC
 
 ** Switching
 
-Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
+[[https://github.com/abo-abo/ace-window][ace-window]] for switching windows, but we only call it as a subroutine from a =hydra= below.
 
 [[http://oremacs.com/download/ace-window.gif]] ([[http://oremacs.com/download/ace-window.gif][source]])
-
-- =C-x o= jump to window (rebound from ~other-window~)
-- =±= jump to window (~other-window~)
 
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
   :ensure t
-  :bind (("C-x o" . ace-window)
-         ("M-p" . ace-window)
-         ("±" . other-window))
   :config (progn
             (setq aw-keys   '(?a ?s ?d ?f ?j ?k ?l)
-                  aw-dispatch-always t
+                  aw-dispatch-always nil
                   aw-dispatch-alist
                   '((?x aw-delete-window     "Ace - Delete Window")
                     (?c aw-swap-window       "Ace - Swap Window")
@@ -271,16 +262,6 @@ Use [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
                     (?r winner-redo)))))
 #+END_SRC
 
-Also use =windmove= ([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered-29][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package windmove
-  :bind (("<f2> <right>" . windmove-right)
-         ("<f2> <left>" . windmove-left)
-         ("<f2> <up>" . windmove-up)
-         ("<f2> <down>" . windmove-down)))
-#+END_SRC
-
 Quickly jump back and forth between buffers ([[http://www.emacswiki.org/emacs/SwitchingBuffers#toc4][source]])
 
 #+BEGIN_SRC emacs-lisp
@@ -289,20 +270,6 @@ Quickly jump back and forth between buffers ([[http://www.emacswiki.org/emacs/Sw
 Repeated invocations toggle between the two most recently open buffers."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
-
-(key-chord-define-global "jj" #'malb/switch-to-previous-buffer)
-#+END_SRC
-
-** Resizing
-*** Manual
-
-*Note* These only work when =golden-ratio-mode= is off.
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "S-C-<left>" 'shrink-window-horizontally)
-(bind-key "S-C-<right>" 'enlarge-window-horizontally)
-(bind-key "S-C-<down>" 'shrink-window)
-(bind-key "S-C-<up>" 'enlarge-window)
 #+END_SRC
 
 ** Special windows
@@ -439,6 +406,63 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
             (setq golden-ratio-inhibit-functions
                   '(malb/golden-ratio-inhibit-functions))))
+#+END_SRC
+
+** Hydra
+
+#+BEGIN_SRC emacs-lisp
+(defhydra malb/hydra-window ()
+  "
+Movement^^        ^Split^         ^Buffer^        ^Resize^         ^Eyebrowse^        ^Olivetti^
+--------------------------------------------------------------------------------------------------
+_←_ ←         _v_ertical      _H_elm-omni      _q_ X←             _[_ \\/ new       Oli_V_etti
+_↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓             _;_ \\/ ←         _,_ O←
+_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑             _'_ \\/ →         _._ O→
+_→_ →         _Z_ reset       _t_oggle buf     _r_ X→             _]_ \\/ close
+_F_ollow      _d_lt this      _a_ce 1       max_i_mize            _!_ \\/ rename
+_SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
+_j_ump        _o_nly this     _S_ave
+"
+  ("<left>" windmove-left )
+  ("<down>" windmove-down )
+  ("<up>" windmove-up )
+  ("<right>" windmove-right )
+  ("j" avy-goto-word-1 :color blue)
+  ("q" shrink-window-horizontally)
+  ("w" shrink-window)
+  ("e" enlarge-window)
+  ("r" enlarge-window-horizontally)
+  ("g" golden-ratio-mode)
+  ("H" malb/helm-omni :color blue)
+  ("p" previous-buffer)
+  ("n" next-buffer)
+  ("t" malb/switch-to-previous-buffer :color blue)
+  ("F" follow-mode)
+  ("a" (lambda () (interactive) (ace-window 1)) :color blue)
+  ("v" malb/vsplit-last-buffer)
+  ("h" malb/hsplit-last-buffer)
+  ("s" (lambda () (interactive) (ace-window 4)) :color blue)
+  ("S" save-buffer)
+  ("d" delete-window)
+  ("D" (lambda () (interactive) (ace-window 16)) :color blue)
+  ("o" delete-other-windows :color blue)
+  ("i" ace-maximize-window :color blue)
+  ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
+  ("Z" winner-redo)
+  ("[" malb/eyebrowse-new-window-config :color blue)
+  (";" eyebrowse-prev-window-config)
+  ("'" eyebrowse-next-window-config)
+  ("]" eyebrowse-close-window-config :color blue)
+  ("!" eyebrowse-rename-window-config :color blue)
+  ("V" olivetti-mode)
+  ("," olivetti-shrink)
+  ("." olivetti-expand)
+  ("SPC" nil)
+  ("`" nil))
+
+(key-chord-define-global "z`" #'malb/hydra-window/body)
+(bind-key "C-x o" #'malb/hydra-window/body)
+(bind-key "±" #'other-window)
 #+END_SRC
 
 * Clean Mode Line
@@ -3826,8 +3850,6 @@ Adapt text width to nice to read/edit width.
 #+BEGIN_SRC emacs-lisp
 (use-package olivetti
   :ensure t
-  :bind (("C-M-S-<right>" . olivetti-expand)
-         ("C-M-S-<left>" . olivetti-shrink))
   :config (progn
             (setq-default olivetti-body-width 90)
             (unbind-key "C-c ]" olivetti-mode-map)
