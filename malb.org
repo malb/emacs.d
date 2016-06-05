@@ -413,7 +413,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
-"
+  "
 ^Misc^        ^Split^         ^Buffer^         ^Resize^           ^Eyebrowse^      ^Olivetti^
 ^----^--------^-----^---------^------^---------^------^-----------^---------^------^--------^
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←             _[_ \\/ new    oli_V_etti
@@ -451,8 +451,8 @@ _j_ump        _o_nly this     _S_ave
   ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
   ("Z" winner-redo)
   ("[" malb/eyebrowse-new-window-config :color blue)
-  (";" eyebrowse-prev-window-config)
-  ("'" eyebrowse-next-window-config)
+  (";" (lambda () (interactive) (eyebrowse-prev-window-config nil)) :color blue)
+  ("'" (lambda () (interactive) (eyebrowse-next-window-config nil)) :color blue)
   ("]" eyebrowse-close-window-config :color blue)
   ("!" eyebrowse-rename-window-config :color blue)
   ("V" olivetti-mode)
