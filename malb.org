@@ -1613,6 +1613,8 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
             (setq org-latex-default-packages-alist
                   (remove* '("T1" "fontenc" t)
                            org-latex-default-packages-alist :test 'equal))
+            (setq org-latex-default-packages-alist
+                  (remove '("AUTO" "inputenc" t) org-latex-default-packages-alist))
             (add-to-list 'org-latex-classes
                          '("tuftehandout"
                            "\\documentclass{tufte-handout}
@@ -1626,6 +1628,18 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
                            ("\\subsection{%s}" . "\\subsection*{%s}")
                            ("\\paragraph{%s}" . "\\paragraph*{%s}")
                            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
+
+(use-package ox-koma-letter
+  :config (progn
+            (add-to-list 'org-latex-classes
+                         '("koma-letter"
+                           "\\documentclass{scrlttr2}
+\\usepackage{color}
+\\usepackage{amssymb}
+\\usepackage{amsmath}
+\\usepackage{gensymb}
+\\usepackage{nicefrac}
+\\usepackage{units}"))))
 #+END_SRC
 
 **** TODO using latexmk (like this) means we get less feedback than we’d like
