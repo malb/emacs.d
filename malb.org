@@ -1324,10 +1324,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Look
 
 #+BEGIN_SRC emacs-lisp
-(setq org-hide-emphasis-markers nil            ; don’t hide markers for like *foo*
+(setq org-hide-mphasis-markers nil ; don’t hide markers for like *foo*
       org-ellipsis "⤵"
       org-highlight-latex-and-related '(latex)
-      org-src-fontify-natively t               ; fontify code blocks
+      org-src-fontify-natively t        ; fontify code blocks
       org-image-actual-width '(1024))
 #+END_SRC
 
@@ -1423,6 +1423,24 @@ delete SCHEDULED if new state is WAITING
                                  ("@train" . ?t)
                                  ("quick" . ?q)
                                  (:endgroup)))
+#+END_SRC
+
+** Tables
+
+Bind =org-table-*= command when the point is in an org table ([[http://emacs.stackexchange.com/a/22457/115][source]]).
+
+#+BEGIN_SRC emacs-lisp
+(bind-keys
+ :map org-mode-map
+ :filter (org-at-table-p)
+ ("C-c ?" . org-table-field-info)
+ ("C-c SPC" . org-table-blank-field)
+ ("C-c +" . org-table-sum)
+ ("C-c =" . org-table-eval-formula)
+ ("C-c `" . org-table-edit-field)
+ ("C-#" . org-table-rotate-recalc-marks)
+ ("C-c }" . org-table-toggle-coordinate-overlays)
+ ("C-c {" . org-table-toggle-formula-debugger))
 #+END_SRC
 
 ** Templates
@@ -1706,6 +1724,31 @@ _underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starte
 
             (add-to-list 'org-export-filter-underline-functions 'malb/beamer-underline)
             ))
+#+END_SRC
+
+*** Reveal.js
+
+[[https://github.com/yjwen/org-reveal][ox-reveal]] — Presentations using [[http://lab.hakim.se/reveal-js/][reveal.js]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-reveal
+  :ensure t
+  :config
+  (progn
+    (setq org-reveal-root (expand-file-name "reveal.js/" user-emacs-directory)
+          org-reveal-hlevel 2
+          org-reveal-head-preamble "<style type=\"text/css\">.reveal p {text-align: left;}</style>"
+          org-reveal-theme "solarized" ; beige blood moon night serif simple sky solarized
+          org-reveal-mathjax t)))
+#+END_SRC
+
+*** Bootstrap
+
+[[https://github.com/marsmining/ox-twbs][ox-twbs]] - Twitter Bootstrap.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-twbs
+  :ensure t)
 #+END_SRC
 
 ** Capture
