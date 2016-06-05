@@ -1688,11 +1688,18 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 
 *** Beamer
 
+_underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starter-kit/starter-kit-org.html][source]])
+
 #+BEGIN_SRC emacs-lisp
 (use-package ox-beamer
   :config (progn
             (add-to-list 'org-beamer-environments-extra
                          '("lemma" "l" "\\begin{lemma}%a" "\\end{lemma}"))
+            (defun malb/beamer-underline (contents backend info)
+              (when (eq backend 'beamer)
+                (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
+
+            (add-to-list 'org-export-filter-underline-functions 'malb/beamer-underline)
             ))
 #+END_SRC
 
