@@ -902,8 +902,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
   :ensure t
   :bind (("C-c o" . helm-multi-swoop-org)
          ("C-S-s" . helm-swoop)
-         ("C-M-s" . helm-multi-swoop-all)
-         ("C-r"   . helm-resume))
+         ("C-M-s" . helm-multi-swoop-all))
   :config (progn
             (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
                   helm-swoop-split-with-multiple-windows nil
@@ -1025,12 +1024,12 @@ Switch themes with helm.
             ))
 #+END_SRC
 
-** Helm-yasnippet
+** Helm-Yasnippet
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-c-yasnippet
   :ensure t
-  :bind ("C-c y" .  helm-yas-complete)
+  :bind ("C-c h y" .  helm-yas-complete)
   :config (progn
             (setq helm-yas-space-match-any-greedy t)))
 #+END_SRC
