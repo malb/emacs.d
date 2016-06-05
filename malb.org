@@ -3679,7 +3679,7 @@ Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multi
 
 ([[http://endlessparentheses.com/multiple-cursors-keybinds.html?source=rss][keybinding source]])
 
-*Tip:* When you have multiple active cursors, if you hit =C-' = it will hide lines that don't have an active cursor.
+Commands are bound to =C-x m …=
 
 #+BEGIN_SRC emacs-lisp
 (use-package multiple-cursors
@@ -3693,19 +3693,23 @@ Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multi
             (bind-key "M-4" #'mc/mark-next-like-this)
             (bind-key "M-£" #'mc/unmark-previous-like-this)
             (bind-key "M-$" #'mc/unmark-next-like-this)
-            (bind-key "C-m" #'mc/mark-all-dwim ctl-x-map)
 
             (define-prefix-command 'malb/mc-map)
-
             (bind-key "m" 'malb/mc-map ctl-x-map)
 
-            (bind-key "i" #'mc/insert-numbers malb/mc-map)
-            (bind-key "h" #'mc-hide-unmatched-lines-mode malb/mc-map)
             (bind-key "a" #'mc/mark-all-like-this malb/mc-map)
-            (bind-key "d" #'mc/mark-all-symbols-like-this-in-defun malb/mc-map)
-            (bind-key "r" #'mc/reverse-regions malb/mc-map)
-            (bind-key "s" #'mc/sort-regions malb/mc-map)
-            (bind-key "l" #'mc/edit-lines malb/mc-map)
+            (bind-key "d" #'mc/mark-all-dwim malb/mc-map)
+            (bind-key "s" #'mc/mark-all-symbols-like-this-in-defun malb/mc-map)
+
+            (bind-key "i" #'mc/insert-numbers malb/mc-map)
+            (bind-key "l" #'mc/insert-letters malb/mc-map)
+
+            (bind-key "h" #'mc-hide-unmatched-lines-mode malb/mc-map)
+
+            (bind-key "R" #'mc/reverse-regions malb/mc-map)
+            (bind-key "S" #'mc/sort-regions malb/mc-map)
+            (bind-key "L" #'mc/edit-lines malb/mc-map)
+
             (bind-key "C-a" #'mc/edit-beginnings-of-lines malb/mc-map)
             (bind-key "C-e" #'mc/edit-ends-of-lines malb/mc-map)
             )
