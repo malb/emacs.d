@@ -5247,20 +5247,19 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 * Key Bindings
 
 #+BEGIN_SRC emacs-lisp
+(malb/set-menu-key "<f2>" #'malb/hydra-window/body)
 (malb/set-menu-key "a" #'helm-imenu-anywhere)
 (malb/set-menu-key "b" #'malb/helm-omni)
 (malb/set-menu-key "c" #'helm-calcul-expression)
 (malb/set-menu-key "C" #'mu4e-compose-new)
 (malb/set-menu-key "e" #'malb/eshell-here)
 (malb/set-menu-key "f" #'helm-find-files)
-(malb/set-menu-key "g" #'malb/hydra-goto/body)
 (malb/set-menu-key "i" #'helm-semantic-or-imenu)
 (malb/set-menu-key "j" #'avy-goto-word-1)
 (malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex)
 (malb/set-menu-key "m" #'malb/mail)
 (malb/set-menu-key "n" #'helm-mu)
-(malb/set-menu-key "," #'malb/hydra-navigate/body)
 (malb/set-menu-key "/" #'malb/helm-ag-projects)
 (malb/set-menu-key "o" #'helm-org-agenda-files-headings)
 (malb/set-menu-key "P" #'prodigy)
