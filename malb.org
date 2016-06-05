@@ -378,7 +378,8 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
                                                mu4e-view-mode
                                                mu4e-main-mode
                                                mu4e-headers-mode
-                                               calendar-mode))
+                                               calendar-mode
+                                               compilation-mode))
             (golden-ratio-mode t)
 
             (defun malb/golden-ratio-inhibit-functions ()
