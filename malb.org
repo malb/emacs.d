@@ -3804,21 +3804,23 @@ Use less tab completion in prose. ([[http://endlessparentheses.com/tab-completio
 
 *** Line wrapping
 
-Put everything back on one line and use ~visual-line-mode~ to do the work of wrapping text for us. ([[http://www.emacswiki.org/emacs/UnfillParagraph][source]])
+Put everything back on one line if =M-q= is pressed twice and use ~visual-line-mode~ to do the work of wrapping text for us. ([[http://endlessparentheses.com/fill-and-unfill-paragraphs-with-a-single-key.html?source=rss][source]])
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'text-mode-hook #'turn-on-visual-line-mode)
 (diminish 'visual-line-mode)
 
-(defun malb/unfill-paragraph (&optional region)
-  "Takes a multi-line paragraph and makes it into a single line of text."
-  (interactive (progn
-                 (barf-if-buffer-read-only)
-                 (list t)))
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil region)))
+(defun malb/fill-or-unfill ()
+  "Like `fill-paragraph', but unfill if used twice."
+  (interactive)
+  (let ((fill-column
+         (if (eq last-command 'malb/fill-or-unfill)
+             (progn (setq this-command nil)
+                    (point-max))
+           fill-column)))
+    (call-interactively #'fill-paragraph)))
 
-(bind-key "M-Q" 'malb/unfill-paragraph)
+(bind-key [remap fill-paragraph] #'malb/fill-or-unfill)
 #+END_SRC
 
 Indent correctly in ~visual-line-mode~ (~org-mode~ has its own thing).
