@@ -4063,9 +4063,7 @@ Use [[http://jblevins.org/projects/deft/][deft]].
                 deft-current-sort-method 'title
                 deft-file-naming-rules '((noslash . "-")
                                          (nospace . "-")
-                                         (case-fn . downcase))
-                )
-
+                                         (case-fn . downcase)))
 
           (defun malb/deft-in-dir (dir)
             "Run deft in directory DIR"
