@@ -1280,9 +1280,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Options
 
 #+BEGIN_SRC emacs-lisp
-(setq org-hide-emphasis-markers nil            ; hide markers for like *foo*
-      org-ellipsis "⤵"
-      org-enforce-todo-dependencies t          ; enforce todo dependencies
+(setq org-enforce-todo-dependencies t          ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
       org-catch-invisible-edits 'smart
@@ -1290,12 +1288,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-startup-folded 'fold
       org-log-into-drawer t
       org-log-done t
-      org-highlight-latex-and-related '(latex)
       org-return-follows-link nil             ; don’t follow links by pressing ENTER
       org-clock-persist 'history
       org-special-ctrl-a/e t                   ; begin/end of line to skip starts …
       org-special-ctrl-k t                     ; special keys for killing a headline
-      org-src-fontify-natively t               ; fontify code blocks
       org-agenda-tags-column -117
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
@@ -1313,7 +1309,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-reverse-note-order t
       org-footnote-auto-adjust t               ; renumber footnotes automagically
       org-confirm-elisp-link-function nil      ;
-      org-image-actual-width '(1024)
       )
 
 (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
@@ -1324,7 +1319,17 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (bind-key "C-c C-," #'org-time-stamp-inactive org-mode-map) ; fylcheck binds C-c !
 #+END_SRC
 
-**** TODO move org config to respective sections
+*** TODO move org config to respective sections
+
+** Look
+
+#+BEGIN_SRC emacs-lisp
+(setq org-hide-emphasis-markers nil            ; don’t hide markers for like *foo*
+      org-ellipsis "⤵"
+      org-highlight-latex-and-related '(latex)
+      org-src-fontify-natively t               ; fontify code blocks
+      org-image-actual-width '(1024))
+#+END_SRC
 
 ** Org Babel
 
