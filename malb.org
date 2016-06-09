@@ -1774,6 +1774,28 @@ _underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starte
   :ensure t)
 #+END_SRC
 
+*** Pandoc
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-pandoc
+  :ensure t
+  :init (progn
+          (setq org-pandoc-menu-entry  '((113 "to commonmark and open." org-pandoc-export-to-commonmark-and-open)
+                                         (81 "as commonmark." org-pandoc-export-as-commonmark)
+                                         (120 "to docx and open." org-pandoc-export-to-docx-and-open)
+                                         (88 "to docx." org-pandoc-export-to-docx)
+                                         (51 "to epub and open." org-pandoc-export-to-epub-and-open)
+                                         (35 "to epub." org-pandoc-export-to-epub)
+                                         (101 "to epub3 and open." org-pandoc-export-to-epub3-and-open)
+                                         (69 "to epub3." org-pandoc-export-to-epub3)
+                                         (106 "to json and open." org-pandoc-export-to-json-and-open)
+                                         (74 "as json." org-pandoc-export-as-json)
+                                         (58 "to rst and open." org-pandoc-export-to-rst-and-open)
+                                         (42 "as rst." org-pandoc-export-as-rst)
+                                         (114 "to rtf and open." org-pandoc-export-to-rtf-and-open)
+                                         (82 "as rtf." org-pandoc-export-as-rtf)))))
+#+END_SRC
+
 ** Capture
 
 If we are in a project we might add a TODO entry to the appropriate entry in =projects.org=.
