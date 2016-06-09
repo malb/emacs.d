@@ -2575,6 +2575,7 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 * Programming (languages)
 ** General
 *** REPL
+**** Comint
 
 We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.com/questions/14072/replicate-ipython-history-behaviour-in-emacs][source]])
 
@@ -2598,11 +2599,10 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
               (let ((kill-buffer-query-functions nil))
                 (kill-buffer)))
 
-            (bind-key "C-S-w" #'malb/kill-buffer-delete-window comint-mode-map)
-            ))
+            (bind-key "C-S-w" #'malb/kill-buffer-delete-window comint-mode-map)))
 #+END_SRC
 
-**** Comint History Across Sessions
+***** Comint History Across Sessions
 
 [[https://oleksandrmanzyuk.wordpress.com/2011/10/23/a-persistent-command-history-in-emacs/][source]]
 
