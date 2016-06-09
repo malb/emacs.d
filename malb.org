@@ -149,7 +149,6 @@ should be executed or the text inserted) is annoying.
 #+END_SRC
 
 * Window Management
-
 ** Splitting
 
 When splitting windows open the previous buffer in it.
@@ -294,7 +293,8 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\`\\*Edit footnote .*\\*\\'"
                              "\\`\\*TeX errors*\\*\\'"
                              "\\`\\*mu4e-update*\\*\\'"
-                             "\\`\\*prodigy-.*\\*\\'"))
+                             "\\`\\*prodigy-.*\\*\\'"
+                             "\\`\\*Org Export Dispatcher\\*\\'"))
 
 (dolist (name malb/popup-windows)
   (add-to-list 'display-buffer-alist
