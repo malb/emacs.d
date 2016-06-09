@@ -4803,42 +4803,6 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
   (use-package dired-x)
 #+END_SRC
 
-** [[https://github.com/ralesi/ranger][Ranger]]
-
-[[https://github.com/ralesi/ranger.el/raw/master/screenshots/hello-ranger.gif]] ([[https://github.com/ralesi/ranger.el/raw/master/screenshots/hello-ranger.gif][source]])
-
-*Commands*
-
-| =C-p=    | toggle ranger in dired buffer               |
-| =j=      | navigate down                               |
-| =k=      | navigate up                                 |
-| =C-j=    | scroll preview window down                  |
-| =C-k=    | scroll preview window up                    |
-| =f=      | search for file names                       |
-| =i=      | show preview of current file                |
-| =H=      | search through history                      |
-| =zi=     | toggle showing literal / full-text previews |
-| =zh=     | toggle showing dotfiles                     |
-| =o=      | sort options                                |
-| =h=      | go up directory                             |
-| =1/ RET= | find file / enter directory                 |
-| =q=      | quit                                        |
-| =r=      | revert buffer                               |
-| =z-=     | reduce number of parents                    |
-| =z+=     | increment number of parents                 |
-| =v=      | toggle all marks                            |
-| =V=      | visually select lines                       |
-| =S=      | enter shell                                 |
-| =C-SPC=  | mark current file                           |
-
-#+BEGIN_SRC emacs-lisp
-(use-package ranger
-  :ensure t
-  :config (progn
-            (setq ranger-cleanup-on-disable t
-                  ranger-cleanup-eagerly t)))
-#+END_SRC
-
 * Diff
 
 #+BEGIN_SRC emacs-lisp
