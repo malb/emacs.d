@@ -1620,8 +1620,8 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 
 *** LaTeX
 
-- We use [[http://www.xelatex.org][XeLaTeX]] because UTF-8 and fonts.
-- We drop =\usepackage[T1]{fontenc}= because XeLaTeX doesn’t need it.
+- Use [[http://www.xelatex.org][XeLaTeX]] because UTF-8 and fonts.
+- Drop =\usepackage[T1]{fontenc}= because XeLaTeX doesn’t need and like it it.
 - We add [[https://www.ctan.org/pkg/tufte-latex?lang=en][tufte-handout]] as a class for our … handouts.
 
 #+BEGIN_SRC emacs-lisp
@@ -1630,60 +1630,126 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
             (setq org-latex-listings 't)
             (add-to-list 'org-latex-packages-alist '("" "listings"))
             (add-to-list 'org-latex-packages-alist '("" "xcolor"))
-            (add-to-list 'org-latex-packages-alist '("no-math" "fontspec")) ;; so it works with beamer
-            (setq org-latex-pdf-process
-                  '("latexmk -xelatex -output-directory=%o -pdf %f")
-                  org-latex-caption-above nil)
-            (setq org-latex-default-packages-alist
-                  (remove* '("T1" "fontenc" t)
-                           org-latex-default-packages-alist :test 'equal))
-            (setq org-latex-default-packages-alist
-                  (remove '("AUTO" "inputenc" t) org-latex-default-packages-alist))
-            (add-to-list 'org-latex-classes
-                         '((concat "tuftehandout\n"
-                                   "\\documentclass{tufte-handout}\n"
-                                   "\\usepackage{xcolor}\n"
-                                   "\\usepackage{amssymb}\n"
-                                   "\\usepackage{amsmath}\n"
-                                   "\\usepackage{gensymb}\n"
-                                   "\\usepackage{nicefrac}\n"
-                                   "\\usepackage{units}\n")
-                           ("\\section{%s}" . "\\section*{%s}")
-                           ("\\subsection{%s}" . "\\subsection*{%s}")
-                           ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                           ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+            (add-to-list 'org-latex-packages-alist '("" "amssymb"))
+            (add-to-list 'org-latex-packages-alist '("" "amsmath"))
+            (add-to-list 'org-latex-packages-alist '("" "gensymb"))
+            (add-to-list 'org-latex-packages-alist '("" "nicefrac"))
+            (add-to-list 'org-latex-packages-alist '("" "units"))
 
-            ;; `hyperref' package setup
-            (setq org-latex-hyperref-template
-                  (concat "\\hypersetup{\n"
-                          "pdfauthor={%a},\n"
-                          "pdftitle={%t},\n"
-                          "pdfkeywords={%k},\n"
-                          "pdfsubject={%d},\n"
-                          "pdfcreator={%c},\n"
-                          "pdflang={%L},\n"
-                          "colorlinks,\n"
-                          "citecolor=gray,\n"
-                          "filecolor=gray,\n"
-                          "linkcolor=gray,\n"
-                          "urlcolor=gray\n"
-                          "}"))))
+            (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf %f")
+                  org-latex-caption-above nil
+                  org-latex-default-packages-alist (remove* '("T1" "fontenc" t)
+                                                            org-latex-default-packages-alist :test 'equal)
+                  org-latex-default-packages-alist (remove '("AUTO" "inputenc" t)
+                                                           org-latex-default-packages-alist)
+                  org-latex-hyperref-template  (concat "\\hypersetup{\n"
+                                                       "pdfauthor={%a},\n"
+                                                       "pdftitle={%t},\n"
+                                                       "pdfkeywords={%k},\n"
+                                                       "pdfsubject={%d},\n"
+                                                       "pdfcreator={%c},\n"
+                                                       "pdflang={%L},\n"
+                                                       "colorlinks,\n"
+                                                       "citecolor=gray,\n"
+                                                       "filecolor=gray,\n"
+                                                       "linkcolor=gray,\n"
+                                                       "urlcolor=gray\n"
+                                                       "}\n"))
+
+            (add-to-list 'org-latex-classes
+                         (list "handout"
+                               (concat "\\documentclass{tufte-handout}\n"
+                                       "\\usepackage{fontspec}\n"
+                                       "[DEFAULT-PACKAGES]\n"
+                                       "[PACKAGES]\n"
+                                       "[EXTRA]\n")
+                               '("\\section{%s}" . "\\section*{%s}")
+                               '("\\subsection{%s}" . "\\subsection*{%s}")
+                               '("\\paragraph{%s}" . "\\paragraph*{%s}")
+                               '("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+            (add-to-list 'org-latex-classes
+                         (list "org-report"
+                               (concat "\\documentclass{article}\n"
+                                       "\\usepackage{fontspec}\n"
+                                       "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}\n"
+                                       "[DEFAULT-PACKAGES]\n"
+                                       "\\parskip 1em\n"
+                                       "\\parindent 0pt\n"
+                                       "\\linespread{1.25}\n"
+                                       "[EXTRA]\n")
+                               '("\\section{%s}" . "\\section*{%s}")
+                               '("\\subsection{%s}" . "\\subsection*{%s}")
+                               '("\\paragraph{%s}" . "\\paragraph*{%s}")
+                               '("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+            (add-to-list 'org-latex-classes
+                         (list "marticle"
+                               (concat "\\documentclass{article}\n"
+                                       "\\usepackage{fontspec}\n"
+                                       "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}\n"
+                                       "\\usepackage{unicodesymbols}\n"
+                                       "[DEFAULT-PACKAGES]\n"
+                                       "[PACKAGES]\n"
+                                       "\\usepackage[backend=bibtex,style=alphabetic,maxnames=8,citestyle=alphabetic]{biblatex}\n"
+                                       "\\DeclareFieldFormat{title}{\\textbf{#1}}\n"
+                                       "\\DeclareFieldFormat[book]{title}{\\textbf{#1}}\n"
+                                       "\\DeclareFieldFormat[thesis]{title}{\\textbf{#1}}\n"
+                                       "\\DeclareFieldFormat[inproceedings]{title}{\\textbf{#1}}\n"
+                                       "\\DeclareFieldFormat[article]{title}{\\textbf{#1}}\n"
+                                       "\\DeclareFieldFormat[misc]{title}{\\textbf{#1}}\n"
+                                       "\\parskip 1em\n"
+                                       "\\parindent 0pt\n"
+                                       "\\lstdefinelanguage{Sage}[]{Python}{morekeywords={True,False,sage,cdef,cpdef,ctypedef,self},sensitive=true}\n"
+                                       "\\lstset{frame=none,showtabs=False, showspaces=False, showstringspaces=False,\n"
+                                       "         commentstyle={\\color{gray}}, keywordstyle={\\color{black}\\textbf},\n"
+                                       "         stringstyle={\\color{darkgray}}, frame=single, basicstyle=\\tt\\scriptsize\\relax,\n"
+                                       "         inputencoding=utf8, literate={…}{{\\ldots}}1, belowskip=0.0em,}\n"
+                                       "[EXTRA]\n")
+                               '("\\section{%s}" . "\\section*{%s}")
+                               '("\\subsection{%s}" . "\\subsection*{%s}")
+                               '("\\paragraph{%s}" . "\\paragraph*{%s}")
+                               '("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+            ))
 
 (use-package ox-koma-letter
   :config (progn
             (add-to-list 'org-latex-classes
-                         '("koma-letter"
-                           (concat "\\documentclass{scrlttr2}\n"
-                                   "\\usepackage{xcolor}\n"
-                                   "\\usepackage{amssymb}\n"
-                                   "\\usepackage{amsmath}\n"
-                                   "\\usepackage{gensymb}\n"
-                                   "\\usepackage{nicefrac}\n"
-                                   "\\usepackage{units}\n"
-                                   "\\usepackage{fontspec}\n")))))
+                         (list "letter"
+                               (concat "\\documentclass{scrlttr2}\n"
+                                       "\\usepackage{fontspec}\n"
+                                       "[DEFAULT-PACKAGES]\n"
+                                       "[EXTRA]\n")))))
 #+END_SRC
 
 **** TODO using latexmk (like this) means we get less feedback than we’d like
+
+*** Beamer
+
+_underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starter-kit/starter-kit-org.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-beamer
+  :config (progn
+            (add-to-list 'org-beamer-environments-extra
+                         '("lemma" "l" "\\begin{lemma}%a" "\\end{lemma}"))
+            (defun malb/beamer-underline (contents backend info)
+              (when (eq backend 'beamer)
+                (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
+
+            (add-to-list 'org-export-filter-underline-functions 'malb/beamer-underline)
+
+            (add-to-list 'org-latex-classes
+                         (list "mbeamer"
+                               (concat  "\\documentclass[presentation,smaller]{beamer}\n"
+                                        (with-temp-buffer
+                                          (insert-file-contents
+                                           (expand-file-name "talk-header.tex" user-emacs-directory))
+                                          (buffer-string)))
+                               '("\\section{%s}" . "\\section*{%s}")
+                               '("\\subsection{%s}" . "\\subsection*{%s}")
+                               '("\\subsubsection{%s}" . "\\subsubsection*{%s}")))))
+#+END_SRC
 
 *** ODT
 
@@ -1731,23 +1797,6 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 #+END_SRC
 
 **** TODO the output of =malb/org-json-export-as-json= is way too messy
-
-*** Beamer
-
-_underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starter-kit/starter-kit-org.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package ox-beamer
-  :config (progn
-            (add-to-list 'org-beamer-environments-extra
-                         '("lemma" "l" "\\begin{lemma}%a" "\\end{lemma}"))
-            (defun malb/beamer-underline (contents backend info)
-              (when (eq backend 'beamer)
-                (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
-
-            (add-to-list 'org-export-filter-underline-functions 'malb/beamer-underline)
-            ))
-#+END_SRC
 
 *** Reveal.js
 
@@ -4291,7 +4340,11 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 ** LaTeX
 
-*Tip*: Forward search with ~C-c C-g~.
+| Command       | Explanation     |
+|---------------+-----------------|
+| ~C-c C-g~     | forward search  |
+| ~C-c C-o C-b~ | fold everything |
+| ~C-<tab>~     | fold dwim       |
 
 #+BEGIN_SRC emacs-lisp
 (use-package tex
@@ -4321,8 +4374,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                '("corollary" LaTeX-env-label)
                '("definition" LaTeX-env-label)
                '("example" LaTeX-env-label)
-               '("proposition" LaTeX-env-label)
-               ))
+               '("proposition" LaTeX-env-label)))
 
             (setq reftex-section-levels '(("part" . 0)
                                           ("chapter" . 1)
@@ -4350,8 +4402,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
              `((,(rx "\\" (or (any ",.!;")
                               (and (or "left" "right" "qquad" "quad")
                                    symbol-end)))
-                0 'malb/unimportant-latex-face prepend))
-             'end)
+                0 'malb/unimportant-latex-face prepend)) 'end)
 
             (setq TeX-auto-save t
                   TeX-parse-self t
@@ -4369,7 +4420,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+END_SRC
 
-** LatexMK
+*** LatexMK
 
 #+BEGIN_SRC emacs-lisp
 (use-package auctex-latexmk
@@ -4379,7 +4430,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (auctex-latexmk-setup)))
 #+END_SRC
 
-** LaTeX preview pane
+*** LaTeX preview pane
 
 [[https://github.com/jsinglet/latex-preview-pane][LaTeX preview pane]]
 
@@ -4389,6 +4440,19 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
   :ensure t
   :config (progn
             (setq latex-preview-pane-multifile-mode (quote auctex))))
+#+END_SRC
+
+*** Setup everything
+
+Setup everything for LaTeX (this can be slow, hence we call it manually)
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/latex-init ()
+  (interactive)
+  (ignore-errors
+    (malb/latex-parse-bibtex))          ; don't die if there's no bibtex file
+  (olivetti-mode 1)
+  (latex-preview-pane-mode 1))
 #+END_SRC
 
 ** Utility Functions
@@ -4419,19 +4483,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
   (interactive "r")
   (align-regexp start end
                 "\\(\\s-*\\):" 1 0 t))
-#+END_SRC
-
-** Setup everything
-
-Setup everything for LaTeX (this can be slow, hence we call it manually)
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/latex-init ()
-  (interactive)
-  (ignore-errors
-    (malb/latex-parse-bibtex))          ; don't die if there's no bibtex file
-  (olivetti-mode 1)
-  (latex-preview-pane-mode 1))
 #+END_SRC
 
 * BibTeX
