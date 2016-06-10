@@ -1564,11 +1564,17 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 
 ** Export
 
+UTF-8 everywhere.
+
 #+BEGIN_SRC emacs-lisp
 (setq org-export-coding-system 'utf-8)
 #+END_SRC
 
 *** iCalendar
+
+iCal export is triggered after 600 seconds of inactivity.
+
+*Note*: this code is definitely from somewhere else. I don’t remember where, though.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-icalendar
@@ -1587,7 +1593,6 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 (defvar malb/org-icalendar-export-timer nil
   "Timer that `malb/org-icalendar-export-timer' used to reschedule itself, or nil.")
 #+END_SRC
-
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/org-icalendar-export-with-delay (secs)
