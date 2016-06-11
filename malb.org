@@ -1845,9 +1845,7 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
                                          (106 "to json and open." org-pandoc-export-to-json-and-open)
                                          (74 "as json." org-pandoc-export-as-json)
                                          (58 "to rst and open." org-pandoc-export-to-rst-and-open)
-                                         (42 "as rst." org-pandoc-export-as-rst)
-                                         (114 "to rtf and open." org-pandoc-export-to-rtf-and-open)
-                                         (82 "as rtf." org-pandoc-export-as-rtf)))))
+                                         (42 "as rst." org-pandoc-export-as-rst)))))
 #+END_SRC
 
 ** Capture
