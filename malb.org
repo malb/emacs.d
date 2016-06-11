@@ -547,6 +547,19 @@ Call ~yas-decribe-tables~ to see currently defined snippets.
             (setq yas-verbosity 1)))
 #+END_SRC
 
+** Auto YASnippet
+
+#+BEGIN_QUOTE
+This is a hybrid of keyboard macros and yasnippet. You create the snippet on the go, usually to be used just in the one place. It's fast, because you're not leaving the current buffer, and all you do is enter the code you'd enter anyway, just placing ~ where you'd like yasnippet fields and mirrors to be.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package auto-yasnippet
+  :ensure t
+  :bind (("C-c y c" . aya-create)
+         ("C-c y e" . aya-expand)))
+#+END_SRC
+
 * Auto Completion
 
 Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-completion.
@@ -3221,9 +3234,6 @@ The following code parses a complete project with semantic. This is useful for e
 Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/function-args][function-args]]'s =moo-doxygen=.
 
 #+BEGIN_SRC emacs-lisp
-(use-package auto-yasnippet
-  :ensure t)
-
 (defun malb/doxygen ()
   "Generate a doxygen yasnippet and expand it with `aya-expand'.
   The point should be on the top-level function name."
