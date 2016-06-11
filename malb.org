@@ -175,7 +175,7 @@ When splitting windows open the previous buffer in it.
 Don’t split horizontally.
 
 #+BEGIN_SRC emacs-lisp
-(setq split-width-threshold  100)
+(setq split-width-threshold  80)
 (setq split-height-threshold nil)
 #+END_SRC
 
@@ -316,7 +316,7 @@ In case we just want to kill the bottom window, set a shortcut do to this.
   "Quit side windows of the current frame."
   (interactive)
   (dolist (window (window-at-side-list))
-    (quit-window nil window)))
+    (delete-window window)))
 
 (bind-key "C-§" #'malb/quit-bottom-side-windows)
 (key-chord-define-global "qq" #'malb/quit-bottom-side-windows)
@@ -333,7 +333,7 @@ If there is no compilation window, open one at the bottom, spanning the complete
                 display-buffer-in-side-window)
                (reusable-frames . visible)
                (side            . bottom)
-               (window-height   . 0.4)))
+               (window-height   . 0.3)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
