@@ -1285,9 +1285,9 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Files
 
 #+BEGIN_SRC emacs-lisp
-(setq org-directory malb/org-files-dir)
-(setq org-agenda-files malb/org-files)
-(setq org-default-notes-file malb/inbox-org)
+(setq org-directory malb/org-files-dir
+      org-agenda-files malb/org-files
+      org-default-notes-file malb/inbox-org)
 #+END_SRC
 
 ** Options
@@ -1305,7 +1305,27 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-clock-persist 'history
       org-special-ctrl-a/e t                   ; begin/end of line to skip starts …
       org-special-ctrl-k t                     ; special keys for killing a headline
-      org-agenda-tags-column -117
+      org-edit-src-content-indentation 0       ; don't indent source code
+      org-src-preserve-indentation t           ; preserve indentation in code
+      org-src-window-setup 'current-window     ; when hitting C-c '
+      org-reverse-note-order t
+      org-footnote-auto-adjust t               ; renumber footnotes automagically
+      org-confirm-elisp-link-function nil      ;
+      org-startup-with-inline-images t         ; show images when opening a file.
+      )
+
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+
+(bind-key "<home>" #'org-beginning-of-line org-mode-map)
+(bind-key "<end>" #'org-end-of-line org-mode-map)
+(bind-key "C-c C-." #'org-time-stamp org-mode-map) ; ede binds C-c . too
+(bind-key "C-c C-," #'org-time-stamp-inactive org-mode-map) ; fylcheck binds C-c !
+#+END_SRC
+
+** Agenda
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-tags-column -117
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
       org-agenda-default-appointment-duration 60
@@ -1316,23 +1336,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-agenda-compact-blocks t              ; Compact the block agenda view
       org-agenda-span 14                       ; span 14 days of agenda
       org-agenda-start-on-weekday nil          ; start today not on Monday
-      org-edit-src-content-indentation 0       ; don't indent source code
-      org-src-preserve-indentation t           ; preserve indentation in code
-      org-src-window-setup 'current-window     ; when hitting C-c '
-      org-reverse-note-order t
-      org-footnote-auto-adjust t               ; renumber footnotes automagically
-      org-confirm-elisp-link-function nil      ;
       )
 
 (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
-
-(bind-key "<home>" #'org-beginning-of-line org-mode-map)
-(bind-key "<end>" #'org-end-of-line org-mode-map)
-(bind-key "C-c C-." #'org-time-stamp org-mode-map) ; ede binds C-c . too
-(bind-key "C-c C-," #'org-time-stamp-inactive org-mode-map) ; fylcheck binds C-c !
 #+END_SRC
-
-*** TODO move org config to respective sections
 
 ** Look
 
@@ -1580,7 +1587,11 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 UTF-8 everywhere.
 
 #+BEGIN_SRC emacs-lisp
-(setq org-export-coding-system 'utf-8)
+(setq org-export-coding-system 'utf-8
+      org-export-in-background nil
+      org-export-babel-evaluate nil
+      org-export-with-timestamps 'active
+      org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))
 #+END_SRC
 
 *** iCalendar
@@ -1597,9 +1608,7 @@ iCal export is triggered after 600 seconds of inactivity.
                   org-icalendar-categories '(category)
                   org-icalendar-use-scheduled '(todo-start event-if-not-todo)
                   org-icalendar-use-deadline '(todo-due)
-                  org-icalendar-with-timestamps 'active
-                  org-export-with-timestamps 'active
-                  org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))))
+                  org-icalendar-with-timestamps 'active)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
