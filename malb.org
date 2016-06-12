@@ -5576,6 +5576,10 @@ We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which custo
 
               (spaceline-spacemacs-theme)
               (spaceline-helm-mode)
+
+              (spaceline-toggle-hud-off)
+              (spaceline-toggle-buffer-encoding-abbrev-off)
+
               (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
               (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
               (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
