@@ -2018,6 +2018,25 @@ I've notice that while I really like taking notes in a meeting, I don't always l
 (add-hook 'org-mode-hook #'malb/org-mode-complete-hook)
 #+END_SRC
 
+** Eldoc
+
+Activate eldoc and show footnotes in minibuffer.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook #'org-eldoc-load)
+(add-hook 'org-mode-hook #'eldoc-mode)
+
+(defun malb/org-eldoc-get-footnote ()
+  (save-excursion
+    (let ((fn (org-between-regexps-p "\\[fn:" "\\]")))
+      (when fn
+        (save-match-data
+          (nth 3 (org-footnote-get-definition (buffer-substring (+ 1 (car fn)) (- (cdr fn) 1)))))))))
+
+(advice-add 'org-eldoc-documentation-function
+            :before-until #'malb/org-eldoc-get-footnote)
+#+END_SRC
+
 ** Functions
 
 ([[http://emacs.stackexchange.com/a/10712/115][source]])
