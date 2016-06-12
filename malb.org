@@ -590,7 +590,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
                                              sage-shell-mode
                                              ein:notebook-multilang-mode
                                              ein:notebook-python-mode)
-                  company-lighter-base "γ")
+                  company-lighter-base "Γ")
 
             (global-company-mode 1)
 
@@ -1230,7 +1230,7 @@ This library provides easy project management and navigation. The concept of a p
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
                   projectile-switch-project-action 'helm-projectile
                   projectile-mode-line  '(:eval
-                                          (format " [%s]"
+                                          (format "▸[%s]"
                                                   (projectile-project-name))))
 
             (projectile-global-mode)))
