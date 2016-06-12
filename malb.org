@@ -5063,7 +5063,7 @@ Always prefer to load newer files, instead of giving precedence to the .elc file
 (setq load-prefer-newer t)
 #+END_SRC
 
-Smoother scrolling and better defaults for recentering with =C-l=
+Smoother scrolling.
 
 #+BEGIN_SRC emacs-lisp
 (setq scroll-conservatively 10
