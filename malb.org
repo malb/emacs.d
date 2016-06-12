@@ -22,7 +22,7 @@ We assume that the following variables are defined:
 - ~malb/common-file-targets~ - for helm
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/sage-executable~ - full path of Sage executable
-- ~malb/malb/mu4e-name-replacements~ - email name replacements
+- ~malb/mu4e-name-replacements~ - email name replacements
 
 * Package Management
 
