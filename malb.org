@@ -5070,6 +5070,14 @@ Smoother scrolling.
       scroll-preserve-screen-position t)
 #+END_SRC
 
+Smoother mouse scrolling.
+
+#+BEGIN_SRC emacs-lisp
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)) ; one line at a time
+      mouse-wheel-progressive-speed nil            ; don't accelerate scrolling
+      mouse-wheel-follow-mouse 't)                 ; scroll window under mouse
+#+END_SRC
+
 Use ~kill -pUSR1~ to kill Emacs. ([[https://github.com/wasamasa/dotemacs/blob/master/init.org][source]])
 
 #+BEGIN_SRC emacs-lisp
