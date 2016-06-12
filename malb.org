@@ -5085,6 +5085,12 @@ Show key combos
 (setq echo-keystrokes 0.1)
 #+END_SRC
 
+Diminish ~eldoc-mode~
+
+#+BEGIN_SRC emacs-lisp
+(diminish 'eldoc-mode)
+#+END_SRC
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
