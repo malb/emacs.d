@@ -2124,6 +2124,9 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
   :config (progn
             (setq magit-push-always-verify nil
                   magit-last-seen-setup-instructions "2.1.0")
+
+            ;; we use magit, not vc for git
+            (delete 'Git vc-handled-backends)
             ))
 
 (use-package magit-svn
