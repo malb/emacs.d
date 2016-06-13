@@ -5497,10 +5497,6 @@ The result looks like this:
               (defun malb/load-main-theme ()
                 (load-theme 'solarized-light t)
 
-                (solarized-with-color-variables
-                  'light
-                  (setq malb/solarized-bg (solarized-color-blend base02 base03 0.3)))
-
                 ;; steal org style from Leuven
                 (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
                 (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
@@ -5509,9 +5505,13 @@ The result looks like this:
                 (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
                 (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
                 (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-                (set-face-attribute 'org-block-background nil :background malb/solarized-bg)
+                (set-face-attribute 'org-block-background nil :background (solarized-with-color-variables
+                                                                            'light
+                                                                            (solarized-color-blend base02 base03 0.3)))
                 (when (boundp 'hl-sentence-mode)
-                  (set-face-attribute 'hl-sentence-face nil :background  malb/solarized-bg))
+                  (set-face-attribute 'hl-sentence-face nil :background (solarized-with-color-variables
+                                                                            'light
+                                                                            (solarized-color-blend base02 base03 0.6))))
                 (when (boundp 'which-func-mode)
                   (set-face-attribute 'which-func nil :foreground "#DEB542"))
 
