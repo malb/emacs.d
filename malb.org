@@ -271,6 +271,13 @@ Repeated invocations toggle between the two most recently open buffers."
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 #+END_SRC
 
+Bind =M-1= and =M-2= to cycle through buffers.
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "M-1" #'previous-buffer)
+(bind-key "M-2" #'next-buffer)
+#+END_SRC
+
 ** Special windows
 
 Some buffers should behave like pop ups:
@@ -435,6 +442,8 @@ _j_ump        _o_nly this     _S_ave
   ("r" enlarge-window-horizontally)
   ("g" golden-ratio-mode)
   ("H" malb/helm-omni :color blue)
+  ("1" previous-buffer)
+  ("2" next-buffer)
   ("p" previous-buffer)
   ("n" next-buffer)
   ("t" malb/switch-to-previous-buffer :color blue)
@@ -462,6 +471,7 @@ _j_ump        _o_nly this     _S_ave
   ("`" nil))
 
 (key-chord-define-global "z`" #'malb/hydra-window/body)
+(key-chord-define-global "12" #'malb/hydra-window/body)
 (bind-key "C-x o" #'malb/hydra-window/body)
 (bind-key "±" #'other-window)
 #+END_SRC
