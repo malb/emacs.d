@@ -60,6 +60,7 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 #+BEGIN_SRC emacs-lisp
 (use-package paradox
   :ensure paradox
+  :commands (paradox-list-packages)
   :config (setq paradox-github-token malb/paradox-github-token
                 paradox-automatically-star t))
 #+END_SRC
@@ -88,9 +89,9 @@ Maximise the window as soon as possible
 * Disable Clutter
 
 #+BEGIN_SRC emacs-lisp
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 #+END_SRC
 
 * Memory
@@ -184,8 +185,6 @@ Resize windows to accommodate new ones.
 #+BEGIN_SRC emacs-lisp
 (setq window-combination-resize t)
 #+END_SRC
-
-*** TODO window splitting rules need more thought
 
 ** Restoring Configurations
 
@@ -596,10 +595,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
                   company-dabbrev-code-everywhere t
                   company-tooltip-align-annotations t
                   company-minimum-prefix-length 1
-                  company-global-modes '(not sage-shell:sage-mode
-                                             sage-shell-mode
-                                             ein:notebook-multilang-mode
-                                             ein:notebook-python-mode)
+                  company-global-modes '(not)
                   company-lighter-base "Γ")
 
             (global-company-mode 1)
@@ -2130,6 +2126,13 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :ensure t
+  :commands (magit-status
+             magit-diff
+             magit-commit
+             magit-log
+             magit-push
+             magit-stage-file
+             magit-unstage-file)
   :bind ("<f7>" . magit-status)
   :config (progn
             (setq magit-push-always-verify nil
@@ -2148,7 +2151,9 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
             (add-hook 'magit-mode-hook #'malb/magit-svn)))
 #+END_SRC
 
-** [[https://github.com/sigma/magit-gh-pulls][Github pull requests]]
+** GitHub Pull Requests
+
+Handle [[https://github.com/sigma/magit-gh-pulls][pull requests]] from magit
 
 *Commands:*
 
@@ -2165,7 +2170,16 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 *** TEST if =magit-gh-pulls= can be enabled by default without causing delay
 
-** Git-timemachine
+** Org Links for Magit Buffers
+
+[[https://github.com/magit/orgit][orgit]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package orgit
+  :ensure t)
+#+END_SRC
+
+** Git Timemachine
 
 I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][git-timemachine]] but when I do …
 
@@ -2174,17 +2188,16 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
   :ensure t)
 #+END_SRC
 
-** [[https://github.com/rmuslimov/browse-at-remote][Browse on Github/Bitbucket]]
+** Git Link
+
+[[https://github.com/sshaw/git-link][git-link]]:
+
+#+BEGIN_QUOTE
+functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories. =git-link= returns the URL for the current buffer's file location at the current line number or active region. =git-link-commit= returns the URL for a commit. URLs are added to the kill ring.
+#+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
-  (use-package browse-at-remote
-    :ensure t)
-#+END_SRC
-
-** [[https://github.com/magit/orgit][Org links to Magit buffers]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package orgit
+(use-package git-link
   :ensure t)
 #+END_SRC
 
@@ -3021,8 +3034,7 @@ mouse-3: go to end")
                                              "Vagrant"
                                              "VMware vSphere"
                                              )
-                  helm-dash-browser-func 'eww)
-            ))
+                  helm-dash-browser-func 'eww)))
 #+END_SRC
 
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
@@ -3590,6 +3602,10 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             (add-hook 'sage-shell-mode-hook #'auto-complete-mode)
             (add-hook 'sage-shell-mode-hook #'eldoc-mode)
 
+            (when (boundp 'company-global-modes)
+              (add-to-list 'company-global-modes 'sage-shell:sage-mode)
+              (add-to-list 'company-global-modes 'sage-shell-mode))
+
             (setq sage-shell:input-history-cache-file (concat user-emacs-directory "sage_shell_input_history")
                   sage-shell:sage-executable malb/sage-executable
                   ac-sage-show-quick-help t)
@@ -3625,10 +3641,14 @@ On our system port 8888 is already taken.
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
+  :disabled t
   :config (progn
             (setq ein:use-auto-complete t
                   ein:default-url-or-port 8889)
-            (add-hook 'ein:notebook-multilang-mode-hook #'auto-complete-mode)))
+            (add-hook 'ein:notebook-multilang-mode-hook #'auto-complete-mode)
+            (when (boundp 'company-global-modes)
+              (add-to-list 'company-global-modes 'ein:notebook-multilang-mode)
+              (add-to-list 'company-global-modes 'ein:notebook-python-mode))))
 #+END_SRC
 
 *** Virtual Environments
@@ -4684,6 +4704,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref
   :ensure t
+  :defer 2
   :config (progn
             (setq org-ref-default-bibliography reftex-default-bibliography)
             ))
@@ -4988,6 +5009,7 @@ directory to make multiple eshell windows easier."
 #+BEGIN_SRC emacs-lisp
 (use-package puml-mode
   :ensure t
+  :commands (puml-mode)
   :init (progn
             (setq puml-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")))
 #+END_SRC
