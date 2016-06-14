@@ -2913,7 +2913,19 @@ Make bug references in comments and string clickable
 (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
 #+END_SRC
 
-*** [[https://github.com/Bruce-Connor/aggressive-indent-mode][Aggressive indenting]]
+*** Indenting
+**** Obey Project Rules
+
+[[https://github.com/jscheid/dtrt-indent][drt-indent]] guesses the indentation offset originally used for creating source code files and transparently adjusts the corresponding settings in Emacs, making it more convenient to edit foreign files.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dtrt-indent
+  :ensure t)
+#+END_SRC
+
+**** Agressive Indenting
+
+[[https://github.com/Bruce-Connor/aggressive-indent-mode][aggressive-indent-mode]] for … aggressive indenting.
 
 [[https://github.com/Malabarba/aggressive-indent-mode/raw/master/c-example.gif]] ([[https://github.com/Malabarba/aggressive-indent-mode/raw/master/c-example.gif][source]])
 
