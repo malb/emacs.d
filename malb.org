@@ -5163,6 +5163,13 @@ Diminish ~eldoc-mode~
 (diminish 'eldoc-mode)
 #+END_SRC
 
+When saving a file that starts with =#!=, make it executable.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-save-hook
+          'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
