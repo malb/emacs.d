@@ -581,7 +581,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
-                  company-idle-delay 0.4   ; delay for popup
+                  company-idle-delay 0.6   ; delay for popup
                   company-echo-delay 0     ; remove blinking
                   company-show-numbers t   ; show numbers for easy selection
                   company-selection-wrap-around t
@@ -594,7 +594,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
                   company-tooltip-align-annotations t
                   company-minimum-prefix-length 1
                   company-global-modes '(not)
-                  company-lighter-base "Γ")
+                  company-lighter-base "C")
 
             (global-company-mode 1)
 
