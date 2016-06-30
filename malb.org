@@ -2299,7 +2299,7 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
 #+BEGIN_SRC emacs-lisp
 (add-to-list
  'mu4e-bookmarks
- '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org)"
+ '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
    "Unread bulk messages" ?l))
 
 (add-to-list
