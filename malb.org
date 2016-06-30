@@ -1113,6 +1113,9 @@ See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction to [
 
             (smartparens-global-mode t)
             (setq sp-autodelete-wrap t)
+            (setq sp-cancel-autoskip-on-backward-movement nil)
+
+            (setq-default sp-autoskip-closing-pair t)
             (setq sp-autoescape-string-quote nil) ;; don't escape quotes in strings
             (bind-key "C-M-d" 'sp-down-sexp sp-keymap)
             (bind-key "C-M-u" 'sp-backward-up-sexp sp-keymap)
