@@ -469,7 +469,6 @@ _j_ump        _o_nly this     _S_ave
   ("`" nil))
 
 (key-chord-define-global "z`" #'malb/hydra-window/body)
-(key-chord-define-global "12" #'malb/hydra-window/body)
 (bind-key "C-x o" #'malb/hydra-window/body)
 (bind-key "±" #'other-window)
 #+END_SRC
