@@ -1712,7 +1712,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
             (add-to-list 'org-latex-classes
                          (list "org-report"
-                               (concat "\\documentclass{article}\n"
+                               (concat "\\documentclass{report}\n"
                                        "\\usepackage{fontspec}\n"
                                        "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}\n"
                                        "[DEFAULT-PACKAGES]\n"
@@ -1720,6 +1720,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                        "\\parindent 0pt\n"
                                        "\\linespread{1.25}\n"
                                        "[EXTRA]\n")
+                               '("\\chapter{%s}" . "\\chapter*{%s}")
                                '("\\section{%s}" . "\\section*{%s}")
                                '("\\subsection{%s}" . "\\subsection*{%s}")
                                '("\\paragraph{%s}" . "\\paragraph*{%s}")
