@@ -386,7 +386,6 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
                                                mu4e-headers-mode
                                                calendar-mode
                                                compilation-mode))
-            (golden-ratio-mode t)
 
             (defun malb/golden-ratio-inhibit-functions ()
               (cond
@@ -409,7 +408,6 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
                     (throw 'inhibit nil)))))
 
             (setq golden-ratio-exclude-buffer-regexp malb/popup-windows)
-
 
             (setq golden-ratio-inhibit-functions
                   '(malb/golden-ratio-inhibit-functions))))
