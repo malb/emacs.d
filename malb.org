@@ -3269,6 +3269,16 @@ Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/2
                              1 'font-lock-function-name-face t))))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(use-package doxymacs
+
+  :config (progn
+            (defun malb/doxymacs ()
+              (doxymacs-mode t)
+              (doxymacs-font-lock))
+
+            (add-hook 'c-mode-common-hook #'malb/doxymacs)))
+#+END_SRC
 
 The default key bindings of semantic are a bit awkward, rebind them.
 
