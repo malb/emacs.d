@@ -124,6 +124,7 @@
 \DeclareFieldFormat[book]{title}{\alert{#1}}
 \DeclareFieldFormat[thesis]{title}{\alert{#1}}
 \DeclareFieldFormat[inproceedings]{title}{\alert{#1}}
+\DeclareFieldFormat[incollection]{title}{\alert{#1}}
 \DeclareFieldFormat[article]{title}{\alert{#1}}
 \DeclareFieldFormat[misc]{title}{\alert{#1}}
 
@@ -151,12 +152,12 @@
 %%% Table of Contents
 %%%
 
-\AtBeginSection[] {
-  \begin{frame}<beamer>
-    \frametitle{Outline}
-    \tableofcontents[currentsection]
-  \end{frame}
-}
+% \AtBeginSection[] {
+%   \begin{frame}<beamer>
+%     \frametitle{Outline}
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
 
 %%% Local Variables:
 %%% mode: latex
