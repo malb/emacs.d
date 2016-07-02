@@ -24,6 +24,37 @@ We assume that the following variables are defined:
 - ~malb/sage-executable~ - full path of Sage executable
 - ~malb/mu4e-name-replacements~ - email name replacements
 
+* TLS
+
+Enable TLS cert checking ([[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(let ((trustfile (replace-regexp-in-string
+                  "\\\\" "/" (replace-regexp-in-string
+                              "\n" "" (shell-command-to-string "python -m certifi")))))
+  (setq tls-program (list
+                     (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
+                             (if (eq window-system 'w32) ".exe" "") trustfile))
+        gnutls-verify-error t
+        gnutls-trustfiles (list trustfile)
+        tls-checktrust t))
+
+;; (let ((bad-hosts
+;;        (loop for bad
+;;              in `("https://wrong.host.badssl.com/"
+;;                   "https://self-signed.badssl.com/")
+;;              if (condition-case e
+;;                     (url-retrieve
+;;                      bad (lambda (retrieved) t))
+;;                   (error nil))
+;;              collect bad)))
+;;   (if bad-hosts
+;;       (error (format "tls misconfigured; retrieved %s ok"
+;;                      bad-hosts))
+;;     (url-retrieve "https://badssl.com"
+;;                   (lambda (retrieved) t))))
+#+END_SRC
+
 * Package Management
 
 Configure package repositories
@@ -31,7 +62,8 @@ Configure package repositories
 #+BEGIN_SRC emacs-lisp
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
-                         ("org" . "http://orgmode.org/elpa/") ))
+                         ;; ("org" . "http://orgmode.org/elpa/") ;; no TLS :(
+))
 #+END_SRC
 
 Get the package manager going, but do not autoload packages.
