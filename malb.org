@@ -3159,13 +3159,13 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]])
 #+BEGIN_SRC emacs-lisp
 (use-package helm-gtags
   :ensure t
+  :init (setq helm-gtags-prefix-key "\C-cg"
+              helm-gtags-suggested-key-mapping t)
+  :diminish helm-gtags-mode
   :config (progn  (setq helm-gtags-ignore-case t
                         helm-gtags-auto-update t
                         helm-gtags-use-input-at-cursor t
-                        helm-gtags-pulse-at-cursor t
-                        helm-gtags-prefix-key "\C-cg"
-                        helm-gtags-suggested-key-mapping t
-                        )
+                        helm-gtags-pulse-at-cursor t)
 
                   (add-hook 'java-mode-hook #'helm-gtags-mode)
 
@@ -3190,14 +3190,18 @@ Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/928
            (start (car bounds))
            (end (cdr bounds))
            (currently-using-underscores-p (progn (goto-char start)
-                                                 (re-search-forward "_" end t))))
+                                                 (re-search-forward "_" end t)))
+           (i 0)
+           (case-fold-search nil))
       (if currently-using-underscores-p
           (progn
             (upcase-initials-region start end)
             (replace-string "_" "" nil start end)
             (downcase-region start (1+ start)))
-        (replace-regexp "\\([A-Z]\\)" "_\\1" nil (1+ start) end)
-        (downcase-region start end)))))
+        (while (re-search-forward "\\([a-z]\\)\\([A-Z]\\)" (+ end i) t)
+          (replace-match "\\1_\\2" nil nil)
+          (setq i (+ i 1)))
+        (downcase-region start (+ end i))))))
 #+END_SRC
 
 *** Dump Jump
@@ -3211,6 +3215,19 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
 #+END_SRC
 
 ** C/C++ development
+*** C/C++ Mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package cc-mode
+  :config (progn
+            (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
+
+            (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
+            (bind-key "M-l" #'malb/toggle-camelcase-underscores c-mode-base-map)
+            (bind-key "M-u" #'malb/toggle-camelcase-underscores c-mode-base-map)
+            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
+#+END_SRC
+
 *** Semantic
 
 Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]] for C and C++ (cf. =malb/inhibit-semantic-p=). Also enable some useful minor modes (documentation from =C-h v RET semantic-default-submodes=):
@@ -3246,92 +3263,26 @@ Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]]
           (global-ede-mode t)
           (ede-enable-generic-projects)
 
-          (defun malb/inhibit-semantic-p ()
-            (not (member major-mode '(c-mode c++-mode))))
+          (setq-default semantic-case-fold t)
 
-          (setq semantic-new-buffer-setup-functions (remove-if (lambda (buffer-setup-function)
-                                                                 (member (car buffer-setup-function)
-                                                                         '(python-mode js-mode scheme-mode html-mode)))
-                                                               semantic-new-buffer-setup-functions))
+          ;; (defun malb/inhibit-semantic-p ()
+          ;;   (not (member major-mode '(c-mode c++-mode))))
+
+          ;; (add-to-list 'semantic-inhibit-functions #'malb/inhibit-semantic-p)
+
+          ;; (setq semantic-new-buffer-setup-functions
+          ;;       (remove-if (lambda (buffer-setup-function)
+          ;;                    (member (car buffer-setup-function)
+          ;;                            '(python-mode js-mode scheme-mode html-mode)))
+          ;;                  semantic-new-buffer-setup-functions))
 
           (remove-hook 'python-mode-hook 'wisent-python-default-setup)
 
-          (add-to-list 'semantic-inhibit-functions #'malb/inhibit-semantic-p)))
-#+END_SRC
-
-Grey out ~#if 0~ blocks.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/c-mode-font-lock-if0 (limit)
-  (save-restriction
-    (widen)
-    (save-excursion
-      (goto-char (point-min))
-      (let ((depth 0) str start start-depth)
-        (while (re-search-forward "^\\s-*#\\s-*\\(if\\|else\\|endif\\)" limit 'move)
-          (setq str (match-string 1))
-          (if (string= str "if")
-              (progn
-                (setq depth (1+ depth))
-                (when (and (null start) (looking-at "\\s-+0"))
-                  (setq start (match-end 0)
-                        start-depth depth)))
-            (when (and start (= depth start-depth))
-              (c-put-font-lock-face start (match-beginning 0) 'font-lock-comment-face)
-              (setq start nil))
-            (when (string= str "endif")
-              (setq depth (1- depth)))))
-        (when (and start (> depth 0))
-          (c-put-font-lock-face start (point) 'font-lock-comment-face)))))
-  nil)
-
-(defun malb/c-mode-common-hook ()
-  (font-lock-add-keywords  nil
-                           '((malb/c-mode-font-lock-if0 (0 font-lock-comment-face prepend))) 'add-to-end))
-#+END_SRC
-
-Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/27eqwm/highlighting_c_member_function_calls/][source]])
-
-#+BEGIN_SRC emacs-lisp
-(dolist (major-mode '(c-mode c++-mode))
-  (font-lock-add-keywords major-mode
-                          `((,(concat
-                               "\\<[_a-zA-Z][_a-zA-Z0-9]*\\>"       ; Object identifier
-                               "\\s *"                              ; Optional white space
-                               "\\(?:\\.\\|->\\)"                   ; Member access
-                               "\\s *"                              ; Optional white space
-                               "\\<\\([_a-zA-Z][_a-zA-Z0-9]*\\)\\>" ; Member identifier
-                               "\\s *"                              ; Optional white space
-                               "(")                                 ; Paren for method invocation
-                             1 'font-lock-function-name-face t))))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package doxymacs
-
-  :config (progn
-            (defun malb/doxymacs ()
-              (doxymacs-mode t)
-              (doxymacs-font-lock))
-
-            (add-hook 'c-mode-common-hook #'malb/doxymacs)))
-#+END_SRC
-
-The default key bindings of semantic are a bit awkward, rebind them.
-
-#+BEGIN_SRC emacs-lisp
-(use-package cc-mode
-  :config (progn
-            (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
-
-            (bind-key "M-?"   #'semantic-analyze-proto-impl-toggle c-mode-base-map)
-            (bind-key "M-."   #'semantic-ia-fast-jump c-mode-base-map)
-            (bind-key "C-M-." #'semantic-complete-jump c-mode-base-map)
-            (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)
-            (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-map)
-
-            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))
-            ))
+          (bind-key "M-?"   #'semantic-analyze-proto-impl-toggle c-mode-base-map)
+          (bind-key "M-."   #'semantic-ia-fast-jump c-mode-base-map)
+          (bind-key "C-M-." #'semantic-complete-jump c-mode-base-map)
+          (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)
+          (bind-key "C-c M-d" #'srecode-document-insert-comment c-mode-base-map)))
 #+END_SRC
 
 **** Force semantic parsing
@@ -3387,7 +3338,78 @@ The following code parses a complete project with semantic. This is useful for e
   (malb/semantic-parse-dir (expand-file-name dir) malb/c-files-regex))
 #+END_SRC
 
-*** Doxygen skeletons
+**** SRefactor
+
+#+BEGIN_SRC emacs-lisp
+(use-package srefactor
+  :ensure t
+  :config (progn
+            (bind-key "M-RET" #'srefactor-refactor-at-point c-mode-base-map)))
+#+END_SRC
+
+*** Font Lock
+
+Grey out ~#if 0~ blocks.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/c-mode-font-lock-if0 (limit)
+  (save-restriction
+    (widen)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((depth 0) str start start-depth)
+        (while (re-search-forward "^\\s-*#\\s-*\\(if\\|else\\|endif\\)" limit 'move)
+          (setq str (match-string 1))
+          (if (string= str "if")
+              (progn
+                (setq depth (1+ depth))
+                (when (and (null start) (looking-at "\\s-+0"))
+                  (setq start (match-end 0)
+                        start-depth depth)))
+            (when (and start (= depth start-depth))
+              (c-put-font-lock-face start (match-beginning 0) 'font-lock-comment-face)
+              (setq start nil))
+            (when (string= str "endif")
+              (setq depth (1- depth)))))
+        (when (and start (> depth 0))
+          (c-put-font-lock-face start (point) 'font-lock-comment-face)))))
+  nil)
+
+(defun malb/c-mode-common-hook ()
+  (font-lock-add-keywords  nil
+                           '((malb/c-mode-font-lock-if0 (0 font-lock-comment-face prepend))) 'add-to-end))
+#+END_SRC
+
+Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/27eqwm/highlighting_c_member_function_calls/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(dolist (major-mode '(c-mode c++-mode))
+  (font-lock-add-keywords major-mode
+                          `((,(concat
+                               "\\<[_a-zA-Z][_a-zA-Z0-9]*\\>"       ; Object identifier
+                               "\\s *"                              ; Optional white space
+                               "\\(?:\\.\\|->\\)"                   ; Member access
+                               "\\s *"                              ; Optional white space
+                               "\\<\\([_a-zA-Z][_a-zA-Z0-9]*\\)\\>" ; Member identifier
+                               "\\s *"                              ; Optional white space
+                               "(")                                 ; Paren for method invocation
+                             1 'font-lock-function-name-face t))))
+#+END_SRC
+
+*** Doxygen
+
+#+BEGIN_SRC emacs-lisp
+(use-package doxymacs
+
+  :config (progn
+            (defun malb/doxymacs ()
+              (doxymacs-mode t)
+              (doxymacs-font-lock))
+
+            (add-hook 'c-mode-common-hook #'malb/doxymacs)))
+#+END_SRC
+
+**** DISABLED Skeletons
 
 Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/function-args][function-args]]'s =moo-doxygen=.
 
