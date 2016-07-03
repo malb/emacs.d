@@ -3265,10 +3265,10 @@ Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]]
 
           (setq-default semantic-case-fold t)
 
-          ;; (defun malb/inhibit-semantic-p ()
-          ;;   (not (member major-mode '(c-mode c++-mode))))
+          (defun malb/inhibit-semantic-p ()
+            (member major-mode '(python-mode)))
 
-          ;; (add-to-list 'semantic-inhibit-functions #'malb/inhibit-semantic-p)
+          (add-to-list 'semantic-inhibit-functions #'malb/inhibit-semantic-p)
 
           ;; (setq semantic-new-buffer-setup-functions
           ;;       (remove-if (lambda (buffer-setup-function)
