@@ -3732,7 +3732,14 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
   :ensure t
   :config (progn
             (setq org-babel-default-header-args:sage '((:session . t)
-                                                       (:results . "output")))))
+                                                       (:results . "output replace")
+                                                       (:exports . "both")
+                                                       (:cache .   "no")
+                                                       (:noweb . "no")
+                                                       (:hlines . "no")
+                                                       (:tangle . "no")))
+            (add-to-list 'org-structure-template-alist
+                         '("sg" "#+BEGIN_SRC sage\n?\n#+END_SRC"))))
 #+END_SRC
 
 *** [[https://github.com/tkf/emacs-ipython-notebook][iPython Notebook]]
