@@ -3642,16 +3642,12 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 [[https://github.com/jorgenschaefer/elpy][Elpy]] is an Emacs package to bring powerful Python editing to Emacs. It combines a number of other packages, both written in Emacs Lisp as well as Python.
 #+END_QUOTE
 
-Elpy is quite opinionated and we don’t necessarily share all those opinions. Hence, we only enable a small subset, like =elpy-importmagic-fixup=
+Elpy is quite opinionated and we don’t necessarily share all those opinions. Hence, we only enable a small subset.
 
 #+BEGIN_SRC emacs-lisp
 (use-package elpy
   :ensure t
   :config (progn
-            ;; (setq elpy-modules '(elpy-module-sane-defaults
-            ;;                      elpy-module-yasnippet))
-
-            ;; (elpy-enable)
             (elpy-module-yasnippet 'global-init)
             (defun malb/elpy-sane-defaults ()
               (elpy-module-sane-defaults 'buffer-init))
