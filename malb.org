@@ -3281,8 +3281,7 @@ Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]]
           (bind-key "M-?"   #'semantic-analyze-proto-impl-toggle c-mode-base-map)
           (bind-key "M-."   #'semantic-ia-fast-jump c-mode-base-map)
           (bind-key "C-M-." #'semantic-complete-jump c-mode-base-map)
-          (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)
-          (bind-key "C-c M-d" #'srecode-document-insert-comment c-mode-base-map)))
+          (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)))
 #+END_SRC
 
 **** Force semantic parsing
@@ -3418,7 +3417,6 @@ Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/
   "Generate a doxygen yasnippet and expand it with `aya-expand'.
   The point should be on the top-level function name."
   (interactive)
-  (move-beginning-of-line nil)
   (let ((tag (semantic-current-tag)))
     (unless (semantic-tag-of-class-p tag 'function)
       (error "Expected function, got %S" tag))
@@ -3433,7 +3431,7 @@ Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/
 
   %s
     @return $%d
-  ,*/
+ */
 
   "
              (mapconcat
@@ -3441,6 +3439,7 @@ Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/
               args
               "\n")
              (incf ord)))
+      (malb/beginning-of-line-dwim)
       (aya-expand))))
 
 (bind-key "C-c M-d" #'malb/doxygen c-mode-base-map)
