@@ -5104,7 +5104,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (use-package dired-x)
+(use-package dired-x)
 #+END_SRC
 
 * Diff
