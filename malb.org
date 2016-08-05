@@ -208,7 +208,7 @@ When splitting windows open the previous buffer in it.
 Don’t split horizontally.
 
 #+BEGIN_SRC emacs-lisp
-(setq split-width-threshold  80)
+(setq split-width-threshold  120)
 (setq split-height-threshold nil)
 #+END_SRC
 
