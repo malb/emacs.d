@@ -3185,6 +3185,27 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]])
                   (bind-key "C-c >"   #'helm-gtags-next-history helm-gtags-mode-map)))
 #+END_SRC
 
+*** RTags
+
+[[https://github.com/Andersbakken/rtags][RTags]] can come in handy.
+
+1. create a =compile-commands.json= file using [[https://github.com/rizsotto/Bear][bear]].
+2. launch =rdm=
+3. tell rtags about the project =cd /project/dir/ && rc -J /path/to/compile-commands.json=
+
+On the other hand, rtags seems to have trouble dealing with inline functions.
+
+#+BEGIN_SRC emacs-lisp
+(use-package rtags
+  :ensure t
+  :config (progn
+            (rtags-enable-standard-keybindings)
+            (setq rtags-use-helm t)
+            (add-hook 'c-mode-common-hook #'rtags-start-process-unless-running)
+            (add-hook 'c++-mode-common-hook #'rtags-start-process-unless-running)
+            (add-to-list 'company-backends '(company-rtags :with company-yasnippet) t)))
+#+END_SRC
+
 *** CamelCase
 
 Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/9288181/converting-from-camelcase-to-in-emacs][source]])
