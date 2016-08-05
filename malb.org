@@ -2684,8 +2684,8 @@ Create a new mu4e session in a new frame.
 (defun malb/mail ()
   (interactive)
   (select-frame (make-frame-command))
-  (toggle-frame-maximized)
   (sleep-for 0.1) ;; this is a HACK
+  (toggle-frame-maximized)
   (set-frame-size (selected-frame) 200 64)
   (mu4e))
 #+END_SRC
