@@ -688,6 +688,14 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but 
 (use-package company-auctex
   :ensure t
   :config (progn
+            (defun company-auctex-labels (command &optional arg &rest ignored)
+              "company-auctex-labels backend"
+              (interactive (list 'interactive))
+              (case command
+                (interactive (company-begin-backend 'company-auctex-labels))
+                (prefix (company-auctex-prefix "\\\\.*ref{\\([^}]*\\)\\="))
+                (candidates (company-auctex-label-candidates arg))))
+
             (add-to-list 'company-backends
                          '(company-auctex-macros
                            company-auctex-environments
