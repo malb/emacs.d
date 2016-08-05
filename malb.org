@@ -3295,7 +3295,7 @@ Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]]
           (setq-default semantic-case-fold t)
 
           (defun malb/inhibit-semantic-p ()
-            (member major-mode '(python-mode)))
+            (member major-mode '(python-mode cython-mode)))
 
           (add-to-list 'semantic-inhibit-functions #'malb/inhibit-semantic-p)
 
