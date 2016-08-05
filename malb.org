@@ -4622,6 +4622,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
 
             (bind-key "C-<tab>" #'TeX-fold-dwim LaTeX-mode-map)
+            (bind-key "M-." #'reftex-goto-label LaTeX-mode-map)
 
             ;; http://endlessparentheses.com/improving-latex-equations-with-font-lock.html
             (defface malb/unimportant-latex-face
