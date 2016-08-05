@@ -4042,7 +4042,8 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
   :ensure t
   :bind (("C-c m" . vr/mc-mark)
          ("M-%" . vr/query-replace)
-         ("C-M-r" . vr/isearch-backward)))
+         ("C-S-s" . vr/isearch-forward)
+         ("C-S-r" . vr/isearch-backward)))
 #+END_SRC
 
 ** [[https://github.com/magnars/multiple-cursors.el][Multiple cursors]]
