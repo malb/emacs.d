@@ -208,21 +208,31 @@ When splitting windows open the previous buffer in it.
 Don’t split horizontally.
 
 #+BEGIN_SRC emacs-lisp
-(setq split-width-threshold 120
+(setq split-width-threshold 70
       split-height-threshold nil)
 
-(defun malb/sensible-window-split (&optional window)
-  (cond
-   ((and
-     (window-splittable-p window 'horizontal)
-     (= 1 (length (window-list))))
-    (with-selected-window window
-      (split-window-right)))
-   ((window-splittable-p window)
-    (with-selected-window window
-      (split-window-below)))))
+(defun malb/split-window-sensibly (&optional window)
+  (let ((window (or window (selected-window))))
+    (or (and (window-splittable-p window t)
+             (= (length (window-list)) 1)
+             ;; Split window horizontally.
+             (with-selected-window window
+               (split-window-right)))
+        (and (window-splittable-p window)
+             ;; Split window vertically.
+             (with-selected-window window
+               (split-window-below)))
+        (and (eq window (frame-root-window (window-frame window)))
+             (not (window-minibuffer-p window))
+             ;; If WINDOW is the only window on its frame and is not the
+             ;; minibuffer window, try to split it vertically disregarding
+             ;; the value of `split-height-threshold'.
+             (let ((split-height-threshold 0))
+               (when (window-splittable-p window)
+                 (with-selected-window window
+                   (split-window-below))))))))
 
-(setq split-window-preferred-function #'malb/sensible-window-split)
+(setq split-window-preferred-function #'malb/split-window-sensibly)
 #+END_SRC
 
 Resize windows to accommodate new ones.
