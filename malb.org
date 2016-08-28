@@ -5228,6 +5228,18 @@ deactivate Client
 - [[http://plantuml.com/latex.html][TikZ export]]
 - See also https://github.com/josteink/wsd-mode for https://www.websequencediagrams.com/
 
+* Calendar
+
+[[https://github.com/kiwanami/emacs-calfw][calfw]] for displaying calendars, because why not.
+
+#+BEGIN_SRC emacs-lisp
+(use-package calfw
+  :ensure t)
+
+(use-package calfw-cal)
+(use-package calfw-ical)
+(use-package calfw-org)
+#+END_SRC
 * SX
 
 [[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
