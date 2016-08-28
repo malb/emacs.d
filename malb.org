@@ -4264,7 +4264,7 @@ Adapt text width to nice to read/edit width.
   :ensure t
   :diminish olivetti-mode
   :config (progn
-            (setq-default olivetti-body-width 90)
+            (setq-default olivetti-body-width 120)
             (unbind-key "C-c ]" olivetti-mode-map)
             (unbind-key "C-c [" olivetti-mode-map)))
 #+END_SRC
