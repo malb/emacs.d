@@ -3913,8 +3913,6 @@ Enable CIDER in org-mode.
    :ensure t)
 #+END_SRC
 
-**** TODO check out [[https://github.com/losingkeys/4clojure.el][4clojure]] for learning Clojure
-
 *** Hy
 
 #+BEGIN_SRC emacs-lisp
