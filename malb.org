@@ -3871,6 +3871,14 @@ short and sweet LISP editing ([[https://github.com/abo-abo/lispy][source]])
 (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
 #+END_SRC
 
+[[https://github.com/Wilfred/suggest.el][suggest.el]] is an Emacs package for discovering elisp functions based on examples.
+
+#+BEGIN_SRC emacs-lisp
+(use-package suggest
+  :ensure t)
+#+END_SRC
+
+
 *** Clojure
 
 ([[https://github.com/howardabrams/dot-files/blob/master/emacs-clojure.org][source]])
