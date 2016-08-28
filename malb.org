@@ -1038,56 +1038,13 @@ Switch themes with helm.
   :ensure t)
 #+END_SRC
 
-** Helm-commandlinefu
+** DISABLED Helm-commandlinefu
 
 [[https://github.com/xuchunyang/helm-commandlinefu][Helm-commandlinefu]] is a helm interface to http://www.commandlinefu.com/.
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-commandlinefu
-  :ensure t)
-#+END_SRC
-
-** Helm-baloo
-
-[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below we implement a tiny helm interface to it.
-
-#+BEGIN_SRC emacs-lisp
-(defcustom helm-baloo-file-limit 100
-  "Limit number of entries returned by baloo to this number."
-  :group 'helm-baloo
-  :type '(integer :tag "Limit"))
-
-
-(defun baloo-search (pattern)
-  (start-process "baloosearch" nil "baloosearch" (format "-l %d " helm-baloo-file-limit) pattern))
-
-(defun helm-baloo-search ()
-  (baloo-search helm-pattern))
-
-(defun helm-baloo-transform (cs)
-  (let '(helm-baloo-clean-up-regexp (rx (or
-                                         control
-                                         (seq "[0;31m" (+ (not (any "["))) "[0;0m")
-                                         "[0;32m"
-                                         "[0;0m")))
-    (mapcar (function
-             (lambda (c)
-               (replace-regexp-in-string
-                (rx (seq bol (+ space))) ""
-                (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
-            cs)))
-
-(defvar helm-source-baloo
-  (helm-build-async-source "Baloo"
-    :candidates-process #'helm-baloo-search
-    :candidate-transformer #'helm-baloo-transform
-    :action '(("Open" . (lambda (x) (find-file x)))
-              ("Attach to Email" . (lambda (x) (mml-attach-file x))))))
-
-(defun helm-baloo ()
-  (interactive)
-  (helm :sources helm-source-baloo
-        :buffer "*helm baloo*"))
+;; (use-package helm-commandlinefu
+;;   :ensure t)
 #+END_SRC
 
 ** Helm Locate
@@ -2338,7 +2295,6 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
             (setq gist-ask-for-description t)))
 #+END_SRC
 
-*** TRY Check out [[https://github.com/theanalyst/ix.el][ix]]
 * Email
 
 Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
@@ -5488,6 +5444,15 @@ Debug startup failures. If your Emacs init file signals an error during startup,
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
 #+END_SRC
 
+** Transfer.sh
+
+[[https://github.com/Brillow/transfer-sh.el][transfer.sh]] for interfacing with https://transfer.sh.
+
+#+BEGIN_SRC emacs-lisp
+(use-package transfer-sh
+  :ensure t)
+#+END_SRC
+
 * Services
 
 [[https://github.com/rejeep/prodigy.el][Prodigy]] is a way of managing services from Emacs. Use it for IMAP idle via [[https://www.npmjs.com/package/imapnotify][imapnotify]]. For completeness here’s a matching imapnotify config.
@@ -5931,6 +5896,50 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 (if (daemonp)
     (add-hook 'after-make-frame-functions #'malb/load-theme)
   (malb/load-theme (selected-frame)))
+#+END_SRC
+
+* Baloo
+
+[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below we implement a tiny helm interface to it.
+
+#+BEGIN_SRC emacs-lisp
+(defcustom helm-baloo-file-limit 100
+  "Limit number of entries returned by baloo to this number."
+  :group 'helm-baloo
+  :type '(integer :tag "Limit"))
+
+
+(defun baloo-search (pattern)
+  (start-process "baloosearch" nil "baloosearch" (format "-l %d " helm-baloo-file-limit) pattern))
+
+(defun helm-baloo-search ()
+  (baloo-search helm-pattern))
+
+(defun helm-baloo-transform (cs)
+  (let '(helm-baloo-clean-up-regexp (rx (or
+                                         control
+                                         (seq "[0;31m" (+ (not (any "["))) "[0;0m")
+                                         "[0;32m"
+                                         "[0;0m")))
+    (mapcar (function
+             (lambda (c)
+               (replace-regexp-in-string
+                (rx (seq bol (+ space))) ""
+                (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
+            cs)))
+
+(defvar helm-source-baloo
+  (helm-build-async-source "Baloo"
+    :candidates-process #'helm-baloo-search
+    :candidate-transformer #'helm-baloo-transform
+    :action '(("Open" . (lambda (x) (find-file x)))
+              ("Attach to Email" . (lambda (x) (mml-attach-file x)))
+              ("Transfer.sh" . (lambda (x) (transfer-sh-upload-file-async x))))))
+
+(defun helm-baloo ()
+  (interactive)
+  (helm :sources helm-source-baloo
+        :buffer "*helm baloo*"))
 #+END_SRC
 
 * ToDos
