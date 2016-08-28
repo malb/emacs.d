@@ -5259,6 +5259,7 @@ deactivate Client
 (use-package calfw-ical)
 (use-package calfw-org)
 #+END_SRC
+
 * SX
 
 [[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
