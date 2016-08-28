@@ -5702,6 +5702,17 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 #+END_SRC
 
 * Look
+** Frame Title
+
+([[https://github.com/wasamasa/dotemacs/blob/master/init.org][source]])
+
+#+BEGIN_SRC emacs-lisp
+(setq frame-title-format
+      '("" (:eval (replace-regexp-in-string "^ +" "" (buffer-name)))
+        " - " invocation-name))
+#+END_SRC
+
+
 ** Stripe Buffer
 
 [[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png]] ([[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png][source]])
