@@ -4463,6 +4463,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 (use-package deft
   :ensure t
   :bind ("<f8>" . malb/deft)
+  :bind ("S-<f8>" . malb/blog)
   :init (progn
           (setq deft-extensions '("org" "md")
                 deft-default-extension "org"
