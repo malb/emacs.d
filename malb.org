@@ -4184,6 +4184,8 @@ Put everything back on one line if =M-q= is pressed twice and use ~visual-line-m
 (add-hook 'text-mode-hook #'turn-on-visual-line-mode)
 (diminish 'visual-line-mode)
 
+(setq visual-line-fringe-indicators '(nil right-curly-arrow))
+
 (defun malb/fill-or-unfill ()
   "Like `fill-paragraph', but unfill if used twice."
   (interactive)
