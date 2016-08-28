@@ -2664,6 +2664,7 @@ Create a new mu4e session in a new frame.
   (select-frame (make-frame-command))
   (sleep-for 0.1) ;; this is a HACK
   (toggle-frame-maximized)
+  (sleep-for 0.1) ;; this is a HACK
   (set-frame-size (selected-frame) 200 64)
   (mu4e))
 #+END_SRC
