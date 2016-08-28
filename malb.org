@@ -208,8 +208,21 @@ When splitting windows open the previous buffer in it.
 Don’t split horizontally.
 
 #+BEGIN_SRC emacs-lisp
-(setq split-width-threshold  120)
-(setq split-height-threshold nil)
+(setq split-width-threshold 120
+      split-height-threshold nil)
+
+(defun malb/sensible-window-split (&optional window)
+  (cond
+   ((and
+     (window-splittable-p window 'horizontal)
+     (= 1 (length (window-list))))
+    (with-selected-window window
+      (split-window-right)))
+   ((window-splittable-p window)
+    (with-selected-window window
+      (split-window-below)))))
+
+(setq split-window-preferred-function #'malb/sensible-window-split)
 #+END_SRC
 
 Resize windows to accommodate new ones.
