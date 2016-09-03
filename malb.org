@@ -600,13 +600,20 @@ Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is on ~yasni
 
 Call ~yas-decribe-tables~ to see currently defined snippets.
 
+We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/yasnippet/issues/669][source]])
+
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
   :ensure t
   :diminish yas-minor-mode
   :config (progn
             (yas-global-mode)
-            (setq yas-verbosity 1)))
+            (setq yas-verbosity 1)
+
+            (defun malb/disable-yas-if-no-snippets ()
+              (when (and yas-minor-mode (null (yas--get-snippet-tables)))
+                (yas-minor-mode -1)))
+            (add-hook 'yas-minor-mode-hook #'malb/disable-yas-if-no-snippets)))
 #+END_SRC
 
 ** Auto YASnippet
