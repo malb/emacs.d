@@ -1275,11 +1275,10 @@ This library provides easy project management and navigation. The concept of a p
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
                   projectile-switch-project-action 'helm-projectile
                   projectile-mode-line  '(:eval
-                                          (format "▸[%s]"
+                                          (format "@[%s]"
                                                   (projectile-project-name))))
 
             (projectile-global-mode)))
-
 #+END_SRC
 
 ** [[https://tuhdo.github.io/helm-projectile.html][Helm-projectile]]
