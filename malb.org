@@ -2311,6 +2311,16 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
             (setq gist-ask-for-description t)))
 #+END_SRC
 
+** Gitignore
+
+Generate gitignore files
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-gitignore
+  :ensure t
+  :defer t)
+#+END_SRC
+
 * Email
 
 Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
