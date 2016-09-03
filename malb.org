@@ -4292,7 +4292,7 @@ Adapt text width to nice to read/edit width.
   :ensure t
   :diminish olivetti-mode
   :config (progn
-            (setq-default olivetti-body-width 120)
+            (setq-default olivetti-body-width 90)
             (unbind-key "C-c ]" olivetti-mode-map)
             (unbind-key "C-c [" olivetti-mode-map)))
 #+END_SRC
@@ -4571,8 +4571,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
             (delight 'pandoc-mode
-                     '(:eval (concat " ▣[" (pandoc--get 'write) "]")))
-            ))
+                     '(:eval (concat " ▣[" (pandoc--get 'write) "]")))))
 #+END_SRC
 
 ** ReST
