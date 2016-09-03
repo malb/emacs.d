@@ -913,7 +913,10 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-org-headings-fontify t
                   helm-quick-update t
                   helm-split-window-in-side-p t
-                  helm-truncate-lines nil)
+                  helm-truncate-lines nil
+                  helm-ff-auto-update-initial-value t
+                  helm-grep-default-command "ag --vimgrep -z %p %f"
+                  helm-grep-default-recurse-command "ag --vimgrep -z %p %f")
 
             (when (executable-find "curl")
               (setq helm-google-suggest-use-curl-p t))
@@ -4200,8 +4203,6 @@ Put everything back on one line if =M-q= is pressed twice and use ~visual-line-m
 (add-hook 'text-mode-hook #'turn-on-visual-line-mode)
 (diminish 'visual-line-mode)
 
-(setq visual-line-fringe-indicators '(nil right-curly-arrow))
-
 (defun malb/fill-or-unfill ()
   "Like `fill-paragraph', but unfill if used twice."
   (interactive)
@@ -4657,7 +4658,10 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-PDF-mode t
                   TeX-source-correlate-mode t
                   TeX-save-query nil
-                  TeX-error-overview-open-after-TeX-run t)
+                  TeX-error-overview-open-after-TeX-run t
+                  TeX-electric-sub-and-superscript t
+                  TeX-electric-math '("\\(" "\\)")
+                  TeX-quote-after-quote t)
 
             (setq-default TeX-master nil)
             (setq-default TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
@@ -5165,10 +5169,47 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 (setq diff-switches "-u")
 #+END_SRC
 
-* EShell
+* Shells
+** Multi-Term
 
-Open eshell at point and clean up when closing with =q= ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]) and other stuff ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
+[[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs. =malb/multi-term-here= opens terminal at point, close with =q= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]].
 
+#+BEGIN_SRC emacs-lisp
+(use-package multi-term
+  :ensure t
+  :config (progn
+            (setq term-buffer-maximum-size 16384)
+            (add-to-list 'term-bind-key-alist '("S-<left>"  . multi-term-prev))
+            (add-to-list 'term-bind-key-alist '("S-<right>" . multi-term-next))
+            (bind-key "C-y" #'term-paste term-raw-map)
+
+            (defun malb/term-send-tab ()
+              "Send tab in term mode."
+              (interactive)
+              (term-send-raw-string "\t"))
+            (add-to-list 'term-bind-key-alist '("<tab>" . malb/term-send-tab))
+
+            (defun malb/multi-term-here ()
+              "Opens up a new multi-term in the directory associated with the
+current buffer's file."
+              (interactive)
+              (let* ((parent (if (buffer-file-name)
+                                 (file-name-directory (buffer-file-name))
+                               default-directory))
+                     (height (/ (window-total-height) 3))
+                     (name   (car (last (split-string parent "/" t))))
+                     (golden-ratio-mode nil))
+                (split-window-vertically (- height))
+                (other-window 1)
+                (multi-term)
+                (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+                (insert (concat "ls"))
+                (term-send-input)))))
+#+END_SRC
+
+** EShell
+
+=malb/eshell-here= opens terminal at point, close with =q= ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]) and other stuff ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package eshell
@@ -5187,6 +5228,7 @@ directory to make multiple eshell windows easier."
                 (split-window-vertically (- height))
                 (other-window 1)
                 (eshell "new")
+                (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
                 (rename-buffer (concat "*eshell: " name "*"))
                 (insert (concat "ls"))
                 (eshell-send-input)))
@@ -5215,13 +5257,20 @@ directory to make multiple eshell windows easier."
               (delete-window)
               (eshell/exit))
 
+            (defalias 'eshell/e 'find-file-other-window)
+            (defalias 'eshell/d 'dired)
+
             (defun malb/config-eshell-completion ()
               (setq pcomplete-cycle-completions t))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
-            (setq eshell-scroll-to-bottom-on-input t)
-            ))
+            (setq eshell-scroll-to-bottom-on-input t
+                  eshell-history-size 8192
+                  eshell-buffer-maximum-lines 16384
+                  eshell-hist-ignoredups t
+                  eshell-buffer-shorthand t
+                  eshell-plain-echo-behavior t)))
 #+END_SRC
 
 * Diagrams
@@ -5286,6 +5335,159 @@ deactivate Client
 #+BEGIN_SRC emacs-lisp
   (use-package sx
     :ensure t)
+#+END_SRC
+
+* Transfer.sh
+
+[[https://github.com/Brillow/transfer-sh.el][transfer.sh]] for interfacing with https://transfer.sh.
+
+#+BEGIN_SRC emacs-lisp
+(use-package transfer-sh
+  :ensure t)
+#+END_SRC
+
+* Manage Local Servers
+
+[[https://github.com/rejeep/prodigy.el][Prodigy]] is a way of managing services from Emacs. Use it for IMAP idle via [[https://www.npmjs.com/package/imapnotify][imapnotify]]. For completeness here’s a matching imapnotify config.
+
+#+BEGIN_SRC js :tangle no
+var child_process = require('child_process');
+
+function getStdout(cmd) {
+  var stdout = child_process.execSync(cmd);
+  return stdout.toString().trim();
+}
+
+exports.host = "imap.gmail.com";
+exports.port = 993;
+exports.tls = true;
+exports.username = "martinralbrecht@gmail.com";
+exports.password = // whatever needs doing
+exports.onNewMail = "mbsync googlemail-minimal";
+exports.onNewMailPost = "emacsclient  -e '(mu4e-update-index)'";
+exports.boxes = [ "INBOX"];
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package prodigy
+  :ensure t
+  :init (progn
+          (prodigy-define-tag
+            :name 'email
+            :ready-message "Checking Email using IMAP IDLE. Ctrl-C to shutdown.")
+
+          (prodigy-define-service
+            :name "imapnotify"
+            :command "imapnotify"
+            :args (list "-c" (expand-file-name ".config/imapnotify.gmail.js" (getenv "HOME")))
+            :tags '(email)
+            :kill-signal 'sigkill)
+
+          (prodigy-define-service
+            :name "malb.io"
+            :cwd (expand-file-name "web/malb.io" malb/projects-dir)
+            :command "jekyll"
+            :args '("serve" "-P" "4001")
+            :port 4001
+            :tags '(web))
+
+          (prodigy-define-service
+            :name "discrete-subgroup"
+            :cwd (expand-file-name "web/lattice-meetings" malb/projects-dir)
+            :command "jekyll"
+            :args '("serve" "-P" "4002")
+            :url "http://127.0.0.1:4002/discrete-subgroup/"
+            :tags '(web))))
+#+END_SRC
+
+* Page Breaks
+
+Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][post]], make use of page break characters by using [[https://github.com/purcell/page-break-lines][page-break-lines]] and [[https://github.com/david-christiansen/helm-pages][helm-pages]]. ([[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][source]])
+
+- Insert a new page break with =C-q C-l=.
+
+- Use =C-x [= and =C-x ]= to move backward and forward through pages, respectively.
+
+([[http://ericjmritz.name/2015/10/14/some-personal-hydras-for-gnu-emacs/][hydra source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package page-break-lines
+  :ensure t
+  :config (progn
+            (global-page-break-lines-mode)
+            (add-to-list 'page-break-lines-modes 'c-mode)
+            (add-to-list 'page-break-lines-modes 'python-mode)
+            (diminish 'page-break-lines-mode)))
+
+(use-package helm-pages
+  :ensure t
+  :config (progn
+            (defhydra hydra-page-breaks (global-map "C-x")
+              "pages"
+              ("[" backward-page "backward")
+              ("]" forward-page "forward")
+              ("M-p" helm-pages "helm" :color blue)
+              ("RET" nil "quit"))
+            ))
+#+END_SRC
+
+* X11 Integration
+
+#+BEGIN_SRC emacs-lisp
+(when (display-graphic-p)
+  (setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
+        save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
+        mouse-yank-at-point t
+        x-select-enable-primary t
+        x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+END_SRC
+
+Use GTK printing interface.
+
+#+BEGIN_SRC emacs-lisp
+(setq lpr-command "gtklp")
+#+END_SRC
+
+* Autosave & Backups
+
+Put autosave files (ie =#foo#=) in one place, not scattered across the file system.
+
+#+BEGIN_SRC emacs-lisp
+(defvar malb/autosave-dir
+  (expand-file-name "autosaves" user-emacs-directory))
+
+(make-directory malb/autosave-dir t)
+
+(defun auto-save-file-name-p (filename)
+  (string-match "^#.*#$" (file-name-nondirectory filename)))
+
+(defun make-auto-save-file-name ()
+  (concat malb/autosave-dir
+          (if buffer-file-name
+              (concat "#" (file-name-nondirectory buffer-file-name) "#")
+            (expand-file-name
+             (concat "#%" (buffer-name) "#")))))
+#+END_SRC
+
+Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list contains regexp → directory mappings. Filenames matching a regexp are backed up in the corresponding directory. Emacs will mkdir it if necessary.
+
+#+BEGIN_SRC emacs-lisp
+(defvar backup-dir (expand-file-name "autosaves" user-emacs-directory))
+(setq backup-directory-alist (list (cons "." backup-dir)))
+#+END_SRC
+
+* UTF-8 Everywhere
+
+#+BEGIN_SRC emacs-lisp
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+
+(setq current-language-environment "UTF-8")
+(setq default-input-method "rfc1345")
+
+(prefer-coding-system 'utf-8)
 #+END_SRC
 
 * Misc
@@ -5442,7 +5644,6 @@ Copy filename to clipboard ([[http://emacsredux.com/blog/2013/03/27/copy-filenam
 #+END_SRC
 
 ** Scratch
-*** Unkillable scratch
 
 We don’t want the *scratch* buffer to be killed ever.
 
@@ -5453,14 +5654,14 @@ We don’t want the *scratch* buffer to be killed ever.
             (unkillable-scratch 1)))
 #+END_SRC
 
-*** Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
+Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
 
 #+BEGIN_SRC emacs-lisp
 (use-package scratch
   :ensure t)
 #+END_SRC
 
-*** We know what scratch is for
+We know what scratch is for
 
 #+BEGIN_SRC emacs-lisp
 (setq initial-scratch-message "")
@@ -5484,7 +5685,10 @@ Debug startup failures. If your Emacs init file signals an error during startup,
             (edit-server-start)))
 #+END_SRC
 
-** [[https://github.com/doublep/logview][Logs]]
+* File Types
+** Log Files
+
+Using [[https://github.com/doublep/logview][logview]] mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package logview
@@ -5492,157 +5696,24 @@ Debug startup failures. If your Emacs init file signals an error during startup,
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
 #+END_SRC
 
-** Transfer.sh
+** PCAP Files
 
-[[https://github.com/Brillow/transfer-sh.el][transfer.sh]] for interfacing with https://transfer.sh.
+Wireshark et al. outputs ([[https://github.com/orgcandman/pcap-mode][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package transfer-sh
+(use-package pcap-mode
   :ensure t)
 #+END_SRC
 
-* Services
+** ELF Files
 
-[[https://github.com/rejeep/prodigy.el][Prodigy]] is a way of managing services from Emacs. Use it for IMAP idle via [[https://www.npmjs.com/package/imapnotify][imapnotify]]. For completeness here’s a matching imapnotify config.
-
-#+BEGIN_SRC js :tangle no
-var child_process = require('child_process');
-
-function getStdout(cmd) {
-  var stdout = child_process.execSync(cmd);
-  return stdout.toString().trim();
-}
-
-exports.host = "imap.gmail.com";
-exports.port = 993;
-exports.tls = true;
-exports.username = "martinralbrecht@gmail.com";
-exports.password = // whatever needs doing
-exports.onNewMail = "mbsync googlemail-minimal";
-exports.onNewMailPost = "emacsclient  -e '(mu4e-update-index)'";
-exports.boxes = [ "INBOX"];
-#+END_SRC
+List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package prodigy
+(use-package elf-mode
   :ensure t
-  :init (progn
-          (prodigy-define-tag
-            :name 'email
-            :ready-message "Checking Email using IMAP IDLE. Ctrl-C to shutdown.")
-
-          (prodigy-define-service
-            :name "imapnotify"
-            :command "imapnotify"
-            :args (list "-c" (expand-file-name ".config/imapnotify.gmail.js" (getenv "HOME")))
-            :tags '(email)
-            :kill-signal 'sigkill)
-
-          (prodigy-define-service
-            :name "malb.io"
-            :cwd (expand-file-name "web/malb.io" malb/projects-dir)
-            :command "jekyll"
-            :args '("serve" "-P" "4001")
-            :port 4001
-            :tags '(web))
-
-          (prodigy-define-service
-            :name "discrete-subgroup"
-            :cwd (expand-file-name "web/lattice-meetings" malb/projects-dir)
-            :command "jekyll"
-            :args '("serve" "-P" "4002")
-            :url "http://127.0.0.1:4002/discrete-subgroup/"
-            :tags '(web))))
-#+END_SRC
-
-* Page Breaks
-
-Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][post]], make use of page break characters by using [[https://github.com/purcell/page-break-lines][page-break-lines]] and [[https://github.com/david-christiansen/helm-pages][helm-pages]]. ([[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][source]])
-
-- Insert a new page break with =C-q C-l=.
-
-- Use =C-x [= and =C-x ]= to move backward and forward through pages, respectively.
-
-([[http://ericjmritz.name/2015/10/14/some-personal-hydras-for-gnu-emacs/][hydra source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package page-break-lines
-  :ensure t
-  :config (progn
-            (global-page-break-lines-mode)
-            (add-to-list 'page-break-lines-modes 'c-mode)
-            (add-to-list 'page-break-lines-modes 'python-mode)
-            (diminish 'page-break-lines-mode)))
-
-(use-package helm-pages
-  :ensure t
-  :config (progn
-            (defhydra hydra-page-breaks (global-map "C-x")
-              "pages"
-              ("[" backward-page "backward")
-              ("]" forward-page "forward")
-              ("M-p" helm-pages "helm" :color blue)
-              ("RET" nil "quit"))
-            ))
-#+END_SRC
-
-* X11
-
-#+BEGIN_SRC emacs-lisp
-(when (display-graphic-p)
-  (setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
-        save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
-        mouse-yank-at-point t
-        x-select-enable-primary t
-        x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-#+END_SRC
-
-Use GTK printing interface.
-
-#+BEGIN_SRC emacs-lisp
-(setq lpr-command "gtklp")
-#+END_SRC
-
-* Autosave & Backups
-
-Put autosave files (ie =#foo#=) in one place, not scattered across the file system.
-
-#+BEGIN_SRC emacs-lisp
-(defvar malb/autosave-dir
-  (expand-file-name "autosaves" user-emacs-directory))
-
-(make-directory malb/autosave-dir t)
-
-(defun auto-save-file-name-p (filename)
-  (string-match "^#.*#$" (file-name-nondirectory filename)))
-
-(defun make-auto-save-file-name ()
-  (concat malb/autosave-dir
-          (if buffer-file-name
-              (concat "#" (file-name-nondirectory buffer-file-name) "#")
-            (expand-file-name
-             (concat "#%" (buffer-name) "#")))))
-#+END_SRC
-
-Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list contains regexp → directory mappings. Filenames matching a regexp are backed up in the corresponding directory. Emacs will mkdir it if necessary.
-
-#+BEGIN_SRC emacs-lisp
-(defvar backup-dir (expand-file-name "autosaves" user-emacs-directory))
-(setq backup-directory-alist (list (cons "." backup-dir)))
-#+END_SRC
-
-* UTF-8
-
-#+BEGIN_SRC emacs-lisp
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-
-(setq current-language-environment "UTF-8")
-(setq default-input-method "rfc1345")
-
-(prefer-coding-system 'utf-8)
+  :mode (("\\.so\\'"  . elf-mode)
+         ("\\.a\\'"   . elf-mode)))
 #+END_SRC
 
 * Key Bindings
@@ -5668,30 +5739,7 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (malb/set-menu-key "s" #'helm-swoop)
 (malb/set-menu-key "w" #'olivetti-mode)
 (malb/set-menu-key "x" #'helm-M-x)
-(malb/set-menu-key "z" #'ansi-term)
-#+END_SRC
-
-Easily change the text size:
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/global-text-scale-increase ()
-  "Globally increase font size."
-  (interactive)
-  (set-face-attribute 'default nil :height (+ (face-attribute 'default :height) 5)))
-
-(defun malb/global-text-scale-decrease ()
-  "Globally decrease font size."
-  (interactive)
-  (set-face-attribute 'default nil :height (- (face-attribute 'default :height) 5)))
-
-(bind-key "C-=" #'text-scale-increase)
-(bind-key "C--" #'text-scale-decrease)
-(bind-key "C-M-=" #'malb/global-text-scale-increase)
-(bind-key "C-M--" #'malb/global-text-scale-decrease)
-(bind-key "C-<mouse-4>" #'text-scale-increase)
-(bind-key "C-<mouse-5>" #'text-scale-decrease)
-(bind-key "C-M-<mouse-4>" #'malb/global-text-scale-increase)
-(bind-key "C-M-<mouse-5>" #'malb/global-text-scale-decrease)
+(malb/set-menu-key "z" #'malb/multi-term-here)
 #+END_SRC
 
 Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
@@ -5716,7 +5764,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
             (which-key-mode 1)))
 #+END_SRC
 
-* Look
+* Theme & Look
 ** Frame Title
 
 ([[https://github.com/wasamasa/dotemacs/blob/master/init.org][source]])
@@ -5726,7 +5774,6 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
       '("" (:eval (replace-regexp-in-string "^ +" "" (buffer-name)))
         " - " invocation-name))
 #+END_SRC
-
 
 ** Stripe Buffer
 
@@ -5940,6 +5987,37 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 (setq-default indicate-empty-lines t)
 #+END_SRC
 
+** Line Wrap Indication
+
+#+BEGIN_SRC emacs-lisp
+(setq visual-line-fringe-indicators '(nil right-curly-arrow))
+#+END_SRC
+
+** Text Size
+
+Easily change the text size:
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/global-text-scale-increase ()
+  "Globally increase font size."
+  (interactive)
+  (set-face-attribute 'default nil :height (+ (face-attribute 'default :height) 5)))
+
+(defun malb/global-text-scale-decrease ()
+  "Globally decrease font size."
+  (interactive)
+  (set-face-attribute 'default nil :height (- (face-attribute 'default :height) 5)))
+
+(bind-key "C-=" #'text-scale-increase)
+(bind-key "C--" #'text-scale-decrease)
+(bind-key "C-M-=" #'malb/global-text-scale-increase)
+(bind-key "C-M--" #'malb/global-text-scale-decrease)
+(bind-key "C-<mouse-4>" #'text-scale-increase)
+(bind-key "C-<mouse-5>" #'text-scale-decrease)
+(bind-key "C-M-<mouse-4>" #'malb/global-text-scale-increase)
+(bind-key "C-M-<mouse-5>" #'malb/global-text-scale-decrease)
+#+END_SRC
+
 ** Load Theme
 
 #+BEGIN_SRC emacs-lisp
@@ -5957,7 +6035,7 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
   (malb/load-theme (selected-frame)))
 #+END_SRC
 
-* Baloo
+* KDE Desktop Search with Baloo
 
 [[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below we implement a tiny helm interface to it.
 
