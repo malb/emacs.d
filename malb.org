@@ -926,7 +926,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
             ;; manipulating these lists must happen after helm-mode was called
             (add-to-list 'helm-boring-buffer-regexp-list "\\*CEDET Global\\*")
-            (add-to-list 'helm-boring-buffer-regexp-list "\\`\\*prodigy-.*\\*\\'")
 
             (delete "\\.bbl$" helm-boring-file-regexp-list)
             (add-to-list 'helm-boring-file-regexp-list "\\.nav" t)
