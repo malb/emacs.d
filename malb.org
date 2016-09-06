@@ -241,7 +241,7 @@ Resize windows to accommodate new ones.
 (setq window-combination-resize t)
 #+END_SRC
 
-** Restoring Configurations
+** Restoring configurations
 
 [[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows to “undo” (and “redo”) changes in the window configuration.
 
@@ -249,7 +249,7 @@ Resize windows to accommodate new ones.
 (winner-mode 1)
 #+END_SRC
 
-** Multiple Window Configurations
+** Multiple window configurations
 
 [[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
 
