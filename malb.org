@@ -2240,6 +2240,10 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
             (add-hook 'magit-mode-hook #'malb/magit-svn)))
 #+END_SRC
 
+*Notes*
+
+- try =git config status.showUntrackedFiles all= ([[https://emacs.stackexchange.com/questions/13729/choose-files-to-stage-of-a-new-directory-with-magit][source]])
+
 ** GitHub Pull Requests
 
 Handle [[https://github.com/sigma/magit-gh-pulls][pull requests]] from magit
