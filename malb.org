@@ -673,7 +673,6 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
             (bind-key "M-/"   #'company-complete-common org-mode-map)))
 #+END_SRC
 
-
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
 
 #+BEGIN_SRC emacs-lisp
