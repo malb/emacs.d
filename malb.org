@@ -1307,6 +1307,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
               (helm-build-dummy-source
                   "Create file"
                 :action 'find-file))
+
             (add-to-list
              'helm-projectile-sources-list
              malb/helm-source-file-not-found t)
@@ -1348,12 +1349,13 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (setq org-enforce-todo-dependencies t          ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
-      org-catch-invisible-edits 'smart
+      org-catch-invisible-edits 'show
+      org-adapt-indentation nil                ; Non-nil means adapt indentation to outline node level.
       org-tags-column -110
       org-startup-folded 'fold
       org-log-into-drawer t
       org-log-done t
-      org-return-follows-link nil             ; don’t follow links by pressing ENTER
+      org-return-follows-link nil              ; don’t follow links by pressing ENTER
       org-clock-persist 'history
       org-special-ctrl-a/e t                   ; begin/end of line to skip starts …
       org-special-ctrl-k t                     ; special keys for killing a headline
@@ -1362,8 +1364,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-src-window-setup 'current-window     ; when hitting C-c '
       org-reverse-note-order t
       org-footnote-auto-adjust t               ; renumber footnotes automagically
+      org-footnote-auto-label 'plain           ; foonotes are [1], [2] etc.
       org-confirm-elisp-link-function nil      ;
       org-startup-with-inline-images t         ; show images when opening a file.
+      org-hidden-keywords nil
       )
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
@@ -1421,9 +1425,10 @@ Working with source code in org-mode.
                (plantuml . t)
                (makefile . t)))
 
-            (setq org-confirm-babel-evaluate nil
-                  org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
-
+            (setq org-src-tab-acts-natively nil  ;; BUG
+                  org-confirm-babel-evaluate nil
+                  org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
+                  org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
             (add-to-list 'org-src-lang-modes (quote ("plantuml" . puml)))))
 #+END_SRC
 
@@ -1563,7 +1568,8 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
 
 Targets include this file and any file contributing to the agenda - up to 9 levels deep
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9))))
+(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9)))
+      org-refile-use-outline-path nil)
 #+END_SRC
 
 Stop using paths for refile targets - we file directly with helm
