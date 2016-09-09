@@ -1082,7 +1082,7 @@ Switch themes with helm.
             ))
 #+END_SRC
 
-** Helm-Yasnippet
+** Helm YaSnippet
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-c-yasnippet
