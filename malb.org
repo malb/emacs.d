@@ -1112,6 +1112,14 @@ Don’t include boring or remote stuff in list of recently visited files.
              ))
 #+END_SRC
 
+* Saveplace
+
+#+BEGIN_SRC emacs-lisp
+(use-package saveplace
+  :config (setq-default save-place t
+                        save-place-file (locate-user-emacs-file "places" ".emacs-places")))
+#+END_SRC
+
 * IMenu
 
 Make sure to auto automatically rescan for imenu change.
