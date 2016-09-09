@@ -1285,9 +1285,7 @@ This library provides easy project management and navigation. The concept of a p
                   projectile-ignored-projects malb/projectile-ignored-projects
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
                   projectile-switch-project-action 'helm-projectile
-                  projectile-mode-line  '(:eval
-                                          (format "@[%s]"
-                                                  (projectile-project-name))))
+                  projectile-mode-line  '(:eval (format "\xf07c[%s]" (projectile-project-name))))
 
             (projectile-global-mode)))
 #+END_SRC
@@ -4595,7 +4593,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
             (delight 'pandoc-mode
-                     '(:eval (concat " ▣[" (pandoc--get 'write) "]")))))
+                     '(:eval (concat " \xf064[" (pandoc--get 'write) "]")))))
 #+END_SRC
 
 ** ReST
