@@ -2324,6 +2324,35 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
   :ensure t)
 #+END_SRC
 
+** Git Guttter
+
+[[https://github.com/syohex/emacs-git-gutter-fringe][Highlight changed lines]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-gutter-fringe
+  :ensure t
+  :config (progn
+            (define-fringe-bitmap 'git-gutter-fr:added
+              [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
+              nil nil 'center)
+
+            (define-fringe-bitmap 'git-gutter-fr:modified
+              [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
+              nil nil 'center)
+
+            (define-fringe-bitmap 'git-gutter-fr:deleted
+              [0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
+              nil nil 'center)))
+
+(use-package git-gutter
+  :ensure t
+  :diminish git-gutter-mode
+  :config (progn
+            (global-git-gutter-mode +1)
+            (add-hook 'focus-in-hook 'git-gutter:update-all-windows)))
+#+END_SRC
+
+
 ** Git Link
 
 [[https://github.com/sshaw/git-link][git-link]]:
