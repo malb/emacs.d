@@ -1141,6 +1141,8 @@ Make sure to auto automatically rescan for imenu change.
 
 See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction to [[https://github.com/Fuco1/smartparens][smartparens]].
 
+Some of the config below is stolen from hlissner’s [[https://github.com/hlissner/.emacs.d/blob/master/core/core-editor.el][emacs.d]].
+
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
   :ensure t
@@ -1174,13 +1176,38 @@ See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction to [
             (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward sp-keymap)
             (bind-key "C-S-<backspace>" 'sp-splice-sexp-killing-around sp-keymap)
 
+            (defun malb/sp-point-is-template-p (id action context)
+              (and (sp-in-code-p id action context)
+                   (sp-point-after-word-p id action context)))
 
-            (sp-pair "(" ")" :wrap "C-(") ;; how do people live without this?
-            (sp-pair "{" "}" :wrap "C-{")
+            (defun malb/sp-point-after-include-p (id action context)
+              (and (sp-in-code-p id action context)
+                   (save-excursion
+                     (goto-char (line-beginning-position))
+                     (looking-at-p "[ 	]*#include[^<]+"))))
 
-            (add-to-list 'sp-ignore-modes-list 'org-mode) ; too slow
-            (add-to-list 'sp-ignore-modes-list 'python-mode) ; too slow
-            (add-to-list 'sp-ignore-modes-list 'cython-mode) ; too slow
+            (sp-with-modes '(c-mode c++-mode)
+              (sp-local-pair "<" ">" :when '(malb/sp-point-is-template-p malb/sp-point-after-include-p))
+              (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+              (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
+              (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
+
+            ;; Auto-close more conservatively
+            (sp-pair "'" nil :unless '(sp-point-after-word-p))
+            (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
+            (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
+                     :unless '(sp-point-before-word-p sp-point-before-same-p) :wrap "C-{")
+            (sp-pair "(" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
+                     :unless '(sp-point-before-word-p sp-point-before-same-p) :wrap "C-(")
+            (sp-pair "[" nil :post-handlers '(("| " " "))
+                     :unless '(sp-point-before-word-p sp-point-before-same-p))
+
+            (sp-local-pair '(sh-mode markdown-mode) "`" nil
+                           :unless '(sp-point-before-word-p sp-point-before-same-p))
+
+            ;; (add-to-list 'sp-ignore-modes-list 'org-mode) ; too slow
+            ;; (add-to-list 'sp-ignore-modes-list 'python-mode) ; too slow
+            ;; (add-to-list 'sp-ignore-modes-list 'cython-mode) ; too slow
             (add-to-list 'sp-navigate-consider-stringlike-sexp 'latex-mode)
             ))
 #+END_SRC
