@@ -1100,13 +1100,13 @@ Don’t include boring or remote stuff in list of recently visited files.
 (use-package recentf
   :config  (progn
              (setq recentf-max-saved-items 50
-                   recentf-exclude '("COMMIT_EDITMSG"
-                                     "~$"
-                                     "/tmp/"
-                                     "/ssh:"
-                                     "/sudo:"
-                                     "/scp:"
-                                     (expand-file-name malb/mu4e-maildir)))
+                   recentf-exclude (list "COMMIT_EDITMSG"
+                                         "~$"
+                                         "/tmp/"
+                                         "/ssh:"
+                                         "/sudo:"
+                                         "/scp:"
+                                         (expand-file-name malb/mu4e-maildir)))
              (loop for ext in helm-boring-file-regexp-list
                    do (add-to-list 'recentf-exclude ext t))
              ))
