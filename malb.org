@@ -3685,6 +3685,22 @@ It makes sense to [[https://github.com/antonj/Highlight-Indentation-for-Emacs/][
 
  For example, editing Sage’s arguably massive [[https://github.com/sagemath/sage/blob/master/src/sage/rings/polynomial/multi_polynomial_ideal.py][multi_polynomial_ideal.py]] can be very slow.
 
+*** Fold indentation
+
+([[https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/toggle-indent-fold ()
+  "Toggle fold all lines larger than indentation on current line"
+  (interactive)
+  (let ((col 1))
+    (save-excursion
+      (back-to-indentation)
+      (setq col (+ 1 (current-column)))
+      (set-selective-display
+       (if selective-display nil (or col 1))))))
+#+END_SRC
+
 *** Autocompletion
 
 Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-completion and stuff, it runs [[https://github.com/tkf/emacs-jedi][jedi]] for us. In particular it offers:
