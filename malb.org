@@ -2966,6 +2966,7 @@ Make flycheck prettier based on what spacemacs does.
   :diminish flycheck-mode
   :config (progn
             (global-flycheck-mode)
+            (add-hook 'org-mode-hook (lambda () (flycheck-mode -1)))
 
             (bind-key "C-c f n" #'flycheck-next-error flycheck-mode-map)
             (bind-key "C-c f p" #'flycheck-previous-error flycheck-mode-map)
