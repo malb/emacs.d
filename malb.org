@@ -3642,6 +3642,8 @@ If processing fails throw ProcessingError.
 """
 #+END_SRC
 
+I often restart Python processes (Cython development), so let’s bind a key for that.
+
 #+BEGIN_SRC emacs-lisp
 (use-package python
   :config (progn
@@ -3659,6 +3661,8 @@ If processing fails throw ProcessingError.
                   python-shell-completion-string-code
                   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
+            (bind-key "C-c C-c" #'elpy-shell-send-region-or-buffer python-mode-map)
+            (bind-key "C-c C-r" #'pyvenv-restart-python python-mode-map)
             (bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-or-complete)
