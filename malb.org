@@ -1845,20 +1845,13 @@ iCal export is triggered after 600 seconds of inactivity.
                                '("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
             (add-to-list 'org-latex-classes
-                         (list "marticle"
+                         (list "org-article"
                                (concat "\\documentclass{article}\n"
                                        "\\usepackage{fontspec}\n"
                                        "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}\n"
                                        "\\usepackage{unicodesymbols}\n"
                                        "[DEFAULT-PACKAGES]\n"
                                        "[PACKAGES]\n"
-                                       "\\usepackage[backend=bibtex,style=alphabetic,maxnames=8,citestyle=alphabetic]{biblatex}\n"
-                                       "\\DeclareFieldFormat{title}{\\textbf{#1}}\n"
-                                       "\\DeclareFieldFormat[book]{title}{\\textbf{#1}}\n"
-                                       "\\DeclareFieldFormat[thesis]{title}{\\textbf{#1}}\n"
-                                       "\\DeclareFieldFormat[inproceedings]{title}{\\textbf{#1}}\n"
-                                       "\\DeclareFieldFormat[article]{title}{\\textbf{#1}}\n"
-                                       "\\DeclareFieldFormat[misc]{title}{\\textbf{#1}}\n"
                                        "\\parskip 1em\n"
                                        "\\parindent 0pt\n"
                                        "\\lstdefinelanguage{Sage}[]{Python}{morekeywords={True,False,sage,cdef,cpdef,ctypedef,self},sensitive=true}\n"
