@@ -4383,8 +4383,8 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
 
 #+BEGIN_SRC emacs-lisp
-  (use-package focus
-    :ensure t)
+(use-package focus
+  :ensure t)
 #+END_SRC
 
 *** Spell Checking
@@ -4415,7 +4415,7 @@ Automatically pick dictionary.
   :ensure t
   :config (progn
             (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")
-            ))
+))
 #+END_SRC
 
 **** Abbreviations
@@ -4467,9 +4467,7 @@ Automatically pick dictionary.
             (bind-key "C-x 4 W" #'langtool-check-done)
             (bind-key "C-x 4 l" #'langtool-switch-default-language)
             (bind-key "C-x 4 4" #'langtool-show-message-at-point)
-            (bind-key "C-x 4 c" #'langtool-correct-buffer)
-            )
-  )
+            (bind-key "C-x 4 c" #'langtool-correct-buffer)))
 #+END_SRC
 
 *** Style Checking
@@ -4499,8 +4497,7 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 (use-package define-word
   :ensure t
   :bind (("C-c d" . define-word-at-point)
-         ("C-c D" . define-word)
-         ))
+         ("C-c D" . define-word)))
 #+END_SRC
 
 *** Translating
