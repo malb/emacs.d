@@ -6014,6 +6014,17 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
   (set-frame-parameter (selected-frame) 'alpha value))
 #+END_SRC
 
+** Icons
+
+[[https://raw.githubusercontent.com/domtronn/all-the-icons.el/master/logo.png]]
+
+([[https://github.com/domtronn/all-the-icons.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons
+  :ensure t)
+#+END_SRC
+
 ** Powerline
 
 We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which customises [[https://github.com/milkypostman/powerline][Powerline]].
