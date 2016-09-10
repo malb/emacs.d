@@ -3617,6 +3617,16 @@ and move to the source code that caused it."
   (compilation-start command t))
 #+END_SRC
 
+*** Modern C++
+
+#+BEGIN_SRC emacs-lisp
+(use-package modern-cpp-font-lock
+  :ensure t
+  :diminish modern-c++-font-lock-mode
+  :config (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
+#+END_SRC
+
+
 *** Clang Format
 
 Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format code.
