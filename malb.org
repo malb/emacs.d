@@ -1787,10 +1787,20 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("" "xcolor"))
             (add-to-list 'org-latex-packages-alist '("" "amssymb"))
             (add-to-list 'org-latex-packages-alist '("" "amsmath"))
+            (add-to-list 'org-latex-packages-alist '("" "amsthm"))
             (add-to-list 'org-latex-packages-alist '("" "gensymb"))
             (add-to-list 'org-latex-packages-alist '("" "nicefrac"))
             (add-to-list 'org-latex-packages-alist '("" "units"))
             (add-to-list 'org-latex-packages-alist '("" "xspace"))
+            (add-to-list 'org-latex-packages-alist '("" "fontspec"))
+            (add-to-list 'org-latex-packages-alist '("a4paper,includeheadfoot,margin=2.54cm" "geometry"))
+            (add-to-list 'org-latex-packages-alist '("notions,operators,sets,keys,ff,adversary,primitives,complexity,asymptotics,lambda" "cryptocode"))
+            (add-to-list 'org-latex-packages-alist '("" "unicodesymbols"))
+            (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
+            (add-to-list 'org-latex-packages-alist '("hang,flushmargin" "footmisc"))
+            (add-to-list 'org-latex-packages-alist '("" "microtype"))
+            (add-to-list 'org-latex-packages-alist '("" "inconsolata"))
+            (add-to-list 'org-latex-packages-alist '("color=FFDD00" "todonotes"))
 
             (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf %f")
                   org-latex-caption-above nil
@@ -1815,7 +1825,6 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-classes
                          (list "handout"
                                (concat "\\documentclass{tufte-handout}\n"
-                                       "\\usepackage{fontspec}\n"
                                        "[DEFAULT-PACKAGES]\n"
                                        "[PACKAGES]\n"
                                        "[EXTRA]\n")
@@ -1827,21 +1836,22 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-classes
                          (list "org-report"
                                (concat "\\documentclass{report}\n"
-                                       "\\usepackage{fontspec}\n"
-                                       "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}\n"
-                                       "\\usepackage{unicodesymbols}\n"
                                        "[DEFAULT-PACKAGES]\n"
                                        "[PACKAGES]\n"
                                        "\\parskip 1em\n"
                                        "\\parindent 0pt\n"
                                        "\\linespread{1.25}\n"
-                                       "\\parskip 1em\n"
-                                       "\\parindent 0pt\n"
+                                       "\\newcommand{\\malb}[2][inline]{\\todo[#1]{\\textbf{malb:} #2}\\xspace}"
                                        "\\lstdefinelanguage{Sage}[]{Python}{morekeywords={True,False,sage,cdef,cpdef,ctypedef,self},sensitive=true}\n"
                                        "\\lstset{frame=none,showtabs=False, showspaces=False, showstringspaces=False,\n"
                                        "         commentstyle={\\color{gray}}, keywordstyle={\\color{black}\\textbf},\n"
                                        "         stringstyle={\\color{darkgray}}, frame=single, basicstyle=\\tt\\scriptsize\\relax,\n"
                                        "         inputencoding=utf8, literate={…}{{\\ldots}}1, belowskip=0.0em,}\n"
+                                       "\\newunicodechar{ }{~}\n"
+                                       "\\newtheorem{lemma}{Lemma}\n"
+                                       "\\newtheorem{theorem}{Theorem}\n"
+                                       "\\newtheorem{definition}{Definition}\n"
+                                       "\\newtheorem{remark}{Remark}\n"
                                        "[EXTRA]\n"
                                        )
                                '("\\chapter{%s}" . "\\chapter*{%s}")
@@ -1853,33 +1863,35 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-classes
                          (list "org-article"
                                (concat "\\documentclass{article}\n"
-                                       "\\usepackage{fontspec}\n"
-                                       "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}\n"
-                                       "\\usepackage{unicodesymbols}\n"
                                        "[DEFAULT-PACKAGES]\n"
                                        "[PACKAGES]\n"
                                        "\\parskip 1em\n"
                                        "\\parindent 0pt\n"
+                                       "\\newcommand{\\malb}[2][inline]{\\todo[#1]{\\textbf{malb:} #2}\\xspace}"
                                        "\\lstdefinelanguage{Sage}[]{Python}{morekeywords={True,False,sage,cdef,cpdef,ctypedef,self},sensitive=true}\n"
                                        "\\lstset{frame=none,showtabs=False, showspaces=False, showstringspaces=False,\n"
                                        "         commentstyle={\\color{gray}}, keywordstyle={\\color{black}\\textbf},\n"
                                        "         stringstyle={\\color{darkgray}}, frame=single, basicstyle=\\tt\\scriptsize\\relax,\n"
                                        "         inputencoding=utf8, literate={…}{{\\ldots}}1, belowskip=0.0em,}\n"
+                                       "\\newunicodechar{ }{~}\n"
+                                       "\\newtheorem{lemma}{Lemma}\n"
+                                       "\\newtheorem{theorem}{Theorem}\n"
+                                       "\\newtheorem{definition}{Definition}\n"
+                                       "\\newtheorem{remark}{Remark}\n"
                                        "[EXTRA]\n")
                                '("\\section{%s}" . "\\section*{%s}")
                                '("\\subsection{%s}" . "\\subsection*{%s}")
                                '("\\paragraph{%s}" . "\\paragraph*{%s}")
                                '("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-            ))
 
-(use-package ox-koma-letter
-  :config (progn
-            (add-to-list 'org-latex-classes
-                         (list "letter"
-                               (concat "\\documentclass{scrlttr2}\n"
-                                       "\\usepackage{fontspec}\n"
-                                       "[DEFAULT-PACKAGES]\n"
-                                       "[EXTRA]\n")))))
+            (use-package ox-koma-letter
+              :config (progn
+                        (add-to-list 'org-latex-classes
+                                     (list "letter"
+                                           (concat "\\documentclass{scrlttr2}\n"
+                                                   "\\usepackage{fontspec}\n"
+                                                   "[DEFAULT-PACKAGES]\n"
+                                                   "[EXTRA]\n")))))))
 #+END_SRC
 
 **** TODO using latexmk (like this) means we get less feedback than we’d like
