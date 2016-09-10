@@ -356,7 +356,8 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\`\\*mu4e-update*\\*\\'"
                              "\\`\\*prodigy-.*\\*\\'"
                              "\\`\\*Org Export Dispatcher\\*\\'"
-                             "\\`\\*Helm Swoop\\*\\'"))
+                             "\\`\\*Helm Swoop\\*\\'"
+                             "\\`\\*Backtrace\\*\\'"))
 
 (dolist (name malb/popup-windows)
   (add-to-list 'display-buffer-alist
