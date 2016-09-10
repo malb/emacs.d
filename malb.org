@@ -932,6 +932,10 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (add-to-list 'helm-boring-file-regexp-list "\\.out" t)
             (add-to-list 'helm-boring-file-regexp-list "\\.snm" t)
             (add-to-list 'helm-boring-file-regexp-list "\\.synctex.gz" t)
+            (add-to-list 'helm-boring-file-regexp-list "\\.fdb_latexmk" t)
+            (add-to-list 'helm-boring-file-regexp-list "\\.fls" t)
+            (add-to-list 'helm-boring-file-regexp-list "-blx\\.bib" t)
+            (add-to-list 'helm-boring-file-regexp-list "texput\\.log" t)
 
             ;; rebind tab to do persistent action
             (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
