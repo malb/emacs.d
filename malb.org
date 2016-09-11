@@ -632,6 +632,39 @@ This is a hybrid of keyboard macros and yasnippet. You create the snippet on the
          ("C-c y e" . aya-expand)))
 #+END_SRC
 
+** Auto-Insert
+
+([[https://github.com/hlissner/.emacs.d/blob/master/core/core-autoinsert.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/auto-insert-snippet (key &optional mode)
+  "Auto insert a snippet of yasnippet into new file."
+  (interactive)
+  (let ((is-yasnippet-on (not (cond ((functionp yas-dont-activate)
+                                     (funcall yas-dont-activate))
+                                    ((consp yas-dont-activate)
+                                     (some #'funcall yas-dont-activate))
+                                    (yas-dont-activate))))
+        (snippet (let ((template (cdar (mapcan #'(lambda (table) (yas--fetch table key))
+                                               (yas--get-snippet-tables mode)))))
+                   (if template (yas--template-content template) nil))))
+    (when (and is-yasnippet-on snippet)
+      (yas-expand-snippet snippet))))
+
+(use-package autoinsert
+  :after yasnippet
+  :config (progn
+            (setq auto-insert-query nil  ; Don't prompt before insertion
+                  auto-insert-alist '()) ; Tabula rasa
+            (auto-insert-mode 1)
+            (mapc
+             (lambda (rule) (define-auto-insert
+                              (nth 0 rule)
+                              (vector `(lambda () (malb/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule))))))
+             `(("/announcements/20.+\\.md$"  "isg-announce"  markdown-mode)))))
+#+END_SRC
+
+
 * Auto Completion
 
 Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-completion.
