@@ -632,9 +632,9 @@ This is a hybrid of keyboard macros and yasnippet. You create the snippet on the
          ("C-c y e" . aya-expand)))
 #+END_SRC
 
-** Auto-Insert
+** Auto Insert
 
-([[https://github.com/hlissner/.emacs.d/blob/master/core/core-autoinsert.el][source]])
+We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/blob/master/core/core-autoinsert.el][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/auto-insert-snippet (key &optional mode)
@@ -654,7 +654,7 @@ This is a hybrid of keyboard macros and yasnippet. You create the snippet on the
 (use-package autoinsert
   :after yasnippet
   :config (progn
-            (setq auto-insert-query nil  ; Don't prompt before insertion
+            (setq auto-insert-query nil ; Don't prompt before insertion
                   auto-insert-alist '()) ; Tabula rasa
             (auto-insert-mode 1)
             (mapc
@@ -663,7 +663,6 @@ This is a hybrid of keyboard macros and yasnippet. You create the snippet on the
                               (vector `(lambda () (malb/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule))))))
              `(("/announcements/20.+\\.md$"  "isg-announce"  markdown-mode)))))
 #+END_SRC
-
 
 * Auto Completion
 
@@ -4333,9 +4332,27 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                        :url "https://martinralbrecht.wordpress.com/xmlrpc.php"
                        :username ,(car credentials)
                        :password ,(cadr credentials)))))
+
+            (defun malb/org2blog/wp-format-buffer (buffer-template)
+              "Buffer formatting function without title."
+              (format buffer-template
+                      (format-time-string "[%Y-%m-%d %a %H:%M]" (org-read-date t t))
+                      (mapconcat
+                       (lambda (cat) cat)
+                       (or (plist-get (cdr org2blog/wp-blog) :default-categories)
+                           org2blog/wp-default-categories)
+                       ", ")))
+
             (setq org2blog/wp-use-sourcecode-shortcode nil
                   org2blog/wp-show-post-in-browser nil
-                  org2blog/wp-default-categories '("Cryptography" "Sage"))))
+                  org2blog/wp-default-categories '("Cryptography" "Sage")
+                  org2blog/wp-buffer-format-function #'malb/org2blog/wp-format-buffer
+                  org2blog/wp-buffer-template "#+DATE: %s
+,#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+,#+CATEGORY: %s
+,#+TAGS:
+,#+DESCRIPTION:
+\n")))
 #+END_SRC
 
 * Prose
