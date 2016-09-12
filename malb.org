@@ -4322,6 +4322,8 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 
 * Blogging
 
+We change the default template to not include the title which is filled in by deft. We also query the user for a date/time for the blog post.
+
 #+BEGIN_SRC emacs-lisp
 (use-package org2blog
   :ensure t
