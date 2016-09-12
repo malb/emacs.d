@@ -6030,7 +6030,10 @@ The result looks like this:
                     (set-face-attribute 'flycheck-fringe-error   nil :background "white" :foreground "#dc322f" :weight 'bold)
                     (set-face-attribute 'flycheck-fringe-warning nil :background "white" :foreground "#DEB542" :weight 'bold)
                     (set-face-attribute 'flycheck-fringe-info    nil :background "white" :foreground "#69B7F0" :weight 'bold)
-                    )))
+                    ))
+
+                (set-face-attribute 'highlight-indent-guides-even-face nil :background "#eee8d5")
+                (set-face-attribute 'highlight-indent-guides-odd-face  nil :background "#eee8d5"))
               )))
 
 (when (string-equal malb/theme "dichromacy")
