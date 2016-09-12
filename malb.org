@@ -2193,6 +2193,7 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("color=FFDD00" "todonotes"))
 
             (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf %f")
+                  org-latex-prefer-user-labels t
                   org-latex-caption-above nil
                   org-latex-default-packages-alist (remove* '("T1" "fontenc" t)
                                                             org-latex-default-packages-alist :test 'equal)
@@ -4617,7 +4618,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
             (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))))
   #+END_SRC
 
-*** References for Org Mode
+*** Org Ref
 
 #+BEGIN_QUOTE
 [[https://github.com/jkitchin/org-ref][Org-ref]] is a library for org-mode that provides rich support for citations, labels and cross-references in org-mode. org-ref is especially suitable for org-mode documents destined for LaTeX export and scientific publication. org-ref is also extremely useful for research documents and notes. org-ref bundles several other libraries that provide functions to create and modify bibtex entries from a variety of sources, but most notably from a DOI.
@@ -4630,7 +4631,8 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
   :config (progn
             (setq org-ref-default-bibliography malb/bibtex-files
                   org-ref-notes-directory malb/literature-notes-dir
-                  org-ref-pdf-directory malb/literature-dir)))
+                  org-ref-pdf-directory malb/literature-dir
+                  org-ref-bibtex-hydra-key-binding "\C-cj")))
 #+END_SRC
 
 * Email
