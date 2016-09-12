@@ -839,6 +839,14 @@ This function then hopefully does what I want:
          (not (looking-back "^")))
 
     (company-complete-common))
+
+   ;; no whitespace anywhere
+   ((and (not (active-minibuffer-window))
+         (looking-at "[^[:space:]]")
+         (looking-back "[^[:space:]]")
+         (not (looking-back "^")))
+    (origami-toggle-node (current-buffer) (point)))
+
    ;; by default just call whatever was bound
    (t
     (let ((fn (or (lookup-key (current-local-map) (kbd "TAB"))
@@ -1470,6 +1478,14 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
              ("_" "_" nil org-mode)
              ("$" "$" nil org-mode)))
   (add-hook 'org-mode-hook 'wrap-region-mode))
+#+END_SRC
+
+** Folding
+
+#+BEGIN_SRC emacs-lisp
+(use-package origami
+  :ensure t
+  :commands (origami-toggle-node))
 #+END_SRC
 
 * Projects
