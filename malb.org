@@ -714,6 +714,14 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
   :config (company-quickhelp-mode 1))
 #+END_SRC
 
+[[https://github.com/PythonNut/company-flx/][company-flx]] for flx matching with capf.
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-flx
+  :ensure t
+  :config (company-flx-mode t))
+#+END_SRC
+
 ** C/C++
 
 For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] (and [[https://github.com/randomphrase/company-c-headers][company-c-headers]]) which can be a bit tricky to set up, but works very well once that is done.
@@ -1130,7 +1138,8 @@ Switch themes with helm.
             (setq helm-yas-space-match-any-greedy t)))
 #+END_SRC
 
-* Recent Files
+* History
+** Recent Files
 
 Don’t include boring or remote stuff in list of recently visited files.
 
@@ -1150,7 +1159,7 @@ Don’t include boring or remote stuff in list of recently visited files.
              ))
 #+END_SRC
 
-* Saveplace
+** Saveplace
 
 #+BEGIN_SRC emacs-lisp
 (use-package saveplace
@@ -1273,6 +1282,202 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 
 #+END_SRC
 
+* Editing
+** Dragging lines around
+
+([[https://github.com/rejeep/drag-stuff.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+  (use-package drag-stuff
+    :ensure t
+    :diminish drag-stuff-mode
+    :bind (("M-<up>" . drag-stuff-up)
+           ("M-<down>" . drag-stuff-down)))
+#+END_SRC
+
+** Visualise the undo tree
+
+([[http://www.dr-qusourceorg/undo-tree/undo-tree.el][source]])
+
+*Tip:* Did you know that Emacs has undo in a region?
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :ensure t
+  :diminish undo-tree-mode
+  :config (progn
+            (global-undo-tree-mode)
+            (setq undo-tree-visualizer-timestamps t)
+            (setq undo-tree-visualizer-diff t))
+  )
+#+END_SRC
+
+** Highlight last edits
+
+([[https://sourceub.com/k-talo/volatile-highlights.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+  (use-package volatile-highlights
+    :ensure t
+    :commands volatile-highlights-mode
+    :config (volatile-highlights-mode t)
+    :diminish volatile-highlights-mode)
+#+END_SRC
+
+** [#A] Zap up to char
+
+Kill everything up to character, e.g. if we have “Lorem| ipsum” typing ~M-z u~ would leave us with “Lorem|um”.
+
+#+BEGIN_SRC emacs-lisp
+(use-package avy-zap
+  :ensure t
+  :bind ("M-z" . avy-zap-up-to-char-dwim))
+#+END_SRC
+
+** Reverting buffers
+
+Automatically revert buffers.
+
+#+BEGIN_SRC emacs-lisp
+(setq global-auto-revert-non-file-buffers t
+      auto-revert-verbose nil)
+
+(global-auto-revert-mode 1)
+#+END_SRC
+
+** [[https://github.com/Vifon/focus-autosave-mode.el][Save buffer when loosing focus]]
+
+This can be dangerous, so only enable on per project basis, e.g.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+((markdown-mode . ((eval . (focus-autosave-local-mode 1)))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package focus-autosave-mode
+  :ensure t
+  :config (progn
+            (diminish 'focus-autosave-local-mode " ♻")))
+#+END_SRC
+
+** Regexp
+
+Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regular expressions and use [[https://github.com/benma/visual-regexp-steroids.el/][visual-regexp-steroids]] for modern regexps. This makes Emacs regexp actually usable for me.
+
+#+BEGIN_SRC emacs-lisp
+(use-package visual-regexp-steroids
+  :ensure t)
+
+(use-package visual-regexp
+  :ensure t
+  :bind (("C-c m" . vr/mc-mark)
+         ("M-%" . vr/query-replace)
+         ("C-S-s" . vr/isearch-forward)
+         ("C-S-r" . vr/isearch-backward)))
+#+END_SRC
+
+** [[https://github.com/magnars/multiple-cursors.el][Multiple cursors]]
+
+[[http://i0.wp.com/pragmaticemacs.com/wp-content/uploads/2015/06/wpid-emacs-mc2.gif]] ([[http://i0.wp.com/pragmaticemacs.com/wp-content/uploads/2015/06/wpid-emacs-mc2.gif?zoom=2&w=620][source]])
+
+Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multiple-cursors~.
+
+([[http://endlessparentheses.com/multiple-cursors-keybinds.html?source=rss][keybinding source]])
+
+Commands are bound to =C-x m …=
+
+#+BEGIN_SRC emacs-lisp
+(use-package multiple-cursors
+  :ensure t
+  :config (progn
+            (defun malb/mc-typo-mode ()
+              (add-to-list 'mc/unsupported-minor-modes 'typo-mode))
+            (add-hook 'multiple-cursors-mode-hook #'malb/mc-typo-mode)
+
+            (bind-key "M-3" #'mc/mark-previous-like-this)
+            (bind-key "M-4" #'mc/mark-next-like-this)
+            (bind-key "M-£" #'mc/unmark-previous-like-this)
+            (bind-key "M-$" #'mc/unmark-next-like-this)
+
+            (define-prefix-command 'malb/mc-map)
+            (bind-key "m" 'malb/mc-map ctl-x-map)
+
+            (bind-key "a" #'mc/mark-all-like-this malb/mc-map)
+            (bind-key "d" #'mc/mark-all-dwim malb/mc-map)
+            (bind-key "s" #'mc/mark-all-symbols-like-this-in-defun malb/mc-map)
+
+            (bind-key "i" #'mc/insert-numbers malb/mc-map)
+            (bind-key "l" #'mc/insert-letters malb/mc-map)
+
+            (bind-key "h" #'mc-hide-unmatched-lines-mode malb/mc-map)
+
+            (bind-key "R" #'mc/reverse-regions malb/mc-map)
+            (bind-key "S" #'mc/sort-regions malb/mc-map)
+            (bind-key "L" #'mc/edit-lines malb/mc-map)
+
+            (bind-key "C-a" #'mc/edit-beginnings-of-lines malb/mc-map)
+            (bind-key "C-e" #'mc/edit-ends-of-lines malb/mc-map)
+            )
+  )
+#+END_SRC
+
+** Recursively narrow
+
+#+BEGIN_SRC emacs-lisp
+(use-package recursive-narrow
+  :ensure t
+  :config (progn
+            (defun malb/recursive-narrow-dwim-org ()
+              (if (derived-mode-p 'org-mode)
+                  (cond ((or (org-at-block-p) (org-in-src-block-p)) (org-narrow-to-block))
+                        (t (org-narrow-to-subtree))))
+              )
+            (add-hook 'recursive-narrow-dwim-functions 'malb/recursive-narrow-dwim-org))
+  :bind
+  (("C-x n w" . recursive-widen)
+   ("C-x n n" . recursive-narrow-or-widen-dwim)))
+#+END_SRC
+
+** Expand region
+
+See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https://github.com/magnars/expand-region.el][expand-region]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :ensure t
+  :bind ("C-`" . er/expand-region))
+#+END_SRC
+
+** Embrace
+
+#+BEGIN_SRC emacs-lisp
+(use-package embrace
+  :ensure t
+  :config (progn
+            (bind-key "M-`" #'embrace-commander)
+            (add-hook 'org-mode-hook #'embrace-org-mode-hook)))
+#+END_SRC
+
+** Wrap Region
+
+[[https://github.com/rejeep/wrap-region.el][Wrap Region]] is a minor mode for Emacs that wraps a region with punctuations. For "tagged" markup modes, such as HTML and XML, it wraps with tags.
+
+([[http://pragmaticemacs.com/emacs/wrap-text-in-custom-characters/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package wrap-region
+  :ensure t
+  :diminish wrap-region-mode
+  :config (wrap-region-add-wrappers
+           '(("*" "*" nil org-mode)
+             ("~" "~" nil org-mode)
+             ("/" "/" nil org-mode)
+             ("=" "=" nil org-mode)
+             ("_" "_" nil org-mode)
+             ("$" "$" nil org-mode)))
+  (add-hook 'org-mode-hook 'wrap-region-mode))
+#+END_SRC
+
 * Projects
 
 #+BEGIN_QUOTE
@@ -1384,6 +1589,159 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
             (helm-add-action-to-source
              "Grep in projects `C-s'"
              'helm-do-ag helm-source-projectile-projects 4)))
+#+END_SRC
+
+* Git
+** Magit
+
+[[http://magit.vc][Magit]] is a very nice Git interface.
+
+[[http://magit.vc/img/shot/top.png]] ([[http://magit.vc][source]])
+
+We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :ensure t
+  :commands (magit-status
+             magit-diff
+             magit-commit
+             magit-log
+             magit-push
+             magit-stage-file
+             magit-unstage-file)
+  :bind ("<f7>" . magit-status)
+  :config (progn
+            (setq magit-push-always-verify nil
+                  magit-last-seen-setup-instructions "2.1.0")
+
+            ;; we use magit, not vc for git
+            (delete 'Git vc-handled-backends)
+            ))
+
+(use-package magit-svn
+  :ensure t
+  :config (progn
+            (defun malb/magit-svn ()
+              (if (file-exists-p (magit-git-dir "svn"))
+                  (magit-svn-mode)))
+            (add-hook 'magit-mode-hook #'malb/magit-svn)))
+#+END_SRC
+
+*Notes*
+
+- try =git config status.showUntrackedFiles all= ([[https://emacs.stackexchange.com/questions/13729/choose-files-to-stage-of-a-new-directory-with-magit][source]])
+
+** GitHub Pull Requests
+
+Handle [[https://github.com/sigma/magit-gh-pulls][pull requests]] from magit
+
+*Commands:*
+
+- Press ~# g g~ to refresh the list of pull requests.
+- Highlighting the desired PR and pressing ~# g f~ will fetch the commits associated with the PR.
+- Press ~# g b~ on the PR to create a topic branch for this PR.
+- Press ~# g m~ to merge the PR on top of the currently checked out branch.
+
+#+BEGIN_SRC emacs-lisp
+(require 'ert) ;; https://github.com/sigma/magit-gh-pulls/issues/32
+(use-package magit-gh-pulls
+  :ensure t)
+#+END_SRC
+
+*** TEST if =magit-gh-pulls= can be enabled by default without causing delay
+
+** Org Links for Magit Buffers
+
+[[https://github.com/magit/orgit][orgit]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package orgit
+  :ensure t)
+#+END_SRC
+
+** Git Timemachine
+
+I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][git-timemachine]] but when I do …
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-timemachine
+  :ensure t)
+#+END_SRC
+
+** Git Guttter
+
+[[https://github.com/syohex/emacs-git-gutter-fringe][Highlight changed lines]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-gutter-fringe
+  :ensure t
+  :config (progn
+            (define-fringe-bitmap 'git-gutter-fr:added
+              [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
+              nil nil 'center)
+
+            (define-fringe-bitmap 'git-gutter-fr:modified
+              [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
+              nil nil 'center)
+
+            (define-fringe-bitmap 'git-gutter-fr:deleted
+              [0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
+              nil nil 'center)))
+
+(use-package git-gutter
+  :ensure t
+  :diminish git-gutter-mode
+  :config (progn
+            (global-git-gutter-mode +1)
+            (add-hook 'focus-in-hook 'git-gutter:update-all-windows)))
+#+END_SRC
+
+** Git Link
+
+[[https://github.com/sshaw/git-link][git-link]]:
+
+#+BEGIN_QUOTE
+functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories. =git-link= returns the URL for the current buffer's file location at the current line number or active region. =git-link-commit= returns the URL for a commit. URLs are added to the kill ring.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-link
+  :ensure t)
+#+END_SRC
+
+** Gists
+
+To list [[https://github.com/defunkt/gist.el][gists]], run ~gist-list~:
+
+- =g= - reload the gist list from server
+- =e= - edit current gist description
+- =k= - delete current gist
+- =+= - add a file to the current gist
+- =–= - remove a file from the current gist
+
+- =C-x C-s= - save a new version of the gist
+- =C-x C-w= - rename some file
+
+From a dired buffer, you can: =@= - make a gist out of marked files (with a prefix, make it private)
+
+~gist-region-or-buffer~ - Post either the current region, or if mark is not set, the current buffer as a new paste at https://gist.github.com . Copies the URL into the kill ring. With a prefix argument, makes a private paste.
+
+#+BEGIN_SRC emacs-lisp
+(use-package gist
+  :ensure t
+  :config (progn
+            (setq gist-ask-for-description t)))
+#+END_SRC
+
+** Gitignore
+
+Generate gitignore files
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-gitignore
+  :ensure t
+  :defer t)
 #+END_SRC
 
 * Org-mode all the things!
@@ -2295,627 +2653,6 @@ In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =v
 #+BEGIN_SRC sh :tangle no
 emacs --batch -l ~/.emacs.d/org-export-init.el file.org -f org-latex-export-to-pdf
 #+END_SRC
-
-* Git
-** Magit
-
-[[http://magit.vc][Magit]] is a very nice Git interface.
-
-[[http://magit.vc/img/shot/top.png]] ([[http://magit.vc][source]])
-
-We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit
-  :ensure t
-  :commands (magit-status
-             magit-diff
-             magit-commit
-             magit-log
-             magit-push
-             magit-stage-file
-             magit-unstage-file)
-  :bind ("<f7>" . magit-status)
-  :config (progn
-            (setq magit-push-always-verify nil
-                  magit-last-seen-setup-instructions "2.1.0")
-
-            ;; we use magit, not vc for git
-            (delete 'Git vc-handled-backends)
-            ))
-
-(use-package magit-svn
-  :ensure t
-  :config (progn
-            (defun malb/magit-svn ()
-              (if (file-exists-p (magit-git-dir "svn"))
-                  (magit-svn-mode)))
-            (add-hook 'magit-mode-hook #'malb/magit-svn)))
-#+END_SRC
-
-*Notes*
-
-- try =git config status.showUntrackedFiles all= ([[https://emacs.stackexchange.com/questions/13729/choose-files-to-stage-of-a-new-directory-with-magit][source]])
-
-** GitHub Pull Requests
-
-Handle [[https://github.com/sigma/magit-gh-pulls][pull requests]] from magit
-
-*Commands:*
-
-- Press ~# g g~ to refresh the list of pull requests.
-- Highlighting the desired PR and pressing ~# g f~ will fetch the commits associated with the PR.
-- Press ~# g b~ on the PR to create a topic branch for this PR.
-- Press ~# g m~ to merge the PR on top of the currently checked out branch.
-
-#+BEGIN_SRC emacs-lisp
-(require 'ert) ;; https://github.com/sigma/magit-gh-pulls/issues/32
-(use-package magit-gh-pulls
-  :ensure t)
-#+END_SRC
-
-*** TEST if =magit-gh-pulls= can be enabled by default without causing delay
-
-** Org Links for Magit Buffers
-
-[[https://github.com/magit/orgit][orgit]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package orgit
-  :ensure t)
-#+END_SRC
-
-** Git Timemachine
-
-I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][git-timemachine]] but when I do …
-
-#+BEGIN_SRC emacs-lisp
-(use-package git-timemachine
-  :ensure t)
-#+END_SRC
-
-** Git Guttter
-
-[[https://github.com/syohex/emacs-git-gutter-fringe][Highlight changed lines]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package git-gutter-fringe
-  :ensure t
-  :config (progn
-            (define-fringe-bitmap 'git-gutter-fr:added
-              [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
-              nil nil 'center)
-
-            (define-fringe-bitmap 'git-gutter-fr:modified
-              [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
-              nil nil 'center)
-
-            (define-fringe-bitmap 'git-gutter-fr:deleted
-              [0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
-              nil nil 'center)))
-
-(use-package git-gutter
-  :ensure t
-  :diminish git-gutter-mode
-  :config (progn
-            (global-git-gutter-mode +1)
-            (add-hook 'focus-in-hook 'git-gutter:update-all-windows)))
-#+END_SRC
-
-
-** Git Link
-
-[[https://github.com/sshaw/git-link][git-link]]:
-
-#+BEGIN_QUOTE
-functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories. =git-link= returns the URL for the current buffer's file location at the current line number or active region. =git-link-commit= returns the URL for a commit. URLs are added to the kill ring.
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-(use-package git-link
-  :ensure t)
-#+END_SRC
-
-** Gists
-
-To list [[https://github.com/defunkt/gist.el][gists]], run ~gist-list~:
-
-- =g= - reload the gist list from server
-- =e= - edit current gist description
-- =k= - delete current gist
-- =+= - add a file to the current gist
-- =–= - remove a file from the current gist
-
-- =C-x C-s= - save a new version of the gist
-- =C-x C-w= - rename some file
-
-From a dired buffer, you can: =@= - make a gist out of marked files (with a prefix, make it private)
-
-~gist-region-or-buffer~ - Post either the current region, or if mark is not set, the current buffer as a new paste at https://gist.github.com . Copies the URL into the kill ring. With a prefix argument, makes a private paste.
-
-#+BEGIN_SRC emacs-lisp
-(use-package gist
-  :ensure t
-  :config (progn
-            (setq gist-ask-for-description t)))
-#+END_SRC
-
-** Gitignore
-
-Generate gitignore files
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-gitignore
-  :ensure t
-  :defer t)
-#+END_SRC
-
-* Email
-
-Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package mu4e
-  :config  (setq mu4e-headers-skip-duplicates t
-                 mu4e-use-fancy-chars t
-                 mu4e-view-show-images t
-                 message-kill-buffer-on-exit t
-                 mu4e-hide-index-messages t
-                 mu4e-auto-retrieve-keys t
-                 mu4e-compose-dont-reply-to-self t
-                 mu4e-compose-in-new-frame t
-                 mu4e-split-view 'horizontal
-                 mu4e-headers-visible-columns 122
-                 mu4e-headers-visible-lines 16
-                 mu4e-context-policy 'pick-first
-                 mu4e-compose-context-policy 'ask
-                 mu4e-change-filenames-when-moving t
-                 mu4e-confirm-quit nil))
-#+END_SRC
-
-** Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-(setq mu4e-use-fancy-chars t
-      mu4e-headers-draft-mark     '("D" . "⚒ ") ; draft
-      ;; mu4e-headers-seen-mark      '("S" . "☑ ")  ; seen
-      ;; mu4e-headers-unread-mark    '("u" . "☐ ")  ; unseen
-      mu4e-headers-new-mark       '("N" .  "")
-      mu4e-headers-seen-mark      '("S" . "")    ; seen
-      mu4e-headers-unread-mark    '("u" . "")    ; unseen
-      mu4e-headers-flagged-mark   '("F" .  "⚵ ") ; flagged
-      mu4e-headers-new-mark       '("N" .  "✉ ")  ; new
-      mu4e-headers-replied-mark   '("R" . "↵ ")  ; replied
-      mu4e-headers-passed-mark    '("P" . "⇉ ")  ; passed
-      mu4e-headers-encrypted-mark '("x" . "⚷ ")   ; encrypted
-      mu4e-headers-signed-mark    '("s" . "✍ ")  ; signed
-      mu4e-headers-empty-parent-prefix '("-" . "○")
-      mu4e-headers-first-child-prefix '("\\" . "▶")
-      mu4e-headers-has-child-prefix '("+" . "●"))
-#+END_SRC
-
-** Folders
-
-#+BEGIN_SRC emacs-lisp
-(setq mu4e-maildir malb/mu4e-maildir
-      mu4e-drafts-folder "/[Google Mail]/.Drafts"
-      mu4e-sent-folder   "/[Google Mail]/.Sent Mail"
-      mu4e-trash-folder  "/[Google Mail]/.Bin")
-
-(setq mu4e-maildir-shortcuts
-      '(("/Inbox"                     . ?i)
-        ("/[Google Mail]/.Drafts"     . ?d)
-        ("/[Google Mail]/.Sent Mail"  . ?s)
-        ("/[Google Mail]/.Bin"        . ?t)))
-#+END_SRC
-
-** Queries
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list
- 'mu4e-bookmarks
- '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
-   "Unread bulk messages" ?l))
-
-(add-to-list
- 'mu4e-bookmarks
- '("flag:unread NOT flag:trashed AND NOT flag:list AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
-   "Unread messages addressed to me" ?i))
-
-(add-to-list
- 'mu4e-bookmarks
- '("mime:application/* AND NOT mime:application/pgp* AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
-   "Messages with attachments for me." ?d) t)
-
-(add-to-list
- 'mu4e-bookmarks
- '("flag:flagged"
-   "Flagged messages" ?f) t)
-
-(add-to-list
- 'mu4e-bookmarks
- '("(maildir:\"/[Google Mail]/.Sent Mail\" OR maildir:\"/royal holloway/.sent\") AND date:7d..now"
-   "Sent in last 7 days" ?s) t)
-#+END_SRC
-
-** Retrieving Mail
-
-#+BEGIN_SRC emacs-lisp
-(setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync googlemail-default"
-      mu4e-update-interval nil)
-#+END_SRC
-
-** Sending Email
-
-email is sent with [[https://www.opensmtpd.org][opensmtpd]]’s =sendmail=.
-
-Set =format=flowed= ([[https://github.com/djcb/mu/issues/569][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/compose-setup ()
-  "Use hard newlines, so outgoing mails will have format=flowed."
-  (use-hard-newlines t 'guess))
-#+END_SRC
-
-Set email width to 72 characters
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/fill-column-72 ()
-  (set-fill-column 72))
-#+END_SRC
-
-To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
-(add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
-(add-hook 'message-mode-hook #'flyspell-mode)
-(add-hook 'message-mode-hook #'turn-on-orgstruct)
-(add-hook 'message-mode-hook #'turn-on-orgstruct++)
-(add-hook 'message-mode-hook #'turn-on-orgtbl)
-(add-hook 'message-mode-hook #'typo-mode)
-(add-hook 'message-mode-hook #'olivetti-mode)
-(add-hook 'message-mode-hook #'adict-guess-dictionary)
-(add-hook 'message-mode-hook #'footnote-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;; https://github.com/iqbalansari/dotEmacs/blob/master/config/mail.org
-;; TODO: this means the header does not end
-;; (defun malb/strip-message-mode-problematic-text-props ()
-;;   (save-excursion
-;;     (goto-char (point-min))
-;;     (when (search-forward-regexp (concat "^" mail-heaqder-separator) nil t)
-;;       (remove-text-properties (match-beginning 0) (match-end 0) '(rear-nonsticky)))))
-
-;; (add-hook 'message-mode-hook #'malb/strip-message-mode-problematic-text-props)
-;; (add-hook 'mu4e-compose-mode-hook #'malb/iqbal-strip-message-mode-problematic-text-props)
-#+END_SRC
-
-Don’t add an empty line when quoting email ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/message-insert-citation-line ()
-  "Insert a simple citation line."
-  (when message-reply-headers
-    (newline)
-    (insert (mail-header-from message-reply-headers) " writes:")
-    (newline)))
-
-(setq message-citation-line-function #'malb/message-insert-citation-line)
-#+END_SRC
-
-Put attachments at end of buffer ([[http://mbork.pl/2015-11-28_Fixing_mml-attach-file_using_advice][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mml-attach-file--go-to-eob (orig-fun &rest args)
-  "Go to the end of buffer before attaching files."
-  (save-excursion
-    (save-restriction
-      (widen)
-      (goto-char (point-max))
-      (apply orig-fun args))))
-
-(advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
-#+END_SRC
-
-Yell at me when I forget to attach attachment ([[http://mbork.pl/2016-02-06_An_attachment_reminder_in_mu4e][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/message-attachment-present-p ()
-  "Return t if an attachment is found in the current message."
-  (save-excursion
-    (save-restriction
-      (widen)
-      (goto-char (point-min))
-      (when (search-forward "<#part" nil t) t))))
-
-(defcustom malb/message-attachment-intent-re
-  (regexp-opt '("I attach"
-                "I have attached"
-                "I've attached"
-                "I have included"
-                "I've included"
-                "see the attached"
-                "see the attachment"
-                "attached file"))
-  "A regex which - if found in the message, and if there is no
-attachment - should launch the no-attachment warning.")
-
-(defcustom malb/message-attachment-reminder
-  "Are you sure you want to send this message without any attachment? "
-  "The default question asked when trying to send a message
-containing `malb/message-attachment-intent-re' without an
-actual attachment.")
-
-(defun malb/message-warn-if-no-attachments ()
-  "Ask the user if s?he wants to send the message even though
-there are no attachments."
-  (when (and (save-excursion
-               (save-restriction
-                 (widen)
-                 (goto-char (point-min))
-                 (re-search-forward malb/message-attachment-intent-re nil t)))
-             (not (malb/message-attachment-present-p)))
-    (unless (y-or-n-p malb/message-attachment-reminder)
-      (keyboard-quit))))
-
-(add-hook 'message-send-hook #'malb/message-warn-if-no-attachments)
-#+END_SRC
-
-** Viewing Email
-
-Render HTML emails in =eww= = =shr=
-
-#+BEGIN_SRC emacs-lisp
-;; use imagemagick, if available
-(when (fboundp 'imagemagick-register-types)
-  (imagemagick-register-types))
-
-(use-package mu4e-contrib
-  :config (setq mu4e-html2text-command 'mu4e-shr2text))
-#+END_SRC
-
-Use =<TAB>= to preview messages and =q= to close previews.
-
-#+BEGIN_SRC emacs-lisp
-(require 'mu4e-view)
-(require 'mu4e-headers)
-
-(defun malb/preview-message ()
-  (interactive)
-  (mu4e-headers-view-message)
-  (sleep-for 0.1) ;; this is a HACK
-  (select-window (previous-window)))
-
-;; based on (mu4e-select-other-view)
-(defun malb/close-message-view ()
-  (interactive)
-  (let* ((other-buf mu4e~view-buffer)
-         (other-win (and other-buf (get-buffer-window other-buf))))
-    (if (window-live-p other-win)
-        (progn
-          (select-window other-win)
-          (sleep-for 0.1)
-          (mu4e~view-quit-buffer))
-      (mu4e~headers-quit-buffer))
-    ))
-
-(bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
-(bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
-(bind-key "z" #'malb/close-message-view mu4e-headers-mode-map)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(setq mu4e-headers-fields '((:human-date . 12)
-                            (:flags . 6)
-                            (:mailing-list . 22)
-                            (:from . 32)
-                            (:subject)))
-#+END_SRC
-
-View emails with width restriction (110 so that HTML crap doesn’t break too easily either)
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mu4e-view-mode-hook ()
-  (setq olivetti-body-width 110)
-  (olivetti-mode))
-
-(add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'mu4e-view-actions
-             '("browser" . mu4e-action-view-in-browser) t)
-
-(bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
-(bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
-#+END_SRC
-
-** Contacts
-
-- My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
-- Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/canonicalise-contact-name (name)
-  (let ((case-fold-search nil))
-    (setq name (or name ""))
-    (if (string-match-p "^[^ ]+@[^ ]+\.[^ ]" name)
-        ""
-      (progn
-        (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop email address
-        (setq name (replace-regexp-in-string "^\"\\(.*\\)\"" "\\1" name)) ;; strip quotes
-        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
-        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)) ;; Foo, Bar becomes Bar Foo
-        (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name)) ;; look up names and replace
-        ))))
-
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mu4e-contact-rewrite-function (contact)
-  (let* ((name (or (plist-get contact :name) ""))
-         (mail (plist-get contact :mail))
-         (case-fold-search nil))
-    (plist-put contact :name (malb/canonicalise-contact-name name))
-    contact))
-
-(setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
-#+END_SRC
-
-Useful in email templates
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/yas-get-names-from-fields (fields)
-  (let (names
-        ret
-        name
-        point-end-of-line
-        (search-regexp (mapconcat (lambda (arg)
-                                    (concat "^" arg ": "))
-                                  fields "\\|"))
-        (case-fold-search nil))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward search-regexp nil t)
-        (save-excursion
-          (setq point-end-of-line (re-search-forward "$")))
-        (setq name (buffer-substring-no-properties (point) point-end-of-line))
-        (setq name (split-string name "[^ ]+@[^ ]+," t " ")) ;; split on email@address,
-        (setq names (append names name)))
-      (dolist (name names)
-        (setq name (malb/canonicalise-contact-name name))
-        (if (string-match "\\([^ ,]+\\)" name)
-            (progn
-              (setq name (match-string 1 name))
-              (setq name (capitalize name))
-              (if ret
-                  (setq ret (concat ret ", " name))
-                (setq ret name)))))
-      (if ret ret "there"))))
-
-(defun malb/yas-get-names-from-to-fields ()
-  (interactive)
-  (malb/yas-get-names-from-fields '("To")))
-#+END_SRC
-
-Ignore some email addresses when auto completing:
-
-#+BEGIN_SRC emacs-lisp
-(setq mu4e-compose-complete-ignore-address-regexp (rx  (or (seq "no" (zero-or-one "-") "reply")
-                                                           (seq "replyto-" (one-or-more char) "@plus.google.com")
-                                                           (seq "@" (one-or-more char) ".twitter.com")
-                                                           (seq "do-not-reply" (zero-or-more char) "@"))))
-#+END_SRC
-
-** Dedicated Email Frame
-
-Create a new mu4e session in a new frame.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mail ()
-  (interactive)
-  (select-frame (make-frame-command))
-  (sleep-for 0.1) ;; this is a HACK
-  (toggle-frame-maximized)
-  (sleep-for 0.1) ;; this is a HACK
-  (set-frame-size (selected-frame) 200 64)
-  (mu4e))
-#+END_SRC
-
-Kill mu4e frame.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mu4e-quit-session ()
-  (interactive)
-  (kill-buffer)
-  (delete-frame))
-
-(bind-key "Q" #'malb/mu4e-quit-session mu4e-main-mode-map)
-(bind-key "Q" #'malb/mu4e-quit-session mu4e-headers-mode-map)
-#+END_SRC
-
-** Window Management
-
-I patched mu4e to be way less clever about window management after sending an email, my local =mu4e~compose-handler= looks like this:
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(defun* mu4e~compose-handler (compose-type &optional original-msg includes)
-  …
-  (when mu4e-compose-in-new-frame
-    ;; make sure to close the frame when we're done with the message these are
-    ;; all buffer-local;
-    ;; (push 'delete-frame message-exit-actions)
-    ;; (push 'delete-frame message-postpone-actions)
-    )
-)
-#+END_SRC
-
-and my =mu4e-message-kill-buffer= looks like this:
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(defun mu4e-message-kill-buffer ()
-  "Wrapper around `message-kill-buffer'.
-It restores mu4e window layout after killing the compose-buffer."
-  (interactive)
-  (let ((current-buffer (current-buffer)))
-    (message-kill-buffer)
-    ;; Compose buffer killed
-    (when (not (equal current-buffer (current-buffer)))
-      ;; Restore mu4e
-      ;; (if mu4e-compose-in-new-frame
-      ;; 	  (delete-frame)
-      ;; 	(if (buffer-live-p mu4e~view-buffer)
-      ;; 	    (switch-to-buffer mu4e~view-buffer)
-      ;; 	  (if (buffer-live-p mu4e~headers-buffer)
-      ;; 	      (switch-to-buffer mu4e~headers-buffer)
-      ;; 	    ;; if all else fails, back to the main view
-      ;; 	    (when (fboundp 'mu4e) (mu4e)))))
-      )))
-#+END_SRC
-
-I set my compose frame to be a dedicated window, which then takes care of all window management for me.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mu4e-compose-frame ()
-  (toggle-frame-maximized)
-  (sleep-for 0.25) ;; this is a HACK
-  (set-frame-size (selected-frame) 80 60)
-  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-#+END_SRC
-
-** PGP
-
-#+BEGIN_SRC emacs-lisp
-(setq mml2015-encrypt-to-self t)
-(define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
-(define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
-(setq epg-gpg-program "gpg2")
-#+END_SRC
-
-** Org-MU4E
-
-Link to mu4e messages and threads.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-mu4e
-  :config (setq org-mu4e-link-query-in-headers-mode t))
-#+END_SRC
-
-** Search in Email
-
-Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-mu
-  :ensure t
-  :config (progn
-            (bind-key "S" #'helm-mu mu4e-main-mode-map)))
-#+END_SRC
-
-[[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
-
 * Programming (languages)
 ** General
 *** REPL
@@ -4124,240 +3861,6 @@ Enable CIDER in org-mode.
     :ensure t)
 #+END_SRC
 
-* Editing
-** Dragging lines around
-
-([[https://github.com/rejeep/drag-stuff.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-  (use-package drag-stuff
-    :ensure t
-    :diminish drag-stuff-mode
-    :bind (("M-<up>" . drag-stuff-up)
-           ("M-<down>" . drag-stuff-down)))
-#+END_SRC
-
-** Visualise the undo tree
-
-([[http://www.dr-qusourceorg/undo-tree/undo-tree.el][source]])
-
-*Tip:* Did you know that Emacs has undo in a region?
-
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :ensure t
-  :diminish undo-tree-mode
-  :config (progn
-            (global-undo-tree-mode)
-            (setq undo-tree-visualizer-timestamps t)
-            (setq undo-tree-visualizer-diff t))
-  )
-#+END_SRC
-
-** Highlight last edits
-
-([[https://sourceub.com/k-talo/volatile-highlights.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-  (use-package volatile-highlights
-    :ensure t
-    :commands volatile-highlights-mode
-    :config (volatile-highlights-mode t)
-    :diminish volatile-highlights-mode)
-#+END_SRC
-
-** [#A] Zap up to char
-
-Kill everything up to character, e.g. if we have “Lorem| ipsum” typing ~M-z u~ would leave us with “Lorem|um”.
-
-#+BEGIN_SRC emacs-lisp
-(use-package avy-zap
-  :ensure t
-  :bind ("M-z" . avy-zap-up-to-char-dwim))
-#+END_SRC
-
-** Reverting buffers
-
-Automatically revert buffers.
-
-#+BEGIN_SRC emacs-lisp
-(setq global-auto-revert-non-file-buffers t
-      auto-revert-verbose nil)
-
-(global-auto-revert-mode 1)
-#+END_SRC
-
-** [[https://github.com/Vifon/focus-autosave-mode.el][Save buffer when loosing focus]]
-
-This can be dangerous, so only enable on per project basis, e.g.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-((markdown-mode . ((eval . (focus-autosave-local-mode 1)))))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package focus-autosave-mode
-  :ensure t
-  :config (progn
-            (diminish 'focus-autosave-local-mode " ♻")))
-#+END_SRC
-
-** Regexp
-
-Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regular expressions and use [[https://github.com/benma/visual-regexp-steroids.el/][visual-regexp-steroids]] for modern regexps. This makes Emacs regexp actually usable for me.
-
-#+BEGIN_SRC emacs-lisp
-(use-package visual-regexp-steroids
-  :ensure t)
-
-(use-package visual-regexp
-  :ensure t
-  :bind (("C-c m" . vr/mc-mark)
-         ("M-%" . vr/query-replace)
-         ("C-S-s" . vr/isearch-forward)
-         ("C-S-r" . vr/isearch-backward)))
-#+END_SRC
-
-** [[https://github.com/magnars/multiple-cursors.el][Multiple cursors]]
-
-[[http://i0.wp.com/pragmaticemacs.com/wp-content/uploads/2015/06/wpid-emacs-mc2.gif]] ([[http://i0.wp.com/pragmaticemacs.com/wp-content/uploads/2015/06/wpid-emacs-mc2.gif?zoom=2&w=620][source]])
-
-Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multiple-cursors~.
-
-([[http://endlessparentheses.com/multiple-cursors-keybinds.html?source=rss][keybinding source]])
-
-Commands are bound to =C-x m …=
-
-#+BEGIN_SRC emacs-lisp
-(use-package multiple-cursors
-  :ensure t
-  :config (progn
-            (defun malb/mc-typo-mode ()
-              (add-to-list 'mc/unsupported-minor-modes 'typo-mode))
-            (add-hook 'multiple-cursors-mode-hook #'malb/mc-typo-mode)
-
-            (bind-key "M-3" #'mc/mark-previous-like-this)
-            (bind-key "M-4" #'mc/mark-next-like-this)
-            (bind-key "M-£" #'mc/unmark-previous-like-this)
-            (bind-key "M-$" #'mc/unmark-next-like-this)
-
-            (define-prefix-command 'malb/mc-map)
-            (bind-key "m" 'malb/mc-map ctl-x-map)
-
-            (bind-key "a" #'mc/mark-all-like-this malb/mc-map)
-            (bind-key "d" #'mc/mark-all-dwim malb/mc-map)
-            (bind-key "s" #'mc/mark-all-symbols-like-this-in-defun malb/mc-map)
-
-            (bind-key "i" #'mc/insert-numbers malb/mc-map)
-            (bind-key "l" #'mc/insert-letters malb/mc-map)
-
-            (bind-key "h" #'mc-hide-unmatched-lines-mode malb/mc-map)
-
-            (bind-key "R" #'mc/reverse-regions malb/mc-map)
-            (bind-key "S" #'mc/sort-regions malb/mc-map)
-            (bind-key "L" #'mc/edit-lines malb/mc-map)
-
-            (bind-key "C-a" #'mc/edit-beginnings-of-lines malb/mc-map)
-            (bind-key "C-e" #'mc/edit-ends-of-lines malb/mc-map)
-            )
-  )
-#+END_SRC
-
-** Recursively narrow
-
-#+BEGIN_SRC emacs-lisp
-(use-package recursive-narrow
-  :ensure t
-  :config (progn
-            (defun malb/recursive-narrow-dwim-org ()
-              (if (derived-mode-p 'org-mode)
-                  (cond ((or (org-at-block-p) (org-in-src-block-p)) (org-narrow-to-block))
-                        (t (org-narrow-to-subtree))))
-              )
-            (add-hook 'recursive-narrow-dwim-functions 'malb/recursive-narrow-dwim-org))
-  :bind
-  (("C-x n w" . recursive-widen)
-   ("C-x n n" . recursive-narrow-or-widen-dwim)))
-#+END_SRC
-
-** Expand region
-
-See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https://github.com/magnars/expand-region.el][expand-region]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package expand-region
-  :ensure t
-  :bind ("C-`" . er/expand-region))
-#+END_SRC
-
-** Embrace
-
-#+BEGIN_SRC emacs-lisp
-(use-package embrace
-  :ensure t
-  :config (progn
-            (bind-key "M-`" #'embrace-commander)
-            (add-hook 'org-mode-hook #'embrace-org-mode-hook)))
-#+END_SRC
-
-** Wrap Region
-
-[[https://github.com/rejeep/wrap-region.el][Wrap Region]] is a minor mode for Emacs that wraps a region with punctuations. For "tagged" markup modes, such as HTML and XML, it wraps with tags.
-
-([[http://pragmaticemacs.com/emacs/wrap-text-in-custom-characters/][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package wrap-region
-  :ensure t
-  :diminish wrap-region-mode
-  :config (wrap-region-add-wrappers
-           '(("*" "*" nil org-mode)
-             ("~" "~" nil org-mode)
-             ("/" "/" nil org-mode)
-             ("=" "=" nil org-mode)
-             ("_" "_" nil org-mode)
-             ("$" "$" nil org-mode)))
-  (add-hook 'org-mode-hook 'wrap-region-mode))
-#+END_SRC
-
-* Blogging
-
-We change the default template to not include the title which is filled in by deft. We also query the user for a date/time for the blog post.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org2blog
-  :ensure t
-  :config (progn
-            (let (credentials)
-              (setq credentials (auth-source-user-and-password "martinralbrecht.wordpress.com"))
-              (setq org2blog/wp-blog-alist
-                    `(("martinralbrecht"
-                       :url "https://martinralbrecht.wordpress.com/xmlrpc.php"
-                       :username ,(car credentials)
-                       :password ,(cadr credentials)))))
-
-            (defun malb/org2blog/wp-format-buffer (buffer-template)
-              "Buffer formatting function without title."
-              (format buffer-template
-                      (format-time-string "[%Y-%m-%d %a %H:%M]" (org-read-date t t))
-                      (mapconcat
-                       (lambda (cat) cat)
-                       (or (plist-get (cdr org2blog/wp-blog) :default-categories)
-                           org2blog/wp-default-categories)
-                       ", ")))
-
-            (setq org2blog/wp-use-sourcecode-shortcode nil
-                  org2blog/wp-show-post-in-browser nil
-                  org2blog/wp-default-categories '("Cryptography" "Sage")
-                  org2blog/wp-buffer-format-function #'malb/org2blog/wp-format-buffer
-                  org2blog/wp-buffer-template "#+DATE: %s
-,#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
-,#+CATEGORY: %s
-,#+TAGS:
-,#+DESCRIPTION:
-\n")))
-#+END_SRC
-
 * Prose
 ** General
 *** Tab completion
@@ -4409,6 +3912,22 @@ For hard wraps, allow for a bit more characters per line.
 
 #+BEGIN_SRC emacs-lisp
 (setq fill-column 100)
+#+END_SRC
+
+For some modes we want resp. less wrapping width.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/fill-column-32768 ()
+  (set-fill-column 32768))
+
+(defun malb/fill-column-72 ()
+  (set-fill-column 72))
+#+END_SRC
+
+Indicate soft wrapped lines.
+
+#+BEGIN_SRC emacs-lisp
+(setq visual-line-fringe-indicators '(nil right-curly-arrow))
 #+END_SRC
 
 *** Typography
@@ -4959,23 +4478,33 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
 " s opt-string desc type))))))
 #+END_SRC
 
-* BibTeX
+** BibTeX
 
-Force a parse of the BibTeX database ([[http://stackoverflow.com/questions/9682592/setting-up-reftex-tab-completion-in-emacs][source]])
+My standard BibTeX sources are
+
+- =crypto_crossref.bib= and =abbrev3.bib= are from [[http://cryptobib.di.ens.fr/][crypto.bib]] which has most references relevant to crypto,
+- =jacm.bib= is for the Journal of the ACM provided by the [[http://ftp.math.utah.edu/pub/tex/bib/jacm.html][University of Utah]],
+- =rfc.bib= is for RFCs and provided by [[http://tm.uka.de/~bless/bibrfcindex.html][Roland Bless]].
+
+These are stored in some =common-latex= folder which has my [[https://bitbucket.org/malb/paper-template][paper-template]] as a subfolder.
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/get-bibtex-keys (file)
-  (with-current-buffer (find-file-noselect file)
-    (mapcar #'car (bibtex-parse-keys))))
+(defvar malb/common-latex (concat (file-name-as-directory malb/projects-dir) "common-latex"))
 
-(defun malb/latex-parse-bibtex ()
-  (interactive)
-  (mapc 'LaTeX-add-bibitems
-        (apply 'append
-               (mapcar #'malb/get-bibtex-keys (reftex-get-bibfile-list)))))
+(defvar malb/crypto-bib (concat (file-name-as-directory
+                                 (concat
+                                  (file-name-as-directory malb/common-latex) "paper-template")) "cryptobib"))
+
+(defvar malb/bibtex-files (list (expand-file-name "crypto_crossref.bib" malb/crypto-bib)
+                                (expand-file-name "abbrev3.bib" malb/crypto-bib)
+                                (expand-file-name "rfc.bib" malb/common-latex)
+                                (expand-file-name "jacm.bib" malb/common-latex)
+                                (expand-file-name "local.bib" malb/common-latex)))
+
+(setq reftex-default-bibliography malb/bibtex-files)
 #+END_SRC
 
-We cite as “Alice15” or “AliBobCha15” or “ABCD15” ([[https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-emacs/#comment-2977][source]])
+We cite as “Alice15” or “AliBobCha15” or “ABCD15” ([[https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-emacs/#comment-2977][source]]) and clean up BibTeX entries as we like them on =C-c C-c=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package bibtex
@@ -4990,8 +4519,10 @@ We cite as “Alice15” or “AliBobCha15” or “ABCD15” ([[https://nickhig
                                         last-comma
                                         delimiters
                                         numerical-fields
-                                        realign
-                                        ))
+                                        realign))
+
+            ;; “no” wrap in BibTeX
+            (add-hook 'bibtex-mode-hook #'malb/fill-column-32768)
 
             (defun bibtex-generate-autokey ()
               (let* ((bibtex-autokey-names nil)
@@ -5019,82 +4550,74 @@ We cite as “Alice15” or “AliBobCha15” or “ABCD15” ([[https://nickhig
                   ret)))))
 #+END_SRC
 
-** Helm BibTeX
+Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9682592/setting-up-reftex-tab-completion-in-emacs][source]])
 
-[[https://github.com/tmalsburg/helm-bibtex/][Helm-bibtex]] is a nice interface for BibTex.
+#+BEGIN_SRC emacs-lisp
+(defun malb/get-bibtex-keys (file)
+  (with-current-buffer (find-file-noselect file)
+    (mapcar #'car (bibtex-parse-keys))))
+
+(defun malb/latex-parse-bibtex ()
+  (interactive)
+  (mapc 'LaTeX-add-bibitems
+        (apply 'append
+               (mapcar #'malb/get-bibtex-keys (reftex-get-bibfile-list)))))
+#+END_SRC
+
+*** Helm BibTeX
+
+[[https://github.com/tmalsburg/helm-bibtex/][Helm-bibtex]] is a nice interface for BibTeX.
 
 [[https://github.com/tmalsburg/helm-bibtex/raw/master/screenshot.png]] ([[https://github.com/tmalsburg/helm-bibtex/][source]])
 
-My standard BibTeX sources are
-
-- =crypto_crossref.bib= and =abbrev3.bib= are from [[http://cryptobib.di.ens.fr/][crypto.bib]] which has most references relevant to crypto,
-- =jacm.bib= is for the Journal of the ACM provided by the [[http://ftp.math.utah.edu/pub/tex/bib/jacm.html][University of Utah]],
-- =rfc.bib= is for RFCs and provided by [[http://tm.uka.de/~bless/bibrfcindex.html][Roland Bless]].
-
-These are stored in some =common-latex= folder which has my [[https://bitbucket.org/malb/paper-template][paper-template]] as a subfolder.
+We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=.
 
 #+BEGIN_SRC emacs-lisp
-(defvar malb/common-latex (concat (file-name-as-directory malb/projects-dir) "common-latex"))
-(defvar malb/crypto-bib (concat (file-name-as-directory
-                                 (concat
-                                  (file-name-as-directory malb/common-latex) "paper-template")) "cryptobib"))
-
 (use-package helm-bibtex
   :ensure t
   :config (progn
-            (setq helm-bibtex-bibliography (list (expand-file-name "crypto_crossref.bib" malb/crypto-bib)
-                                                 (expand-file-name "abbrev3.bib" malb/crypto-bib)
-                                                 (expand-file-name "rfc.bib" malb/common-latex)
-                                                 (expand-file-name "jacm.bib" malb/common-latex)
-                                                 (expand-file-name "local.bib" malb/common-latex))
-                  helm-bibtex-library-path malb/literature-dir
-                  helm-bibtex-notes-path malb/literature-notes-dir)
+            (setq bibtex-completion-bibliography malb/bibtex-files
+                  bibtex-completion-library-path malb/literature-dir
+                  bibtex-completion-notes-path malb/literature-notes-dir)
 
-            (setq reftex-default-bibliography helm-bibtex-bibliography)
-
-            (defun helm-bibtex-find-pdf-in-library (key-or-entry)
+            (defun bibtex-completion-find-pdf-in-library (key-or-entry)
               "Searches the directories in `helm-bibtex-library-path' for a
 PDF whose names is composed of the BibTeX key plus \".pdf\".  The
 path of the first matching PDF is returned."
               (let* ((key (if (stringp key-or-entry)
                               key-or-entry
-                            (helm-bibtex-get-value "=key=" key-or-entry)))
+                            (bibtex-completion-get-value "=key=" key-or-entry)))
                      (path (-first 'f-file?
                                    (--map (f-join it (s-concat (s-replace ":" "_" key) ".pdf"))
-                                          (-flatten (list helm-bibtex-library-path))))))
+                                          (-flatten (list bibtex-completion-library-path))))))
                 (when path (list path))))
 
+            ;; move Insert BibTeX key to front
             (helm-delete-action-from-source "Insert BibTeX key" helm-source-bibtex)
-            (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key helm-source-bibtex 0)
-            ))
+            (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key helm-source-bibtex 0)))
 #+END_SRC
 
-** Adding References
+*** Adding References
 
-I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] better, [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] covers mode bases.
+I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] better, [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] covers more bases.
 
-*** biblio.el
+[[https://github.com/cpitclaudel/biblio.el][- biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
 
-[[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
-
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
 (use-package biblio
   :ensure t)
-#+END_SRC
+  #+END_SRC
 
-*** gscholar bibtex
+- [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
 
-[[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
-
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
 (use-package gscholar-bibtex
   :ensure t
   :init (progn
-            (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))
-            ))
-#+END_SRC
+            (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))))
+  #+END_SRC
 
-** References for Org Mode
+*** References for Org Mode
 
 #+BEGIN_QUOTE
 [[https://github.com/jkitchin/org-ref][Org-ref]] is a library for org-mode that provides rich support for citations, labels and cross-references in org-mode. org-ref is especially suitable for org-mode documents destined for LaTeX export and scientific publication. org-ref is also extremely useful for research documents and notes. org-ref bundles several other libraries that provide functions to create and modify bibtex entries from a variety of sources, but most notably from a DOI.
@@ -5105,8 +4628,506 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
   :ensure t
   :defer 2
   :config (progn
-            (setq org-ref-default-bibliography reftex-default-bibliography)
-            ))
+            (setq org-ref-default-bibliography malb/bibtex-files
+                  org-ref-notes-directory malb/literature-notes-dir
+                  org-ref-pdf-directory malb/literature-dir)))
+#+END_SRC
+
+* Email
+
+Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e
+  :config  (setq mu4e-headers-skip-duplicates t
+                 mu4e-use-fancy-chars t
+                 mu4e-view-show-images t
+                 message-kill-buffer-on-exit t
+                 mu4e-hide-index-messages t
+                 mu4e-auto-retrieve-keys t
+                 mu4e-compose-dont-reply-to-self t
+                 mu4e-compose-in-new-frame t
+                 mu4e-split-view 'horizontal
+                 mu4e-headers-visible-columns 122
+                 mu4e-headers-visible-lines 16
+                 mu4e-context-policy 'pick-first
+                 mu4e-compose-context-policy 'ask
+                 mu4e-change-filenames-when-moving t
+                 mu4e-confirm-quit nil))
+#+END_SRC
+
+** Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-use-fancy-chars t
+      mu4e-headers-draft-mark     '("D" . "⚒ ") ; draft
+      ;; mu4e-headers-seen-mark      '("S" . "☑ ")  ; seen
+      ;; mu4e-headers-unread-mark    '("u" . "☐ ")  ; unseen
+      mu4e-headers-new-mark       '("N" .  "")
+      mu4e-headers-seen-mark      '("S" . "")    ; seen
+      mu4e-headers-unread-mark    '("u" . "")    ; unseen
+      mu4e-headers-flagged-mark   '("F" .  "⚵ ") ; flagged
+      mu4e-headers-new-mark       '("N" .  "✉ ")  ; new
+      mu4e-headers-replied-mark   '("R" . "↵ ")  ; replied
+      mu4e-headers-passed-mark    '("P" . "⇉ ")  ; passed
+      mu4e-headers-encrypted-mark '("x" . "⚷ ")   ; encrypted
+      mu4e-headers-signed-mark    '("s" . "✍ ")  ; signed
+      mu4e-headers-empty-parent-prefix '("-" . "○")
+      mu4e-headers-first-child-prefix '("\\" . "▶")
+      mu4e-headers-has-child-prefix '("+" . "●"))
+#+END_SRC
+
+** Folders
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-maildir malb/mu4e-maildir
+      mu4e-drafts-folder "/[Google Mail]/.Drafts"
+      mu4e-sent-folder   "/[Google Mail]/.Sent Mail"
+      mu4e-trash-folder  "/[Google Mail]/.Bin")
+
+(setq mu4e-maildir-shortcuts
+      '(("/Inbox"                     . ?i)
+        ("/[Google Mail]/.Drafts"     . ?d)
+        ("/[Google Mail]/.Sent Mail"  . ?s)
+        ("/[Google Mail]/.Bin"        . ?t)))
+#+END_SRC
+
+** Queries
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list
+ 'mu4e-bookmarks
+ '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
+   "Unread bulk messages" ?l))
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("flag:unread NOT flag:trashed AND NOT flag:list AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
+   "Unread messages addressed to me" ?i))
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("mime:application/* AND NOT mime:application/pgp* AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
+   "Messages with attachments for me." ?d) t)
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("flag:flagged"
+   "Flagged messages" ?f) t)
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("(maildir:\"/[Google Mail]/.Sent Mail\" OR maildir:\"/royal holloway/.sent\") AND date:7d..now"
+   "Sent in last 7 days" ?s) t)
+#+END_SRC
+
+** Retrieving Mail
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync googlemail-default"
+      mu4e-update-interval nil)
+#+END_SRC
+
+** Sending Email
+
+email is sent with [[https://www.opensmtpd.org][opensmtpd]]’s =sendmail=.
+
+Set =format=flowed= ([[https://github.com/djcb/mu/issues/569][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/compose-setup ()
+  "Use hard newlines, so outgoing mails will have format=flowed."
+  (use-hard-newlines t 'guess))
+#+END_SRC
+
+To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=. Also set email width to 72 characters.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
+(add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
+(add-hook 'message-mode-hook #'flyspell-mode)
+(add-hook 'message-mode-hook #'turn-on-orgstruct)
+(add-hook 'message-mode-hook #'turn-on-orgstruct++)
+(add-hook 'message-mode-hook #'turn-on-orgtbl)
+(add-hook 'message-mode-hook #'typo-mode)
+(add-hook 'message-mode-hook #'olivetti-mode)
+(add-hook 'message-mode-hook #'adict-guess-dictionary)
+(add-hook 'message-mode-hook #'footnote-mode)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+;; https://github.com/iqbalansari/dotEmacs/blob/master/config/mail.org
+;; TODO: this means the header does not end
+;; (defun malb/strip-message-mode-problematic-text-props ()
+;;   (save-excursion
+;;     (goto-char (point-min))
+;;     (when (search-forward-regexp (concat "^" mail-heaqder-separator) nil t)
+;;       (remove-text-properties (match-beginning 0) (match-end 0) '(rear-nonsticky)))))
+
+;; (add-hook 'message-mode-hook #'malb/strip-message-mode-problematic-text-props)
+;; (add-hook 'mu4e-compose-mode-hook #'malb/iqbal-strip-message-mode-problematic-text-props)
+#+END_SRC
+
+Don’t add an empty line when quoting email ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/message-insert-citation-line ()
+  "Insert a simple citation line."
+  (when message-reply-headers
+    (newline)
+    (insert (mail-header-from message-reply-headers) " writes:")
+    (newline)))
+
+(setq message-citation-line-function #'malb/message-insert-citation-line)
+#+END_SRC
+
+Put attachments at end of buffer ([[http://mbork.pl/2015-11-28_Fixing_mml-attach-file_using_advice][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mml-attach-file--go-to-eob (orig-fun &rest args)
+  "Go to the end of buffer before attaching files."
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-max))
+      (apply orig-fun args))))
+
+(advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
+#+END_SRC
+
+Yell at me when I forget to attach attachment ([[http://mbork.pl/2016-02-06_An_attachment_reminder_in_mu4e][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/message-attachment-present-p ()
+  "Return t if an attachment is found in the current message."
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-min))
+      (when (search-forward "<#part" nil t) t))))
+
+(defcustom malb/message-attachment-intent-re
+  (regexp-opt '("I attach"
+                "I have attached"
+                "I've attached"
+                "I have included"
+                "I've included"
+                "see the attached"
+                "see the attachment"
+                "attached file"))
+  "A regex which - if found in the message, and if there is no
+attachment - should launch the no-attachment warning.")
+
+(defcustom malb/message-attachment-reminder
+  "Are you sure you want to send this message without any attachment? "
+  "The default question asked when trying to send a message
+containing `malb/message-attachment-intent-re' without an
+actual attachment.")
+
+(defun malb/message-warn-if-no-attachments ()
+  "Ask the user if s?he wants to send the message even though
+there are no attachments."
+  (when (and (save-excursion
+               (save-restriction
+                 (widen)
+                 (goto-char (point-min))
+                 (re-search-forward malb/message-attachment-intent-re nil t)))
+             (not (malb/message-attachment-present-p)))
+    (unless (y-or-n-p malb/message-attachment-reminder)
+      (keyboard-quit))))
+
+(add-hook 'message-send-hook #'malb/message-warn-if-no-attachments)
+#+END_SRC
+
+** Viewing Email
+
+Render HTML emails in =eww= = =shr=
+
+#+BEGIN_SRC emacs-lisp
+;; use imagemagick, if available
+(when (fboundp 'imagemagick-register-types)
+  (imagemagick-register-types))
+
+(use-package mu4e-contrib
+  :config (setq mu4e-html2text-command 'mu4e-shr2text))
+#+END_SRC
+
+Use =<TAB>= to preview messages and =q= to close previews.
+
+#+BEGIN_SRC emacs-lisp
+(require 'mu4e-view)
+(require 'mu4e-headers)
+
+(defun malb/preview-message ()
+  (interactive)
+  (mu4e-headers-view-message)
+  (sleep-for 0.1) ;; this is a HACK
+  (select-window (previous-window)))
+
+;; based on (mu4e-select-other-view)
+(defun malb/close-message-view ()
+  (interactive)
+  (let* ((other-buf mu4e~view-buffer)
+         (other-win (and other-buf (get-buffer-window other-buf))))
+    (if (window-live-p other-win)
+        (progn
+          (select-window other-win)
+          (sleep-for 0.1)
+          (mu4e~view-quit-buffer))
+      (mu4e~headers-quit-buffer))
+    ))
+
+(bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
+(bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
+(bind-key "z" #'malb/close-message-view mu4e-headers-mode-map)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-headers-fields '((:human-date . 12)
+                            (:flags . 6)
+                            (:mailing-list . 22)
+                            (:from . 32)
+                            (:subject)))
+#+END_SRC
+
+View emails with width restriction (110 so that HTML crap doesn’t break too easily either)
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-view-mode-hook ()
+  (setq olivetti-body-width 110)
+  (olivetti-mode))
+
+(add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'mu4e-view-actions
+             '("browser" . mu4e-action-view-in-browser) t)
+
+(bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
+(bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
+#+END_SRC
+
+** Contacts
+
+- My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
+- Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/canonicalise-contact-name (name)
+  (let ((case-fold-search nil))
+    (setq name (or name ""))
+    (if (string-match-p "^[^ ]+@[^ ]+\.[^ ]" name)
+        ""
+      (progn
+        (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop email address
+        (setq name (replace-regexp-in-string "^\"\\(.*\\)\"" "\\1" name)) ;; strip quotes
+        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
+        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)) ;; Foo, Bar becomes Bar Foo
+        (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name)) ;; look up names and replace
+        ))))
+
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-contact-rewrite-function (contact)
+  (let* ((name (or (plist-get contact :name) ""))
+         (mail (plist-get contact :mail))
+         (case-fold-search nil))
+    (plist-put contact :name (malb/canonicalise-contact-name name))
+    contact))
+
+(setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
+#+END_SRC
+
+Useful in email templates
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/yas-get-names-from-fields (fields)
+  (let (names
+        ret
+        name
+        point-end-of-line
+        (search-regexp (mapconcat (lambda (arg)
+                                    (concat "^" arg ": "))
+                                  fields "\\|"))
+        (case-fold-search nil))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward search-regexp nil t)
+        (save-excursion
+          (setq point-end-of-line (re-search-forward "$")))
+        (setq name (buffer-substring-no-properties (point) point-end-of-line))
+        (setq name (split-string name "[^ ]+@[^ ]+," t " ")) ;; split on email@address,
+        (setq names (append names name)))
+      (dolist (name names)
+        (setq name (malb/canonicalise-contact-name name))
+        (if (string-match "\\([^ ,]+\\)" name)
+            (progn
+              (setq name (match-string 1 name))
+              (setq name (capitalize name))
+              (if ret
+                  (setq ret (concat ret ", " name))
+                (setq ret name)))))
+      (if ret ret "there"))))
+
+(defun malb/yas-get-names-from-to-fields ()
+  (interactive)
+  (malb/yas-get-names-from-fields '("To")))
+#+END_SRC
+
+Ignore some email addresses when auto completing:
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-compose-complete-ignore-address-regexp (rx  (or (seq "no" (zero-or-one "-") "reply")
+                                                           (seq "replyto-" (one-or-more char) "@plus.google.com")
+                                                           (seq "@" (one-or-more char) ".twitter.com")
+                                                           (seq "do-not-reply" (zero-or-more char) "@"))))
+#+END_SRC
+
+** Dedicated Email Frame
+
+Create a new mu4e session in a new frame.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mail ()
+  (interactive)
+  (select-frame (make-frame-command))
+  (sleep-for 0.1) ;; this is a HACK
+  (toggle-frame-maximized)
+  (sleep-for 0.1) ;; this is a HACK
+  (set-frame-size (selected-frame) 200 64)
+  (mu4e))
+#+END_SRC
+
+Kill mu4e frame.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-quit-session ()
+  (interactive)
+  (kill-buffer)
+  (delete-frame))
+
+(bind-key "Q" #'malb/mu4e-quit-session mu4e-main-mode-map)
+(bind-key "Q" #'malb/mu4e-quit-session mu4e-headers-mode-map)
+#+END_SRC
+
+** Window Management
+
+I patched mu4e to be way less clever about window management after sending an email, my local =mu4e~compose-handler= looks like this:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun* mu4e~compose-handler (compose-type &optional original-msg includes)
+  …
+  (when mu4e-compose-in-new-frame
+    ;; make sure to close the frame when we're done with the message these are
+    ;; all buffer-local;
+    ;; (push 'delete-frame message-exit-actions)
+    ;; (push 'delete-frame message-postpone-actions)
+    )
+)
+#+END_SRC
+
+and my =mu4e-message-kill-buffer= looks like this:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun mu4e-message-kill-buffer ()
+  "Wrapper around `message-kill-buffer'.
+It restores mu4e window layout after killing the compose-buffer."
+  (interactive)
+  (let ((current-buffer (current-buffer)))
+    (message-kill-buffer)
+    ;; Compose buffer killed
+    (when (not (equal current-buffer (current-buffer)))
+      ;; Restore mu4e
+      ;; (if mu4e-compose-in-new-frame
+      ;; 	  (delete-frame)
+      ;; 	(if (buffer-live-p mu4e~view-buffer)
+      ;; 	    (switch-to-buffer mu4e~view-buffer)
+      ;; 	  (if (buffer-live-p mu4e~headers-buffer)
+      ;; 	      (switch-to-buffer mu4e~headers-buffer)
+      ;; 	    ;; if all else fails, back to the main view
+      ;; 	    (when (fboundp 'mu4e) (mu4e)))))
+      )))
+#+END_SRC
+
+I set my compose frame to be a dedicated window, which then takes care of all window management for me.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-compose-frame ()
+  (toggle-frame-maximized)
+  (sleep-for 0.25) ;; this is a HACK
+  (set-frame-size (selected-frame) 80 60)
+  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+#+END_SRC
+
+** PGP
+
+#+BEGIN_SRC emacs-lisp
+(setq mml2015-encrypt-to-self t)
+(define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
+(define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
+(setq epg-gpg-program "gpg2")
+#+END_SRC
+
+** Org-MU4E
+
+Link to mu4e messages and threads.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-mu4e
+  :config (setq org-mu4e-link-query-in-headers-mode t))
+#+END_SRC
+
+** Search in Email
+
+Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-mu
+  :ensure t
+  :config (progn
+            (bind-key "S" #'helm-mu mu4e-main-mode-map)))
+#+END_SRC
+
+[[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
+
+* Blogging
+
+We change the default template to not include the title which is filled in by deft. We also query the user for a date/time for the blog post.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org2blog
+  :ensure t
+  :config (progn
+            (let (credentials)
+              (setq credentials (auth-source-user-and-password "martinralbrecht.wordpress.com"))
+              (setq org2blog/wp-blog-alist
+                    `(("martinralbrecht"
+                       :url "https://martinralbrecht.wordpress.com/xmlrpc.php"
+                       :username ,(car credentials)
+                       :password ,(cadr credentials)))))
+
+            (defun malb/org2blog/wp-format-buffer (buffer-template)
+              "Buffer formatting function without title."
+              (format buffer-template
+                      (format-time-string "[%Y-%m-%d %a %H:%M]" (org-read-date t t))
+                      (mapconcat
+                       (lambda (cat) cat)
+                       (or (plist-get (cdr org2blog/wp-blog) :default-categories)
+                           org2blog/wp-default-categories)
+                       ", ")))
+
+            (setq org2blog/wp-use-sourcecode-shortcode nil
+                  org2blog/wp-show-post-in-browser nil
+                  org2blog/wp-default-categories '("Cryptography" "Sage")
+                  org2blog/wp-buffer-format-function #'malb/org2blog/wp-format-buffer
+                  org2blog/wp-buffer-template "#+DATE: %s
+,#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+,#+CATEGORY: %s
+,#+TAGS:
+,#+DESCRIPTION:
+\n")))
 #+END_SRC
 
 * PDF Viewer
@@ -6175,12 +6196,6 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
 (set-fringe-bitmap-face 'tilde 'font-lock-comment-face)
 (setq-default indicate-empty-lines t)
-#+END_SRC
-
-** Line Wrap Indication
-
-#+BEGIN_SRC emacs-lisp
-(setq visual-line-fringe-indicators '(nil right-curly-arrow))
 #+END_SRC
 
 ** Text Size
