@@ -1240,17 +1240,13 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
               (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
             ;; Auto-close more conservatively
-            (sp-pair "'" nil :unless '(sp-point-after-word-p))
             (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
-            (sp-pair "{" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
-                     :unless '(sp-point-before-word-p sp-point-before-same-p) :wrap "C-{")
-            (sp-pair "(" nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
-                     :unless '(sp-point-before-word-p sp-point-before-same-p) :wrap "C-(")
-            (sp-pair "[" nil :post-handlers '(("| " " "))
-                     :unless '(sp-point-before-word-p sp-point-before-same-p))
+            (sp-pair "{"  nil :post-handlers '(("||\n[i]" "RET") ("| " " "))  :unless '(sp-point-before-word-p sp-point-before-same-p) :wrap "C-{")
+            (sp-pair "("  nil :post-handlers '(("||\n[i]" "RET") ("| " " "))  :unless '(sp-point-before-word-p sp-point-before-same-p) :wrap "C-(")
+            (sp-pair "["  nil :post-handlers '(("| " " "))                    :unless '(sp-point-before-word-p sp-point-before-same-p))
 
-            (sp-local-pair '(sh-mode markdown-mode) "`" nil
-                           :unless '(sp-point-before-word-p sp-point-before-same-p))
+            (sp-pair "'"  nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
+            (sp-local-pair '(sh-mode markdown-mode) "`" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
 
             ;; (add-to-list 'sp-ignore-modes-list 'org-mode) ; too slow
             ;; (add-to-list 'sp-ignore-modes-list 'python-mode) ; too slow
@@ -1416,9 +1412,7 @@ Commands are bound to =C-x m …=
             (bind-key "L" #'mc/edit-lines malb/mc-map)
 
             (bind-key "C-a" #'mc/edit-beginnings-of-lines malb/mc-map)
-            (bind-key "C-e" #'mc/edit-ends-of-lines malb/mc-map)
-            )
-  )
+            (bind-key "C-e" #'mc/edit-ends-of-lines malb/mc-map)))
 #+END_SRC
 
 ** Recursively narrow
