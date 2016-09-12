@@ -3731,19 +3731,20 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
 *** Highlight indentation
 
-It makes sense to [[https://github.com/antonj/Highlight-Indentation-for-Emacs/][highlight indentation]] in Python.
+It makes sense to [[https://github.com/DarthFennec/highlight-indent-guides][highlight indentation]] in Python.
 
 #+BEGIN_SRC emacs-lisp
-(use-package highlight-indentation
+;; (use-package highlight-indentation
+;;   :ensure t
+;;   :diminish highlight-indentation-mode
+;;   :config (progn ))
+
+(use-package highlight-indent-guides
   :ensure t
-  :diminish highlight-indentation-mode
-  :config (progn
-            (add-hook 'python-mode-hook #'highlight-indentation-mode)))
+  :diminish highlight-indent-guides-mode
+  :config (progn (setq highlight-indent-guides-method 'column)
+                 (add-hook 'python-mode-hook #'highlight-indent-guides-mode)))
 #+END_SRC
-
-**** TODO highlight indentation can be slow for huge buffers
-
- For example, editing Sage’s arguably massive [[https://github.com/sagemath/sage/blob/master/src/sage/rings/polynomial/multi_polynomial_ideal.py][multi_polynomial_ideal.py]] can be very slow.
 
 *** Fold indentation
 
