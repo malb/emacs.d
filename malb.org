@@ -6163,6 +6163,7 @@ We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which custo
               (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
               (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
               (set-face-attribute 'powerline-inactive2 nil :background "grey65" :foreground "gainsboro")
+              (set-face-attribute 'mode-line-buffer-id nil :foreground "white smoke")
               (powerline-reset))))
 #+END_SRC
 
