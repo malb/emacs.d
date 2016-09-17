@@ -4850,6 +4850,17 @@ there are no attachments."
 ;; (add-hook 'message-send-hook #'malb/message-warn-if-no-attachments)
 #+END_SRC
 
+We add a copy of the buffer to the kill ring, to make it easy to refer to it later.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/copy-buffer-to-kill-ring ()
+  "Copy buffer to kill ring."
+  (interactive)
+  (kill-ring-save (point-min) (point-max)))
+
+(add-hook 'message-send-hook #'malb/copy-buffer-to-kill-ring)
+#+END_SRC
+
 ** Viewing Email
 
 Render HTML emails in =eww= = =shr=
