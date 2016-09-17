@@ -4847,7 +4847,7 @@ there are no attachments."
     (unless (y-or-n-p malb/message-attachment-reminder)
       (keyboard-quit))))
 
-(add-hook 'message-send-hook #'malb/message-warn-if-no-attachments)
+;; (add-hook 'message-send-hook #'malb/message-warn-if-no-attachments)
 #+END_SRC
 
 ** Viewing Email
