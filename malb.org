@@ -751,7 +751,7 @@ For Python use [[https://github.com/proofit404/company-anaconda][company-anacond
 
 ** LaTeX
 
-For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but insert unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
+For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We also allow unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-math
@@ -771,11 +771,11 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]] but 
             (add-to-list 'company-backends
                          '(company-auctex-macros
                            company-auctex-environments
-                           company-math-symbols-unicode))
+                           company-math-symbols-unicode
+                           company-math-symbols-latex))
 
             (add-to-list 'company-backends #'company-auctex-labels)
-            (add-to-list 'company-backends #'company-auctex-bibs)
-            (setq company-math-disallow-unicode-symbols-in-faces nil)))
+            (add-to-list 'company-backends #'company-auctex-bibs)))
 #+END_SRC
 
 ** Shell
