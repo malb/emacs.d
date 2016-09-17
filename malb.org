@@ -1797,7 +1797,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-src-window-setup 'current-window     ; when hitting C-c '
       org-reverse-note-order t
       org-footnote-auto-adjust t               ; renumber footnotes automagically
-      org-footnote-auto-label 'plain           ; foonotes are [1], [2] etc.
       org-confirm-elisp-link-function nil      ;
       org-startup-with-inline-images t         ; show images when opening a file.
       org-hidden-keywords nil
