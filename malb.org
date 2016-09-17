@@ -1626,16 +1626,20 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
                   magit-last-seen-setup-instructions "2.1.0")
 
             ;; we use magit, not vc for git
-            (delete 'Git vc-handled-backends)
-            ))
+            (delete 'Git vc-handled-backends)))
 
 (use-package magit-svn
   :ensure t
+  :after magit
   :config (progn
             (defun malb/magit-svn ()
               (if (file-exists-p (magit-git-dir "svn"))
                   (magit-svn-mode)))
             (add-hook 'magit-mode-hook #'malb/magit-svn)))
+
+(use-package magithub
+  :ensure t
+  :after magit)
 #+END_SRC
 
 *Notes*
