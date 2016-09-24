@@ -5084,6 +5084,7 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
   (toggle-frame-maximized)
   (sleep-for 0.25) ;; this is a HACK
   (set-frame-size (selected-frame) 80 60)
+  (sleep-for 0.25) ;; this is a HACK
   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
 #+END_SRC
 
