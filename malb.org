@@ -6303,13 +6303,23 @@ Easily change the text size:
 
 (require 'helm-utils)
 
+(defun malb/helm-mml-attach-files (_candidate)
+  "Attach all selected files"
+  (let* ((files (helm-marked-candidates)))
+    (mapcar 'mml-attach-file files)))
+
+(defun malb/helm-transfer-sh-files (_candidate)
+  "Transfer.sh all selected files"
+  (let* ((files (helm-marked-candidates)))
+    (mapcar 'transfer-sh-upload-file-async files)))
+
 (defvar helm-source-baloo
   (helm-build-async-source "Baloo"
     :candidates-process #'helm-baloo-search
     :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
     :action '(("Open"                   . (lambda (x) (helm-find-many-files x)))
-              ("Attach to Email"        . (lambda (x) (mml-attach-file x)))
-              ("Transfer.sh"            . (lambda (x) (transfer-sh-upload-file-async x)))
+              ("Attach to Email"        . (lambda (x) (malb/helm-mml-attach-files x)))
+              ("Transfer.sh"            . (lambda (x) (malb/helm-transfer-sh-files x)))
               ("Find file as root"      . (lambda (x) (helm-find-file-as-root x)))
               ("Find file other window" . (lambda (x) (helm-find-files-other-window x)))
               ("Find file other frame"  . (lambda (x) (find-file-other-frame x)))
@@ -6336,6 +6346,16 @@ Easily change the text size:
               ("Find file in hex dump" . (lambda (x) (hexl-find-file) x)))
     :keymap helm-generic-files-map
     :help-message #'helm-generic-file-help-message))
+
+(bind-key "C-c C-a" (lambda ()
+                      (interactive)
+                      (with-helm-alive-p
+                        (helm-exit-and-execute-action 'malb/helm-mml-attach-files))) helm-generic-files-map)
+
+(bind-key "C-c C-t" (lambda ()
+                      (interactive)
+                      (with-helm-alive-p
+                        (helm-exit-and-execute-action 'malb/helm-transfer-sh-files))) helm-generic-files-map)
 
 (defun helm-baloo ()
   (interactive)
