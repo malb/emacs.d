@@ -6010,7 +6010,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
   :config (progn
             (add-hook 'dired-mode-hook 'turn-on-stripe-buffer-mode)
             (add-hook 'org-mode-hook 'turn-on-stripe-table-mode)
-            (set-face-attribute 'stripe-highlight nil :background "gray93")
+            (set-face-attribute 'stripe-highlight nil :background "#eee8d5")
             ))
 #+END_SRC
 
