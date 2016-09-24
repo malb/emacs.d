@@ -1636,17 +1636,13 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
               (if (file-exists-p (magit-git-dir "svn"))
                   (magit-svn-mode)))
             (add-hook 'magit-mode-hook #'malb/magit-svn)))
-
-(use-package magithub
-  :ensure t
-  :after magit)
 #+END_SRC
 
 *Notes*
 
 - try =git config status.showUntrackedFiles all= ([[https://emacs.stackexchange.com/questions/13729/choose-files-to-stage-of-a-new-directory-with-magit][source]])
 
-** GitHub Pull Requests
+** GitHub
 
 Handle [[https://github.com/sigma/magit-gh-pulls][pull requests]] from magit
 
@@ -1660,10 +1656,16 @@ Handle [[https://github.com/sigma/magit-gh-pulls][pull requests]] from magit
 #+BEGIN_SRC emacs-lisp
 (require 'ert) ;; https://github.com/sigma/magit-gh-pulls/issues/32
 (use-package magit-gh-pulls
-  :ensure t)
+  :ensure t
+  :config (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
 #+END_SRC
 
-*** TEST if =magit-gh-pulls= can be enabled by default without causing delay
+Create repositories etc.
+
+#+BEGIN_SRC emacs-lisp
+(use-package magithub
+  :ensure t)
+#+END_SRC
 
 ** Org Links for Magit Buffers
 
