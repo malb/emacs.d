@@ -899,11 +899,10 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
       '(helm-source-buffers-list)) ;; list of all open buffers
 
     `(((name . "Virtual Workspace")
-       (candidates . ,(--map (cons  (eyebrowse-format-slot it) (car it))
+       (candidates . ,(--map (cons (eyebrowse-format-slot it) (car it))
                              (eyebrowse--get 'window-configs)))
        (action . (lambda (candidate)
-                   (eyebrowse-switch-to-window-config candidate))
-               )))
+                   (eyebrowse-switch-to-window-config candidate)))))
 
     (if (projectile-project-p)
         '(helm-source-projectile-recentf-list
@@ -915,23 +914,12 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
        (candidates . malb/common-file-targets)
        (action . (("Open" . (lambda (x) (find-file (eval x))))))))
 
-    '(helm-source-files-in-current-dir) ;; files in current directory
-
-    '(helm-source-locate               ;; file anywhere
-      helm-source-baloo                ;; baloo search
-      helm-source-bookmarks            ;; bookmarks too
-      helm-source-buffer-not-found     ;; ask to create a buffer otherwise
-      )
-
-    ;; adding helm-source-imenu-anywhere does some weird pre-filtering
-    '(((name . "imenu-anywere")
-       (candidates . helm-imenu-anywhere-candidates)
-       (action .
-               #[(elm)
-                 "\301\302\"\207"
-                 [elm imenu-anywhere--goto-function ""]
-                 3])))
-    ) "*Helm all the things*"))
+    '(helm-source-files-in-current-dir
+      helm-source-locate
+      helm-source-bookmarks
+      helm-source-buffer-not-found ;; ask to create a buffer otherwise
+      ))
+   "*Helm all the things*"))
 #+END_SRC
 
 Use helm for switching buffers, opening files, calling interactive functions.
