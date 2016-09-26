@@ -2187,11 +2187,9 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("" "units"))
             (add-to-list 'org-latex-packages-alist '("" "xspace"))
             (add-to-list 'org-latex-packages-alist '("" "fontspec"))
-            (add-to-list 'org-latex-packages-alist '("a4paper,includeheadfoot,margin=2.54cm" "geometry"))
             (add-to-list 'org-latex-packages-alist '("notions,operators,sets,keys,ff,adversary,primitives,complexity,asymptotics,lambda" "cryptocode"))
             (add-to-list 'org-latex-packages-alist '("" "unicodesymbols"))
             (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
-            (add-to-list 'org-latex-packages-alist '("hang,flushmargin" "footmisc"))
             (add-to-list 'org-latex-packages-alist '("" "microtype"))
             (add-to-list 'org-latex-packages-alist '("" "inconsolata"))
             (add-to-list 'org-latex-packages-alist '("color=FFDD00" "todonotes"))
@@ -2233,6 +2231,8 @@ iCal export is triggered after 600 seconds of inactivity.
                                (concat "\\documentclass{report}\n"
                                        "[DEFAULT-PACKAGES]\n"
                                        "[PACKAGES]\n"
+                                       "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}"
+                                       "\\usepackage[hang,flushmargin]{footmisc}"
                                        "\\parskip 1em\n"
                                        "\\parindent 0pt\n"
                                        "\\linespread{1.25}\n"
@@ -2260,6 +2260,8 @@ iCal export is triggered after 600 seconds of inactivity.
                                (concat "\\documentclass{article}\n"
                                        "[DEFAULT-PACKAGES]\n"
                                        "[PACKAGES]\n"
+                                       "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}"
+                                       "\\usepackage[hang,flushmargin]{footmisc}"
                                        "\\parskip 1em\n"
                                        "\\parindent 0pt\n"
                                        "\\newcommand{\\malb}[2][inline]{\\todo[#1]{\\textbf{malb:} #2}\\xspace}"
@@ -2284,7 +2286,6 @@ iCal export is triggered after 600 seconds of inactivity.
                         (add-to-list 'org-latex-classes
                                      (list "letter"
                                            (concat "\\documentclass{scrlttr2}\n"
-                                                   "\\usepackage{fontspec}\n"
                                                    "[DEFAULT-PACKAGES]\n"
                                                    "[EXTRA]\n")))))))
 #+END_SRC
