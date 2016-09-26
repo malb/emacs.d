@@ -4105,11 +4105,9 @@ Automatically pick dictionary.
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
                                                                (concat user-emacs-directory "langtool"))
-                  ; langtool-mother-tongue "de"
                   langtool-default-language "en"
                   langtool-disabled-rules '("WHITESPACE_RULE"
-                                            "EN_QUOTES")
-                  )
+                                            "EN_QUOTES"))
 
             (bind-key "C-x 4 w" #'langtool-check)
             (bind-key "C-x 4 W" #'langtool-check-done)
