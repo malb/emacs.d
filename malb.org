@@ -3661,6 +3661,7 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             (add-hook 'sage-shell-mode-hook #'ac-sage-setup)
             (add-hook 'sage-shell-mode-hook #'auto-complete-mode)
             (add-hook 'sage-shell-mode-hook #'eldoc-mode)
+            (setq sage-shell:use-prompt-toolkit t)
 
             (when (boundp 'company-global-modes)
               (add-to-list 'company-global-modes 'sage-shell:sage-mode t)
