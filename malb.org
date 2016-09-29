@@ -4375,8 +4375,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-save-query nil
                   TeX-error-overview-open-after-TeX-run t
                   TeX-electric-sub-and-superscript t
-                  TeX-electric-math '("\\(" "\\)")
-                  TeX-quote-after-quote t)
+                  TeX-electric-math nil
+                  TeX-quote-after-quote nil)
+
 
             (setq-default TeX-master nil)
             (setq-default TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
