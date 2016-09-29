@@ -1665,7 +1665,6 @@ Create repositories etc.
 
 #+BEGIN_SRC emacs-lisp
 (use-package magithub
-  :disabled t
   :ensure t)
 #+END_SRC
 
