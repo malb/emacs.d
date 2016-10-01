@@ -1249,16 +1249,36 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                                                                       sp-point-after-word-p
                                                                       sp-point-before-same-p))
 
+            ;; https://github.com/Fuco1/smartparens/issues/652#issuecomment-250518705
+            (defun malb/latex-replace-dollar (_id action _context)
+              (when (eq action 'wrap)
+                (sp-get sp-last-wrapped-region
+                  (let ((at-beg (= (point) :beg-in)))
+                    (save-excursion
+                      (goto-char :beg)
+                      (delete-char :op-l)
+                      (insert "\\("))
+                    (save-excursion
+                      (goto-char :end-in)
+                      (delete-char :cl-l)
+                      (insert "\\)"))
+                    (setq sp-last-wrapped-region
+                          (sp--get-last-wraped-region
+                           :beg :end "\\(" "\\)"))
+                    (goto-char (if at-beg (1+ :beg-in) :end))))))
 
-            (sp-local-pair '(tex-mode plain-tex-mode latex-mode org-mode) "$" "$"
+            (sp-local-pair '(tex-mode plain-tex-mode latex-mode) "$" nil
                            :unless '(sp-point-before-word-p
                                      sp-point-before-same-p
-                                     sp-latex-point-after-backslash))
-            (sp-local-pair '(tex-mode plain-tex-mode latex-mode org-mode) "\\(" "\\)"
+                                     sp-latex-point-after-backslash)
+                           :post-handlers '(malb/latex-replace-dollar))
+
+            (sp-local-pair '(tex-mode plain-tex-mode latex-mode) "\\(" "\\)"
                            :unless '(sp-point-before-word-p
                                      sp-point-before-same-p
                                      sp-latex-point-after-backslash)
                            :trigger "\$")
+
             (sp-local-pair '(tex-mode plain-tex-mode latex-mode org-mode) "\\[" "\\]"
                            :unless '(sp-point-before-word-p
                                      sp-point-before-same-p
