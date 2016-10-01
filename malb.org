@@ -4808,7 +4808,7 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'typo-mode)
 (add-hook 'message-mode-hook #'olivetti-mode)
 (add-hook 'message-mode-hook #'adict-guess-dictionary)
-(add-hook 'message-mode-hook #'footnote-mode)
+(bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
