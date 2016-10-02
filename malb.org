@@ -2006,7 +2006,9 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
 (add-to-list 'org-structure-template-alist '("al" "#+ATTR_LATEX: " ""))
 (add-to-list 'org-structure-template-alist '("ca" "#+CAPTION: " ""))
 (add-to-list 'org-structure-template-alist '("tn" "#+TBLNAME: " ""))
-(add-to-list 'org-structure-template-alist '("n" "#+NAME: " ""))
+(add-to-list 'org-structure-template-alist '("b"  "#+BEAMER: " ""))
+(add-to-list 'org-structure-template-alist '("n"  "#+NAME: " ""))
+(add-to-list 'org-structure-template-alist '("o"  "#+ATTR_BEAMER: :overlay +-"))
 #+END_SRC
 
 ** Speed Commands
