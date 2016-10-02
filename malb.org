@@ -845,7 +845,11 @@ This function then hopefully does what I want:
          (looking-at "[^[:space:]]")
          (looking-back "[^[:space:]]")
          (not (looking-back "^")))
-    (origami-toggle-node (current-buffer) (point)))
+    (cond
+     ((bound-and-true-p origami-mode)
+      (origami-toggle-node (current-buffer) (point)))
+     ((bound-and-true-p outline-minor-mode)
+      (outline-cycle))))
 
    ;; by default just call whatever was bound
    (t
@@ -1511,6 +1515,14 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
   :ensure t
   :commands (origami-toggle-node))
 #+END_SRC
+
+[[https://github.com/tj64/outline-magic][toggle outline-minor-mode state]] ([[https://emacs.stackexchange.com/questions/361/how-can-i-hide-display-latex-section-just-like-org-mode-does-with-headlines][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package outline-magic
+  :ensure t)
+#+END_SRC
+
 
 * Projects
 
@@ -3528,9 +3540,9 @@ It makes sense to [[https://github.com/DarthFennec/highlight-indent-guides][high
                  (add-hook 'python-mode-hook #'highlight-indent-guides-mode)))
 #+END_SRC
 
-*** Fold indentation
+*** Folding
 
-([[https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159][source]])
+Fold indentation ([[https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/toggle-indent-fold ()
@@ -3542,6 +3554,12 @@ It makes sense to [[https://github.com/DarthFennec/highlight-indent-guides][high
       (setq col (+ 1 (current-column)))
       (set-selective-display
        (if selective-display nil (or col 1))))))
+#+END_SRC
+
+Fold logical units
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'python-mode-hook #'origami-mode)
 #+END_SRC
 
 *** Autocompletion
@@ -4341,7 +4359,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-hook 'LaTeX-mode-hook #'flyspell-mode)
             (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
-            (add-hook 'LaTeX-mode-hook #'TeX-fold-mode)
+            (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
