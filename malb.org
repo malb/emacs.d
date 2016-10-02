@@ -2225,7 +2225,6 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("" "unicodesymbols"))
             (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
             (add-to-list 'org-latex-packages-alist '("" "microtype"))
-            (add-to-list 'org-latex-packages-alist '("" "inconsolata"))
             (add-to-list 'org-latex-packages-alist '("color=FFDD00" "todonotes"))
 
             (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf %f")
