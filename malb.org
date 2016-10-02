@@ -673,8 +673,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :ensure t
-  :bind (("C-<tab>"    . company-complete)
-         ("M-/"        . company-complete))
+  :bind (("M-/"        . company-complete))
 
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
@@ -3517,6 +3516,8 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
             (bind-key "C-c C-c" #'elpy-shell-send-region-or-buffer python-mode-map)
             (bind-key "C-c C-r" #'pyvenv-restart-python python-mode-map)
+            (bind-key "C-<tab>" #'origami-toggle-node python-mode-map)
+            (bind-key "C-S-<iso-lefttab>" #'origami-toggle-all-nodes python-mode-map)
             (bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-or-complete)
@@ -4343,11 +4344,10 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 ** LaTeX
 
-| Command       | Explanation     |
-|---------------+-----------------|
-| ~C-c C-g~     | forward search  |
-| ~C-c C-o C-b~ | fold everything |
-| ~C-<tab>~     | fold dwim       |
+| Command   | Explanation        |
+|-----------+--------------------|
+| ~C-c C-g~ | forward search     |
+| ~C-c @~   | outline minor mode |
 
 #+BEGIN_SRC emacs-lisp
 (use-package tex
@@ -4359,7 +4359,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-hook 'LaTeX-mode-hook #'flyspell-mode)
             (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
-            (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
@@ -4392,7 +4391,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
 
-            (bind-key "C-<tab>" #'TeX-fold-dwim LaTeX-mode-map)
+            (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
+            (bind-key "C-<tab>" #'outline-cycle LaTeX-mode-map)
             (bind-key "M-." #'reftex-goto-label LaTeX-mode-map)
 
             ;; http://endlessparentheses.com/improving-latex-equations-with-font-lock.html
