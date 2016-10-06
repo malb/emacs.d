@@ -1062,7 +1062,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (bind-key "C-s"   #'helm-next-line helm-multi-swoop-map)))
 #+END_SRC
 
-** Helm-ag
+** Helm Ag
 
 [[http://beyondgrep.com][Ack]] is “a tool like grep, optimized for programmers“. [[https://github.com/ggreer/the_silver_searcher][Ag]] is like =ack=, but faster. [[https://github.com/syohex/emacs-helm-ag][Helm-ag]] is a helm interface to =ag=. We use =helm-ag= mainly via =helm-projectile-ag=, which allows us to =grep= through all project files quickly.
 
@@ -1094,7 +1094,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
   )
 #+END_SRC
 
-** Helm-themes
+** Helm Themes
 
 Switch themes with helm.
 
