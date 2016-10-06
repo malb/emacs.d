@@ -4699,7 +4699,10 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=.
   :config (progn
             (setq bibtex-completion-bibliography malb/bibtex-files
                   bibtex-completion-library-path malb/literature-dir
-                  bibtex-completion-notes-path malb/literature-notes-dir)
+                  bibtex-completion-notes-path malb/literature-notes-file
+                  helm-bibtex-full-frame nil
+                  bibtex-completion-notes-template-one-file
+                  "\n* ${title} :${=key=}:\n:PROPERTIES:\n:CUSTOM_ID: ${=key=}\n:END:\n\n")
 
             (defun bibtex-completion-find-pdf-in-library (key-or-entry)
               "Searches the directories in `helm-bibtex-library-path' for a
@@ -4750,7 +4753,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
   :defer 2
   :config (progn
             (setq org-ref-default-bibliography malb/bibtex-files
-                  org-ref-notes-directory malb/literature-notes-dir
+                  org-ref-bibliography-notes malb/literature-notes-file
                   org-ref-pdf-directory malb/literature-dir
                   org-ref-bibtex-hydra-key-binding "\C-cj")))
 #+END_SRC
