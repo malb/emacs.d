@@ -2679,6 +2679,7 @@ Execute this command while the point is on or after the hyper-linked org link."
 #+END_SRC
 
 ** Tips
+
 *** Agenda commands
 
 | ~F~         | ~(org-agenda-follow-mode)~           | Toggle Follow mode                                     |
@@ -2715,6 +2716,7 @@ In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =v
 #+BEGIN_SRC sh :tangle no
 emacs --batch -l ~/.emacs.d/org-export-init.el file.org -f org-latex-export-to-pdf
 #+END_SRC
+
 * Programming (languages)
 ** General
 *** REPL
