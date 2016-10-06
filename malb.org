@@ -5179,6 +5179,32 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
 
+** Attachments
+
+Attachments are mostly handled using the helm baloo interface below, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+
+(use-package gnus-dired
+  :config
+  (progn
+    ;; make the `gnus-dired-mail-buffers' function also work on
+    ;; message-mode derived modes, such as mu4e-compose-mode
+    (defun gnus-dired-mail-buffers ()
+      "Return a list of active message buffers."
+      (let (buffers)
+        (save-current-buffer
+          (dolist (buffer (buffer-list t))
+            (set-buffer buffer)
+            (when (and (derived-mode-p 'message-mode)
+                       (null message-sent-message-via))
+              (push (buffer-name buffer) buffers))))
+        (nreverse buffers)))
+
+    (setq gnus-dired-mail-mode 'mu4e-user-agent)))
+#+END_SRC
+
 * Blogging
 
 We change the default template to not include the title which is filled in by deft. We also query the user for a date/time for the blog post.
