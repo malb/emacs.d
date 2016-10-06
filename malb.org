@@ -2974,9 +2974,9 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
   :diminish ws-butler-mode
   :config (progn
             ;; adding it to prog-mode-hook causes problems for emacsclient
-            (add-hook 'c-mode-common-hook #'ws-butler-mode)
-            (add-hook 'python-mode-hook #'ws-butler-mode)
-            (add-hook 'cython-mode-hook #'ws-butler-mode)
+            (add-hook 'c-mode-common-hook   #'ws-butler-mode)
+            (add-hook 'python-mode-hook     #'ws-butler-mode)
+            (add-hook 'cython-mode-hook     #'ws-butler-mode)
             (add-hook 'emacs-lisp-mode-hook #'ws-butler-mode)
             ))
 #+END_SRC
