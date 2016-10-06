@@ -2344,7 +2344,8 @@ iCal export is triggered after 600 seconds of inactivity.
 
 *** Beamer
 
-_underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starter-kit/starter-kit-org.html][source]])
+- _underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starter-kit/starter-kit-org.html][source]])
+- +strikethrough+ becomes grey in Beamer.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-beamer
@@ -2355,7 +2356,12 @@ _underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starte
               (when (eq backend 'beamer)
                 (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
 
+            (defun malb/beamer-strikethrough (contents backend info)
+              (when (eq backend 'beamer)
+                (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\color{lightgray}" contents)))
+
             (add-to-list 'org-export-filter-underline-functions 'malb/beamer-underline)
+            (add-to-list 'org-export-filter-strike-through-functions 'malb/beamer-strikethrough)
 
             (add-to-list 'org-latex-classes
                          (list "mbeamer"
