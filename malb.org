@@ -1210,26 +1210,33 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (setq sp-autodelete-wrap t)
             (setq sp-cancel-autoskip-on-backward-movement nil)
 
-            (setq-default sp-autoskip-closing-pair t)
-            (setq sp-autoescape-string-quote nil) ;; don't escape quotes in strings
-            (bind-key "C-M-d" 'sp-down-sexp sp-keymap)
-            (bind-key "C-M-u" 'sp-backward-up-sexp sp-keymap)
+            (setq-default sp-autoskip-closing-pair t) (setq sp-autoescape-string-quote nil) ;; don't escape quotes in strings
 
-            (bind-key "C-M-a" 'sp-beginning-of-sexp sp-keymap)
-            (bind-key "C-M-e" 'sp-end-of-sexp sp-keymap)
+            (bind-key "C-M-f" #'sp-forward-sexp smartparens-mode-map)
+            (bind-key "C-M-b" #'sp-backward-sexp smartparens-mode-map)
+            (bind-key "C-M-n" #'sp-next-sexp smartparens-mode-map)
+            (bind-key "C-M-p" #'sp-previous-sexp smartparens-mode-map)
+            (bind-key "C-M-d" 'sp-down-sexp smartparens-mode-map)
+            (bind-key "C-M-u" 'sp-backward-up-sexp smartparens-mode-map)
 
-            (bind-key "M-<right>" 'sp-next-sexp sp-keymap)
-            (bind-key "M-<left>" 'sp-previous-sexp sp-keymap)
+            (bind-key "M-<right>" 'sp-next-sexp smartparens-mode-map)
+            (bind-key "M-<left>" 'sp-previous-sexp smartparens-mode-map)
 
-            (bind-key "C-M-t" 'sp-transpose-sexp sp-keymap)
-            (bind-key "M-d" 'sp-kill-sexp sp-keymap)
-            (bind-key "M-<backspace>" 'sp-backward-unwrap-sexp sp-keymap)
+            (bind-key "C-M-a" 'sp-beginning-of-sexp smartparens-mode-map)
+            (bind-key "C-M-e" 'sp-end-of-sexp smartparens-mode-map)
 
-            (bind-key "C-<right>" 'sp-forward-slurp-sexp sp-keymap)
-            (bind-key "C-<left>" 'sp-forward-barf-sexp sp-keymap)
+            (bind-key "C-M-k" #'sp-kill-sexp smartparens-mode-map)
+            (bind-key "C-M-w" #'sp-copy-sexp smartparens-mode-map)
 
-            (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward sp-keymap)
-            (bind-key "C-S-<backspace>" 'sp-splice-sexp-killing-around sp-keymap)
+            (bind-key "C-M-t" 'sp-transpose-sexp smartparens-mode-map)
+            (bind-key "M-d" 'sp-kill-sexp smartparens-mode-map)
+            (bind-key "M-<backspace>" 'sp-backward-unwrap-sexp smartparens-mode-map)
+
+            (bind-key "C-<right>" 'sp-forward-slurp-sexp smartparens-mode-map)
+            (bind-key "C-<left>" 'sp-forward-barf-sexp smartparens-mode-map)
+
+            (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward smartparens-mode-map)
+            (bind-key "C-S-<backspace>" 'sp-splice-sexp-killing-around smartparens-mode-map)
 
             (defun malb/sp-point-is-template-p (id action context)
               (and (sp-in-code-p id action context)
