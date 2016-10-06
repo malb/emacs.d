@@ -6277,6 +6277,19 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
             (beacon-mode t)))
 #+END_SRC
 
+** Minimap
+
+#+BEGIN_SRC emacs-lisp
+(use-package minimap
+  :ensure t
+  :config (setq minimap-display-semantic-overlays nil
+                minimap-major-modes '(prog-mode markdown-mode)
+                minimap-minimum-width 20
+                minimap-mode t
+                minimap-width-fraction 0.1
+                minimap-window-location 'right))
+#+END_SRC
+
 ** Vim-like Empty Line Indicator
 
 #+BEGIN_SRC emacs-lisp
