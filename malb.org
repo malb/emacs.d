@@ -1103,6 +1103,15 @@ Switch themes with helm.
   :ensure t)
 #+END_SRC
 
+** Helm Descbinds
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-descbinds
+  :ensure t
+  :bind ("C-h b" . helm-descbinds)
+  :init (fset 'describe-bindings 'helm-descbinds))
+#+END_SRC
+
 ** DISABLED Helm-commandlinefu
 
 [[https://github.com/xuchunyang/helm-commandlinefu][Helm-commandlinefu]] is a helm interface to http://www.commandlinefu.com/.
