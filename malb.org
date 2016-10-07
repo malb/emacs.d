@@ -4376,7 +4376,40 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
             (delight 'pandoc-mode
-                     '(:eval (concat " \xf064[" (pandoc--get 'write) "]")))))
+                     '(:eval (concat " \xf064[" (pandoc--get 'write) "]")))
+
+            (defun malb/copy-as (arg)
+              (interactive "P")
+              (cond
+               (arg
+                (malb/-copy-as
+                 (completing-read "Output format to use: " pandoc--output-formats nil t)))
+               ((derived-mode-p 'org-mode)
+                (malb/-copy-as "latex"))
+               (t
+                (malb/-copy-as "org"))))
+
+            (defun malb/copy-as-latex ()
+              (interactive)
+              (malb/-copy-as "latex"))
+
+            (defun malb/copy-as-org ()
+              (interactive)
+              (malb/-copy-as "org"))
+
+            (defun malb/-copy-as (what)
+              (let ((pandoc-use-async nil))
+                (pandoc--set 'read (cdr (assq major-mode pandoc-major-modes)))
+                (or (buffer-live-p pandoc--output-buffer)
+                    (setq pandoc--output-buffer (get-buffer-create " *Pandoc output*")))
+                (pandoc--call-external what  nil
+                                       (if (use-region-p)
+                                           (cons (region-beginning) (region-end)))))
+              (switch-to-buffer pandoc--output-buffer)
+              (kill-new (buffer-string))
+              (bury-buffer))
+
+            (bind-key "M-W" #'malb/copy-as)))
 #+END_SRC
 
 ** ReST
