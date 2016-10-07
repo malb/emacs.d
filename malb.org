@@ -5677,6 +5677,18 @@ directory to make multiple eshell windows easier."
                   eshell-plain-echo-behavior t)))
 #+END_SRC
 
+** Editor == Emacs
+
+#+BEGIN_SRC emacs-lisp
+(use-package with-editor
+  :ensure t
+  :init
+  (progn
+    (add-hook 'shell-mode-hook  #'with-editor-export-editor)
+    (add-hook 'term-exec-hook   'with-editor-export-editor)
+    (add-hook 'eshell-mode-hook #'with-editor-export-editor)))
+#+END_SRC
+
 * Diagrams
 ** [[http://plantuml.com/][PlantUML]]
 
