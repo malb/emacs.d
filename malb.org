@@ -4242,6 +4242,18 @@ Prose linting using … [[http://proselint.com][proselint]].
 (add-to-list 'flycheck-checkers 'proselint)
 #+END_SRC
 
+*** Synonyms
+
+[[https://github.com/hpdeifel/synosaurus][synosaurus]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package synosaurus
+  :ensure t
+  :config (progn
+            (setq synosaurus-choose-method 'popup)
+            (synosaurus-mode)))
+#+END_SRC
+
 *** Dictionary
 
 Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
