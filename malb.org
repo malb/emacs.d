@@ -4860,6 +4860,8 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
         ("/[Google Mail]/.Drafts"     . ?d)
         ("/[Google Mail]/.Sent Mail"  . ?s)
         ("/[Google Mail]/.Bin"        . ?t)))
+
+(setq mu4e-attachment-dir "~/Downloads")
 #+END_SRC
 
 ** Queries
