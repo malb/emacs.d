@@ -8,7 +8,7 @@
 We assume that the following variables are defined:
 
 - ~malb/projects-dir~ - a superepository of which all of my projects are subprojects
-- ~malb/literature-dir~ - PDFs of papers
+- ~malb/literature-dirs~ - PDFs of papers
 - ~malb/literature-notes-dir~ - notes on papers
 - ~malb/documents-dir~ - documents
 - ~malb/sync-dir~ - documents that are syncronised
@@ -4698,11 +4698,11 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=.
   :ensure t
   :config (progn
             (setq bibtex-completion-bibliography malb/bibtex-files
-                  bibtex-completion-library-path malb/literature-dir
+                  bibtex-completion-library-path malb/literature-dirs
                   bibtex-completion-notes-path malb/literature-notes-file
                   helm-bibtex-full-frame nil
                   bibtex-completion-notes-template-one-file
-                  "\n* ${title} :${=key=}:\n:PROPERTIES:\n:CUSTOM_ID: ${=key=}\n:END:\n\n")
+                  "** ${title} :${=key=}:\n:PROPERTIES:\n:CUSTOM_ID: ${=key=}\n:END:\n\n")
 
             (defun bibtex-completion-find-pdf-in-library (key-or-entry)
               "Searches the directories in `helm-bibtex-library-path' for a
@@ -4754,7 +4754,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
   :config (progn
             (setq org-ref-default-bibliography malb/bibtex-files
                   org-ref-bibliography-notes malb/literature-notes-file
-                  org-ref-pdf-directory malb/literature-dir
+                  org-ref-pdf-directory malb/literature-dirs
                   org-ref-bibtex-hydra-key-binding "\C-cj")))
 #+END_SRC
 
