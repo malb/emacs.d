@@ -4285,9 +4285,8 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 (use-package google-translate
   :ensure t
   :bind ("C-c t" . google-translate-smooth-translate)
-  :config (progn
-            (setq google-translate-translation-directions-alist
-                  '(("de" . "en") ("en" . "de") ("de" . "fr") ("fr" . "de")))))
+  :init (progn (setq google-translate-translation-directions-alist
+                     '(("de" . "en") ("en" . "de") ))))
 #+END_SRC
 
 *** Googling
