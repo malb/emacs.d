@@ -4265,7 +4265,7 @@ Prose linting using … [[http://proselint.com][proselint]].
   :ensure t
   :config (progn
             (setq synosaurus-choose-method 'popup)
-            (synosaurus-mode)))
+            (add-hook 'org-mode-hook #'synosaurus-mode)))
 #+END_SRC
 
 *** Dictionary
