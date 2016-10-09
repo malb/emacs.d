@@ -2754,6 +2754,7 @@ Execute this command while the point is on or after the hyper-linked org link."
 
 *** Commands I easily forget
 
+- =C-c C-v C-d= splits blocks
 - =C-c C-j= calls ~(org-goto)~ which jumps to headlines in a file
 - =C-c /= calls ~(org-sparse-tree)~ which reduces the tree to the nodes with some attribute
 
