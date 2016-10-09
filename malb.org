@@ -2575,35 +2575,47 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 #+BEGIN_SRC emacs-lisp
 (use-package org-capture
   :bind ("<f9>" . org-capture)
-  :config (setq org-capture-templates
-                '(("t" "task"
-                   entry (file malb/inbox-org)
-                   "** TODO %?\n%i" :prepend t)
+  :config (progn
+            (setq org-capture-templates
+                  '(("t" "task"
+                     entry (file malb/inbox-org)
+                     "** TODO %?\n%i" :prepend t)
 
-                  ("p" "project task" plain (function malb/org-capture-projectile)
-                   "** TODO %?\n%a\n" :prepend t)
+                    ("T" "task with context"
+                     entry (file malb/inbox-org)
+                     "** TODO %?\n%i\n%a" :prepend t)
 
-                  ("k" "respond to email (KMail)"
-                   entry (file+headline malb/inbox-org "Email")
-                   "* REPLY to [[mailto:%link][%:description]]\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n\n[[mailto:%:link][%:link]] wrote:\n#+BEGIN_QUOTE\n%x\n#+END_QUOTE\n\n"
-                   :immediate-finish t
-                   :prepend t)
+                    ("p" "project task" plain (function malb/org-capture-projectile)
+                     "** TODO %?\n%i\n%a\n" :prepend t)
 
-                  ("r" "respond ro email (mu4e)"
-                   entry (file+headline malb/inbox-org "Email")
-                   "* REPLY to [[mailto:%:fromaddress][%:fromname]] on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
-                   :immediate-finish t
-                   :prepend t)
+                    ;; ("k" "respond to email (KMail)"
+                    ;;  entry (file+headline malb/inbox-org "Email")
+                    ;;  "* REPLY to [[mailto:%link][%:description]]\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n\n[[mailto:%:link][%:link]] wrote:\n#+BEGIN_QUOTE\n%x\n#+END_QUOTE\n\n"
+                    ;;  :immediate-finish t
+                    ;;  :prepend t)
 
-                  ("f" "file email (mu4e)"
-                   entry (file+headline malb/inbox-org "Email")
-                   "* %a by [[mailto:%:fromaddress][%:fromname]]\n%U\n\n%i%?\n"
-                   :immediate-finish nil
-                   :prepend nil)
+                    ("r" "respond ro email (mu4e)"
+                     entry (file+headline malb/inbox-org "Email")
+                     "* REPLY to %:fromname on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
+                     :immediate-finish t
+                     :prepend t)
 
-                  ("j" "journal entry"
-                   entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
-                   "** research\n%?\n** critique\n\n"))))
+                    ("f" "file email (mu4e)"
+                     entry (file+headline malb/inbox-org "Email")
+                     "* %a by %:fromname)\n%U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
+                     :immediate-finish nil
+                     :prepend nil)
+
+                    ("j" "journal entry"
+                     entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
+                     "** research\n%?\n** critique\n\n")
+                    ("m" "meeting" entry (file+headline malb/inbox-org "Meetings")
+                     "* Meeting with %^{who}\n%U\n\n%i%?\n\n"
+                     :clock-in t :clock-resume t)))
+
+            (setq org-capture-templates-contexts
+                  '(("r" ((in-mode . "mu4e-view-mode")))
+                    ("f" ((in-mode . "mu4e-view-mode")))))))
 #+END_SRC
 
 ** Org EWW
