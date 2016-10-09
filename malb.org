@@ -567,7 +567,7 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 #+BEGIN_SRC emacs-lisp
 (use-package avy
   :ensure t
-  :bind ("C-c <SPC>" . avy-goto-word-1)
+  :bind ("C-c C-<SPC>" . avy-goto-word-1)
   :config (progn
             (setq avy-background t)
             (key-chord-define-global "jj"  #'avy-goto-word-1)))
@@ -947,7 +947,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
   :bind (("M-x"     . helm-M-x)
          ("C-x C-b" . malb/helm-omni)
          ("C-x C-f" . helm-find-files)
-         ("C-c C-<SPC>" . helm-all-mark-rings))
+         ("C-c <SPC>" . helm-all-mark-rings))
   :config (progn
             (require 'helm-config)
             (bind-key "C-c h" #'helm-command-prefix)
@@ -6605,11 +6605,9 @@ Easily change the text size:
 
 * ToDos
 ** TODO get better at jumping around
-- =avy-goto-word-1= (=C-c C-<SPC>=)
 - =pop-local-mark= (=C-u C-<SPC>=)
 - =pop-global-mark= (=C-x C-<SPC>=)
 - =helm-all-mark-rings= (=C-h C-<SPC>=)
-- next buffer/previous buffer: =C-x <left>= and =C-x <right>=
 * Notes
 ** Stuck Emacs
 
