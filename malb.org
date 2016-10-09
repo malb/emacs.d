@@ -4405,13 +4405,17 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (defun malb/copy-as (arg)
               (interactive "P")
               (cond
-               (arg
-                (malb/-copy-as
-                 (completing-read "Output format to use: " pandoc--output-formats nil t)))
-               ((derived-mode-p 'org-mode)
-                (malb/-copy-as "latex"))
-               (t
-                (malb/-copy-as "org"))))
+               (arg                        (malb/-copy-as
+                                            (completing-read "Output format to use: "
+                                                             pandoc--output-formats nil t)))
+               ((derived-mode-p 'org-mode) (malb/copy-as-latex-from-org))
+               (t                          (malb/-copy-as "org"))))
+
+            (defun malb/copy-as-latex-from-org ()
+              (interactive)
+              (if (org-region-active-p)
+                  (kill-new (org-export-string-as (buffer-substring (region-beginning) (region-end)) 'latex t))
+                (kill-new (org-export-string-as (buffer-substring (point-min) (point-max)) 'latex t))))
 
             (defun malb/copy-as-latex ()
               (interactive)
