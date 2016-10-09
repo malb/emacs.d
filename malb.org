@@ -964,7 +964,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-quick-update t
                   helm-split-window-in-side-p t
                   helm-truncate-lines nil
-                  helm-ff-auto-update-initial-value t
+                  helm-ff-auto-update-initial-value nil
                   helm-grep-default-command "ag --vimgrep -z %p %f"
                   helm-grep-default-recurse-command "ag --vimgrep -z %p %f")
 
