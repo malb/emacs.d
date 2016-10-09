@@ -1878,6 +1878,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-confirm-elisp-link-function nil      ;
       org-startup-with-inline-images t         ; show images when opening a file.
       org-hidden-keywords nil
+      org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
       )
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
