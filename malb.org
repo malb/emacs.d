@@ -5500,6 +5500,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                                      "-blx.bib$" "\\.snm$"
                                      "\\.synctex\\.gz$" "\\.tex\\.backup$" "\\.bib\\.backup$"
                                      "\\.fdb_latexmk$" "\\.fls$"
+                                     "\\.pyc"
                                      "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'")
                          "\\|"))
 
