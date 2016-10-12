@@ -5544,6 +5544,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (setq ediff-window-setup-function 'ediff-setup-windows-plain
                   ediff-split-window-function 'split-window-horizontally
                   ediff-diff-options "-w")
+            (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
             ))
 #+END_SRC
 
