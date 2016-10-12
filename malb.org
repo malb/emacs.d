@@ -3583,19 +3583,13 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
 *** Highlight indentation
 
-It makes sense to [[https://github.com/DarthFennec/highlight-indent-guides][highlight indentation]] in Python.
+It makes sense to highlight indentation in Python.
 
 #+BEGIN_SRC emacs-lisp
-;; (use-package highlight-indentation
-;;   :ensure t
-;;   :diminish highlight-indentation-mode
-;;   :config (progn ))
-
-(use-package highlight-indent-guides
+(use-package highlight-indentation
   :ensure t
-  :diminish highlight-indent-guides-mode
-  :config (progn (setq highlight-indent-guides-method 'column)
-                 (add-hook 'python-mode-hook #'highlight-indent-guides-mode)))
+  :diminish highlight-indentation-mode
+  :config (progn (add-hook 'python-mode-hook #'highlight-indentation-mode)))
 #+END_SRC
 
 *** Folding
