@@ -5528,6 +5528,10 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (put 'dired-find-alternate-file 'disabled nil)
 
             (bind-key "F" 'find-name-dired dired-mode-map)
+            (bind-key "j" #'dired-next-line dired-mode-map)
+            (bind-key "k" #'dired-previous-line dired-mode-map)
+            (bind-key "e" #'ediff-files dired-mode-map)
+            (bind-key "i" #'helm-find-files dired-mode-map)
             (bind-key "C-SPC" #'dired-mark dired-mode-map) ; use C-@ if you really want to mark
             (bind-key "M-o" 'dired-omit-mode dired-mode-map)))
 #+END_SRC
