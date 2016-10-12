@@ -6425,11 +6425,15 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 #+BEGIN_SRC emacs-lisp
 (use-package minimap
   :ensure t
-  :config (setq minimap-display-semantic-overlays nil
-                minimap-major-modes '(prog-mode markdown-mode)
-                minimap-minimum-width 20
-                minimap-width-fraction 0.1
-                minimap-window-location 'right))
+  :config (progn
+            (setq minimap-display-semantic-overlays nil
+                  minimap-major-modes '(prog-mode markdown-mode)
+                  minimap-minimum-width 15
+                  minimap-width-fraction 0.05
+                  minimap-highlight-line nil
+                  minimap-window-location 'right)
+
+            (set-face-attribute 'minimap-font-face nil :height 0.125)))
 #+END_SRC
 
 ** Vim-like Empty Line Indicator
