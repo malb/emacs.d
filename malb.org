@@ -475,11 +475,11 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
   "
-^Misc^        ^Split^         ^Buffer^         ^Resize^           ^Eyebrowse^      ^Olivetti^   ^Registers^
-^----^--------^-----^---------^------^---------^------^-----------^---------^------^--------^---^------------^
-_←_ ←         _v_ertical      _H_elm-omni      _q_ X←             _[_ \\/ new    oli_V_etti     _W_ store cfg
-_↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓             _;_ \\/ ←         _,_ O←      _J_ load cfg
-_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑             _'_ \\/ →         _._ O→
+^Misc^        ^Split^         ^Buffer^         ^Resize^           ^Eyebrowse^      ^Center^   ^Registers^
+^----^--------^-----^---------^------^---------^------^-----------^---------^------^------^---^------------^
+_←_ ←         _v_ertical      _H_elm-omni      _q_ X←             _[_ \\/ new      _C_enter   _W_ store cfg
+_↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓             _;_ \\/ ←         _,_ C←    _J_ load cfg
+_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑             _'_ \\/ →         _._ C→
 _→_ →         _Z_ reset       _t_oggle buf     _r_ X→             _]_ \\/ close
 _T_oggle ded  _d_lt this      _a_ce 1       max_i_mize            _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
@@ -518,9 +518,9 @@ _j_ump        _o_nly this     _S_ave
   ("'" (lambda () (interactive) (eyebrowse-next-window-config nil)) :color blue)
   ("]" eyebrowse-close-window-config :color blue)
   ("!" eyebrowse-rename-window-config :color blue)
-  ("V" olivetti-mode)
-  ("," olivetti-shrink)
-  ("." olivetti-expand)
+  ("C" visual-fill-column-mode)
+  ("," (lambda () (interactive) (set-fill-column (+ fill-column 2)) (visual-fill-column-adjust)) :color red)
+  ("." (lambda () (interactive) (set-fill-column (- fill-column 2)) (visual-fill-column-adjust)) :color red)
   ("W" window-configuration-register)
   ("J" jump-to-register  :color blue)
   ("1" eyebrowse-switch-to-window-config-1 :color blue)
@@ -2644,9 +2644,6 @@ I've notice that while I really like taking notes in a meeting, I don't always l
   (delete-other-windows)                              ;; Get rid of other windows
   (text-scale-set 2)                                  ;; Text is now readable by others
   (fringe-mode 0)
-  (olivetti-mode 1)
-  (olivetti-set-width 110)
-  (olivetti-toggle-hide-modeline)
   (message "When finished taking your notes, run meeting-done."))
 #+END_SRC
 
@@ -2657,8 +2654,6 @@ I've notice that while I really like taking notes in a meeting, I don't always l
   (widen)                                       ;; Opposite of narrow-to-region
   (text-scale-set 0)                            ;; Reset the font size increase
   (fringe-mode 1)
-  (olivetti-toggle-hide-modeline)
-  (olivetti-mode 0)
   (winner-undo))                                ;; Put the windows back in place
 #+END_SRC
 
@@ -4034,10 +4029,10 @@ Indent correctly in ~visual-line-mode~ (~org-mode~ has its own thing).
             ))
 #+END_SRC
 
-For hard wraps, allow for a bit more characters per line.
+Allow for a bit more characters per line by default.
 
 #+BEGIN_SRC emacs-lisp
-(setq fill-column 100)
+(setq-default fill-column 100)
 #+END_SRC
 
 For some modes we want resp. less wrapping width.
@@ -4107,18 +4102,29 @@ Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparent
             (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)))
 #+END_SRC
 
-*** Olivetti
+*** Visual Fill Column Mode
 
-Adapt text width to nice to read/edit width.
+[[https://github.com/joostkremers/visual-fill-column][soft wrap at fill-column]]
+
+([[http://www.lunaryorn.com/posts/center-buffer-text-in-emacs.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package olivetti
+(use-package visual-fill-column
   :ensure t
-  :diminish olivetti-mode
+  :defer t
+  :init (progn
+          (dolist (hook '(org-mode-hook
+                          markdown-mode-hook
+                          mu4e-view-mode-hook
+                          rst-mode-hook
+                          LaTeX-mode-hook))
+            (add-hook hook #'visual-fill-column-mode)))
   :config (progn
-            (setq-default olivetti-body-width 90)
-            (unbind-key "C-c ]" olivetti-mode-map)
-            (unbind-key "C-c [" olivetti-mode-map)))
+            (setq-default visual-fill-column-center-text t
+                          visual-fill-column-fringes-outside-margins nil)
+
+            (dolist (fn '(text-scale-increase text-scale-decrease text-scale-adjust))
+              (advice-add fn :after #'visual-fill-column-adjust))))
 #+END_SRC
 
 *** Sentences
@@ -4579,7 +4585,6 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
   (interactive)
   (ignore-errors
     (malb/latex-parse-bibtex))          ; don't die if there's no bibtex file
-  (olivetti-mode 1)
   (latex-preview-pane-mode 1))
 #+END_SRC
 
@@ -4939,7 +4944,6 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'turn-on-orgstruct++)
 (add-hook 'message-mode-hook #'turn-on-orgtbl)
 (add-hook 'message-mode-hook #'typo-mode)
-(add-hook 'message-mode-hook #'olivetti-mode)
 (add-hook 'message-mode-hook #'adict-guess-dictionary)
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
 #+END_SRC
@@ -5094,8 +5098,9 @@ View emails with width restriction (110 so that HTML crap doesn’t break too ea
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
-  (setq olivetti-body-width 110)
-  (olivetti-mode))
+  (set-fill-column 110)
+  (visual-line-mode)
+  (visual-fill-column-mode))
 
 (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
@@ -6174,7 +6179,7 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 (malb/set-menu-key "P" #'prodigy)
 (malb/set-menu-key "p" #'pandoc-main-hydra/body)
 (malb/set-menu-key "s" #'helm-swoop)
-(malb/set-menu-key "w" #'olivetti-mode)
+(malb/set-menu-key "w" #'visual-fill-column-mode)
 (malb/set-menu-key "x" #'helm-M-x)
 (malb/set-menu-key "z" #'malb/multi-term-here)
 #+END_SRC
@@ -6666,4 +6671,5 @@ And Emacs will change the mode to ~c++-mode~ whenever it had initially set it to
 
 # Local Variables:
 # eval: (ws-butler-mode 1)
+# fill-column: 158
 # End:
