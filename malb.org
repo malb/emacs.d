@@ -3754,7 +3754,9 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
   :ensure t
   :config (progn
             (setq ac-delay 0.3
-                  ac-auto-start 2)))
+                  ac-auto-start 2)
+            (bind-key "C-/" #'auto-complete ac-mode-map)
+            (bind-key "M-/" #'auto-complete ac-mode-map)))
 
 (use-package auto-complete-sage
   :ensure t)
