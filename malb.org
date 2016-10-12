@@ -846,7 +846,8 @@ This function then hopefully does what I want:
          (looking-back "[^[:space:]]")
          (not (looking-back "^")))
 
-    (company-complete-common))
+    (cond (company-mode (company-complete-common))
+          (auto-complete-mode (auto-complete))))
 
    ;; no whitespace anywhere
    ((and (not (active-minibuffer-window))
