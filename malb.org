@@ -6224,20 +6224,32 @@ The result looks like this:
                 (load-theme 'solarized-light t)
 
                 ;; steal org style from Leuven
-                (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
-                (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
+                (set-face-attribute 'org-checkbox nil :weight 'bold
+                                    :box '(:line-width 1 :style 'pressed-button)
+                                    :foreground "white" :background "light gray")
+                (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB")
+                                    :foreground "#8BB300" :background "#F0F0F0")
                 (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
-                (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
-                (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
-                (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background (solarized-with-color-variables 'light base02) :foreground "#657b83" :slant 'normal)
-                (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background (solarized-with-color-variables 'light base02) :foreground "#657b83" :slant 'normal)
-                (set-face-attribute 'org-block-background nil :background (solarized-with-color-variables
-                                                                            'light
-                                                                            (solarized-color-blend base02 base03 0.3)))
+                (set-face-attribute 'org-tag nil :weight 'normal
+                                    :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
+                (set-face-attribute 'org-todo nil :weight 'bold
+                                    :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16"
+                                    :background "#FFE6E4")
+                (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line
+                                    :background (solarized-with-color-variables 'light base02)
+                                    :foreground "#657b83" :slant 'normal)
+                (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line
+                                    :background (solarized-with-color-variables 'light base02)
+                                    :foreground "#657b83" :slant 'normal)
+                (set-face-attribute 'org-block-background nil
+                                    :background (solarized-with-color-variables
+                                                  'light
+                                                  (solarized-color-blend base02 base03 0.3)))
                 (when (boundp 'hl-sentence-mode)
-                  (set-face-attribute 'hl-sentence-face nil :background (solarized-with-color-variables
-                                                                          'light
-                                                                          (solarized-color-blend base02 base03 0.6))))
+                  (set-face-attribute 'hl-sentence-face nil
+                                      :background (solarized-with-color-variables
+                                                    'light
+                                                    (solarized-color-blend base02 base03 0.6))))
                 (when (boundp 'which-func-mode)
                   (set-face-attribute 'which-func nil :foreground "#DEB542"))
 
@@ -6247,13 +6259,16 @@ The result looks like this:
                     (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
                     (set-face-attribute 'flycheck-warning nil :underline "#b58900")
                     (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
-                    (set-face-attribute 'flycheck-fringe-error   nil :background (solarized-with-color-variables 'light base03) :foreground "#dc322f" :weight 'bold)
-                    (set-face-attribute 'flycheck-fringe-warning nil :background (solarized-with-color-variables 'light base03) :foreground "#DEB542" :weight 'bold)
-                    (set-face-attribute 'flycheck-fringe-info    nil :background (solarized-with-color-variables 'light base03) :foreground "#69B7F0" :weight 'bold)
-                    ))
-
-                (set-face-attribute 'highlight-indent-guides-even-face nil :background (solarized-with-color-variables 'light base02))
-                (set-face-attribute 'highlight-indent-guides-odd-face  nil :background (solarized-with-color-variables 'light base02)))
+                    (set-face-attribute 'flycheck-fringe-error   nil
+                                        :background (solarized-with-color-variables 'light base03)
+                                        :foreground "#dc322f" :weight 'bold)
+                    (set-face-attribute 'flycheck-fringe-warning nil
+                                        :background (solarized-with-color-variables 'light base03)
+                                        :foreground "#DEB542" :weight 'bold)
+                    (set-face-attribute 'flycheck-fringe-info    nil
+                                        :background (solarized-with-color-variables 'light base03)
+                                        :foreground "#69B7F0" :weight 'bold)
+                    )))
               )))
 
 (when (string-equal malb/theme "dichromacy")
