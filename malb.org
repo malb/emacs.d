@@ -4107,13 +4107,6 @@ Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparent
 (use-package visual-fill-column
   :ensure t
   :defer t
-  :init (progn
-          (dolist (hook '(org-mode-hook
-                          markdown-mode-hook
-                          mu4e-view-mode-hook
-                          rst-mode-hook
-                          LaTeX-mode-hook))
-            (add-hook hook #'visual-fill-column-mode)))
   :config (progn
             (setq-default visual-fill-column-center-text t
                           visual-fill-column-fringes-outside-margins nil)
