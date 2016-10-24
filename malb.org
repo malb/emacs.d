@@ -5636,8 +5636,10 @@ directory to make multiple eshell windows easier."
               (delete-window)
               (eshell/exit))
 
-            (defalias 'eshell/e 'find-file-other-window)
-            (defalias 'eshell/d 'dired)
+            (defalias 'eshell/e     'find-file)
+            (defalias 'eshell/d     'dired)
+            (defalias 'eshell/emacs 'find-file)
+            (defalias 'eshell/less  'view-file)
 
             (defun malb/config-eshell-completion ()
               (setq pcomplete-cycle-completions t))
