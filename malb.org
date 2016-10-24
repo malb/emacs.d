@@ -858,7 +858,7 @@ This function then hopefully does what I want:
      ((bound-and-true-p origami-mode)
       (origami-toggle-node (current-buffer) (point)))
      ((bound-and-true-p outline-minor-mode)
-      (outline-cycle))))
+      (save-excursion (outline-cycle)))))
 
    ;; by default just call whatever was bound
    (t
