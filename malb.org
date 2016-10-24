@@ -1738,13 +1738,6 @@ Handle [[https://github.com/sigma/magit-gh-pulls][pull requests]] from magit
   :config (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
 #+END_SRC
 
-Create repositories etc.
-
-#+BEGIN_SRC emacs-lisp
-(use-package magithub
-  :ensure t)
-#+END_SRC
-
 ** Org Links for Magit Buffers
 
 [[https://github.com/magit/orgit][orgit]]
