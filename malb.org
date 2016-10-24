@@ -475,11 +475,11 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
   "
-^Misc^        ^Split^         ^Buffer^         ^Resize^           ^Eyebrowse^      ^Center^   ^Registers^
+^Misc^        ^Split^         ^Buffer^         ^Resize^           ^Eyebrowse^      ^Center^   ^Other^
 ^----^--------^-----^---------^------^---------^------^-----------^---------^------^------^---^------------^
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←             _[_ \\/ new      _C_enter   _W_ store cfg
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓             _;_ \\/ ←         _,_ C←    _J_ load cfg
-_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑             _'_ \\/ →         _._ C→
+_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑             _'_ \\/ →         _._ C→    _I_ imenu list
 _→_ →         _Z_ reset       _t_oggle buf     _r_ X→             _]_ \\/ close
 _T_oggle ded  _d_lt this      _a_ce 1       max_i_mize            _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
@@ -496,6 +496,7 @@ _j_ump        _o_nly this     _S_ave
   ("r" enlarge-window-horizontally)
   ("g" golden-ratio-mode)
   ("H" malb/helm-omni :color blue)
+  ("I" imenu-list-minor-mode :color blue)
   ("1" previous-buffer)
   ("2" next-buffer)
   ("p" previous-buffer)
