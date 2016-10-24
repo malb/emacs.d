@@ -1022,7 +1022,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (helm-flx-mode +1)))
 #+END_SRC
 
-** Helm-ring
+** Helm Ring
 
 =helm-ring= makes the kill ring actually useful, let’s use it.
 
