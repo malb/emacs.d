@@ -5048,7 +5048,7 @@ View emails with width restriction (110 so that HTML crap doesn’t break too ea
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
-  (set-fill-column 110)
+  (set-fill-column 80)
   (visual-line-mode)
   (visual-fill-column-mode))
 
