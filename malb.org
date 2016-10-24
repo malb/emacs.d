@@ -1781,6 +1781,7 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
   :diminish git-gutter-mode
   :config (progn
             (global-git-gutter-mode +1)
+            (setq git-gutter:disabled-modes '(org-mode))
             (add-hook 'focus-in-hook 'git-gutter:update-all-windows)))
 #+END_SRC
 
