@@ -4809,7 +4809,7 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=.
                   bibtex-completion-notes-path malb/literature-notes-file
                   helm-bibtex-full-frame nil
                   bibtex-completion-notes-template-one-file
-                  "** ${title} :${=key=}:\n:PROPERTIES:\n:CUSTOM_ID: ${=key=}\n:END:\n\n")
+                  "** ${title} cite:${=key=}\n:PROPERTIES:\n:CUSTOM_ID: ${=key=}\n:END:\n\nfullcite:${=key=}\n\n")
 
             (defun bibtex-completion-find-pdf-in-library (key-or-entry)
               "Searches the directories in `helm-bibtex-library-path' for a
