@@ -3,7 +3,7 @@
 #+TYP_TODO: TRY(y) TEST(t) IMPLEMENT(i) TODO(o) | DONE(d)
 #+TODO: | DISABLED(d)
 
-* Assumptions
+* Assumptions & Init
 
 We assume that the following variables are defined:
 
@@ -23,6 +23,14 @@ We assume that the following variables are defined:
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/sage-executable~ - full path of Sage executable
 - ~malb/mu4e-name-replacements~ - email name replacements
+
+We collect our own customisations in the =malb= group.
+
+#+BEGIN_SRC emacs-lisp
+(defgroup malb nil
+  "malb's personal config"
+  :group 'convenience)
+#+END_SRC
 
 * TLS
 
@@ -5127,21 +5135,28 @@ View emails with width restriction (110 so that HTML crap doesn’t break too ea
 
 - My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
 - Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
+- Some people like to send incomplete data, so we maintain a local replacement list
+
+#+BEGIN_SRC emacs-lisp
+(defcustom malb-mu4e-name-replacements nil
+  "replacement names from e-mail addresses"
+  :type '(alist :key-type string :value-type string)
+  :group 'malb)
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/canonicalise-contact-name (name)
-  (let ((case-fold-search nil))
-    (setq name (or name ""))
-    (if (string-match-p "^[^ ]+@[^ ]+\.[^ ]" name)
-        ""
+  (let* ((case-fold-search nil)
+         (name (or name ""))
+         (email (replace-regexp-in-string "^.* <?\\([^ ]+@[^ ]+\.[^ >]+\\)>?" "\\1" name))
+         ;; look up email address and use entry if found
+         (candidate (cdr (assoc email malb-mu4e-name-replacements))))
+    (if candidate candidate
       (progn
         (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop email address
         (setq name (replace-regexp-in-string "^\"\\(.*\\)\"" "\\1" name)) ;; strip quotes
         (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
-        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)) ;; Foo, Bar becomes Bar Foo
-        (setq name (or (cdr (assoc name malb/mu4e-name-replacements)) name)) ;; look up names and replace
-        ))))
-
+        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)))))) ;; Foo, Bar becomes Bar Foo
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -5179,8 +5194,7 @@ Useful in email templates
         (setq name (malb/canonicalise-contact-name name))
         (if (string-match "\\([^ ,]+\\)" name)
             (progn
-              (setq name (match-string 1 name))
-              (setq name (capitalize name))
+              (setq name (capitalize (replace-regexp-in-string "~" " " (match-string 1 name))))
               (if ret
                   (setq ret (concat ret ", " name))
                 (setq ret name)))))
@@ -5190,6 +5204,24 @@ Useful in email templates
   (interactive)
   (malb/yas-get-names-from-fields '("To")))
 #+END_SRC
+
+We also add a convenient function to add new replacements.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/add-mu4e-name-replacement ()
+  (interactive)
+  (let* ((email (helm-read-string "Email: " (get-text-property (point) 'email)))
+         (name  (helm-read-string "Name: "
+                                  (malb/canonicalise-contact-name
+                                   (get-text-property (point) 'long)))))
+    (add-to-list 'malb-mu4e-name-replacements (cons email name) t)
+    (customize-save-variable 'malb-mu4e-name-replacements malb-mu4e-name-replacements)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map)
+#+END_SRC
+
 
 Ignore some email addresses when auto completing:
 
