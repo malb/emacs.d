@@ -794,8 +794,7 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
   :ensure t
   :config (progn
             (setq company-shell-modes '(sh-mode shell-mode))
-            (add-to-list 'company-backends 'company-shell)
-            ))
+            (add-to-list 'company-backends 'company-shell)))
 #+END_SRC
 
 ** YaSnippet
