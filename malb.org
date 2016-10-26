@@ -2158,6 +2158,7 @@ Allow refile to create parent tasks with confirmation
 
 (add-hook 'org-mode-hook #'malb/org-ispell)
 (add-hook 'org-mode-hook #'flyspell-mode)
+(add-hook 'org-mode-hook #'malb/company-ispell-setup) ;; complete from ispell dict
 #+END_SRC
 
 ** Diminish Minor Modes
@@ -4427,7 +4428,8 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
 
             (bind-key "M-." #'markdown-jump markdown-mode-map)
             (bind-key "C-c C-e o" #'malb/markdown-preview-buffer markdown-mode-map) ;; inspired by org-mode-export
-            (add-hook 'markdown-mode-hook #'flyspell-mode)))
+            (add-hook 'markdown-mode-hook #'flyspell-mode)
+            (add-hook 'markdown-mode-hook #'malb/company-ispell-setup)))
 #+END_SRC
 
 *** Pandoc
@@ -4985,6 +4987,7 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'turn-on-orgtbl)
 (add-hook 'message-mode-hook #'typo-mode)
 (add-hook 'message-mode-hook #'adict-guess-dictionary)
+(add-hook 'message-mode-hook #'malb/company-ispell-setup)
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
 #+END_SRC
 
