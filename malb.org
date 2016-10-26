@@ -2748,6 +2748,17 @@ Activate eldoc and show footnotes in minibuffer.
             :before-until #'malb/org-eldoc-get-footnote)
 #+END_SRC
 
+** Footnotes
+
+([[https://emacs.stackexchange.com/questions/19282/how-to-disable-plain-footnote-references][source]])
+
+#+BEGIN_SRC emacs-lisp
+(setq org-footnote-definition-re "^\\[fn:[-_[:word:]]+\\]"
+      org-footnote-re            (concat "\\[\\(?:fn:\\([-_[:word:]]+\\)?:"
+                                         "\\|"
+                                         "\\(fn:[-_[:word:]]+\\)\\)"))
+#+END_SRC
+
 ** Functions
 
 ([[http://emacs.stackexchange.com/a/10712/115][source]])
