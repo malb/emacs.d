@@ -819,6 +819,35 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
       (mapcar #'malb/company-mode/backend-with-yas company-backends))
 #+END_SRC
 
+** All the words
+
+([[https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-company.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/toggle-company-ispell ()
+  (interactive)
+  (cond
+   ((member '(company-ispell :with company-yasnippet) company-backends)
+    (setq company-backends (delete '(company-ispell :with company-yasnippet) company-backends))
+    (add-to-list 'company-backends '(company-dabbrev :with company-yasnippet) t)
+    (message "company-ispell disabled"))
+   (t
+    (setq company-backends (delete '(company-dabbrev :with company-yasnippet) company-backends))
+    (add-to-list 'company-backends '(company-ispell :with company-yasnippet) t)
+    (message "company-ispell enabled!"))))
+
+(defun malb/company-ispell-setup ()
+  ;; @see https://github.com/company-mode/company-mode/issues/50
+  (when (boundp 'company-backends)
+    (make-local-variable 'company-backends)
+    (setq company-backends (delete '(company-dabbrev :with company-yasnippet) company-backends))
+    (add-to-list 'company-backends '(company-ispell :with company-yasnippet) t)
+    ;; https://github.com/redguardtoo/emacs.d/issues/473
+    (if (and (boundp 'ispell-alternate-dictionary)
+             ispell-alternate-dictionary)
+        (setq company-ispell-dictionary ispell-alternate-dictionary))))
+#+END_SRC
+
 ** Tab DWIM
 
 =yas-expand= is run first and does what it has to, then it calls =malb/indent-or-complete=.
