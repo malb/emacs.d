@@ -1905,29 +1905,30 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Options
 
 #+BEGIN_SRC emacs-lisp
-(setq org-enforce-todo-dependencies t          ; enforce todo dependencies
+(setq org-enforce-todo-dependencies t   ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
       org-catch-invisible-edits 'show
-      org-adapt-indentation nil                ; Non-nil means adapt indentation to outline node level.
+      org-adapt-indentation nil         ; Non-nil means adapt indentation to outline node level.
       org-tags-column -110
       org-startup-folded 'fold
       org-log-into-drawer t
       org-log-done t
-      org-return-follows-link nil              ; don’t follow links by pressing ENTER
+      org-return-follows-link nil       ; don’t follow links by pressing ENTER
       org-clock-persist 'history
-      org-special-ctrl-a/e t                   ; begin/end of line to skip starts …
-      org-special-ctrl-k t                     ; special keys for killing a headline
-      org-edit-src-content-indentation 0       ; don't indent source code
-      org-src-preserve-indentation t           ; preserve indentation in code
-      org-src-window-setup 'current-window     ; when hitting C-c '
+      org-special-ctrl-a/e t               ; begin/end of line to skip starts …
+      org-special-ctrl-k t                 ; special keys for killing a headline
+      org-edit-src-content-indentation 0   ; don't indent source code
+      org-src-preserve-indentation t       ; preserve indentation in code
+      org-src-window-setup 'current-window ; when hitting C-c '
       org-reverse-note-order t
-      org-footnote-auto-adjust t               ; renumber footnotes automagically
-      org-confirm-elisp-link-function nil      ;
-      org-startup-with-inline-images t         ; show images when opening a file.
+      org-footnote-auto-adjust t          ; renumber footnotes automagically
+      org-confirm-elisp-link-function nil ;
+      org-startup-with-inline-images t    ; show images when opening a file.
       org-hidden-keywords nil
       org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
-      )
+      org-goto-interface 'org-outline-path-complete
+      org-outline-path-complete-in-steps nil)
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
