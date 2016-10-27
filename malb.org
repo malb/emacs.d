@@ -2298,12 +2298,6 @@ iCal export is triggered after 600 seconds of inactivity.
 (add-hook 'after-save-hook 'malb/ox-export-after-save-hook)
 #+END_SRC
 
-*** Markdown
-
-#+BEGIN_SRC emacs-lisp
-(use-package ox-md)
-#+END_SRC
-
 *** LaTeX
 
 - Use [[http://www.xelatex.org][XeLaTeX]] because UTF-8 and fonts.
