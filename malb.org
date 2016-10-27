@@ -2424,8 +2424,6 @@ iCal export is triggered after 600 seconds of inactivity.
                                                    "[EXTRA]\n")))))))
 #+END_SRC
 
-**** TODO using latexmk (like this) means we get less feedback than we’d like
-
 *** Beamer
 
 - _underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starter-kit/starter-kit-org.html][source]])
