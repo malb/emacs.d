@@ -2286,8 +2286,7 @@ iCal export is triggered after 600 seconds of inactivity.
          (* 1 secs) nil (lambda ()
                           ;; async, check org-export-init.el
                           (org-icalendar-combine-agenda-files t)
-                          (org-agenda-redo)
-                          ))))
+                          (org-agenda-redo)))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -5223,7 +5222,6 @@ We also add a convenient function to add new replacements.
 (bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map)
 #+END_SRC
 
-
 Ignore some email addresses when auto completing:
 
 #+BEGIN_SRC emacs-lisp
@@ -5272,8 +5270,7 @@ I patched mu4e to be way less clever about window management after sending an em
     ;; all buffer-local;
     ;; (push 'delete-frame message-exit-actions)
     ;; (push 'delete-frame message-postpone-actions)
-    )
-)
+    ))
 #+END_SRC
 
 and my =mu4e-message-kill-buffer= looks like this:
