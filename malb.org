@@ -2302,7 +2302,8 @@ iCal export is triggered after 600 seconds of inactivity.
 
 - Use [[http://www.xelatex.org][XeLaTeX]] because UTF-8 and fonts.
 - Drop =\usepackage[T1]{fontenc}= because XeLaTeX doesn’t need and like it it.
-- We add [[https://www.ctan.org/pkg/tufte-latex?lang=en][tufte-handout]] as a class for our … handouts.
+- Add some standard (to us) packages
+- Handouts are done via [[https://www.ctan.org/pkg/tufte-latex?lang=en][tufte-handout]], letters via =ox-koma-letter=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-latex
