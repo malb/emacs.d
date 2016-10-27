@@ -5779,17 +5779,6 @@ deactivate Client
 (use-package calfw-org)
 #+END_SRC
 
-* SX
-
-[[https://github.com/vermiculus/sx.el/][Stack Exchange for Emacs]]
-
-[[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png]] ([[https://github.com/vermiculus/sx.el/raw/master/list-and-question.png][source]])
-
-#+BEGIN_SRC emacs-lisp
-  (use-package sx
-    :ensure t)
-#+END_SRC
-
 * Transfer.sh
 
 [[https://github.com/Brillow/transfer-sh.el][transfer.sh]] for interfacing with https://transfer.sh.
