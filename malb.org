@@ -2507,8 +2507,8 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 (use-package ox-pandoc
   :ensure t
   :init (progn
-          (setq org-pandoc-menu-entry  '( (103 "to markdown_github and open." org-pandoc-export-to-markdown_github-and-open)
-                                          (71 "as markdown_github." org-pandoc-export-as-markdown_github)
+          (setq org-pandoc-menu-entry  '( (103 "to md_github and open." org-pandoc-export-to-markdown_github-and-open)
+                                          (71 "as md_github." org-pandoc-export-as-markdown_github)
                                           (120 "to docx and open." org-pandoc-export-to-docx-and-open)
                                           (88 "to docx." org-pandoc-export-to-docx)
                                           (51 "to epub and open." org-pandoc-export-to-epub-and-open)
