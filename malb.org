@@ -2476,36 +2476,6 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 
 **** TODO org-odt-style-file doesn’t seem to take
 
-*** JSON
-
-([[https://github.com/mattduck/org-toggl-py/blob/master/org-export-json.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/org-json-export-as-json ()
-  (interactive)
-  (let* ((tree
-          (save-restriction
-            (org-narrow-to-subtree)
-            (org-element-parse-buffer 'object nil))))
-    (org-element-map tree (append org-element-all-elements
-                                  org-element-all-objects '(plain-text))
-      (lambda (x)
-        (if (org-element-property :parent x)
-            (org-element-put-property x :parent nil))
-        (if (org-element-property :structure x)
-            (org-element-put-property x :structure nil))
-        ))
-    (save-excursion
-      (generate-new-buffer "*org-json*")
-      (switch-to-buffer-other-window "*org-json*")
-      (json-mode)
-      (insert (json-encode tree))
-      (json-mode-beautify))
-    ))
-#+END_SRC
-
-**** TODO the output of =malb/org-json-export-as-json= is way too messy
-
 *** Reveal.js
 
 [[https://github.com/yjwen/org-reveal][ox-reveal]] — Presentations using [[http://lab.hakim.se/reveal-js/][reveal.js]].
