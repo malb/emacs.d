@@ -6490,7 +6490,8 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
                   minimap-highlight-line nil
                   minimap-window-location 'right)
 
-            (set-face-attribute 'minimap-font-face nil :height 0.125)))
+            (set-face-attribute 'minimap-active-region-background nil :background nil)
+            (set-face-attribute 'minimap-font-face nil :height 0.2)))
 #+END_SRC
 
 ** Vim-like Empty Line Indicator
