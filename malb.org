@@ -3846,10 +3846,10 @@ On our system port 8888 is already taken.
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
-  :disabled t
   :config (progn
             (setq ein:use-auto-complete t
                   ein:default-url-or-port 8889)
+            (bind-key "C-<return>" #'ein:worksheet-execute-cell-and-goto-next ein:notebook-mode-map)
             (add-hook 'ein:notebook-multilang-mode-hook #'auto-complete-mode)
             (when (boundp 'company-global-modes)
               (add-to-list 'company-global-modes 'ein:notebook-multilang-mode t)
