@@ -5840,7 +5840,16 @@ exports.boxes = [ "INBOX"];
             :command "jekyll"
             :args '("serve" "-P" "4002")
             :url "http://127.0.0.1:4002/discrete-subgroup/"
-            :tags '(web))))
+            :tags '(web))
+
+          (prodigy-define-service
+            :name "fpylll"
+            :cwd (expand-file-name "lattices/fpylll" malb/projects-dir)
+            :command "/home/malb/Scripts/fpylll-jupyter.sh"
+            :port 8889
+            :stop-signal 'sigkill
+            :kill-process-buffer-on-stop t
+            :tags '(development))))
 #+END_SRC
 
 * Page Breaks
