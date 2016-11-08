@@ -1501,7 +1501,9 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
          ("C-S-r" . vr/isearch-backward)))
 #+END_SRC
 
-** [[https://github.com/magnars/multiple-cursors.el][Multiple cursors]]
+** Multiple cursors
+
+[[https://github.com/magnars/multiple-cursors.el][Multiple cursors]] are awesome.
 
 [[http://i0.wp.com/pragmaticemacs.com/wp-content/uploads/2015/06/wpid-emacs-mc2.gif]] ([[http://i0.wp.com/pragmaticemacs.com/wp-content/uploads/2015/06/wpid-emacs-mc2.gif?zoom=2&w=620][source]])
 
