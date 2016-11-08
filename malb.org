@@ -2751,6 +2751,20 @@ Activate eldoc and show footnotes in minibuffer.
       org-footnote-re "\\[\\(?:fn:\\([-_[:word:]]+\\)?:\\|\\(fn:[-_[:word:]]+\\)\\)")
 #+END_SRC
 
+** Inline Tasks
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-inlinetask
+  :config (progn
+            (defun malb/org-latex-format-inlinetask-function
+                (todo todo-type priority title tags contents info)
+              "format function for a inlinetasks.
+See `org-latex-format-inlinetask-function' for details."
+              (concat "\\todo[inline]{\\textbf{" todo "}: " title "}\n"))
+            (setq org-latex-format-inlinetask-function #'malb/org-latex-format-inlinetask-function)
+            (setq org-inlinetask-min-level 6)))
+#+END_SRC
+
 ** Functions
 
 ([[http://emacs.stackexchange.com/a/10712/115][source]])
