@@ -1327,9 +1327,13 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                      :unless '(sp-point-before-word-p sp-point-before-same-p))
 
             (sp-pair "'"  nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
-            (sp-local-pair '(sh-mode markdown-mode) "`" nil :unless '(sp-point-before-word-p
-                                                                      sp-point-after-word-p
-                                                                      sp-point-before-same-p))
+            (sp-local-pair '(sh-mode
+                             markdown-mode
+                             python-mode
+                             cython-mode)
+                           "`" nil :unless '(sp-point-before-word-p
+                                             sp-point-after-word-p
+                                             sp-point-before-same-p))
 
             ;; https://github.com/Fuco1/smartparens/issues/652#issuecomment-250518705
             (defun malb/latex-replace-dollar (_id action _context)
