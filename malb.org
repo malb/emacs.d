@@ -2322,11 +2322,11 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("" "nicefrac"))
             (add-to-list 'org-latex-packages-alist '("" "units"))
             (add-to-list 'org-latex-packages-alist '("" "xspace"))
-            (add-to-list 'org-latex-packages-alist '("notions,operators,sets,keys,ff,adversary,primitives,complexity,asymptotics,lambda" "cryptocode"))
+            (add-to-list 'org-latex-packages-alist '("notions,operators,sets,keys,ff,adversary,primitives,complexity,asymptotics,lambda,landau" "cryptocode"))
             (add-to-list 'org-latex-packages-alist '("" "unicodesymbols"))
             (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
             (add-to-list 'org-latex-packages-alist '("" "microtype"))
-            (add-to-list 'org-latex-packages-alist '("color=FFDD00" "todonotes"))
+            (add-to-list 'org-latex-packages-alist '("color=yellow!40" "todonotes") t)
 
             (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf %f")
                   org-latex-prefer-user-labels t
@@ -2360,6 +2360,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                        "\\newtheorem{theorem}{Theorem}\n"
                                        "\\newtheorem{definition}{Definition}\n"
                                        "\\newtheorem{remark}{Remark}\n"
+                                       "\\newtheorem{corollary}{Corollary}\n"
                                        "[EXTRA]\n")
                                '("\\section{%s}" . "\\section*{%s}")
                                '("\\subsection{%s}" . "\\subsection*{%s}")
@@ -2388,6 +2389,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                        "\\newtheorem{theorem}{Theorem}\n"
                                        "\\newtheorem{definition}{Definition}\n"
                                        "\\newtheorem{remark}{Remark}\n"
+                                       "\\newtheorem{corollary}{Corollary}\n"
                                        "[EXTRA]\n"
                                        )
                                '("\\chapter{%s}" . "\\chapter*{%s}")
@@ -2417,6 +2419,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                        "\\newtheorem{theorem}{Theorem}\n"
                                        "\\newtheorem{definition}{Definition}\n"
                                        "\\newtheorem{remark}{Remark}\n"
+                                       "\\newtheorem{corollary}{Corollary}\n"
                                        "[EXTRA]\n")
                                '("\\section{%s}" . "\\section*{%s}")
                                '("\\subsection{%s}" . "\\subsection*{%s}")
