@@ -5882,6 +5882,15 @@ exports.boxes = [ "INBOX"];
             :port 8889
             :stop-signal 'sigkill
             :kill-process-buffer-on-stop t
+            :tags '(development))
+
+          (prodigy-define-service
+            :name "sage-devel"
+            :cwd (expand-file-name "sage/notebooks" malb/projects-dir)
+            :command "/home/malb/Scripts/sage-jupyter.sh"
+            :port 8890
+            :stop-signal 'sigkill
+            :kill-process-buffer-on-stop t
             :tags '(development))))
 #+END_SRC
 
