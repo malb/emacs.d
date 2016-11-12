@@ -1123,6 +1123,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                 helm-ag-command-option "--all-text"
                 helm-ag-insert-at-point 'symbol
                 helm-ag-fuzzy-match t
+                helm-ag-use-temp-buffer t
                 helm-ag-use-grep-ignore-list t
                 helm-ag-use-agignore t))
 #+END_SRC
