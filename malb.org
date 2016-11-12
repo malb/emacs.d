@@ -2747,8 +2747,12 @@ Activate eldoc and show footnotes in minibuffer.
 ([[https://emacs.stackexchange.com/questions/19282/how-to-disable-plain-footnote-references][source]])
 
 #+BEGIN_SRC emacs-lisp
-(setq org-footnote-definition-re "^\\[\\([0-9]+\\|fn:[-_[:word:]]+\\)\\]"
-      org-footnote-re "\\[\\(?:fn:\\([-_[:word:]]+\\)?:\\|\\(fn:[-_[:word:]]+\\)\\)")
+(setq org-footnote-definition-re (org-re "^\\[\\(fn:[-_[:word:]]+\\)\\]")
+      org-footnote-re (concat "\\[\\(?:"
+                              ;; Match inline footnotes.
+                              (org-re "fn:\\([-_[:word:]]+\\)?:\\|")
+                              (org-re "\\(fn:[-_[:word:]]+\\)")
+                              "\\)"))
 #+END_SRC
 
 ** Inline Tasks
