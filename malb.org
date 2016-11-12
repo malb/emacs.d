@@ -2649,10 +2649,10 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      "* Meeting with %^{who}\n%U\n\n%i%?\n\n"
                      :clock-in t :clock-resume t)
 
-                    ("P" "Protocol" entry (file+headline malb/inbox-org "Links")
+                    ("L" "link with selection" entry (file+headline malb/inbox-org "Links")
                      "* %^{Title}\nSource: %u, %c\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
 
-                    ("L" "Protocol Link" entry (file+headline malb/inbox-org "Links")
+                    ("l" "link" entry (file+headline malb/inbox-org "Links")
                      "* %? [[%:link][%:description]]\nCaptured On: %U")))
 
             (setq org-capture-templates-contexts
