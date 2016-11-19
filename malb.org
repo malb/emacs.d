@@ -2654,7 +2654,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      "* %^{Title}\nSource: %u, %c\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
 
                     ("l" "link" entry (file+headline malb/inbox-org "Links")
-                     "* %? [[%:link][%:description]]\nCaptured On: %U")))
+                     "* %? [[%:link][%:description]]\nCaptured On: %U\n\n")))
 
             (setq org-capture-templates-contexts
                   '(("r" ((in-mode . "mu4e-view-mode")))
