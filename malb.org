@@ -12,7 +12,6 @@ We assume that the following variables are defined:
 - ~malb/literature-notes-dir~ - notes on papers
 - ~malb/documents-dir~ - documents
 - ~malb/sync-dir~ - documents that are syncronised
-- ~malb/solarized-p~ - do we want solarized?
 - ~malb/paradox-github-token~ - github login
 - ~malb/org-files-dir~ - org files go here
 - ~malb/org-mode-ics~ - icalendar file
@@ -22,6 +21,7 @@ We assume that the following variables are defined:
 - ~malb/common-file-targets~ - for helm
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/sage-executable~ - full path of Sage executable
+- ~malb/theme~ - theme choice
 - ~malb/mu4e-name-replacements~ - email name replacements
 
 We collect our own customisations in the =malb= group.
