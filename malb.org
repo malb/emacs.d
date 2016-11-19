@@ -3890,10 +3890,12 @@ On our system port 8888 is already taken.
   :ensure t
   :config (progn
             (setq ein:use-auto-complete t
-                  ein:default-url-or-port 8889)
+                  ein:url-or-port '(8889 8890)
+                  ein:default-url-or-port 8890)
             (add-hook 'ein:notebook-multilang-mode-hook #'auto-complete-mode)
             (require 'ein-notebook)
-            (bind-key "C-<return>" #'ein:worksheet-execute-cell-and-goto-next ein:notebook-mode-map)
+            (bind-key "S-<return>" #'ein:worksheet-execute-cell-and-goto-next ein:notebook-mode-map)
+            (bind-key "C-<return>" #'ein:worksheet-execute-cell ein:notebook-mode-map)
             (when (boundp 'company-global-modes)
               (add-to-list 'company-global-modes 'ein:notebook-multilang-mode t)
               (add-to-list 'company-global-modes 'ein:notebook-python-mode t))))
