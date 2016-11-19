@@ -6351,6 +6351,7 @@ The result looks like this:
                                     :background (solarized-with-color-variables
                                                   'light
                                                   (solarized-color-blend base02 base03 0.3)))
+
                 (when (boundp 'hl-sentence-mode)
                   (set-face-attribute 'hl-sentence-face nil
                                       :background (solarized-with-color-variables
@@ -6374,35 +6375,17 @@ The result looks like this:
                     (set-face-attribute 'flycheck-fringe-info    nil
                                         :background (solarized-with-color-variables 'light base03)
                                         :foreground "#69B7F0" :weight 'bold)
-                    )))
-              )))
+                    ))
 
-(when (string-equal malb/theme "dichromacy")
-  (progn
-    (defun malb/load-main-theme ()
-      (load-theme 'dichromacy t)
-
-      ;; steal org style from Leuven
-      (set-face-attribute 'org-checkbox nil :weight 'bold :box '(:line-width 1 :style 'pressed-button) :foreground "white" :background "light gray")
-      (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB") :foreground "#8BB300" :background "#F0F0F0")
-      (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
-      (set-face-attribute 'org-tag nil :weight 'normal :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
-      (set-face-attribute 'org-todo nil :weight 'bold :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16" :background "#FFE6E4")
-      (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-      (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line :background "#eee8d5" :foreground "#657b83" :slant 'normal)
-      (set-face-attribute 'org-block-background nil :background "#F4F4F4")
-      (set-face-attribute 'org-table nil :foreground "#d55e00")
-
-      ;; steal spacemacs flycheck style
-      (eval-after-load "fylcheck"
-        (progn
-          (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
-          (set-face-attribute 'flycheck-warning nil :underline "#b58900")
-          (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
-          (set-face-attribute 'flycheck-fringe-error   nil :background "white" :foreground "#dc322f" :weight 'bold)
-          (set-face-attribute 'flycheck-fringe-warning nil :background "white" :foreground "#DEB542" :weight 'bold)
-          (set-face-attribute 'flycheck-fringe-info    nil :background "white" :foreground "#69B7F0" :weight 'bold)))
-      )))
+                (eval-after-load "ein-cell"
+                  (progn
+                    (set-face-attribute 'ein:cell-input-area   nil :background (solarized-with-color-variables
+                                                                                 'light
+                                                                                 (solarized-color-blend base02 base03 0.5)))
+                    (set-face-attribute 'ein:cell-input-prompt nil
+                                        :background nil
+                                        :foreground "#657b83" :weight 'bold) ))
+                ))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -6412,10 +6395,14 @@ The result looks like this:
         ("ONHOLD"    :foreground "gray" :weight bold)
         ("STALLED"   :foreground "gray" :weight bold)
         ("SUBMITTED" :foreground "gray" :weight bold)
-        ("DELEGATED" :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-        ("WAITING"   :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-        ("COAUTHOR"  :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-        ("NATIVE"    :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+        ("DELEGATED" :foreground "dark orange"
+         :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+        ("WAITING"   :foreground "dark orange"
+         :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+        ("COAUTHOR"  :foreground "dark orange"
+         :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+        ("NATIVE"    :foreground "dark orange"
+         :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
         ))
 #+END_SRC
 
