@@ -2631,17 +2631,24 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ;;  :immediate-finish t
                     ;;  :prepend t)
 
-                    ("r" "respond ro email (mu4e)"
+                    ("r" "respond ro email"
                      entry (file+headline malb/inbox-org "Email")
                      "* REPLY to %:fromname on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
                      :immediate-finish t
                      :prepend t)
 
-                    ("f" "file email (mu4e)"
+                    ("F" "file email search"
                      entry (file+headline malb/inbox-org "Email")
-                     "* %a by %:fromname)\n%U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
+                     "* %a\n\n"
                      :immediate-finish nil
                      :prepend nil)
+
+                    ("f" "file email"
+                     entry (file+headline malb/inbox-org "Email")
+                     "* %a by %:fromname\n%U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
+                     :immediate-finish nil
+                     :prepend nil)
+
 
                     ("j" "journal entry"
                      entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
@@ -2658,7 +2665,8 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
             (setq org-capture-templates-contexts
                   '(("r" ((in-mode . "mu4e-view-mode")))
-                    ("f" ((in-mode . "mu4e-view-mode")))))))
+                    ("f" ((in-mode . "mu4e-view-mode")))
+                    ("F" ((in-mode . "mu4e-headers-mode")))))))
 #+END_SRC
 
 ** Org EWW
