@@ -6219,54 +6219,6 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
          ("\\.a\\'"   . elf-mode)))
 #+END_SRC
 
-* Key Bindings
-
-#+BEGIN_SRC emacs-lisp
-(malb/set-menu-key "<f2>" #'malb/hydra-window/body)
-(malb/set-menu-key "a" #'helm-imenu-anywhere)
-(malb/set-menu-key "b" #'malb/helm-omni)
-(malb/set-menu-key "c" #'helm-calcul-expression)
-(malb/set-menu-key "C" #'mu4e-compose-new)
-(malb/set-menu-key "e" #'malb/eshell-here)
-(malb/set-menu-key "f" #'helm-find-files)
-(malb/set-menu-key "i" #'helm-semantic-or-imenu)
-(malb/set-menu-key "j" #'avy-goto-word-1)
-(malb/set-menu-key "k" #'helm-baloo)
-(malb/set-menu-key "l" #'helm-bibtex)
-(malb/set-menu-key "m" #'malb/mail)
-(malb/set-menu-key "n" #'helm-mu)
-(malb/set-menu-key "/" #'malb/helm-ag-projects)
-(malb/set-menu-key "o" #'helm-org-agenda-files-headings)
-(malb/set-menu-key "P" #'prodigy)
-(malb/set-menu-key "p" #'pandoc-main-hydra/body)
-(malb/set-menu-key "s" #'helm-swoop)
-(malb/set-menu-key "w" #'visual-fill-column-mode)
-(malb/set-menu-key "x" #'helm-M-x)
-(malb/set-menu-key "z" #'malb/multi-term-here)
-#+END_SRC
-
-Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "M-j" #'join-line)
-#+END_SRC
-
-=C-z= only annoys me, use =C-x C-z= when you need it
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "C-z" nil)
-#+END_SRC
-
-** Learn key bindings
-
-#+BEGIN_SRC emacs-lisp
-(use-package which-key
-  :ensure t
-  :diminish which-key-mode
-  :config (progn
-            (which-key-mode 1)))
-#+END_SRC
-
 * Theme & Look
 ** Frame Title
 
@@ -6672,6 +6624,165 @@ Easily change the text size:
   (interactive)
   (helm :sources helm-source-baloo
         :buffer "*helm baloo*"))
+#+END_SRC
+
+* AWS Polly
+
+#+BEGIN_SRC emacs-lisp
+(defgroup aws-polly nil
+  "Run AWS Polly for Text to Speech"
+  :group 'tools)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defcustom aws-polly-voices '(("Brian"  "en-GB")
+                              ("Joanna"  "en-US")
+                              ("Mizuki"  "ja-JP")
+                              ("Filiz"  "tr-TR")
+                              ("Astrid"  "sv-SE")
+                              ("Maxim"  "ru-RU")
+                              ("Tatyana"  "ru-RU")
+                              ("Carmen"  "ro-RO")
+                              ("Ines"  "pt-PT")
+                              ("Cristiano"  "pt-PT")
+                              ("Vitoria"  "pt-BR")
+                              ("Ricardo"  "pt-BR")
+                              ("Maja"  "pl-PL")
+                              ("Jan"  "pl-PL")
+                              ("Ewa"  "pl-PL")
+                              ("Ruben"  "nl-NL")
+                              ("Lotte"  "nl-NL")
+                              ("Liv"  "nb-NO")
+                              ("Giorgio"  "it-IT")
+                              ("Carla"  "it-IT")
+                              ("Karl"  "is-IS")
+                              ("Dora"  "is-IS")
+                              ("Mathieu"  "fr-FR")
+                              ("Celine"  "fr-FR")
+                              ("Chantal"  "fr-CA")
+                              ("Penelope"  "es-US")
+                              ("Miguel"  "es-US")
+                              ("Enrique"  "es-ES")
+                              ("Conchita"  "es-ES")
+                              ("Geraint" en-G "B-WLS")
+                              ("Salli"  "en-US")
+                              ("Kimberly"  "en-US")
+                              ("Kendra"  "en-US")
+                              ("Justin"  "en-US")
+                              ("Joey"  "en-US")
+                              ("Ivy"  "en-US")
+                              ("Raveena"  "en-IN")
+                              ("Emma"  "en-GB")
+                              ("Amy"  "en-GB")
+                              ("Russell"  "en-AU")
+                              ("Nicole"  "en-AU")
+                              ("Marlene"  "de-DE")
+                              ("Hans"  "de-DE")
+                              ("Naja"  "da-DK")
+                              ("Mads"  "da-DK")
+                              ("Gwyneth"  "cy-GB")
+                              ("Jacek"  "pl-PL"))
+  "Voices to use in AWS polly"
+  :group 'aws-polly
+  :type ''(alist :value-type (string string)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defcustom aws-polly-command "aws polly synthesize-speech --output-format mp3 --voice-id %s --text \"%s\" %s"
+  "Command to run AWS polly"
+  :group 'aws-polly
+  :type 'string)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defcustom aws-polly-play-command "mplayer %s"
+  "Command to play mp3"
+  :group 'aws-polly
+  :type 'string)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun aws-polly-select-voice (text)
+  (let ((lang (with-temp-buffer
+                (insert text)
+                (adict-guess-buffer-language)))
+        (voice nil))
+    (dolist (entry aws-polly-voices voice)
+      (if (and (not voice) (string-prefix-p lang (cadr entry)))
+          (setq voice (car entry))))
+    (if voice
+        voice
+      (caar aws-polly-voices))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun aws-polly-region (arg)
+  "Speak region text with AWS polly"
+  (interactive "P")
+  (if (use-region-p)
+      (let* ((text (buffer-substring (region-beginning) (region-end)))
+             (output-filename (make-temp-file "emacs-aws-polly" nil ".mp3"))
+             (voice (if arg (replace-regexp-in-string
+                             " .*$" ""
+                             (completing-read "Voice: "
+                                              (mapcar (lambda (x) (format "%s (%s)" (car x) (cadr x)))
+                                                      aws-polly-voices) nil t))
+                      (aws-polly-select-voice text))))
+        (if (> (length text) 1500)
+            (error "AWS polly will only accept up 1500 characters."))
+        (message "Running AWS Polly")
+        (shell-command (format aws-polly-command voice text output-filename))
+        (start-process-shell-command "aws-polly-play" nil (format aws-polly-play-command output-filename)))
+    (error "No active region")))
+#+END_SRC
+
+* Key Bindings
+
+#+BEGIN_SRC emacs-lisp
+(malb/set-menu-key "<f2>" #'malb/hydra-window/body)
+(malb/set-menu-key "a" #'helm-imenu-anywhere)
+(malb/set-menu-key "A" #'aws-polly-region)
+(malb/set-menu-key "b" #'malb/helm-omni)
+(malb/set-menu-key "c" #'helm-calcul-expression)
+(malb/set-menu-key "C" #'mu4e-compose-new)
+(malb/set-menu-key "e" #'malb/eshell-here)
+(malb/set-menu-key "f" #'helm-find-files)
+(malb/set-menu-key "i" #'helm-semantic-or-imenu)
+(malb/set-menu-key "j" #'avy-goto-word-1)
+(malb/set-menu-key "k" #'helm-baloo)
+(malb/set-menu-key "l" #'helm-bibtex)
+(malb/set-menu-key "m" #'malb/mail)
+(malb/set-menu-key "n" #'helm-mu)
+(malb/set-menu-key "/" #'malb/helm-ag-projects)
+(malb/set-menu-key "o" #'helm-org-agenda-files-headings)
+(malb/set-menu-key "P" #'prodigy)
+(malb/set-menu-key "p" #'pandoc-main-hydra/body)
+(malb/set-menu-key "s" #'helm-swoop)
+(malb/set-menu-key "w" #'visual-fill-column-mode)
+(malb/set-menu-key "x" #'helm-M-x)
+(malb/set-menu-key "z" #'malb/multi-term-here)
+#+END_SRC
+
+Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "M-j" #'join-line)
+#+END_SRC
+
+=C-z= only annoys me, use =C-x C-z= when you need it
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "C-z" nil)
+#+END_SRC
+
+** Learn key bindings
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :config (progn
+            (which-key-mode 1)))
 #+END_SRC
 
 * ToDos
