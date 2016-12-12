@@ -1095,17 +1095,28 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
          ("C-s"   . malb/swoop-or-search)
          ("C-M-s" . helm-multi-swoop-all))
   :config (progn
+
             (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
                   helm-swoop-split-with-multiple-windows nil
                   helm-swoop-split-direction #'split-window-horizontally
                   helm-swoop-split-window-function 'helm-default-display-buffer
                   helm-swoop-speed-or-color t)
+
+            ;; https://emacs.stackexchange.com/questions/28790/helm-swoop-how-to-make-it-behave-more-like-isearch
+            (defun malb/helm-swoop-C-s ()
+              (interactive)
+              (if (boundp 'helm-swoop-pattern)
+                  (if (equal helm-swoop-pattern "")
+                      (previous-history-element 1)
+                    (helm-next-line))
+                (helm-next-line)))
+
             (bind-key "C-S-s" #'helm-swoop-from-isearch isearch-mode-map)
             (bind-key "C-S-s" #'helm-multi-swoop-all-from-helm-swoop helm-swoop-map)
             (bind-key "C-r"   #'helm-previous-line helm-swoop-map)
-            (bind-key "C-s"   #'helm-next-line helm-swoop-map)
+            (bind-key "C-s"   #'malb/helm-swoop-C-s helm-swoop-map)
             (bind-key "C-r"   #'helm-previous-line helm-multi-swoop-map)
-            (bind-key "C-s"   #'helm-next-line helm-multi-swoop-map)))
+            (bind-key "C-s"   #'malb/helm-swoop-C-s helm-multi-swoop-map)))
 #+END_SRC
 
 ** Helm Ag
