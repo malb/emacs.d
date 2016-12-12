@@ -2813,6 +2813,26 @@ Execute this command while the point is on or after the hyper-linked org link."
                             nil start end)))))))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun malb/copy-available-dates ()
+  "copy scheduled dates from headings 'TBD'"
+  (interactive)
+  (save-excursion
+    (let ((r))
+      (while
+          (let ((heading   (org-get-heading))
+                (scheduled (org-entry-get (point) "SCHEDULED" nil)))
+            (if (equal "TBD" heading)
+                (progn
+                  (add-to-list 'r scheduled t)))
+            (org-get-next-sibling)))
+      (kill-new (mapconcat (lambda (x)
+                             (concat "- "
+                                     (replace-regexp-in-string "<\\|>" "" x)))
+                           r "\n")))))
+#+END_SRC
+
+
 ** Tips
 
 *** Agenda commands
