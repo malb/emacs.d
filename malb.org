@@ -6703,7 +6703,7 @@ Easily change the text size:
                               ("Miguel"  "es-US")
                               ("Enrique"  "es-ES")
                               ("Conchita"  "es-ES")
-                              ("Geraint" en-G "B-WLS")
+                              ("Geraint" "en-GB-WLS")
                               ("Salli"  "en-US")
                               ("Kimberly"  "en-US")
                               ("Kendra"  "en-US")
