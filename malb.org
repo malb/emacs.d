@@ -6786,7 +6786,7 @@ prefix argument is given ask for voice first."
          (voice (if arg (aws-polly-voices-completing-read)
                   (aws-polly-select-voice text))))
     (if (> (length text) aws-polly-character-limit)
-        (error "AWS polly will only accept up 1500 characters."))
+        (error "AWS polly will only accept up 1500 characters but got %s" (length text)))
     (shell-command (format aws-polly-command voice text output-filename))
     (start-process-shell-command "aws-polly-play" nil (format aws-polly-play-command output-filename))))
 #+END_SRC
