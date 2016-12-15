@@ -6762,7 +6762,7 @@ We call =pandoc= to convert our buffer to plain text. This kills links etc. whic
           (switch-to-buffer pandoc--output-buffer)
           (setq text (buffer-string))
           (bury-buffer)
-          text)
+          (replace-regexp-in-string "_" "" text))
       (buffer-substring beginning end))))
 #+END_SRC
 
