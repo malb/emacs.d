@@ -6678,7 +6678,7 @@ A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s
 AWS offers various voices to choose from
 
 #+BEGIN_SRC emacs-lisp
-(defcustom aws-polly-voices '(("Brian"    "en-GB") ("Joanna"    "en-US") ("Mizuki"   "ja-JP") ("Filiz"   "tr-TR")
+(defcustom aws-polly-voices '(("Emma"     "en-GB") ("Joanna"    "en-US") ("Mizuki"   "ja-JP") ("Filiz"   "tr-TR")
                               ("Astrid"   "sv-SE") ("Maxim"     "ru-RU") ("Tatyana"  "ru-RU") ("Carmen"  "ro-RO")
                               ("Ines"     "pt-PT") ("Cristiano" "pt-PT") ("Vitoria"  "pt-BR") ("Ricardo" "pt-BR")
                               ("Maja"     "pl-PL") ("Jan"       "pl-PL") ("Ewa"      "pl-PL") ("Ruben"   "nl-NL")
@@ -6687,7 +6687,7 @@ AWS offers various voices to choose from
                               ("Chantal"  "fr-CA") ("Penelope"  "es-US") ("Miguel"   "es-US") ("Enrique" "es-ES")
                               ("Conchita" "es-ES") ("Geraint"   "en-GB-WLS") ("Salli"  "en-US") ("Kimberly" "en-US")
                               ("Kendra"   "en-US") ("Justin"    "en-US") ("Joey"  "en-US") ("Ivy"      "en-US")
-                              ("Raveena"  "en-IN") ("Emma"      "en-GB") ("Amy"   "en-GB") ("Russell"  "en-AU")
+                              ("Raveena"  "en-IN") ("Brian"     "en-GB") ("Amy"   "en-GB") ("Russell"  "en-AU")
                               ("Nicole"   "en-AU") ("Marlene"   "de-DE") ("Hans"  "de-DE") ("Naja"     "da-DK")
                               ("Mads"     "da-DK") ("Gwyneth"  " cy-GB") ("Jacek" "pl-PL"))
   "Voices to use in AWS polly in order of preference"
