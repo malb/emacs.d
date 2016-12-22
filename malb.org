@@ -1623,7 +1623,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
   :commands (origami-toggle-node))
 #+END_SRC
 
-[[https://github.com/tj64/outline-magic][toggle outline-minor-mode state]] ([[https://emacs.stackexchange.com/questions/361/how-can-i-hide-display-latex-section-just-like-org-mode-does-with-headlines][source]])
+[[https://github.com/tj64/outline-magic][outline-magic]] provides =outline-cycle= ([[https://emacs.stackexchange.com/questions/361/how-can-i-hide-display-latex-section-just-like-org-mode-does-with-headlines][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package outline-magic
