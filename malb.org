@@ -2762,19 +2762,6 @@ Activate eldoc and show footnotes in minibuffer.
             :before-until #'malb/org-eldoc-get-footnote)
 #+END_SRC
 
-** Footnotes
-
-([[https://emacs.stackexchange.com/questions/19282/how-to-disable-plain-footnote-references][source]])
-
-#+BEGIN_SRC emacs-lisp
-(setq org-footnote-definition-re (org-re "^\\[\\(fn:[-_[:word:]]+\\)\\]")
-      org-footnote-re (concat "\\[\\(?:"
-                              ;; Match inline footnotes.
-                              (org-re "fn:\\([-_[:word:]]+\\)?:\\|")
-                              (org-re "\\(fn:[-_[:word:]]+\\)")
-                              "\\)"))
-#+END_SRC
-
 ** Inline Tasks
 
 #+BEGIN_SRC emacs-lisp
@@ -6339,7 +6326,8 @@ The result looks like this:
                 (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line
                                     :background (solarized-with-color-variables 'light base02)
                                     :foreground "#657b83" :slant 'normal)
-                (set-face-attribute 'org-block-background nil
+                (set-face-attribute 'org-block nil
+                                    :foreground "#657b83"
                                     :background (solarized-with-color-variables
                                                   'light
                                                   (solarized-color-blend base02 base03 0.3)))
