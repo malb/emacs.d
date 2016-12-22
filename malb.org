@@ -5059,6 +5059,8 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 Don’t add an empty line when quoting email ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
 
 #+BEGIN_SRC emacs-lisp
+(require 'nnheader)
+
 (defun malb/message-insert-citation-line ()
   "Insert a simple citation line."
   (when message-reply-headers
