@@ -4918,7 +4918,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
                   org-ref-bibtex-hydra-key-binding "\C-cj")))
 #+END_SRC
 
-* Email
+* Email (Mu4e)
 
 Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
 
@@ -4932,8 +4932,8 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
                  mu4e-auto-retrieve-keys t
                  mu4e-compose-dont-reply-to-self t
                  mu4e-compose-in-new-frame t
-                 mu4e-split-view 'horizontal
-                 mu4e-headers-visible-columns 122
+                 mu4e-split-view 'vertical
+                 mu4e-headers-visible-columns 116
                  mu4e-headers-visible-lines 16
                  mu4e-context-policy 'pick-first
                  mu4e-compose-context-policy 'ask
@@ -4995,13 +4995,18 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
 
 (add-to-list
  'mu4e-bookmarks
- '("mime:application/* AND NOT mime:application/pgp* AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
-   "Messages with attachments for me." ?d) t)
+ '("mime:application/* AND NOT mime:application/pgp* AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:30d..today"
+   "Messages with attachments for me in last 30 days" ?d) t)
 
 (add-to-list
  'mu4e-bookmarks
  '("flag:flagged"
    "Flagged messages" ?f) t)
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("NOT flag:trashed AND NOT flag:list AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:7d..today"
+   "Messages addressed to me in last 7 days" ?W) t)
 
 (add-to-list
  'mu4e-bookmarks
@@ -5106,7 +5111,7 @@ Render HTML emails in =eww= = =shr=
   (imagemagick-register-types))
 
 (use-package mu4e-contrib
-  :config (setq mu4e-html2text-command 'mu4e-shr2text))
+  :config (setq mu4e-html2text-command #'mu4e-shr2text))
 #+END_SRC
 
 Use =<TAB>= to preview messages and =q= to close previews.
@@ -5140,20 +5145,28 @@ Use =<TAB>= to preview messages and =q= to close previews.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-headers-fields '((:human-date . 12)
-                            (:flags . 6)
-                            (:mailing-list . 22)
-                            (:from . 32)
+(setq mu4e-headers-fields '((:human-date . 10)
+                            (:flags . 4)
+                            (:mailing-list . 12)
+                            (:from . 22)
                             (:subject)))
 #+END_SRC
 
-View emails with width restriction (110 so that HTML crap doesn’t break too easily either)
+View emails with width restriction, but wider for HTML
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
-  (set-fill-column 80)
-  (visual-line-mode)
-  (visual-fill-column-mode))
+  (let* ((txt (mu4e-message-field msg :body-txt))
+         (html (mu4e-message-field msg :body-html)))
+    (cond
+     ((and (> (* mu4e-view-html-plaintext-ratio-heuristic
+                 (length txt)) (length html))
+           (or (not mu4e-view-prefer-html) (not html)))
+      (set-fill-column 80))
+     (t
+      (set-fill-column 120)))
+    (visual-line-mode)
+    (visual-fill-column-mode)))
 
 (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
