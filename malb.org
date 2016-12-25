@@ -5674,6 +5674,19 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 (use-package dired-x)
 #+END_SRC
 
+* Neotree
+
+[[https://github.com/jaypei/emacs-neotree][Neotree]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package neotree
+  :ensure t
+
+  :config (progn
+            (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
+                  neo-smart-open t)))
+#+END_SRC
+
 * Diff
 
 #+BEGIN_SRC emacs-lisp
