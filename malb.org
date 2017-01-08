@@ -3330,18 +3330,6 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
 #+END_SRC
 
 ** C/C++ development
-*** C/C++ Mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package cc-mode
-  :config (progn
-            (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
-
-            (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
-            (bind-key "M-l" #'malb/toggle-camelcase-underscores c-mode-base-map)
-            (bind-key "M-u" #'malb/toggle-camelcase-underscores c-mode-base-map)
-            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
-#+END_SRC
 
 *** Semantic
 
@@ -3626,7 +3614,6 @@ and move to the source code that caused it."
   :config (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 #+END_SRC
 
-
 *** Clang Format
 
 Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format code.
@@ -3636,6 +3623,18 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format c
   :ensure t
   :config (progn
             (setq clang-format-executable "clang-format-3.8")))
+#+END_SRC
+*** C/C++ Mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package cc-mode
+  :config (progn
+            (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
+
+            (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
+            (bind-key "M-l" #'malb/toggle-camelcase-underscores c-mode-base-map)
+            (bind-key "M-u" #'malb/toggle-camelcase-underscores c-mode-base-map)
+            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+END_SRC
 
 ** Python
