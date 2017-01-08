@@ -2005,7 +2005,7 @@ Working with source code in org-mode.
                   org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
-            (add-to-list 'org-src-lang-modes (quote ("plantuml" . puml)))))
+            (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
 #+END_SRC
 
 *** Org iPython
@@ -5832,11 +5832,11 @@ directory to make multiple eshell windows easier."
 ** [[http://plantuml.com/][PlantUML]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package puml-mode
+(use-package plantuml-mode
   :ensure t
-  :commands (puml-mode)
+  :commands (plantuml-mode)
   :init (progn
-            (setq puml-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")))
+            (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar")))
 #+END_SRC
 
 *Example*
