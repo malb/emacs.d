@@ -2265,9 +2265,16 @@ UTF-8 everywhere.
 #+BEGIN_SRC emacs-lisp
 (setq org-export-coding-system 'utf-8
       org-export-in-background nil
-      org-export-babel-evaluate nil
+      org-export-babel-evaluate t
       org-export-with-timestamps 'active
       org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))
+#+END_SRC
+
+([[https://lists.gnu.org/archive/html/emacs-orgmode/2016-12/msg00555.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
+(add-to-list 'org-babel-default-inline-header-args '(:eval . "never-export"))
 #+END_SRC
 
 *** iCalendar
@@ -2343,9 +2350,9 @@ iCal export is triggered after 600 seconds of inactivity.
             (setq org-latex-pdf-process '("latexmk -xelatex -output-directory=%o -pdf %f")
                   org-latex-prefer-user-labels t
                   org-latex-caption-above nil
-                  org-latex-default-packages-alist (remove* '("T1" "fontenc" t)
+                  org-latex-default-packages-alist (remove* '("T1" "fontenc" t ("pdflatex"))
                                                             org-latex-default-packages-alist :test 'equal)
-                  org-latex-default-packages-alist (remove '("AUTO" "inputenc" t)
+                  org-latex-default-packages-alist (remove '("AUTO" "inputenc" t ("pdflatex"))
                                                            org-latex-default-packages-alist)
                   org-latex-hyperref-template  (concat "\\hypersetup{\n"
                                                        "pdfauthor={%a},\n"
