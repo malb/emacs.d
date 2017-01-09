@@ -286,7 +286,7 @@ Resize windows to accommodate new ones.
                       ))
                   )))
 
-            (require 'latex-preview-pane)
+            (use-package latex-preview-pane :ensure t)
 
             (defun malb/close-latex-preview-pane-before-eyebrowse-switch ()
               ;; latex-preview-pane uses window-parameters which are not preserved by eyebrowse, so
@@ -1690,7 +1690,7 @@ This library provides easy project management and navigation. The concept of a p
   :bind (("<f5>" . projectile-compile-project)
          ("<f6>" . next-error))
   :config (progn
-            (require 'magit) ;; this is ugly but we need it here for now
+            (use-package magit :ensure t)
             (require 'helm-projectile)
             (helm-projectile-on)
 
