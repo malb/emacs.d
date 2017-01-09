@@ -2026,6 +2026,7 @@ Working with source code in org-mode.
                     (:exports . "both")
                     (:cache .   "no")
                     (:noweb . "no")
+                    (:eval . "never-export")
                     (:hlines . "no")
                     (:tangle . "no")))))
 #+END_SRC
@@ -3901,6 +3902,7 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             (setq org-babel-default-header-args:sage '((:session . t)
                                                        (:results . "output replace")
                                                        (:exports . "both")
+                                                       (:eval . "never-export")
                                                        (:cache .   "no")
                                                        (:noweb . "no")
                                                        (:hlines . "no")
@@ -5811,7 +5813,7 @@ directory to make multiple eshell windows easier."
 
 *Example*
 
-#+BEGIN_SRC plantuml :file foo.svg :tangle no
+#+BEGIN_QUOTE plantuml :file foo.svg :tangle no
 skinparam monochrome true
 skinparam dpi 150
 skinparam backgroundColor transparent
@@ -5833,7 +5835,7 @@ note left: Session established
 deactivate Server
 Client -> Client: Saves token
 deactivate Client
-#+END_SRC
+#+END_QUOTE
 
 - [[http://plantuml.com/latex.html][TikZ export]]
 - See also https://github.com/josteink/wsd-mode for https://www.websequencediagrams.com/
