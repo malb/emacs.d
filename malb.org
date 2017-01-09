@@ -4286,35 +4286,6 @@ Automatically pick dictionary.
             (add-hook 'markdown-mode-hook #'adict-guess-dictionary)))
 #+END_SRC
 
-**** Abbreviations
-
-([[http://pages.sachachua.com/.emacs.d/Sacha.html#unnumbered-45][source]])
-
-#+NAME: abbrev
-| Base  | Expansion                             |
-|-------+---------------------------------------|
-| qm    | martinralbrecht@googlemail.com        |
-| qb    | https://martinralbrecht.wordpress.com |
-| qw    | http://malb.io                        |
-| qisg  | Information Security Group            |
-| qrhul | Royal Holloway                        |
-|-------+---------------------------------------|
-
-#+BEGIN_SRC emacs-lisp :var data=abbrev
-(mapc (lambda (x) (define-global-abbrev (car x) (cadr x))) (cddr data))
-#+END_SRC
-
-#+RESULTS:
-| qb    | [[https://martinralbrecht.wordpress.com]] |
-| qw    | [[http://malb.io]]                        |
-| qisg  | Information Security Group            |
-| qrhul | Royal Holloway                        |
-
-#+BEGIN_SRC emacs-lisp
-(setq-default abbrev-mode t)
-(diminish 'abbrev-mode)
-#+END_SRC
-
 *** Grammar Checking
 
 ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
