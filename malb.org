@@ -1994,7 +1994,7 @@ Working with source code in org-mode.
             (org-babel-do-load-languages
              'org-babel-load-languages
              '((python . t)
-               (sh . t)
+               (shell . t)
                (latex . t)
                (ditaa . t)
                (clojure . t)
