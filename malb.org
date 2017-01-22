@@ -4925,7 +4925,9 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
                  mu4e-context-policy 'pick-first
                  mu4e-compose-context-policy 'ask
                  mu4e-change-filenames-when-moving t
-                 mu4e-confirm-quit nil))
+                 mu4e-confirm-quit nil
+                 mu4e-index-cleanup nil      ;; don't do a full cleanup check
+                 mu4e-index-lazy-check t))
 #+END_SRC
 
 ** Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
