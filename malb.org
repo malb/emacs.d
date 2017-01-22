@@ -3926,10 +3926,18 @@ On our system port 8888 is already taken.
             (setq ein:use-auto-complete t
                   ein:url-or-port '(8889 8890)
                   ein:default-url-or-port 8890)
-            (add-hook 'ein:notebook-multilang-mode-hook #'auto-complete-mode)
+
+            (defun malb/ein-hook ()
+              (toggle-truncate-lines t)
+              (auto-complete-mode))
+
+            (add-hook 'ein:notebook-multilang-mode-hook #' malb/ein-hook)
+
             (require 'ein-notebook)
+
             (bind-key "S-<return>" #'ein:worksheet-execute-cell-and-goto-next ein:notebook-mode-map)
             (bind-key "C-<return>" #'ein:worksheet-execute-cell ein:notebook-mode-map)
+            ;; at this point the list starts with not, i.e. is negated
             (when (boundp 'company-global-modes)
               (add-to-list 'company-global-modes 'ein:notebook-multilang-mode t)
               (add-to-list 'company-global-modes 'ein:notebook-python-mode t))))
