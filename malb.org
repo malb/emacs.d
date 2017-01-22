@@ -5624,7 +5624,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                                      "\\.synctex\\.gz$" "\\.tex\\.backup$" "\\.bib\\.backup$"
                                      "\\.fdb_latexmk$" "\\.fls$"
                                      "\\.pyc"
-                                     "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'")
+                                     "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'"
+                                     "^\\.?#\\|^\\..+$")
                          "\\|"))
 
             (push ".brf" dired-latex-unclean-extensions)
@@ -5640,6 +5641,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                   dired-recursive-deletes 'always
                   dired-dwim-target t
                   dired-auto-revert-buffer t)
+
+            (add-hook 'dired-mode-hook (defun malb/enable-dired-omit-mode () (dired-omit-mode)))
 
             ;; For the few times I’m using Dired, I prefer it not spawning an endless amount of
             ;; buffers. In fact, I’d prefer it using one buffer unless another one is explicitly
