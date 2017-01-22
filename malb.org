@@ -530,7 +530,7 @@ _j_ump        _o_nly this     _S_ave
   ("C" visual-fill-column-mode)
   ("," (lambda () (interactive) (set-fill-column (+ fill-column 2)) (visual-fill-column-adjust)) :color red)
   ("." (lambda () (interactive) (set-fill-column (- fill-column 2)) (visual-fill-column-adjust)) :color red)
-  ("W" window-configuration-register)
+  ("W" window-configuration-to-register)
   ("J" jump-to-register  :color blue)
   ("1" eyebrowse-switch-to-window-config-1 :color blue)
   ("2" eyebrowse-switch-to-window-config-2 :color blue)
