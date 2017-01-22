@@ -12,6 +12,7 @@
 \RequirePackage{tabularx}
 \RequirePackage[normalem]{ulem}
 \RequirePackage[all]{xy}
+\RequirePackage{etoolbox}
 
 %%%
 %%% Code Listings
@@ -34,6 +35,13 @@
   literate={…}{{\ldots}}1,
   belowskip=0.0em,
 }
+
+\makeatletter
+\patchcmd{\@verbatim}
+  {\verbatim@font}
+  {\verbatim@font\scriptsize}
+  {}{}
+\makeatother
 
 %%%
 %%% Tikz
