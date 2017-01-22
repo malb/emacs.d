@@ -5967,8 +5967,7 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
               ("[" backward-page "backward")
               ("]" forward-page "forward")
               ("M-p" helm-pages "helm" :color blue)
-              ("RET" nil "quit"))
-            ))
+              ("RET" nil "quit"))))
 #+END_SRC
 
 * X11 Integration
@@ -6208,15 +6207,6 @@ We know what scratch is for
 (setq initial-scratch-message "")
 #+END_SRC
 
-** [[https://github.com/Malabarba/elisp-bug-hunter][Bug-hunter]]
-
-Debug startup failures. If your Emacs init file signals an error during startup, but you don't know why, simply issue ~M-x bug-hunter-init-file RET RET~ and The Bug Hunter will find it for you.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package bug-hunter
-    :ensure t)
-#+END_SRC
-
 ** [[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
 
 #+BEGIN_SRC emacs-lisp
@@ -6260,7 +6250,7 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 * Theme & Look
 ** Frame Title
 
-([[https://github.com/wasamasa/dotemacs/blob/master/init.org][source]])
+Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob/master/init.org#display-buffer-name-in-frame-titles][source]])
 
 #+BEGIN_SRC emacs-lisp
 (setq frame-title-format
@@ -6272,7 +6262,7 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 
 [[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png]] ([[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png][source]])
 
-[[https://github.com/sabof/stripe-buffer][Stripe Buffer]] makes it vastly easier to read tables and friends. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
+[[https://github.com/sabof/stripe-buffer][Stripe Buffer]] makes it vastly easier to read tables and dired buffers. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
 
 #+BEGIN_SRC emacs-lisp
 (use-package stripe-buffer
@@ -6280,8 +6270,7 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
   :config (progn
             (add-hook 'dired-mode-hook 'turn-on-stripe-buffer-mode)
             (add-hook 'org-mode-hook 'turn-on-stripe-table-mode)
-            (set-face-attribute 'stripe-highlight nil :background "#eee8d5")
-            ))
+            (set-face-attribute 'stripe-highlight nil :background "#eee8d5")))
 #+END_SRC
 
 ** Theme
@@ -6364,8 +6353,7 @@ The result looks like this:
                                         :foreground "#DEB542" :weight 'bold)
                     (set-face-attribute 'flycheck-fringe-info    nil
                                         :background (solarized-with-color-variables 'light base03)
-                                        :foreground "#69B7F0" :weight 'bold)
-                    ))
+                                        :foreground "#69B7F0" :weight 'bold)))
 
                 (eval-after-load "ein-cell"
                   (progn
@@ -6374,8 +6362,7 @@ The result looks like this:
                                                                                  (solarized-color-blend base02 base03 0.5)))
                     (set-face-attribute 'ein:cell-input-prompt nil
                                         :background nil
-                                        :foreground "#657b83" :weight 'bold) ))
-                ))))
+                                        :foreground "#657b83" :weight 'bold) ))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -6392,8 +6379,7 @@ The result looks like this:
         ("COAUTHOR"  :foreground "dark orange"
          :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
         ("NATIVE"    :foreground "dark orange"
-         :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-        ))
+         :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")))
 #+END_SRC
 
 Set transparency because reasons ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
@@ -6471,6 +6457,8 @@ enabled."
 
 ** Rainbow mode
 
+Colourise colours or names in buffers ([[http://git.savannah.gnu.org/cgit/emacs/elpa.git/tree/packages/rainbow-mode][source]])
+
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-mode
   :ensure t
@@ -6505,6 +6493,8 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 
 ** Minimap
 
+I don’t often use minimap, but it can be useful sometimes.
+
 #+BEGIN_SRC emacs-lisp
 (use-package minimap
   :ensure t
@@ -6521,6 +6511,8 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 #+END_SRC
 
 ** Vim-like Empty Line Indicator
+
+([[https://www.reddit.com/r/emacs/comments/2kdztw/emacs_in_evil_mode_show_tildes_for_blank_lines/][source]])
 
 #+BEGIN_SRC emacs-lisp
 (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
@@ -6573,14 +6565,13 @@ Easily change the text size:
 
 * KDE Desktop Search with Baloo
 
-[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below we implement a tiny helm interface to it.
+[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below, we implement a tiny helm interface to it.
 
 #+BEGIN_SRC emacs-lisp
 (defcustom helm-baloo-file-limit 100
   "Limit number of entries returned by baloo to this number."
   :group 'helm-baloo
   :type '(integer :tag "Limit"))
-
 
 (defun baloo-search (pattern)
   (start-process "baloosearch" nil "baloosearch" (format "-l %d " helm-baloo-file-limit) pattern))
@@ -6839,10 +6830,6 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 #+END_SRC
 
 * ToDos
-** TODO get better at jumping around
-- =pop-local-mark= (=C-u C-<SPC>=)
-- =pop-global-mark= (=C-x C-<SPC>=)
-- =helm-all-mark-rings= (=C-h C-<SPC>=)
 * Notes
 ** Stuck Emacs
 
