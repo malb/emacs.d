@@ -1678,6 +1678,7 @@ This library provides easy project management and navigation. The concept of a p
 - =C-c p p=   ~helm-projectile-switch-project~
 - =C-c p r=   ~projectile-replace~
 - =C-c p s s= ~helm-projectile-ag~
+- =C-c p x=   ~projectile-run-term~ etc.
 
 *When switching projects:*
 
