@@ -2045,6 +2045,7 @@ Working with source code in org-mode.
 (setq org-todo-keywords
       '((sequence "TODO(t)"
                   "WAITING(w@)"
+                  "PING(p)"
                   "|"
                   "DELEGATED(e@/!)"
                   "DONE(d)"
@@ -2054,10 +2055,10 @@ Working with source code in org-mode.
                   "WRITEUP"
                   "READ(r)"
                   "COAUTHOR(!)"
-                  "REWRITE(!)"
+                  "REVISE(!)"
                   "SUBMITTED(@/!)"
                   "|"
-                  "PUBLISHED(p!)"
+                  "PUBLISHED(!)"
                   "ONHOLD(h@/!)"
                   "STALLED(s)") ;; papers
 
@@ -2071,7 +2072,7 @@ Working with source code in org-mode.
               "TALK(k)"
               "STUDY(y)"
               "LOAD"
-              "|" "DONE") ))
+              "|" "DONE")))
 
 (org-clock-persistence-insinuate)
 #+END_SRC
