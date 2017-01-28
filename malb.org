@@ -4559,6 +4559,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-hook 'LaTeX-mode-hook #'flyspell-mode)
             (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
+            (add-hook 'LaTeX-mode-hook #'visual-fill-column-mode)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
@@ -4621,7 +4622,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-save-query nil
                   TeX-error-overview-open-after-TeX-run t
                   TeX-electric-sub-and-superscript t
-                  TeX-electric-math nil
+                  TeX-electric-math '("\\(" . "\\)")
+                  LaTeX-electric-left-right-brace t
                   TeX-quote-after-quote nil)
 
             ;; https://stackoverflow.com/questions/19845598/emacs-regex-replacing-a-string-inside-a-latex-equation
@@ -4636,7 +4638,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                                                     ret))))))
                        (query-replace-regexp regexp to-string delimited start end backward))))
 
-            (setq-default TeX-master nil)
+            (setq-default TeX-master 'dwim)
             (setq-default TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
 
             (setq font-latex-fontify-sectioning 1.0)
