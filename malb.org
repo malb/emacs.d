@@ -1720,7 +1720,7 @@ This library provides easy project management and navigation. The concept of a p
             (projectile-global-mode)))
 #+END_SRC
 
-** [[https://tuhdo.github.io/helm-projectile.html][Helm-projectile]]
+[[https://tuhdo.github.io/helm-projectile.html][Helm]] integration
 
 *Commands:*
 
