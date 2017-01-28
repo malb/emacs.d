@@ -114,6 +114,12 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 
 * Fullscreen
 
+Allow pixel-wise scaling
+
+#+BEGIN_SRC emacs-lisp
+(setq frame-resize-pixelwise t)
+#+END_SRC
+
 Maximise the window as soon as possible
 
 #+BEGIN_SRC emacs-lisp
