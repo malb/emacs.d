@@ -2351,7 +2351,7 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("" "nicefrac"))
             (add-to-list 'org-latex-packages-alist '("" "units"))
             (add-to-list 'org-latex-packages-alist '("" "xspace"))
-            (add-to-list 'org-latex-packages-alist '("notions,operators,sets,keys,ff,adversary,primitives,complexity,asymptotics,lambda,landau" "cryptocode"))
+            (add-to-list 'org-latex-packages-alist '("notions,operators,sets,keys,ff,adversary,primitives,complexity,asymptotics,lambda,landau,advantage" "cryptocode"))
             (add-to-list 'org-latex-packages-alist '("" "unicodesymbols"))
             (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
             (add-to-list 'org-latex-packages-alist '("" "microtype"))
