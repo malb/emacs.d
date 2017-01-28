@@ -5664,6 +5664,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
             (bind-key "RET" #'dired-find-alternate-file dired-mode-map)
 
+            (dired-async-mode)
+
             (put 'dired-find-alternate-file 'disabled nil)))
 #+END_SRC
 
