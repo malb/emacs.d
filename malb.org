@@ -4677,7 +4677,8 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
   (interactive)
   (ignore-errors
     (malb/latex-parse-bibtex))          ; don't die if there's no bibtex file
-  (latex-preview-pane-mode 1))
+  ;; (latex-preview-pane-mode 1)
+  )
 #+END_SRC
 
 ** Utility Functions
