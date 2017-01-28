@@ -1355,52 +1355,52 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                                              sp-point-before-same-p))
 
             ;; https://github.com/Fuco1/smartparens/issues/652#issuecomment-250518705
-            (defun malb/latex-replace-dollar (_id action _context)
-              (when (eq action 'wrap)
-                (sp-get sp-last-wrapped-region
-                  (let ((at-beg (= (point) :beg-in)))
-                    (save-excursion
-                      (goto-char :beg)
-                      (delete-char :op-l)
-                      (insert "\\("))
-                    (save-excursion
-                      (goto-char :end-in)
-                      (delete-char :cl-l)
-                      (insert "\\)"))
-                    (setq sp-last-wrapped-region
-                          (sp--get-last-wraped-region
-                           :beg :end "\\(" "\\)"))
-                    (goto-char (if at-beg (1+ :beg-in) :end))))))
+            ;; (defun malb/latex-replace-dollar (_id action _context)
+            ;;   (when (eq action 'wrap)
+            ;;     (sp-get sp-last-wrapped-region
+            ;;       (let ((at-beg (= (point) :beg-in)))
+            ;;         (save-excursion
+            ;;           (goto-char :beg)
+            ;;           (delete-char :op-l)
+            ;;           (insert "\\("))
+            ;;         (save-excursion
+            ;;           (goto-char :end-in)
+            ;;           (delete-char :cl-l)
+            ;;           (insert "\\)"))
+            ;;         (setq sp-last-wrapped-region
+            ;;               (sp--get-last-wraped-region
+            ;;                :beg :end "\\(" "\\)"))
+            ;;         (goto-char (if at-beg (1+ :beg-in) :end))))))
 
-            (sp-with-modes
-                '(tex-mode plain-tex-mode latex-mode)
+            ;; (sp-with-modes
+            ;;     '(tex-mode plain-tex-mode latex-mode)
 
-              (sp-local-pair  "$" nil
-                              :unless '(sp-point-before-word-p
-                                        sp-point-before-same-p
-                                        sp-latex-point-after-backslash)
-                              :post-handlers '(malb/latex-replace-dollar))
+            ;;   (sp-local-pair  "$" nil
+            ;;                   :unless '(sp-point-before-word-p
+            ;;                             sp-point-before-same-p
+            ;;                             sp-latex-point-after-backslash)
+            ;;                   :post-handlers '(malb/latex-replace-dollar))
 
-              (sp-local-pair "\\(" "\\)"
-                             :unless '(sp-point-before-word-p
-                                       sp-point-before-same-p
-                                       sp-latex-point-after-backslash)
-                             :trigger "\$")
+            ;;   (sp-local-pair "\\(" "\\)"
+            ;;                  :unless '(sp-point-before-word-p
+            ;;                            sp-point-before-same-p
+            ;;                            sp-latex-point-after-backslash)
+            ;;                  :trigger "\$")
 
-              (sp-local-pair "\\[" "\\]"
-                             :unless '(sp-point-before-word-p
-                                       sp-point-before-same-p
-                                       sp-latex-point-after-backslash)))
+            ;;   (sp-local-pair "\\[" "\\]"
+            ;;                  :unless '(sp-point-before-word-p
+            ;;                            sp-point-before-same-p
+            ;;                            sp-latex-point-after-backslash)))
+
+            ;; (add-to-list 'sp-navigate-consider-stringlike-sexp 'latex-mode)
+
+            (add-to-list 'sp-ignore-modes-list 'latex-mode)
 
             (sp-with-modes
                 'org-mode
               (sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p))
-              (sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p)
-                             :post-handlers '(("[d1]" "SPC")))
               (sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p)
-                             :post-handlers '(("[d1]" "SPC"))))
-
-            (add-to-list 'sp-navigate-consider-stringlike-sexp 'latex-mode)))
+                             :post-handlers '(("[d1]" "SPC"))))))
 #+END_SRC
 
 ** Misc
