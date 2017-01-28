@@ -4543,10 +4543,11 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 ** LaTeX
 
-| Command   | Explanation        |
-|-----------+--------------------|
-| ~C-c C-g~ | forward search     |
-| ~C-c @~   | outline minor mode |
+| Command   | Explanation          |
+|-----------+----------------------|
+| ~C-c C-g~ | forward search       |
+| ~C-c @~   | outline minor mode   |
+| ~C-c ?~   | symbol documentation |
 
 #+BEGIN_SRC emacs-lisp
 (use-package tex
