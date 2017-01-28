@@ -990,6 +990,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
   :diminish helm-mode
   :bind (("M-x"     . helm-M-x)
          ("C-x C-b" . malb/helm-omni)
+         ("C-x b" . malb/helm-omni)
          ("C-x C-f" . helm-find-files)
          ("C-c <SPC>" . helm-all-mark-rings))
   :config (progn
