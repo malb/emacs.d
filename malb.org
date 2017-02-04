@@ -572,20 +572,17 @@ keyword is not enough.
   :ensure t)
 #+END_SRC
 
-* Jumping around
+* Hardcore Mode
 
-[[https://raw.githubusercontent.com/wiki/nloyola/avy/images/avy-goto-char.png]] ([[https://github.com/abo-abo/avy][source]])
-
-See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mode~ which inspired [[https://github.com/abo-abo/avy][avy]].
-
+Disable arrow keys to force learning how to jump around in a better way.
 
 #+BEGIN_SRC emacs-lisp
-(use-package avy
+(use-package hardcore-mode
   :ensure t
-  :bind ("C-c C-<SPC>" . avy-goto-word-1)
+  :init (progn (setq too-hardcore-backspace t)
+               (setq too-hardcore-return t))
   :config (progn
-            (setq avy-background t)
-            (key-chord-define-global "jj"  #'avy-goto-word-1)))
+            (global-hardcore-mode)))
 #+END_SRC
 
 
@@ -614,6 +611,22 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 #+END_SRC
 
 *Tip* =C-u 0 C-c b ,​= description of the change at a particular stop on your tour
+
+* Jumping around
+
+[[https://raw.githubusercontent.com/wiki/nloyola/avy/images/avy-goto-char.png]] ([[https://github.com/abo-abo/avy][source]])
+
+See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mode~ which inspired [[https://github.com/abo-abo/avy][avy]].
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package avy
+  :ensure t
+  :bind ("C-c C-<SPC>" . avy-goto-word-1)
+  :config (progn
+            (setq avy-background t)
+            (key-chord-define-global "jj"  #'avy-goto-word-1)))
+#+END_SRC
 
 * Snippets
 
