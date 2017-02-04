@@ -489,21 +489,22 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
   "
-^Misc^        ^Split^         ^Buffer^         ^Resize^           ^Eyebrowse^      ^Center^   ^Other^
-^----^--------^-----^---------^------^---------^------^-----------^---------^------^------^---^------------^
-_←_ ←         _v_ertical      _H_elm-omni      _q_ X←             _[_ \\/ new      _C_enter   _W_ store cfg
-_↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓             _;_ \\/ ←         _,_ C←    _J_ load cfg
-_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑             _'_ \\/ →         _._ C→    _I_ imenu list
-_→_ →         _Z_ reset       _t_oggle buf     _r_ X→             _]_ \\/ close
-_T_oggle ded  _d_lt this      _a_ce 1       max_i_mize            _!_ \\/ rename
+^Misc^        ^Split^         ^Buffer^         ^Resize^         ^Eyebrowse^^     ^Center^   ^Jumping^   ^Other^
+^----^--------^-----^---------^------^---------^------^---------^---------^^-----^------^---^-------^---^--------------^
+_←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ new      _C_enter   _j_ump      _W_ store cfg
+_↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_line     _J_ load cfg
+_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→                 _I_ imenu list
+_→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close
+_T_oggle ded  _d_lt this      _a_ce 1       max_i_mize          _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
-_j_ump        _o_nly this     _S_ave
+^^            _o_nly this
 "
   ("<left>" windmove-left )
   ("<down>" windmove-down )
   ("<up>" windmove-up )
   ("<right>" windmove-right )
   ("j" avy-goto-word-1 :color blue)
+  ("l" avy-goto-line :color blue)
   ("q" shrink-window-horizontally)
   ("w" shrink-window)
   ("e" enlarge-window)
@@ -521,7 +522,6 @@ _j_ump        _o_nly this     _S_ave
   ("v" malb/vsplit-last-buffer)
   ("h" malb/hsplit-last-buffer)
   ("s" (lambda () (interactive) (ace-window 4)) :color blue)
-  ("S" save-buffer)
   ("d" delete-window)
   ("D" (lambda () (interactive) (ace-window 16)) :color blue)
   ("o" delete-other-windows :color blue)
