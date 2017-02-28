@@ -500,8 +500,8 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 ^Misc^        ^Split^         ^Buffer^         ^Resize^         ^Eyebrowse^^     ^Center^   ^Jumping^   ^Other^
 ^----^--------^-----^---------^------^---------^------^---------^---------^^-----^------^---^-------^---^--------------^
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ new      _C_enter   _j_ump      _W_ store cfg
-_↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_line     _J_ load cfg
-_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→                 _I_ imenu list
+_↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_ine      _J_ load cfg
+_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _I_ imenu list
 _→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close
 _T_oggle ded  _d_lt this      _a_ce 1       max_i_mize          _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
@@ -537,8 +537,8 @@ _SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
   ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
   ("Z" winner-redo)
   ("[" malb/eyebrowse-new-window-config :color blue)
-  (";" (lambda () (interactive) (eyebrowse-prev-window-config nil)) :color blue)
-  ("'" (lambda () (interactive) (eyebrowse-next-window-config nil)) :color blue)
+  (";" (lambda () (interactive) (eyebrowse-prev-window-config nil)) :color red)
+  ("'" (lambda () (interactive) (eyebrowse-next-window-config nil)) :color red)
   ("]" eyebrowse-close-window-config :color blue)
   ("!" eyebrowse-rename-window-config :color blue)
   ("C" visual-fill-column-mode)
