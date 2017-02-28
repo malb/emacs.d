@@ -6642,6 +6642,22 @@ Easily change the text size:
 (bind-key "C-M-<mouse-5>" #'malb/global-text-scale-decrease)
 #+END_SRC
 
+** Bell
+
+#+BEGIN_SRC emacs-lisp
+(setq visible-bell nil)
+
+(defun malb/invert-mode-line ()
+  (invert-face 'mode-line)
+  (invert-face 'powerline-active1)
+  (invert-face 'powerline-active2)
+  (powerline-reset))
+
+(setq ring-bell-function (lambda ()
+                           (malb/invert-mode-line)
+                           (run-with-timer 0.05 nil #'malb/invert-mode-line)))
+#+END_SRC
+
 ** Load Theme
 
 #+BEGIN_SRC emacs-lisp
