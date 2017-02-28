@@ -6933,7 +6933,6 @@ If your instance hangs and won't respond to =C-g=, you can use =pkill -SIGUSR2 e
 #+END_QUOTE
 
 ([[http://irreal.org/blog/?p=4763][source]])
-
 ** Compile .emacs
 
 #+BEGIN_SRC emacs-lisp :tangle no
