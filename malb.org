@@ -1811,20 +1811,11 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 ** GitHub
 
-Handle [[https://github.com/sigma/magit-gh-pulls][pull requests]] from magit
-
-*Commands:*
-
-- Press ~# g g~ to refresh the list of pull requests.
-- Highlighting the desired PR and pressing ~# g f~ will fetch the commits associated with the PR.
-- Press ~# g b~ on the PR to create a topic branch for this PR.
-- Press ~# g m~ to merge the PR on top of the currently checked out branch.
-
 #+BEGIN_SRC emacs-lisp
-(require 'ert) ;; https://github.com/sigma/magit-gh-pulls/issues/32
-(use-package magit-gh-pulls
+(use-package magithub
   :ensure t
-  :config (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
+  :after magit
+  :config (magithub-feature-autoinject t))
 #+END_SRC
 
 ** Org Links for Magit Buffers
