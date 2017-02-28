@@ -1329,7 +1329,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
             (bind-key "C-M-t" 'sp-transpose-sexp smartparens-mode-map)
             (bind-key "M-d" 'sp-kill-sexp smartparens-mode-map)
-            (bind-key "M-<backspace>" 'sp-backward-unwrap-sexp smartparens-mode-map)
+            (bind-key "M-S-<backspace>" 'sp-backward-unwrap-sexp smartparens-mode-map)
 
             (bind-key "C-<right>" 'sp-forward-slurp-sexp smartparens-mode-map)
             (bind-key "C-<left>" 'sp-forward-barf-sexp smartparens-mode-map)
