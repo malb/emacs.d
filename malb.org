@@ -3957,6 +3957,20 @@ On our system port 8888 is already taken.
               (add-to-list 'company-global-modes 'ein:notebook-python-mode t))))
 #+END_SRC
 
+Shortcut for Sage Jupyter notebook.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/sage-notebook ()
+  (interactive)
+  (let ((sage (prodigy-find-service "sage-devel")))
+    (if (not (prodigy-service-started-p sage))
+        (progn
+          (prodigy-start-service sage)
+          (sleep-for 1.0))))
+  (ein:notebooklist-open 8890))
+#+END_SRC
+
+
 *** Virtual Environments
 
 [[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices.
