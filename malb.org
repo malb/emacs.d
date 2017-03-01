@@ -6300,7 +6300,17 @@ Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
 We know what scratch is for
 
 #+BEGIN_SRC emacs-lisp
-(setq initial-scratch-message "")
+(setq initial-major-mode 'org-mode
+      initial-scratch-message "\
+This buffer is for notes you don't want to save, and for Lisp evaluation.
+If you want to create a file, visit that file with C-x C-f,
+then enter the text in that file's own buffer.
+
+,#+BEGIN_SRC emacs-lisp
+
+,#+END_SRC
+
+")
 #+END_SRC
 
 ** [[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
