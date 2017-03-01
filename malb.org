@@ -5377,7 +5377,7 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
 (setq epg-gpg-program "gpg2")
 #+END_SRC
 
-** Org-MU4E
+** Org-Mu4e
 
 Link to mu4e messages and threads.
 
@@ -5887,7 +5887,6 @@ directory to make multiple eshell windows easier."
    (t
     (while (pcomplete-here (pcomplete-entries))))))
 #+END_SRC
-
 
 ** COMMENT Editor == Emacs
 
