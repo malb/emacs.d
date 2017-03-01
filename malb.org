@@ -4678,6 +4678,17 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (auctex-latexmk-setup)))
 #+END_SRC
 
+Run =latexmk -pvc= in async shell
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/run-latexmk (arg)
+  (interactive "p")
+  (let*  ((engine (if arg "-xelatex" ""))
+          (filename (file-name-sans-extension (buffer-file-name))))
+    (async-shell-command (format "latexmk -pvc -pdf %s -interaction=nonstopmode %s.tex"
+                                 engine filename))))
+#+END_SRC
+
 *** LaTeX preview pane
 
 [[https://github.com/jsinglet/latex-preview-pane][LaTeX preview pane]]
