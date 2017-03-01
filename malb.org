@@ -6950,6 +6950,18 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 (bind-key "C-z" nil)
 #+END_SRC
 
+=cycle-spacing=, when called multiple times, cycles through
+
+1) replacing all spaces with a single space
+2) removing all spaces
+3) restoring the original spacing
+
+([[http://pragmaticemacs.com/emacs/cycle-spacing/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "M-SPC" #'cycle-spacing)
+#+END_SRC
+
 ** Learn key bindings
 
 #+BEGIN_SRC emacs-lisp
