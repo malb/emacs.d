@@ -2702,14 +2702,6 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("F" ((in-mode . "mu4e-headers-mode")))))))
 #+END_SRC
 
-** Org EWW
-
-Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-eww)
-#+END_SRC
-
 ** [#C] Meeting Notes
 
 #+BEGIN_QUOTE
@@ -6134,6 +6126,29 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (setq default-input-method "rfc1345")
 
 (prefer-coding-system 'utf-8)
+#+END_SRC
+
+* EWW
+
+([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#browser-switch][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/switch-default-browser ()
+  "switch between default browser and eww"
+  (interactive)
+  (if (string-equal "browse-url-default-browser" browse-url-browser-function)
+      (setq browse-url-browser-function 'eww-browse-url)
+    (setq browse-url-browser-function 'browse-url-default-browser))
+  (message "%s" browse-url-browser-function))
+#+END_SRC
+
+** Org EWW
+
+Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-eww
+  :after org)
 #+END_SRC
 
 * Misc
