@@ -6974,6 +6974,10 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 * ToDos
 * Notes
+** Resetting a =defvar= Value
+
+=C-M-x= - =eval-defun= is your friend ([[http://irreal.org/blog/?p=5929][source]])
+
 ** Stuck Emacs
 
 #+BEGIN_QUOTE
