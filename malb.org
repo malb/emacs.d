@@ -2664,15 +2664,9 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("p" "project task" plain (function malb/org-capture-projectile)
                      "** TODO %?\n%i\n%a\n" :prepend t)
 
-                    ;; ("k" "respond to email (KMail)"
-                    ;;  entry (file+headline malb/inbox-org "Email")
-                    ;;  "* REPLY to [[mailto:%link][%:description]]\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n\n[[mailto:%:link][%:link]] wrote:\n#+BEGIN_QUOTE\n%x\n#+END_QUOTE\n\n"
-                    ;;  :immediate-finish t
-                    ;;  :prepend t)
-
                     ("r" "respond ro email"
                      entry (file+headline malb/inbox-org "Email")
-                     "* REPLY to %:fromname on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
+                     "* REPLY to %:fromname on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
                      :immediate-finish t
                      :prepend t)
 
