@@ -5035,12 +5035,10 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
 
 email is sent with [[https://www.opensmtpd.org][opensmtpd]]’s =sendmail=.
 
-Set =format=flowed= ([[https://github.com/djcb/mu/issues/569][source]])
+Set =format=flowed= ([[https://vxlabs.com/2017/02/07/mu4e-0-9-18-e-mailing-with-emacs-now-even-better/][source]])
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/compose-setup ()
-  "Use hard newlines, so outgoing mails will have format=flowed."
-  (use-hard-newlines t 'guess))
+(setq mu4e-compose-format-flowed t)
 #+END_SRC
 
 To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=. Also set email width to 72 characters.
@@ -5054,7 +5052,6 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'turn-on-orgtbl)
 (add-hook 'message-mode-hook #'typo-mode)
 (add-hook 'message-mode-hook #'malb/company-ispell-setup)
-(add-hook 'message-mode-hook #'malb/enable-guess-language-mode)
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
 #+END_SRC
 
@@ -5100,15 +5097,8 @@ Put attachments at end of buffer ([[http://mbork.pl/2015-11-28_Fixing_mml-attach
 (advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
 #+END_SRC
 
-We add a copy of the buffer to the kill ring, to make it easy to refer to it later.
-
 #+BEGIN_SRC emacs-lisp
-(defun malb/copy-buffer-to-kill-ring ()
-  "Copy buffer to kill ring."
-  (interactive)
-  (kill-ring-save (point-min) (point-max)))
-
-(add-hook 'message-send-hook #'malb/copy-buffer-to-kill-ring)
+(bind-key "<f2> c" #'message-goto-cc mu4e-compose-mode-map)
 #+END_SRC
 
 ** Viewing Email
