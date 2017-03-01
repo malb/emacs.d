@@ -4305,14 +4305,13 @@ Automatically pick dictionary.
 #+BEGIN_SRC emacs-lisp
 (use-package guess-language
   :ensure t
+  :diminish guess-language-mode
+  :init (add-hook 'text-mode-hook #'guess-language-mode)
   :config (progn
-            (setq guess-language-languages '(en de)
-                  guess-language-min-paragraph-length 35)
-
-            (defun malb/enable-guess-language-mode ()
-              (guess-language-mode 1))))
+            (setq guess-language-langcodes '((en . ("en_GB" "English"))
+                                             (de . ("de"  "German")))
+                  guess-language-languages '(en de))))
 #+END_SRC
-
 
 *** Grammar Checking
 
