@@ -5229,7 +5229,7 @@ Kill mu4e frame.
   (kill-buffer)
   (delete-frame))
 
-(bind-key "Q" #'malb/mu4e-quit-session mu4e-main-mode-map)
+(bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map)
 #+END_SRC
 
 ** Window Management
