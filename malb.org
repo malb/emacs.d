@@ -2702,51 +2702,6 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("F" ((in-mode . "mu4e-headers-mode")))))))
 #+END_SRC
 
-** [#C] Meeting Notes
-
-#+BEGIN_QUOTE
-I've notice that while I really like taking notes in a meeting, I don't always like the multiple windows I have opened, so I created this function that I can easily call to eliminate distractions enduring a meeting. ([[https://github.com/howardabrams/dot-files/blob/master/emacs-org.org][source]])
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-(defun meeting-notes ()
-  "Call this after creating an org-mode heading for where the notes for the meeting
-  should be. After calling this function, call 'meeting-done' to reset the environment."
-  (interactive)
-  (outline-mark-subtree)                              ;; Select org-mode section
-  (narrow-to-region (region-beginning) (region-end))  ;; Only show that region
-  (deactivate-mark)
-  (delete-other-windows)                              ;; Get rid of other windows
-  (text-scale-set 2)                                  ;; Text is now readable by others
-  (fringe-mode 0)
-  (message "When finished taking your notes, run meeting-done."))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun meeting-done ()
-  "Attempt to 'undo' the effects of taking meeting notes."
-  (interactive)
-  (widen)                                       ;; Opposite of narrow-to-region
-  (text-scale-set 0)                            ;; Reset the font size increase
-  (fringe-mode 1)
-  (winner-undo))                                ;; Put the windows back in place
-#+END_SRC
-
-** [#C] Org Tree Slide
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-tree-slide
-  :ensure t
-  :config (progn
-            (bind-key "C-<left>"
-                      #'org-tree-slide-move-previous-tree org-tree-slide-mode-map)
-            (bind-key "C-<right>"
-                      #'org-tree-slide-move-next-tree org-tree-slide-mode-map)
-            (bind-key "<f11>"
-                      #'org-tree-slide-content org-tree-slide-mode-map)
-            (setq org-tree-slide-skip-outline-level 2)))
-#+END_SRC
-
 ** Auto Completion
 
 #+BEGIN_SRC emacs-lisp
@@ -2832,7 +2787,6 @@ Execute this command while the point is on or after the hyper-linked org link."
                                      (replace-regexp-in-string "<\\|>" "" x)))
                            r "\n")))))
 #+END_SRC
-
 
 ** Tips
 
