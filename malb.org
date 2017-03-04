@@ -600,7 +600,8 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 #+BEGIN_SRC emacs-lisp
 (use-package avy
   :ensure t
-  :bind ("C-c C-<SPC>" . avy-goto-word-or-subword-1)
+  :bind (("C-c C-<SPC>" . avy-goto-char-timer)
+         ("M-g g" . avy-goto-line))
   :config (progn
             (setq avy-background t)
             (key-chord-define-global "jj"  #'avy-goto-word-or-subword-1)))
