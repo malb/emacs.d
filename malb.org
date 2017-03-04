@@ -2013,7 +2013,6 @@ Working with source code in org-mode.
                (shell . t)
                (latex . t)
                (ditaa . t)
-               (clojure . t)
                (plantuml . t)
                (makefile . t)))
 
@@ -3124,7 +3123,6 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
   :ensure t
   :config (progn
             (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
-            (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
             (unbind-key "C-c C-q" aggressive-indent-mode-map))
   :diminish aggressive-indent-mode)
 #+END_SRC
@@ -4051,49 +4049,6 @@ short and sweet LISP editing ([[https://github.com/abo-abo/lispy][source]])
 #+BEGIN_SRC emacs-lisp
 (use-package suggest
   :ensure t)
-#+END_SRC
-
-
-*** Clojure
-
-([[https://github.com/howardabrams/dot-files/blob/master/emacs-clojure.org][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package clojure-mode
-  :ensure t
-  :config (progn
-            (add-hook 'clojure-mode-hook #'eldoc-mode)
-            (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
-            (add-hook 'clojure-mode-hook #'lispy-mode)))
-#+END_SRC
-
-**** CIDER
-
-#+BEGIN_SRC emacs-lisp
-(use-package cider
-  :ensure t
-  :config (progn
-            (setq cider-repl-use-clojure-font-lock t
-                  nrepl-hide-special-buffers t
-                  cider-popup-stacktraces nil)
-            (add-hook 'cider-mode-hook #'cider-turn-on-eldoc-mode)
-            (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)))
-#+END_SRC
-
-**** Org-Mode
-
-Enable CIDER in org-mode.
-
-#+BEGIN_SRC emacs-lisp
-(use-package ob-clojure
-  :config (setq org-babel-clojure-backend 'cider))
-#+END_SRC
-
-**** Flycheck
-
-#+BEGIN_SRC emacs-lisp
-(use-package flycheck-clojure
-   :ensure t)
 #+END_SRC
 
 *** Hy
