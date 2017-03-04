@@ -1450,11 +1450,11 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 ([[https://github.com/rejeep/drag-stuff.el][source]])
 
 #+BEGIN_SRC emacs-lisp
-  (use-package drag-stuff
-    :ensure t
-    :diminish drag-stuff-mode
-    :bind (("M-<up>" . drag-stuff-up)
-           ("M-<down>" . drag-stuff-down)))
+(use-package drag-stuff
+  :ensure t
+  :diminish drag-stuff-mode
+  :bind (("M-p" . drag-stuff-up)
+         ("M-n" . drag-stuff-down)))
 #+END_SRC
 
 ** Visualise the undo tree
