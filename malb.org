@@ -5703,7 +5703,8 @@ directory to make multiple eshell windows easier."
 
             (defun malb/eshell-keys ()
               (bind-key "<home>" #'eshell-bol eshell-mode-map)
-              (bind-key "M-l" #'helm-eshell-history eshell-mode-map))
+              (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
+              (define-key eshell-mode-map [remap eshell-pcomplete] #'helm-esh-pcomplete))
 
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
             ;; for some reason this needs to be a hook
