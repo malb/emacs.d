@@ -1248,7 +1248,7 @@ Don’t include boring or remote stuff in list of recently visited files.
 #+BEGIN_SRC emacs-lisp
 (use-package recentf
   :config  (progn
-             (setq recentf-max-saved-items 50
+             (setq recentf-max-saved-items 64
                    recentf-exclude (list "COMMIT_EDITMSG"
                                          "~$"
                                          "/tmp/"
