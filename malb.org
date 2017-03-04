@@ -5628,6 +5628,14 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 #+END_SRC
 
 * Shells
+
+We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#eshell-and-shell-environment][source]])
+
+#+BEGIN_SRC emacs-lisp
+(setenv "PAGER" "cat")
+#+END_SRC
+
+
 ** Multi-Term
 
 [[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs. =malb/multi-term-here= opens terminal at point, close with =q= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]].
