@@ -1655,6 +1655,15 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
   :ensure t)
 #+END_SRC
 
+** Hungry Delete
+
+#+BEGIN_SRC emacs-lisp
+(use-package nv-delete-back
+  :bind (("C-<backspace>" . nv-delete-back-all)
+         ("M-<backspace>" . nv-delete-back))
+  :ensure t)
+#+END_SRC
+
 * Projects (Projectile)
 
 #+BEGIN_QUOTE
