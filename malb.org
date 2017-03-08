@@ -2063,8 +2063,8 @@ Working with source code in org-mode.
       '((sequence "TODO(t)"
                   "WAITING(w@)"
                   "PING(p)"
-                  "|"
                   "DELEGATED(e@/!)"
+                  "|"
                   "DONE(d)"
                   "CANCELLED(c@/!)") ;;generic
 
@@ -3920,10 +3920,11 @@ Shortcut for Sage Jupyter notebook.
     (if (not (prodigy-service-started-p sage))
         (progn
           (prodigy-start-service sage)
-          (sleep-for 1.0))))
+          (sleep-for 1.5))))
   (ein:notebooklist-open 8890))
 #+END_SRC
 
+*Note:* If you get =[warn] Null value passed to ein:get-ipython-major-version= try =(ein:query-ipython-version 8890 t)=
 
 *** Virtual Environments
 
