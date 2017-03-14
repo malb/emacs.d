@@ -3174,12 +3174,12 @@ mouse-3: go to end")
 #+BEGIN_SRC emacs-lisp
 (use-package helm-dash
   :ensure t
+  :bind ("C-c h ." . helm-dash-at-point)
   :config (progn
             (setq helm-dash-common-docsets '("Bash"
                                              "C"
                                              "C++"
                                              "Emacs Lisp"
-                                             "Go"
                                              "HTML"
                                              "Java"
                                              "LaTeX"
@@ -3188,7 +3188,6 @@ mouse-3: go to end")
                                              "Python 2"
                                              "Python 3"
                                              "Vagrant"
-                                             "VMware vSphere"
                                              )
                   helm-dash-browser-func 'eww)))
 #+END_SRC
