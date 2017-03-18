@@ -3296,6 +3296,17 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
   :config (dumb-jump-mode))
 #+END_SRC
 
+*** Debuggers
+
+[[https://github.com/realgud/realgud][All the debuggers]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package realgud
+  :ensure t
+  :config (progn
+            (setq realgud:pdb-command-name "python -m pdb")))
+#+END_SRC
+
 ** C/C++ development
 
 *** Semantic
