@@ -3798,22 +3798,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 *** Sage
 
-Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top. However, we usually don’t do that but use python-mode directly. For this, our setup is as follows.
-
-In =.emacs.d= create a directory =sage-python/bin= which contains a file called =python= with the following content:
-
-#+BEGIN_SRC bash
-#!/bin/bash
-sage -python "$@"
-#+END_SRC
-
-Then, in each project where we want to use Sage, we can add a =.dir-locals.el= file at the top level with
-
-#+BEGIN_SRC emacs-lisp  :tangle no
-((python-mode . ((python-shell-virtualenv-path . (concat user-emacs-directory "sage-devel-python")))))
-#+END_SRC
-
-which will tell ~anaconda-mode~ to run Sage’s python process instead of the system-wide one.
+Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top.
 
 #+BEGIN_SRC emacs-lisp
 (use-package auto-complete
@@ -3855,6 +3840,27 @@ which will tell ~anaconda-mode~ to run Sage’s python process instead of the sy
             (bind-key "C-<return>" #'auto-complete sage-shell:sage-mode-map)
             ))
 #+END_SRC
+
+However, I usually don’t do that but use python-mode directly:
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/sage-workon ()
+  (interactive)
+  (setenv "SAGE_ROOT" "/opt/sage-devel/")
+  (setenv "SAGE_LOCAL" "/opt/sage-devel/local/")
+  (setenv "ORIG_LD_LIBRARY_PATH" (getenv "LD_LIBRARY_PATH"))
+  (setenv "LD_LIBRARY_PATH" "/opt/sage-devel/local/lib/")
+  (venv--activate-dir "/opt/sage-devel/local/"))
+
+(defun malb/sage-deactivate ()
+  (interactive)
+  (setenv "SAGE_ROOT")
+  (setenv "SAGE_LOCAL")
+  (setenv "LD_LIBRARY_PATH" (getenv "ORIG_LD_LIBRARY_PATH"))
+  (setenv "ORIG_LD_LIBRARY_PATH")
+  (venv-deactivate))
+#+END_SRC
+
 
 **** Org Babel SageMath
 
