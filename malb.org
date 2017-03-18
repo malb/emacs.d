@@ -3628,7 +3628,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
                           python-fill-docstring-style 'django)
 
             (setq python-shell-interpreter "ipython"
-                  python-shell-interpreter-args ""
+                  python-shell-interpreter-args "--simple-prompt -i"
                   python-shell-prompt-regexp "In \\[[0-9]+\\]: "
                   python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
                   python-shell-completion-setup-code
