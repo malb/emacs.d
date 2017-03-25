@@ -3290,10 +3290,16 @@ Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/928
 
 zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for JavaScript, Emacs Lisp, Python, Go, Clojure, …
 
+- =dumb-jump-go= =C-M-g= core functionality. Attempts to jump to the definition for the thing under point
+- =dumb-jump-back= =C-M-p= jumps back to where you were when you jumped. These are chained so if you go down a rabbit hole you can get back out or where you want to be.
+- =dumb-jump-quick-look= =C-M-q= like =dumb-jump-go= but shows tooltip with file, line, and context
+
 #+BEGIN_SRC emacs-lisp
 (use-package dumb-jump
   :ensure t
-  :config (dumb-jump-mode))
+  :config (progn
+            (setq dumb-jump-selector 'helm)
+            (dumb-jump-mode)))
 #+END_SRC
 
 *** Debuggers
