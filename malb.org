@@ -2699,11 +2699,17 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      "* Meeting with %^{who}\n%U\n\n%i%?\n\n"
                      :clock-in t :clock-resume t)
 
-                    ("L" "link with selection" entry (file+headline malb/inbox-org "Links")
-                     "* %^{Title}\nSource: %u, %c\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?")
+                    ("p" "Protocol" entry
+                     (file+headline (expand-file-name "inbox.org" malb/org-files-dir) "Links")
+                     "* %?[[%:link][%:description]]\nCaptured On: %U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
+                     :immediate-finish nil
+                     :prepend t)
 
-                    ("l" "link" entry (file+headline malb/inbox-org "Links")
-                     "* %? [[%:link][%:description]]\nCaptured On: %U\n\n")))
+                    ("L" "Protocol link" entry
+                     (file+headline (expand-file-name "inbox.org" malb/org-files-dir) "Links")
+                     "* %?[[%:link][%:description]]\nCaptured On: %U\n\n"
+                     :immediate-finish nil
+                     :prepend t)))
 
             (setq org-capture-templates-contexts
                   '(("r" ((in-mode . "mu4e-view-mode")))
