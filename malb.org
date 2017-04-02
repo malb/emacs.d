@@ -2670,7 +2670,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      entry (file malb/inbox-org)
                      "** TODO %?\n%i\n%a" :prepend t)
 
-                    ("p" "project task" plain (function malb/org-capture-projectile)
+                    ("P" "project task" plain (function malb/org-capture-projectile)
                      "** TODO %?\n%i\n%a\n" :prepend t)
 
                     ("r" "respond ro email"
