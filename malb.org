@@ -458,7 +458,8 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
             (require 'ispell)
             (setq golden-ratio-adjust-factor 1.0
-                  golden-ratio-exclude-modes '(eshell-mode
+                  golden-ratio-exclude-modes '(imenu-list-major-mode
+                                               eshell-mode
                                                pdf-view-mode
                                                mu4e-view-mode
                                                mu4e-main-mode
@@ -488,8 +489,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
             (setq golden-ratio-exclude-buffer-regexp malb/popup-windows)
 
-            (setq golden-ratio-inhibit-functions
-                  '(malb/golden-ratio-inhibit-functions))))
+            (setq golden-ratio-inhibit-functions '(malb/golden-ratio-inhibit-functions))))
 #+END_SRC
 
 ** Hydra
