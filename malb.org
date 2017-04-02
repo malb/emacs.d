@@ -5843,6 +5843,15 @@ directory to make multiple eshell windows easier."
     (while (pcomplete-here (pcomplete-entries))))))
 #+END_SRC
 
+*** Tips
+
+Cat directly into a buffer (select with =C-c M-b=)
+
+#+BEGIN_SRC shell :tangle no
+cat mylog.log >> #<buffer *scratch*>
+#+END_SRC
+
+
 ** COMMENT Editor == Emacs
 
 #+BEGIN_SRC emacs-lisp
