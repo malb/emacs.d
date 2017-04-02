@@ -501,10 +501,10 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 ^----^--------^-----^---------^------^---------^------^---------^---------^^-----^------^---^-------^---^--------------^
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ new      _C_enter   _j_ump      _W_ store cfg
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_ine      _J_ load cfg
-_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _I_ imenu list
+_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _i_ imenu list
 _→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close
-_T_oggle ded  _d_lt this      _a_ce 1       max_i_mize          _!_ \\/ rename
-_SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
+_T_oggle ded  _d_lt this      _a_ce 1          _g_olden-ratio   _!_ \\/ rename
+_SPC_ cancel  _D_lt other     _s_wap
 ^^            _o_nly this
 "
   ("<left>" windmove-left )
@@ -519,7 +519,7 @@ _SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
   ("r" enlarge-window-horizontally)
   ("g" golden-ratio-mode)
   ("H" malb/helm-omni :color blue)
-  ("I" imenu-list-minor-mode :color blue)
+  ("i" imenu-list-smart-toggle :color blue)
   ("1" previous-buffer)
   ("2" next-buffer)
   ("p" previous-buffer)
@@ -533,7 +533,6 @@ _SPC_ cancel  _D_lt other     _s_wap           _g_olden-ratio
   ("d" delete-window)
   ("D" (lambda () (interactive) (ace-window 16)) :color blue)
   ("o" delete-other-windows :color blue)
-  ("i" ace-maximize-window :color blue)
   ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
   ("Z" winner-redo)
   ("[" malb/eyebrowse-new-window-config :color blue)
@@ -1289,7 +1288,10 @@ Make sure to auto automatically rescan for imenu change.
 
 #+BEGIN_SRC emacs-lisp
 (use-package imenu-list
-  :ensure t)
+  :ensure t
+  :config (setq imenu-list-position 'left
+                imenu-list-size 0.15
+                imenu-list-auto-resize nil))
 #+END_SRC
 
 * Parenthesis
