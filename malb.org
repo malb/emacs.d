@@ -6438,6 +6438,12 @@ The result looks like this:
                                         :background (solarized-with-color-variables 'light base03)
                                         :foreground "#69B7F0" :weight 'bold)))
 
+                (eval-after-load "eshell-git-prompt"
+                  (progn
+                    (set-face-attribute 'eshell-git-prompt-powerline-dir-face nil :foreground "white")
+                    (set-face-attribute 'eshell-git-prompt-powerline-clean-face nil :foreground "white")
+                    (set-face-attribute 'eshell-git-prompt-powerline-not-clean-face nil :foreground "white")))
+
                 (eval-after-load "ein-cell"
                   (progn
                     (set-face-attribute 'ein:cell-input-area   nil :background (solarized-with-color-variables
