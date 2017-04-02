@@ -6410,6 +6410,27 @@ When saving a file that starts with =#!=, make it executable.
           'executable-make-buffer-file-executable-if-script-p)
 #+END_SRC
 
+=C-u C-SPC C-SCP= pops the mark twice
+
+#+BEGIN_SRC emacs-lisp
+(setq set-mark-command-repeat-pop t)
+#+END_SRC
+
+Skip over duplicates ([[http://endlessparentheses.com/faster-pop-to-mark-command.html][source]]):
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/multi-pop-to-mark (orig-fun &rest args)
+  "Call ORIG-FUN until the cursor moves.
+Try the repeated popping up to 10 times. ARGS is passed through."
+  (let ((p (point)))
+    (dotimes (i 10)
+      (when (= p (point))
+        (apply orig-fun args)))))
+
+(advice-add 'pop-to-mark-command :around #'malb/multi-pop-to-mark)
+#+END_SRC
+
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
