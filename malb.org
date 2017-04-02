@@ -3250,9 +3250,9 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]])
 
 [[https://github.com/Andersbakken/rtags][RTags]] can come in handy.
 
-1. create a =compile-commands.json= file using [[https://github.com/rizsotto/Bear][bear]].
+1. create a =compile_commands.json= file using [[https://github.com/rizsotto/Bear][bear]].
 2. launch =rdm=
-3. tell rtags about the project =cd /project/dir/ && rc -J /path/to/compile-commands.json=
+3. tell rtags about the project =cd /project/dir/ && rc -J /path/to/compile_commands.json=
 
 On the other hand, rtags seems to have trouble dealing with inline functions.
 
@@ -3261,9 +3261,10 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
   :ensure t
   :config (progn
             (rtags-enable-standard-keybindings)
-            (setq rtags-use-helm t)
-            (add-hook 'c-mode-common-hook #'rtags-start-process-unless-running)
-            (add-hook 'c++-mode-common-hook #'rtags-start-process-unless-running)
+            (setq rtags-use-helm t
+                  rtags-autostart-diagnostics t)
+            (add-hook 'c-mode-hook #'rtags-start-process-unless-running)
+            (add-hook 'c++-mode-hook #'rtags-start-process-unless-running)
             (add-to-list 'company-backends '(company-rtags :with company-yasnippet) t)))
 #+END_SRC
 
@@ -3307,6 +3308,12 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
   :ensure t
   :config (progn
             (setq dumb-jump-selector 'helm)
+            (unbind-key "C-M-g" dumb-jump-mode-map)
+            (unbind-key "C-M-p" dumb-jump-mode-map)
+            (unbind-key "C-M-q" dumb-jump-mode-map)
+            (bind-key "C-c j ." #'dumb-jump-go dumb-jump-mode-map)
+            (bind-key "C-c j ," #'dumb-jump-back dumb-jump-mode-map)
+            (bind-key "C-c j q" #'dumb-jump-quick-look dumb-jump-mode-map)
             (dumb-jump-mode)))
 #+END_SRC
 
@@ -3723,10 +3730,23 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 #+BEGIN_SRC emacs-lisp
 (use-package anaconda-mode
   :ensure t
+  :after dumb-jump
   :diminish anaconda-mode
   :config (progn
             (add-hook 'python-mode-hook #'anaconda-mode)
-            (add-hook 'python-mode-hook #'anaconda-eldoc-mode)))
+            (add-hook 'python-mode-hook #'anaconda-eldoc-mode)
+
+            (defun malb/anaconda-mode-find-definitions (&optional arg)
+              (interactive "P")
+              (let ((p (point)))
+                (if (not (called-interactively-p 'any))
+                    (anaconda-mode-find-definitions arg)
+                  (call-interactively 'anaconda-mode-find-definitions))
+                (if (equal p (point))
+                    (dumb-jump-go))))
+
+            (bind-key "M-." #'malb/anaconda-mode-find-definitions anaconda-mode-map)
+            ))
 #+END_SRC
 
 *** Pydoc
