@@ -3995,8 +3995,7 @@ Shortcut for Sage Jupyter notebook.
 
             (add-hook 'python-mode-hook #'malb/activate-venv)
             (add-hook 'cython-mode-hook #'malb/activate-venv)
-            (add-hook 'eshell-mode-hook #'malb/activate-venv)
-            ))
+            (add-hook 'eshell-mode-hook #'malb/activate-venv)))
 #+END_SRC
 
 ** Lisp
