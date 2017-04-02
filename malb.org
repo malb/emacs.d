@@ -6977,16 +6977,13 @@ If your instance hangs and won't respond to =C-g=, you can use =pkill -SIGUSR2 e
 - =C-x C-SPC= jump back globally
 - =C-x z= repeat last command (and again with just =z=)
 - =align-regexp= to align on regexp
-- =C-c == reftex-toc
 - =C-h c= invokes describe-key-briefly.
 - =%&= in =dired= marks garbage files
-- =M-a= and =M-e= to move through sentences and
 - =C-<down>= and =C-<up>= to move backwards and forwards through paragraphs
 - ~M-|~ to send the contents of a region to a shell command
 - =C-x 4 C-o= (~display-buffer~) opens another window, but instead if showing the same buffer, shows another one, the name of which is read from the minibuffer. Note that the newly opened window does not get selected!
 - =C-x 4 0= (~kill-buffer-and-window~), which not only deletes the current window (like ~C-x 0~), but also kills its buffer.
 - ~C-x 4 c~ (~clone-indirect-buffer-other-window~) splits the current window, clones the current buffer and visits the clone in the newly opened window.
-- =C-x <left>= and =C-x <right>= cycle through buffers
 
 ** TRAMP syntax
 
