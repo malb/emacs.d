@@ -6573,6 +6573,7 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 
             (setq beacon-color "#EEAD0E")
             (add-to-list 'beacon-dont-blink-major-modes 'eshell-mode)
+            (add-to-list 'beacon-dont-blink-commands 'mwheel-scroll)
 
             (add-hook 'beacon-dont-blink-predicates
                       #'malb/beacon-disable-hl-line-mode)
