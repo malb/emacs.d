@@ -5987,7 +5987,10 @@ exports.boxes = [ "INBOX"];
             :port 8890
             :stop-signal 'sigkill
             :kill-process-buffer-on-stop t
-            :tags '(development))))
+            :tags '(development))
+
+          ;; start imapnotify
+          (prodigy-start-service (prodigy-find-service "imapnotify"))))
 #+END_SRC
 
 * Page Breaks
