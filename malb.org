@@ -1565,6 +1565,8 @@ Commands are bound to =C-x m …=
             (bind-key "M-£" #'mc/unmark-previous-like-this)
             (bind-key "M-$" #'mc/unmark-next-like-this)
 
+            (bind-key "C-;" #'mc/mark-all-dwim)
+
             (define-prefix-command 'malb/mc-map)
             (bind-key "m" 'malb/mc-map ctl-x-map)
 
@@ -4268,8 +4270,9 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
   :bind ("C-." . ace-flyspell-dwim)
   :init (progn
           (eval-after-load "flyspell"
-            '(bind-key  "C-." #'ace-flyspell-dwim flyspell-mode-map)))
-  )
+            '(bind-key  "C-." #'ace-flyspell-dwim flyspell-mode-map))
+          (eval-after-load "flyspell"
+            '(unbind-key "C-;" flyspell-mode-map))))
 #+END_SRC
 
 Diminish ~flyspell-mode~ as we always use it.
