@@ -153,9 +153,9 @@ Maximise the window as soon as possible
 We have RAM, lots of it.
 
 #+BEGIN_SRC emacs-lisp
-(setq global-mark-ring-max 128
-      mark-ring-max 128
-      kill-ring-max 128)
+(setq global-mark-ring-max 256
+      mark-ring-max 256
+      kill-ring-max 256)
 #+END_SRC
 
 ([[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][source]])
