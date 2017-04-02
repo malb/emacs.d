@@ -3928,11 +3928,11 @@ However, I usually don’t do that but use python-mode directly:
                          '("sg" "#+BEGIN_SRC sage\n?\n#+END_SRC"))))
 #+END_SRC
 
-*** [[https://github.com/tkf/emacs-ipython-notebook][iPython Notebook]]
+*** iPython Notebook
 
-An interface from Emacs to iPython.
+[[https://github.com/millejoh/emacs-ipython-notebook][EIN]] is a interface to iPython.
 
-[[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png]] ([[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png][source]])
+[[https://github.com/millejoh/emacs-ipython-notebook/wiki/images/demo_plotnormal.PNG]] ([[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png][source]])
 
 On our system port 8888 is already taken.
 
@@ -3941,8 +3941,9 @@ On our system port 8888 is already taken.
   :ensure t
   :config (progn
             (setq ein:use-auto-complete t
-                  ein:url-or-port '(8889 8890)
-                  ein:default-url-or-port 8890)
+                  ein:url-or-port '(8890 8889)
+                  ein:default-url-or-port 8890
+                  ein:console-args '("--simple-prompt"))
 
             (defun malb/ein-hook ()
               (toggle-truncate-lines t)
