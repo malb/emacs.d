@@ -1968,6 +1968,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-startup-with-inline-images t    ; show images when opening a file.
       org-hidden-keywords nil
       org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
+      org-list-allow-alphabetical t
       org-goto-interface 'org-outline-path-complete
       org-outline-path-complete-in-steps nil)
 
