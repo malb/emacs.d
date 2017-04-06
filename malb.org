@@ -3324,6 +3324,7 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
 #+BEGIN_SRC emacs-lisp
 (use-package realgud
   :ensure t
+  :commands (realgud:pdb realgud:ipdb realgud:trepan2 realgud:gdb)
   :config (progn
             (setq realgud:pdb-command-name "python -m pdb")))
 #+END_SRC
@@ -3444,6 +3445,7 @@ The following code parses a complete project with semantic. This is useful for e
 #+BEGIN_SRC emacs-lisp
 (use-package srefactor
   :ensure t
+  :defer 10
   :config (progn
             (bind-key "M-RET" #'srefactor-refactor-at-point c-mode-base-map)))
 #+END_SRC
@@ -3939,6 +3941,7 @@ On our system port 8888 is already taken.
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
+  :commands (ein:notebook-open)
   :config (progn
             (setq ein:use-auto-complete t
                   ein:url-or-port '(8890 8889)
@@ -3958,10 +3961,16 @@ On our system port 8888 is already taken.
             ;; at this point the list starts with not, i.e. is negated
             (when (boundp 'company-global-modes)
               (add-to-list 'company-global-modes 'ein:notebook-multilang-mode t)
-              (add-to-list 'company-global-modes 'ein:notebook-python-mode t))))
-#+END_SRC
+              (add-to-list 'company-global-modes 'ein:notebook-python-mode t))
 
-*Note:* We [[https://github.com/millejoh/emacs-ipython-notebook/issues/147][need]] to enable password authentication.
+            (require 'ein-cell)
+            (set-face-attribute 'ein:cell-input-area   nil :background (solarized-with-color-variables
+                                                                         'light
+                                                                         (solarized-color-blend base02 base03 0.5)))
+            (set-face-attribute 'ein:cell-input-prompt nil
+                                :background nil
+                                :foreground "#657b83" :weight 'bold)))
+#+END_SRC
 
 Shortcut for Sage Jupyter notebook.
 
@@ -3974,7 +3983,6 @@ Shortcut for Sage Jupyter notebook.
           (venv-deactivate)  ;; avoid weird interactions
           (prodigy-start-service sage)
           (sleep-for 1.5))))
-  (ein:notebooklist-login 8890 malb/sage-notebook-password)
   (ein:notebooklist-open 8890))
 #+END_SRC
 
@@ -5593,15 +5601,125 @@ We change the default template to not include the title which is filled in by de
 
 [[https://github.com/politza/pdf-tools][PDF tools]] is a reasonable PDF viewer for Emacs.
 
+We also add support to extract PDF annotations to a temporary org-mode/markdown buffer, based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]].
+
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
   :ensure t
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :init (progn
           (add-hook 'pdf-view-mode-hook 'auto-revert-mode))
   :config (progn
             (pdf-tools-install)
             (setq-default pdf-view-display-size 'fit-page)
-            (bind-key "D" #'dedicated-mode pdf-view-mode-map)))
+
+            (defun pdf-tools-org-edges-to-region (edges)
+              "Attempt to get 4-entry region \(LEFT TOP RIGHT BOTTOM\) from several EDGES.
+We need this to import annotations and to get marked-up text, because
+annotations are referenced by its edges, but functions for these tasks
+need region."
+              (let ((left0 (nth 0 (car edges)))
+                    (top0 (nth 1 (car edges)))
+                    (bottom0 (nth 3 (car edges)))
+                    (top1 (nth 1 (car (last edges))))
+                    (right1 (nth 2 (car (last edges))))
+                    (bottom1 (nth 3 (car (last edges))))
+                    (n (safe-length edges)))
+                ;; we try to guess the line height to move
+                ;; the region away from the boundary and
+                ;; avoid double lines
+                (list left0
+                      (+ top0 (/ (- bottom0 top0) 3))
+                      right1
+                      (- bottom1 (/ (- bottom1 top1) 3)))))
+
+            (defun malb/pdf-annot-export-as-org (compact)
+              "Export annotations to Org Buffer."
+              (interactive "P")
+              (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
+                     (source-buffer (current-buffer))
+                     (source-buffer-name (file-name-sans-extension (buffer-name)))
+                     (source-file-name (buffer-file-name source-buffer))
+                     (target-buffer-name (format "*Notes for %s*" source-buffer-name))
+                     (target-buffer (get-buffer-create target-buffer-name)))
+                (switch-to-buffer target-buffer)
+                (org-mode)
+                (erase-buffer)
+                (insert (format "#+TITLE: Notes for %s\n" source-buffer-name))
+                (insert (format "#+STARTUP: indent\n\n"))
+                (insert (format "source: [[%s][%s]]\n\n" source-file-name source-buffer))
+                (mapc
+                 (lambda (annot) ;; traverse all annotations
+                   (progn
+                     (insert (if compact "- " "* "))
+                     (insert (format "page %s" (cdr (assoc 'page annot))))
+                     ;; insert text from marked-up region in an org-mode quote
+                     (when (pdf-annot-get annot 'markup-edges)
+                       (let ((highlighted-text (with-current-buffer source-buffer
+                                                 (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                                   (pdf-tools-org-edges-to-region
+                                                                    (pdf-annot-get annot 'markup-edges))))))
+                         (if compact
+                             (insert (format ": “%s”\n\n" (replace-regexp-in-string "\n" " " highlighted-text)))
+                           (insert (concat "\n\n#+BEGIN_QUOTE\n"
+                                           highlighted-text
+                                           "\n#+END_QUOTE\n\n")))))
+                     (let ((note (pdf-annot-get annot 'contents)))
+                       (if (> (length note) 0)
+                           (insert (format "%s\n\n" note))))))
+                 (cl-remove-if
+                  (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
+                  annots)
+                 )))
+
+            (defun malb/pdf-annot-export-as-md (compact)
+              "Export annotations to Markdown buffer."
+              (interactive "P")
+              (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
+                     (source-buffer (current-buffer))
+                     (source-buffer-name (file-name-sans-extension (buffer-name)))
+                     (source-file-name (buffer-file-name source-buffer))
+                     (target-buffer-name (format "*Notes for %s*" source-buffer-name))
+                     (target-buffer (get-buffer-create target-buffer-name)))
+                (switch-to-buffer target-buffer)
+                (markdown-mode)
+                (erase-buffer)
+                (insert (format "---\ntitle: Notes for %s\n---\n\n" source-buffer-name))
+                (insert (format "source: [%s](%s)\n\n" source-buffer source-file-name))
+                (mapc
+                 (lambda (annot) ;; traverse all annotations
+                   (progn
+                     (insert (if compact
+                                 (format "- page %s: " (cdr (assoc 'page annot)))
+                               (format "On page %s:  \n" (cdr (assoc 'page annot)))))
+                     ;; insert text from marked-up region in an org-mode quote
+                     (when (pdf-annot-get annot 'markup-edges)
+                       (let ((highlighted-text (with-current-buffer source-buffer
+                                                 (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                                   (pdf-tools-org-edges-to-region
+                                                                    (pdf-annot-get annot 'markup-edges))))))
+                         (if compact
+                             (insert (format "“%s”\n\n" (replace-regexp-in-string "\n" " " highlighted-text)))
+                           (insert (format "> %s\n\n" (replace-regexp-in-string "\n" "\n> " highlighted-text))))))
+
+                     (let ((note (pdf-annot-get annot 'contents)))
+                       (if (> (length note) 0)
+                           (insert (format "%s\n\n" note))))))
+                 (cl-remove-if
+                  (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
+                  annots)
+                 )))
+
+            (defhydra malb/hydra-pdf-annot (:color blue)
+              "export annotations to"
+              ("o" (lambda () (interactive) (malb/pdf-annot-export-as-org 1)) "org-mode (compact)")
+              ("O" malb/pdf-annot-export-as-org "org-mode")
+              ("m" (lambda () (interactive) (malb/pdf-annot-export-as-md  1)) "markdown (compact)")
+              ("M" malb/pdf-annot-export-as-md "markdown")
+              ("q" nil "cancel"))
+
+            (bind-key "D" #'dedicated-mode pdf-view-mode-map)
+            (bind-key "x" #'malb/hydra-pdf-annot/body pdf-view-mode-map)))
 #+END_SRC
 
 We make ~scroll-other-window~ work for PDF tools ([[https://github.com/politza/pdf-tools/issues/55][source]])
@@ -5636,119 +5754,6 @@ If buffer type is not included, 'default' will be used. Used by malb/smart-other
 
 (define-key global-map (kbd "C-M-v") 'malb/other-scroll-up)
 (define-key global-map (kbd "C-M-S-v") 'malb/other-scroll-down)
-#+END_SRC
-
-Extract PDF annotations to temporary org-mode buffer, based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]].
-
-*Tip:* =C-u= prefix argument produces a compact variant.
-
-#+BEGIN_SRC emacs-lisp
-(defun pdf-tools-org-edges-to-region (edges)
-  "Attempt to get 4-entry region \(LEFT TOP RIGHT BOTTOM\) from several EDGES.
-We need this to import annotations and to get marked-up text, because
-annotations are referenced by its edges, but functions for these tasks
-need region."
-  (let ((left0 (nth 0 (car edges)))
-        (top0 (nth 1 (car edges)))
-        (bottom0 (nth 3 (car edges)))
-        (top1 (nth 1 (car (last edges))))
-        (right1 (nth 2 (car (last edges))))
-        (bottom1 (nth 3 (car (last edges))))
-        (n (safe-length edges)))
-    ;; we try to guess the line height to move
-    ;; the region away from the boundary and
-    ;; avoid double lines
-    (list left0
-          (+ top0 (/ (- bottom0 top0) 3))
-          right1
-          (- bottom1 (/ (- bottom1 top1) 3)))))
-
-(defun malb/pdf-annot-export-as-org (compact)
-  "Export annotations to Org Buffer."
-  (interactive "P")
-  (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
-         (source-buffer (current-buffer))
-         (source-buffer-name (file-name-sans-extension (buffer-name)))
-         (source-file-name (buffer-file-name source-buffer))
-         (target-buffer-name (format "*Notes for %s*" source-buffer-name))
-         (target-buffer (get-buffer-create target-buffer-name)))
-    (switch-to-buffer target-buffer)
-    (org-mode)
-    (erase-buffer)
-    (insert (format "#+TITLE: Notes for %s\n" source-buffer-name))
-    (insert (format "#+STARTUP: indent\n\n"))
-    (insert (format "source: [[%s][%s]]\n\n" source-file-name source-buffer))
-    (mapc
-     (lambda (annot) ;; traverse all annotations
-       (progn
-         (insert (if compact "- " "* "))
-         (insert (format "page %s" (cdr (assoc 'page annot))))
-         ;; insert text from marked-up region in an org-mode quote
-         (when (pdf-annot-get annot 'markup-edges)
-           (let ((highlighted-text (with-current-buffer source-buffer
-                                     (pdf-info-gettext (pdf-annot-get annot 'page)
-                                                       (pdf-tools-org-edges-to-region
-                                                        (pdf-annot-get annot 'markup-edges))))))
-             (if compact
-                 (insert (format ": “%s”\n\n" (replace-regexp-in-string "\n" " " highlighted-text)))
-               (insert (concat "\n\n#+BEGIN_QUOTE\n"
-                               highlighted-text
-                               "\n#+END_QUOTE\n\n")))))
-         (let ((note (pdf-annot-get annot 'contents)))
-           (if (> (length note) 0)
-               (insert (format "%s\n\n" note))))))
-     (cl-remove-if
-      (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
-      annots)
-     )))
-
-(defun malb/pdf-annot-export-as-md (compact)
-  "Export annotations to Markdown buffer."
-  (interactive "P")
-  (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
-         (source-buffer (current-buffer))
-         (source-buffer-name (file-name-sans-extension (buffer-name)))
-         (source-file-name (buffer-file-name source-buffer))
-         (target-buffer-name (format "*Notes for %s*" source-buffer-name))
-         (target-buffer (get-buffer-create target-buffer-name)))
-    (switch-to-buffer target-buffer)
-    (markdown-mode)
-    (erase-buffer)
-    (insert (format "---\ntitle: Notes for %s\n---\n\n" source-buffer-name))
-    (insert (format "source: [%s](%s)\n\n" source-buffer source-file-name))
-    (mapc
-     (lambda (annot) ;; traverse all annotations
-       (progn
-         (insert (if compact
-                     (format "- page %s: " (cdr (assoc 'page annot)))
-                   (format "On page %s:  \n" (cdr (assoc 'page annot)))))
-         ;; insert text from marked-up region in an org-mode quote
-         (when (pdf-annot-get annot 'markup-edges)
-           (let ((highlighted-text (with-current-buffer source-buffer
-                                     (pdf-info-gettext (pdf-annot-get annot 'page)
-                                                       (pdf-tools-org-edges-to-region
-                                                        (pdf-annot-get annot 'markup-edges))))))
-             (if compact
-                 (insert (format "“%s”\n\n" (replace-regexp-in-string "\n" " " highlighted-text)))
-               (insert (format "> %s\n\n" (replace-regexp-in-string "\n" "\n> " highlighted-text))))))
-
-         (let ((note (pdf-annot-get annot 'contents)))
-           (if (> (length note) 0)
-               (insert (format "%s\n\n" note))))))
-     (cl-remove-if
-      (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
-      annots)
-     )))
-
-(defhydra malb/hydra-pdf-annot (:color blue)
-  "export annotations to"
-  ("o" (lambda () (interactive) (malb/pdf-annot-export-as-org 1)) "org-mode (compact)")
-  ("O" malb/pdf-annot-export-as-org "org-mode")
-  ("m" (lambda () (interactive) (malb/pdf-annot-export-as-md  1)) "markdown (compact)")
-  ("M" malb/pdf-annot-export-as-md "markdown")
-  ("q" nil "cancel"))
-
-(bind-key "x" #'malb/hydra-pdf-annot/body pdf-view-mode-map)
 #+END_SRC
 
 * Dired
@@ -6215,13 +6220,12 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
 * X11 Integration
 
 #+BEGIN_SRC emacs-lisp
-(when (display-graphic-p)
-  (setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
-        save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
-        mouse-yank-at-point t
-        mouse-drag-copy-region t
-        x-select-enable-primary t
-        x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+(setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
+      save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
+      mouse-yank-at-point t
+      mouse-drag-copy-region t
+      x-select-enable-primary t
+      x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 #+END_SRC
 
 Use GTK printing interface.
@@ -6655,16 +6659,7 @@ The result looks like this:
                   (progn
                     (set-face-attribute 'eshell-git-prompt-powerline-dir-face nil :foreground "white")
                     (set-face-attribute 'eshell-git-prompt-powerline-clean-face nil :foreground "white")
-                    (set-face-attribute 'eshell-git-prompt-powerline-not-clean-face nil :foreground "white")))
-
-                (eval-after-load "ein-cell"
-                  (progn
-                    (set-face-attribute 'ein:cell-input-area   nil :background (solarized-with-color-variables
-                                                                                 'light
-                                                                                 (solarized-color-blend base02 base03 0.5)))
-                    (set-face-attribute 'ein:cell-input-prompt nil
-                                        :background nil
-                                        :foreground "#657b83" :weight 'bold) ))))))
+                    (set-face-attribute 'eshell-git-prompt-powerline-not-clean-face nil :foreground "white")))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
