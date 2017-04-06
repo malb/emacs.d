@@ -2687,7 +2687,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
                     ("f" "file email"
                      entry (file+headline malb/inbox-org "Email")
-                     "* %a by %:fromname\n%U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
+                     "* %a by %:fromname\n%U\n\n"
                      :immediate-finish nil
                      :prepend nil)
 
