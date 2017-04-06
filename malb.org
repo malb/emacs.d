@@ -91,6 +91,7 @@ Get the package manager going, but do not autoload packages.
 Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our configuration readable.
 
 #+BEGIN_SRC emacs-lisp
+(setq use-package-verbose t)
 (require 'use-package)
 #+END_SRC
 
