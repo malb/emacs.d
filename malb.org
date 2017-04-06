@@ -4938,6 +4938,7 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
                  mu4e-hide-index-messages t
                  mu4e-auto-retrieve-keys t
                  mu4e-compose-dont-reply-to-self t
+                 mu4e-completing-read-function 'completing-read
                  mu4e-compose-in-new-frame t
                  mu4e-split-view 'vertical
                  mu4e-headers-visible-columns 116
@@ -4947,6 +4948,7 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
                  mu4e-change-filenames-when-moving t
                  mu4e-confirm-quit nil
                  mu4e-index-cleanup t
+                 mu4e-view-show-addresses t
                  mu4e-index-lazy-check nil))
 #+END_SRC
 
@@ -5173,6 +5175,11 @@ View emails with width restriction, but wider for HTML
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'mu4e-view-actions
              '("browser" . mu4e-action-view-in-browser) t)
+
+(defun malb/view-in-eww (msg)
+  (eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
+(add-to-list 'mu4e-view-actions '("Eww view" . malb/view-in-eww) t)
+
 
 (bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
 (bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
