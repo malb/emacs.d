@@ -109,7 +109,7 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 #+BEGIN_SRC emacs-lisp
 (use-package paradox
   :ensure paradox
-  :commands (paradox-list-packages)
+  :commands paradox-list-packages
   :config (setq paradox-github-token malb/paradox-github-token
                 paradox-automatically-star t))
 #+END_SRC
@@ -118,6 +118,7 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 
 #+BEGIN_SRC emacs-lisp
 (use-package try
+  :commands try
   :ensure t)
 #+END_SRC
 
