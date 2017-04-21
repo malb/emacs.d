@@ -4380,7 +4380,7 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
   :ensure t
   :bind ("C-c t" . google-translate-smooth-translate)
   :init (progn (setq google-translate-translation-directions-alist
-                     '(("de" . "en") ("en" . "de") ))))
+                     '(("en" . "de") ("de" . "en")))))
 #+END_SRC
 
 *** Googling
