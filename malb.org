@@ -1227,6 +1227,21 @@ Switch themes with helm.
             (setq helm-yas-space-match-any-greedy t)))
 #+END_SRC
 
+** Helm Org Rifle
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-org-rifle
+  :ensure t
+  :config (progn
+            (defun malb/helm-org-rifle-agenda-files (arg)
+              (interactive "p")
+              (let ((current-prefix-arg nil))
+                (cond
+                 ((equal arg 4) (call-interactively #'helm-org-rifle-agenda-files nil))
+                 ((equal arg 16) (helm-org-rifle-occur-agenda-files))
+                 (t (helm-org-agenda-files-headings)))))))
+#+END_SRC
+
 * History
 ** Recent Files
 
