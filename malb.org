@@ -6690,8 +6690,6 @@ The result looks like this:
         ("WAITING"   :foreground "dark orange"
          :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
         ("COAUTHOR"  :foreground "dark orange"
-         :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-        ("NATIVE"    :foreground "dark orange"
          :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")))
 #+END_SRC
 
