@@ -1830,6 +1830,7 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 #+BEGIN_SRC emacs-lisp
 (use-package magithub
   :ensure t
+  :disabled
   :after magit
   :config (magithub-feature-autoinject t))
 #+END_SRC
