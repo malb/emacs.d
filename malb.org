@@ -583,16 +583,6 @@ keyword is not enough.
 
 * Jumping around
 
-Annoy me when I’m using arrow keys too much:
-
-#+BEGIN_SRC emacs-lisp
-(use-package annoying-arrows-mode
-  :ensure t
-  :config (progn
-            (setq annoying-arrows-too-far-count 16)
-            (global-annoying-arrows-mode t)))
-#+END_SRC
-
 [[https://raw.githubusercontent.com/wiki/nloyola/avy/images/avy-goto-char.png]] ([[https://github.com/abo-abo/avy][source]])
 
 See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mode~ which inspired [[https://github.com/abo-abo/avy][avy]].
