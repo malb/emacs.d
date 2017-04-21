@@ -2077,7 +2077,7 @@ Working with source code in org-mode.
         (sequence "EXPLORE"
                   "WRITEUP"
                   "READ(r)"
-                  "COAUTHOR(!)"
+                  "COAUTHOR(@/!)"
                   "REVISE(!)"
                   "SUBMITTED(@/!)"
                   "|"
@@ -2107,9 +2107,12 @@ delete SCHEDULED if new state is WAITING
   (when (or
          (string-equal org-state "WAITING")
          (string-equal org-state "COAUTHOR")
-         (string-equal org-state "NATIVE")
+         (string-equal org-state "DELEGATED")
          (string-equal org-state "SUBMITTED"))
-    (org-remove-timestamp-with-keyword org-scheduled-string)))
+    (progn
+      (org-remove-timestamp-with-keyword org-scheduled-string)
+      (when (not (org-get-deadline-time (point)))
+        (org-deadline nil (org-read-date nil t "+7d"))))))
 
 (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
 #+END_SRC
