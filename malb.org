@@ -1377,46 +1377,50 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                                              sp-point-before-same-p))
 
             ;; https://github.com/Fuco1/smartparens/issues/652#issuecomment-250518705
-            ;; (defun malb/latex-replace-dollar (_id action _context)
-            ;;   (when (eq action 'wrap)
-            ;;     (sp-get sp-last-wrapped-region
-            ;;       (let ((at-beg (= (point) :beg-in)))
-            ;;         (save-excursion
-            ;;           (goto-char :beg)
-            ;;           (delete-char :op-l)
-            ;;           (insert "\\("))
-            ;;         (save-excursion
-            ;;           (goto-char :end-in)
-            ;;           (delete-char :cl-l)
-            ;;           (insert "\\)"))
-            ;;         (setq sp-last-wrapped-region
-            ;;               (sp--get-last-wraped-region
-            ;;                :beg :end "\\(" "\\)"))
-            ;;         (goto-char (if at-beg (1+ :beg-in) :end))))))
+            (defun malb/latex-replace-dollar (_id action _context)
+              (when (eq action 'wrap)
+                (sp-get sp-last-wrapped-region
+                  (let ((at-beg (= (point) :beg-in)))
+                    (save-excursion
+                      (goto-char :beg)
+                      (delete-char :op-l)
+                      (insert "\\("))
+                    (save-excursion
+                      (goto-char :end-in)
+                      (delete-char :cl-l)
+                      (insert "\\)"))
+                    (setq sp-last-wrapped-region
+                          (sp--get-last-wraped-region
+                           :beg :end "\\(" "\\)"))
+                    (goto-char (if at-beg (1+ :beg-in) :end))))))
 
-            ;; (sp-with-modes
-            ;;     '(tex-mode plain-tex-mode latex-mode)
+            (sp-with-modes
+                '(tex-mode plain-tex-mode latex-mode)
 
-            ;;   (sp-local-pair  "$" nil
-            ;;                   :unless '(sp-point-before-word-p
-            ;;                             sp-point-before-same-p
-            ;;                             sp-latex-point-after-backslash)
-            ;;                   :post-handlers '(malb/latex-replace-dollar))
+              (sp-local-pair "\\(" "\\)"
+                             :unless '(sp-point-before-word-p
+                                       sp-point-before-same-p
+                                       sp-latex-point-after-backslash)
+                             :trigger-wrap "\$"
+                             :trigger "\$")
 
-            ;;   (sp-local-pair "\\(" "\\)"
-            ;;                  :unless '(sp-point-before-word-p
-            ;;                            sp-point-before-same-p
-            ;;                            sp-latex-point-after-backslash)
-            ;;                  :trigger "\$")
+              (sp-local-pair  "$" nil
+                              :unless '(sp-point-before-word-p
+                                        sp-point-before-same-p
+                                        sp-latex-point-after-backslash)
+                              :post-handlers '(:add malb/latex-replace-dollar))
 
-            ;;   (sp-local-pair "\\[" "\\]"
-            ;;                  :unless '(sp-point-before-word-p
-            ;;                            sp-point-before-same-p
-            ;;                            sp-latex-point-after-backslash)))
+              (sp-local-pair "\\[" "\\]"
+                             :unless '(sp-point-before-word-p
+                                       sp-point-before-same-p
+                                       sp-latex-point-after-backslash)))
 
-            ;; (add-to-list 'sp-navigate-consider-stringlike-sexp 'latex-mode)
+            (add-to-list 'sp-navigate-consider-stringlike-sexp 'latex-mode)
 
-            (add-to-list 'sp-ignore-modes-list 'latex-mode)
+            ;; (add-to-list 'sp-ignore-modes-list 'latex-mode)
+
+            ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
+            (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
 
             (sp-with-modes
                 'org-mode
@@ -4294,6 +4298,7 @@ Diminish ~flyspell-mode~ as we always use it.
 
 #+BEGIN_SRC emacs-lisp
 (eval-after-load "flyspell"
+
   '(diminish 'flyspell-mode))
 #+END_SRC
 
@@ -4627,8 +4632,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-save-query nil
                   TeX-error-overview-open-after-TeX-run t
                   TeX-electric-sub-and-superscript t
-                  TeX-electric-math '("\\(" . "\\)")
-                  LaTeX-electric-left-right-brace t
+                  ;; TeX-electric-math '("\\(" . "\\)")
+                  ;; LaTeX-electric-left-right-brace t
                   TeX-quote-after-quote nil)
 
             ;; https://stackoverflow.com/questions/19845598/emacs-regex-replacing-a-string-inside-a-latex-equation
