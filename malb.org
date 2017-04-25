@@ -7112,8 +7112,8 @@ prefix argument is given ask for voice first."
 
 #+BEGIN_SRC emacs-lisp
 (malb/set-menu-key "<f2>" #'malb/hydra-window/body)
-(malb/set-menu-key "a" #'helm-imenu-anywhere)
-(malb/set-menu-key "A" #'aws-polly-region)
+(malb/set-menu-key "A" #'helm-imenu-anywhere)
+(malb/set-menu-key "a" #'aws-polly-region)
 (malb/set-menu-key "b" #'malb/helm-omni)
 (malb/set-menu-key "C" #'helm-calcul-expression)
 (malb/set-menu-key "c" #'mu4e-compose-new)
