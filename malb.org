@@ -6688,9 +6688,18 @@ The result looks like this:
 
                 (eval-after-load "eshell-git-prompt"
                   (progn
-                    (set-face-attribute 'eshell-git-prompt-powerline-dir-face nil :foreground "white")
-                    (set-face-attribute 'eshell-git-prompt-powerline-clean-face nil :foreground "white")
-                    (set-face-attribute 'eshell-git-prompt-powerline-not-clean-face nil :foreground "white")))))))
+                    (set-face-attribute 'eshell-git-prompt-powerline-dir-face nil
+                                        :foreground (solarized-with-color-variables 'light base03))
+                    (set-face-attribute 'eshell-git-prompt-powerline-clean-face nil
+                                        :foreground (solarized-with-color-variables 'light base03))
+                    (set-face-attribute 'eshell-git-prompt-powerline-not-clean-face nil
+                                        :foreground (solarized-with-color-variables 'light base03))))
+
+                (eval-after-load "pdf-tools"
+                  (progn
+                    (setq pdf-view-midnight-colors (cons (solarized-with-color-variables 'light base1)
+                                                         (solarized-with-color-variables 'light base03)))
+                    nil))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
