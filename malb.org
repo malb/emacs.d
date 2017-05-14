@@ -5948,7 +5948,7 @@ directory to make multiple eshell windows easier."
             (defun malb/eshell-keys ()
               (bind-key "<home>" #'eshell-bol eshell-mode-map)
               (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
-              (define-key eshell-mode-map [remap eshell-pcomplete] #'helm-esh-pcomplete))
+              (define-key eshell-mode-map [remap eshell-pcomplete] #'company-complete))
 
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
             ;; for some reason this needs to be a hook
@@ -5975,7 +5975,8 @@ directory to make multiple eshell windows easier."
 
             (defun malb/config-eshell-completion ()
               (setq pcomplete-cycle-completions t
-                    pcomplete-ignore-case t))
+                    pcomplete-ignore-case t)
+              (setq-local company-idle-delay nil))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
