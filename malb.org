@@ -7074,10 +7074,9 @@ We call =pandoc= to convert our buffer to plain text. This kills links etc. whic
     (if reader
         (progn
           (pandoc--set 'read reader)
-          (or (buffer-live-p pandoc--output-buffer)
-              (setq pandoc--output-buffer (get-buffer-create " *Pandoc output*")))
+          (get-buffer-create pandoc--output-buffer-name)
           (pandoc--call-external "plain" nil (cons beginning end))
-          (switch-to-buffer pandoc--output-buffer)
+          (switch-to-buffer (get-buffer-create pandoc--output-buffer-name))
           (setq text (buffer-string))
           (bury-buffer)
           (replace-regexp-in-string "_" "" text))
