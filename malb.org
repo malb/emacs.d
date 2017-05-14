@@ -5626,7 +5626,6 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
   :ensure t
-  :mode ("\\.pdf\\'" . pdf-view-mode)
   :init (progn
           (add-hook 'pdf-view-mode-hook 'auto-revert-mode))
   :config (progn
