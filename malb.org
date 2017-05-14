@@ -5822,7 +5822,10 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                   dired-recursive-copies 'always
                   dired-recursive-deletes 'always
                   dired-dwim-target t
-                  dired-auto-revert-buffer t)
+                  dired-auto-revert-buffer t
+                  wdired-use-dired-vertical-movement 'sometimes)
+
+            (bind-key "C-s" #'dired-isearch-filenames dired-mode-map)
 
             (add-hook 'dired-mode-hook (defun malb/enable-dired-omit-mode () (dired-omit-mode)))
 
