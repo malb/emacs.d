@@ -1647,7 +1647,9 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
              ("/" "/" nil org-mode)
              ("=" "=" nil org-mode)
              ("_" "_" nil org-mode)
-             ("$" "$" nil org-mode)))
+             ("$" "$" nil org-mode)
+             ("#+BEGIN_QUOTE\n" "#+END_QUOTE\n" "q" org-mode)
+             ("#+BEGIN_SRC \n" "\n#+END_SRC" "s" org-mode)))
   (add-hook 'org-mode-hook 'wrap-region-mode))
 #+END_SRC
 
