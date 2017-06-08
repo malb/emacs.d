@@ -5115,6 +5115,68 @@ Put attachments at end of buffer ([[http://mbork.pl/2015-11-28_Fixing_mml-attach
 (advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
 #+END_SRC
 
+Use Helm to re-arrange recipients of an e-mail.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/fixup-recipients ()
+  (interactive)
+  (let (address
+        addresses
+        to
+        cc
+        point-end-of-line
+        (search-regexp "^to: \\|^cc: ")
+        (case-fold-search t))
+
+    ;; extract addresses
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward search-regexp nil t)
+        (save-excursion
+          (setq point-end-of-line (re-search-forward "$")))
+        (setq addresses (append addresses
+                                (split-string (buffer-substring-no-properties
+                                               (point) point-end-of-line)
+                                              "[^ ]+@[^ ]+," t " "))))
+      (setq addresses (mapcar (lambda (address)
+                                (format "\"%s\" <%s>" (malb/canonicalise-contact-name address)
+                                        (replace-regexp-in-string
+                                         ".*\\(^\\| \\)<?\\([^< ]+@[^ >]+\\)>?.*" "\\2" address)))
+                              addresses)))
+
+    ;; ask user to split into To and CC
+    (helm :sources `(((name . "To:")
+                      (candidates . addresses)
+                      (action . (("Select" . (lambda (x) (setq to (helm-marked-candidates))))
+                                 ("Ignore" . (lambda (x))))))))
+
+    (dolist (address to)
+      (setq addresses (delete address addresses)))
+
+    (if addresses
+        (helm :sources `(((name . "CC:")
+                          (candidates . addresses)
+                          (action . (("Select" . (lambda (x) (setq cc (helm-marked-candidates))))
+                                     ("Ignore" . (lambda (x)))))))))
+
+    ;; Replace To: and CC: fields
+    (save-excursion
+      (goto-char (point-min))
+
+      (while (re-search-forward search-regexp nil t)
+        (kill-whole-line))
+
+      (message-goto-from)
+
+      (if to (progn (newline)
+                    (insert "To:")
+                    (insert (mapconcat #'identity to ", "))))
+      (if cc (progn (newline)
+                    (insert "Cc:")
+                    (insert (mapconcat #'identity cc ", ")))))))
+#+END_SRC
+
+
 #+BEGIN_SRC emacs-lisp
 (bind-key "<f2> c" #'message-goto-cc mu4e-compose-mode-map)
 #+END_SRC
