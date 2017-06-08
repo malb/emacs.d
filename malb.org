@@ -32,6 +32,11 @@ We assume that the following variables are defined:
 - ~malb/theme~ - theme choice
 - ~malb/mu4e-name-replacements~ - email name replacements
 
+
+#+BEGIN_SRC emacs-lisp
+;;; init.el --- personal emacs config file -*- lexical-binding: t ; eval: (read-only-mode 1)-*-
+#+END_SRC
+
 We collect our own customisations in the =malb= group.
 
 #+BEGIN_SRC emacs-lisp
