@@ -5178,7 +5178,11 @@ Use Helm to re-arrange recipients of an e-mail.
 
 
 #+BEGIN_SRC emacs-lisp
-(bind-key "<f2> c" #'message-goto-cc mu4e-compose-mode-map)
+(bind-key "C-c g t" #'message-goto-to mu4e-compose-mode-map)
+(bind-key "C-c g c" #'message-goto-cc mu4e-compose-mode-map)
+(bind-key "C-c g b" #'message-goto-bcc mu4e-compose-mode-map)
+(bind-key "C-c g f" #'message-goto-from mu4e-compose-mode-map)
+(bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
 #+END_SRC
 
 ** Viewing Email
