@@ -4832,7 +4832,7 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
 
 [[https://github.com/tmalsburg/helm-bibtex/raw/master/screenshot.png]] ([[https://github.com/tmalsburg/helm-bibtex/][source]])
 
-We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=.
+We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add an option to google the paper’s title
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-bibtex
@@ -4844,6 +4844,18 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=.
                   helm-bibtex-full-frame t
                   bibtex-completion-notes-template-one-file
                   "** ${title} cite:${=key=}\n:PROPERTIES:\n:CUSTOM_ID: ${=key=}\n:END:\n\nfullcite:${=key=}\n\n")
+
+            (defun malb/bibtex-completion-google-this (keys-or-entries)
+              (dolist (key-or-entry keys-or-entries)
+                (let* ((key (if (stringp key-or-entry)
+                                key-or-entry
+                              (bibtex-completion-get-value "=key=" key-or-entry))))
+                  (helm-google (replace-regexp-in-string
+                                "{\\|}" ""  (bibtex-completion-get-value "title"
+                                                                         (bibtex-completion-get-entry key)))))))
+
+            (helm-bibtex-helmify-action malb/bibtex-completion-google-this
+                                        helm-malb/bibtex-completion-google-this)
 
             (defun bibtex-completion-find-pdf-in-library (key-or-entry)
               "Searches the directories in `helm-bibtex-library-path' for a
