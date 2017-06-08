@@ -2082,7 +2082,7 @@ Working with source code in org-mode.
                   "CANCELLED(c@/!)") ;;generic
 
         (sequence "EXPLORE"
-                  "WRITEUP"
+                  "WRITE"
                   "READ(r)"
                   "COAUTHOR(@/!)"
                   "REVISE(!)"
