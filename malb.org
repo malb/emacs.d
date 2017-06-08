@@ -4743,7 +4743,8 @@ Setup everything for LaTeX (this can be slow, hence we call it manually)
 My standard BibTeX sources are
 
 - =crypto_crossref.bib= and =abbrev3.bib= are from [[http://cryptobib.di.ens.fr/][crypto.bib]] which has most references relevant to crypto,
-- =jacm.bib= is for the Journal of the ACM provided by the [[http://ftp.math.utah.edu/pub/tex/bib/jacm.html][University of Utah]],
+- =jacm.bib= is for the Journal of the ACM provided by the [[http://ftp.math.utah.edu/pub/tex/bib/jacm.bib][University of Utah]],
+- =dcc.bib= is for Designs, Codes, and Cryptography provided by the [[http://ftp.math.utah.edu/pub/tex/bib/designscodescryptogr.bib][University of Utah]],
 - =rfc.bib= is for RFCs and provided by [[http://tm.uka.de/~bless/bibrfcindex.html][Roland Bless]].
 
 These are stored in some =common-latex= folder which has my [[https://bitbucket.org/malb/paper-template][paper-template]] as a subfolder.
@@ -4759,6 +4760,7 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
                                 (expand-file-name "abbrev3.bib" malb/crypto-bib)
                                 (expand-file-name "rfc.bib" malb/common-latex)
                                 (expand-file-name "jacm.bib" malb/common-latex)
+                                (expand-file-name "dcc.bib" malb/common-latex)
                                 (expand-file-name "local.bib" malb/common-latex)))
 
 (setq reftex-default-bibliography malb/bibtex-files)
