@@ -5285,7 +5285,6 @@ View emails with width restriction, but wider for HTML
              '("Xsender search" . malb/search-for-sender-extended) t)
 #+END_SRC
 
-
 ** Contacts
 
 - My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
@@ -5318,7 +5317,7 @@ View emails with width restriction, but wider for HTML
 (defun malb/mu4e-contact-rewrite-function (contact)
   (let* ((name (or (plist-get contact :name) ""))
          (mail (plist-get contact :mail))
-         (case-fold-search nil))
+         (case-fold-search t))
     (plist-put contact :name (malb/canonicalise-contact-name (format "%s <%s>" name mail)))
     contact))
 
@@ -5336,7 +5335,7 @@ Useful in email templates
         (search-regexp (mapconcat (lambda (arg)
                                     (concat "^" arg ": "))
                                   fields "\\|"))
-        (case-fold-search nil))
+        (case-fold-search t))
     (save-excursion
       (goto-char (point-min))
       (while (re-search-forward search-regexp nil t)
