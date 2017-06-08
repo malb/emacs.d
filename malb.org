@@ -5319,6 +5319,49 @@ Ignore some email addresses when auto completing:
                                                            (seq "do-not-reply" (zero-or-more char) "@"))))
 #+END_SRC
 
+Helm menu for contacts, based on ([[http://kitchingroup.cheme.cmu.edu/blog/2015/03/14/A-helm-mu4e-contact-selector/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/helm-mu-contacts (arg)
+  "Helm interface to email addresses.
+
+When ARG equals then search is the persistent action, otherwise
+it is to insert the contact.
+"
+  (interactive "p")
+
+  (let* ((malb/helm-mu-actions '(("Insert." . (lambda (x)
+                                                (insert (mapconcat 'identity
+                                                                   (helm-marked-candidates) ","))))
+                                 ("Search for messages." . (lambda (x)
+                                                             (let ((contacts (concat "("
+                                                                                     (mapconcat (lambda (str)
+                                                                                                  (replace-regexp-in-string
+                                                                                                   ".*\\(^\\| \\)<?\\([^< ]+@[^ >]+\\)>?.*" "\\2" str))
+                                                                                                (helm-marked-candidates) " OR ")
+                                                                                     ")")))
+                                                               (mu4e-headers-search (concat "contact:" contacts)))))
+                                 ("Copy contacts to clipboard." . (lambda (x)
+                                                                    (kill-new
+                                                                     (mapconcat 'identity
+                                                                                (helm-marked-candidates) ","))))))
+         (malb/helm-mu-actions (cond ((equal arg 4) (cons (cadr malb/helm-mu-actions)
+                                                          (cons (car malb/helm-mu-actions)
+                                                                (cddr  malb/helm-mu-actions))))
+                                     (t malb/helm-mu-actions))))
+
+    (message "helm-mu-actions %s" malb/helm-mu-actions)
+    (helm :sources `(((name . "Email address candidates")
+                      (candidates . ,(append
+                                      ;; mu contacts
+                                      (loop for contact being the hash-key of mu4e~contacts
+                                            collect (cons contact contact))))
+                      (action . malb/helm-mu-actions))))))
+
+(key-chord-define mu4e-compose-mode-map ",," #'malb/helm-mu-contacts)
+(bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map)
+#+END_SRC
+
 ** Dedicated Email Frame
 
 Create a new mu4e session in a new frame.
@@ -5420,7 +5463,15 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 (use-package helm-mu
   :ensure t
   :config (progn
-            (bind-key "S" #'helm-mu mu4e-main-mode-map)))
+
+            (defun malb/helm-mu (arg)
+              (interactive "p")
+              (let ((current-prefix-arg nil))
+                (cond
+                 ((equal arg 4) (malb/helm-mu-contacts 4))
+                 (t (helm-mu)))))
+
+            (bind-key "S" #'malb/helm-mu mu4e-main-mode-map)))
 #+END_SRC
 
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
@@ -7182,7 +7233,7 @@ prefix argument is given ask for voice first."
 (malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex)
 (malb/set-menu-key "m" #'malb/mail)
-(malb/set-menu-key "n" #'helm-mu)
+(malb/set-menu-key "n" #'malb/helm-mu)
 (malb/set-menu-key "/" #'malb/helm-ag-projects)
 (malb/set-menu-key "o" #'malb/helm-org-rifle-agenda-files)
 (malb/set-menu-key "P" #'prodigy)
