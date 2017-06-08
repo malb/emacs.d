@@ -372,6 +372,7 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\`\\*Helm all the things\\*\\'"
                              "\\`\\*Helm Find Files\\*\\'"
                              "\\`\\*Help\\*\\'"
+                             "\\`\\*ielm\\*\\'"
                              "\\`\\*anaconda-doc\\*\\'"
                              "\\`\\*Google Translate\\*\\'"
                              "\\` \\*LanguageTool Errors\\* \\'"
