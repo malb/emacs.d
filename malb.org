@@ -4929,7 +4929,8 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
             (setq org-ref-default-bibliography malb/bibtex-files
                   org-ref-bibliography-notes malb/literature-notes-file
                   org-ref-pdf-directory malb/literature-dirs
-                  org-ref-bibtex-hydra-key-binding "\C-cj")))
+                  org-ref-bibtex-hydra-key-binding "\C-cj"
+                  org-ref-show-broken-links nil)
 #+END_SRC
 
 * Email (Mu4e)
