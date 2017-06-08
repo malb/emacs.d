@@ -5397,25 +5397,28 @@ it is to insert the contact.
 "
   (interactive "p")
 
-  (let* ((malb/helm-mu-actions '(("Insert." .
-                                  (lambda (x)
-                                    (insert (mapconcat 'identity
-                                                       (helm-marked-candidates) ","))))
-                                 ("Search for messages." .
-                                  (lambda (x)
-                                    (let ((contacts
-                                           (concat "("
-                                                   (mapconcat (lambda (str)
-                                                                (replace-regexp-in-string
-                                                                 ".*\\(^\\| \\)<?\\([^< ]+@[^ >]+\\)>?.*" "\\2"
-                                                                 str))
-                                                              (helm-marked-candidates) " OR ")
-                                                   ")")))
-                                      (mu4e-headers-search (concat "contact:" contacts)))))
-                                 ("Copy contacts to clipboard." .
-                                  (lambda (x)
-                                    (kill-new (mapconcat 'identity
-                                                         (helm-marked-candidates) ","))))))
+  (let* ((malb/helm-mu-actions
+          '(("Insert." . (lambda (x)
+                           (insert (mapconcat 'identity
+                                              (helm-marked-candidates) ","))))
+            ("Show messages" . (lambda (x)
+                                        (let ((contacts
+                                               (concat "("
+                                                       (mapconcat
+                                                        (lambda (str)
+                                                          (replace-regexp-in-string
+                                                           ".*\\(^\\| \\)<?\\([^< ]+@[^ >]+\\)>?.*" "\\2"
+                                                           str))
+                                                        (helm-marked-candidates) " OR ")
+                                                       ")")))
+                                          (mu4e-headers-search (concat "contact:" contacts)))))
+            ("Copy contacts to clipboard." . (lambda (x)
+                                               (kill-new
+                                                (mapconcat 'identity
+                                                           (helm-marked-candidates) ","))))
+            ("Google contact" . (lambda (x)
+                                  (helm-google (replace-regexp-in-string
+                                                "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" x))))))
 
          (malb/helm-mu-actions (cond ((equal arg 4) (cons (cadr malb/helm-mu-actions)
                                                           (cons (car malb/helm-mu-actions)
