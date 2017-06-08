@@ -3081,6 +3081,7 @@ Make bug references in comments and string clickable
 #+END_SRC
 
 *** Indenting
+
 **** Obey Project Rules
 
 [[https://github.com/jscheid/dtrt-indent][drt-indent]] guesses the indentation offset originally used for creating source code files and transparently adjusts the corresponding settings in Emacs, making it more convenient to edit foreign files.
@@ -3324,9 +3325,9 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
             (unbind-key "C-M-g" dumb-jump-mode-map)
             (unbind-key "C-M-p" dumb-jump-mode-map)
             (unbind-key "C-M-q" dumb-jump-mode-map)
-            (bind-key "C-c j ." #'dumb-jump-go dumb-jump-mode-map)
-            (bind-key "C-c j ," #'dumb-jump-back dumb-jump-mode-map)
-            (bind-key "C-c j q" #'dumb-jump-quick-look dumb-jump-mode-map)
+            (bind-key "C-c d ." #'dumb-jump-go dumb-jump-mode-map)
+            (bind-key "C-c d ," #'dumb-jump-back dumb-jump-mode-map)
+            (bind-key "C-c d q" #'dumb-jump-quick-look dumb-jump-mode-map)
             (dumb-jump-mode)))
 #+END_SRC
 
@@ -3342,7 +3343,25 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
             (setq realgud:pdb-command-name "python -m pdb")))
 #+END_SRC
 
+**** GDB
+
+#+BEGIN_SRC emacs-lisp
+(setq gdb-find-source-frame t
+      gdb-many-windows t)
+#+END_SRC
+
 ** C/C++ development
+
+#+BEGIN_SRC emacs-lisp
+(use-package cc-mode
+  :config (progn
+            (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
+
+            (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
+            (bind-key "M-l" #'malb/toggle-camelcase-underscores c-mode-base-map)
+            (bind-key "M-u" #'malb/toggle-camelcase-underscores c-mode-base-map)
+            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
+#+END_SRC
 
 *** Semantic
 
@@ -3458,9 +3477,7 @@ The following code parses a complete project with semantic. This is useful for e
 #+BEGIN_SRC emacs-lisp
 (use-package srefactor
   :ensure t
-  :defer 10
-  :config (progn
-            (bind-key "M-RET" #'srefactor-refactor-at-point c-mode-base-map)))
+  :defer 10)
 #+END_SRC
 
 *** Font Lock
@@ -3523,50 +3540,6 @@ Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/2
               (doxymacs-font-lock))
 
             (add-hook 'c-mode-common-hook #'malb/doxymacs)))
-#+END_SRC
-
-**** DISABLED Skeletons
-
-Insert Doxygen skeleton on =C-c M-d=. Adapted from [[https://github.com/abo-abo/function-args][function-args]]'s =moo-doxygen=.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/doxygen ()
-  "Generate a doxygen yasnippet and expand it with `aya-expand'.
-  The point should be on the top-level function name."
-  (interactive)
-  (let ((tag (semantic-current-tag)))
-    (unless (semantic-tag-of-class-p tag 'function)
-      (error "Expected function, got %S" tag))
-    (let* ((name (semantic-tag-name tag))
-           (attrs (semantic-tag-attributes tag))
-           (args (plist-get attrs :arguments))
-           (ord 1))
-      (setq aya-current
-            (format
-             "/**
-    @brief $1
-
-  %s
-    @return $%d
- */
-
-  "
-             (mapconcat
-              (lambda (x) (format "  @param %-16s $%d" (car x) (incf ord)))
-              args
-              "\n")
-             (incf ord)))
-      (malb/beginning-of-line-dwim)
-      (aya-expand))))
-
-(bind-key "C-c M-d" #'malb/doxygen c-mode-base-map)
-#+END_SRC
-
-*** GDB
-
-#+BEGIN_SRC emacs-lisp
-(setq gdb-find-source-frame t
-      gdb-many-windows t)
 #+END_SRC
 
 *** Valgrind
@@ -3637,18 +3610,6 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format c
   :ensure t
   :config (progn
             (setq clang-format-executable "clang-format-3.8")))
-#+END_SRC
-*** C/C++ Mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package cc-mode
-  :config (progn
-            (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
-
-            (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
-            (bind-key "M-l" #'malb/toggle-camelcase-underscores c-mode-base-map)
-            (bind-key "M-u" #'malb/toggle-camelcase-underscores c-mode-base-map)
-            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+END_SRC
 
 ** Python
@@ -3741,7 +3702,6 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 | ~M-?~   | =anaconda-mode-show-doc=         |
 |---------+----------------------------------|
 
-
 #+BEGIN_SRC emacs-lisp
 (use-package anaconda-mode
   :ensure t
@@ -3774,6 +3734,7 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 #+END_SRC
 
 *** Docstrings
+
 **** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]]
 
 Python docstring mode provides syntax highlighting for docstrings in both ReStructuredText and Epydoc formats, as well as an override for the fill-paragraph function when editing such a docstring that will wrap things according to Python community convention.
@@ -3813,8 +3774,6 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
          ("\\.pxi\\'"  . cython-mode)))
 #+END_SRC
 
-**** Flycheck
-
 [[https://github.com/lbolla/emacs-flycheck-cython][Flycheck for Cython]]
 
 #+BEGIN_SRC emacs-lisp
@@ -3846,8 +3805,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (elpy-module-yasnippet 'global-init)
             (defun malb/elpy-sane-defaults ()
               (elpy-module-sane-defaults 'buffer-init))
-            (add-hook 'python-mode-hook #'malb/elpy-sane-defaults)
-            ))
+            (add-hook 'python-mode-hook #'malb/elpy-sane-defaults)))
 #+END_SRC
 
 *** PIP
@@ -3857,7 +3815,71 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
    :ensure t)
 #+END_SRC
 
-*** Sage
+*** iPython Notebook
+
+[[https://github.com/millejoh/emacs-ipython-notebook][EIN]] is a interface to iPython.
+
+[[https://github.com/millejoh/emacs-ipython-notebook/wiki/images/demo_plotnormal.PNG]] ([[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png][source]])
+
+On our system port 8888 is already taken.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ein
+  :ensure t
+  :commands (ein:notebook-open)
+  :config (progn
+            (setq ein:use-auto-complete t
+                  ein:url-or-port '(8890 8889)
+                  ein:default-url-or-port 8890
+                  ein:console-args '("--simple-prompt"))
+
+            (defun malb/ein-hook ()
+              (toggle-truncate-lines t)
+              (auto-complete-mode))
+
+            (add-hook 'ein:notebook-multilang-mode-hook #' malb/ein-hook)
+
+            (require 'ein-notebook)
+
+            (bind-key "S-<return>" #'ein:worksheet-execute-cell-and-goto-next ein:notebook-mode-map)
+            (bind-key "C-<return>" #'ein:worksheet-execute-cell ein:notebook-mode-map)
+            ;; at this point the list starts with not, i.e. is negated
+            (when (boundp 'company-global-modes)
+              (add-to-list 'company-global-modes 'ein:notebook-multilang-mode t)
+              (add-to-list 'company-global-modes 'ein:notebook-python-mode t))
+
+            (require 'ein-cell)
+            (set-face-attribute 'ein:cell-input-area   nil :background (solarized-with-color-variables
+                                                                         'light
+                                                                         (solarized-color-blend base02 base03 0.5)))
+            (set-face-attribute 'ein:cell-input-prompt nil
+                                :background nil
+                                :foreground "#657b83" :weight 'bold)))
+#+END_SRC
+
+*** Virtual Environments
+
+[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices.
+
+#+BEGIN_SRC emacs-lisp
+(use-package virtualenvwrapper
+  :ensure t
+  :config (progn
+            (venv-initialize-interactive-shells)
+            (venv-initialize-eshell)
+            (setq venv-location (expand-file-name ".virtualenvs" "~"))
+
+            (defun malb/activate-venv ()
+              (hack-local-variables)
+              (when (boundp 'project-venv-name)
+                (venv-workon project-venv-name)))
+
+            (add-hook 'python-mode-hook #'malb/activate-venv)
+            (add-hook 'cython-mode-hook #'malb/activate-venv)
+            (add-hook 'eshell-mode-hook #'malb/activate-venv)))
+#+END_SRC
+
+** Sage
 
 Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top.
 
@@ -3922,69 +3944,6 @@ However, I usually don’t do that but use python-mode directly:
   (venv-deactivate))
 #+END_SRC
 
-
-**** Org Babel SageMath
-
-([[https://github.com/stakemori/ob-sagemath][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package ob-sagemath
-  :ensure t
-  :config (progn
-            (setq org-babel-default-header-args:sage '((:session . t)
-                                                       (:results . "output replace")
-                                                       (:exports . "both")
-                                                       (:eval . "never-export")
-                                                       (:cache .   "no")
-                                                       (:noweb . "no")
-                                                       (:hlines . "no")
-                                                       (:tangle . "no")))
-            (add-to-list 'org-structure-template-alist
-                         '("sg" "#+BEGIN_SRC sage\n?\n#+END_SRC"))))
-#+END_SRC
-
-*** iPython Notebook
-
-[[https://github.com/millejoh/emacs-ipython-notebook][EIN]] is a interface to iPython.
-
-[[https://github.com/millejoh/emacs-ipython-notebook/wiki/images/demo_plotnormal.PNG]] ([[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png][source]])
-
-On our system port 8888 is already taken.
-
-#+BEGIN_SRC emacs-lisp
-(use-package ein
-  :ensure t
-  :commands (ein:notebook-open)
-  :config (progn
-            (setq ein:use-auto-complete t
-                  ein:url-or-port '(8890 8889)
-                  ein:default-url-or-port 8890
-                  ein:console-args '("--simple-prompt"))
-
-            (defun malb/ein-hook ()
-              (toggle-truncate-lines t)
-              (auto-complete-mode))
-
-            (add-hook 'ein:notebook-multilang-mode-hook #' malb/ein-hook)
-
-            (require 'ein-notebook)
-
-            (bind-key "S-<return>" #'ein:worksheet-execute-cell-and-goto-next ein:notebook-mode-map)
-            (bind-key "C-<return>" #'ein:worksheet-execute-cell ein:notebook-mode-map)
-            ;; at this point the list starts with not, i.e. is negated
-            (when (boundp 'company-global-modes)
-              (add-to-list 'company-global-modes 'ein:notebook-multilang-mode t)
-              (add-to-list 'company-global-modes 'ein:notebook-python-mode t))
-
-            (require 'ein-cell)
-            (set-face-attribute 'ein:cell-input-area   nil :background (solarized-with-color-variables
-                                                                         'light
-                                                                         (solarized-color-blend base02 base03 0.5)))
-            (set-face-attribute 'ein:cell-input-prompt nil
-                                :background nil
-                                :foreground "#657b83" :weight 'bold)))
-#+END_SRC
-
 Shortcut for Sage Jupyter notebook.
 
 #+BEGIN_SRC emacs-lisp
@@ -4002,26 +3961,22 @@ Shortcut for Sage Jupyter notebook.
 
 *Note:* If you get =[warn] Null value passed to ein:get-ipython-major-version= try =(ein:query-ipython-version 8890 t)=
 
-*** Virtual Environments
-
-[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices.
+([[https://github.com/stakemori/ob-sagemath][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package virtualenvwrapper
+(use-package ob-sagemath
   :ensure t
   :config (progn
-            (venv-initialize-interactive-shells)
-            (venv-initialize-eshell)
-            (setq venv-location (expand-file-name ".virtualenvs" "~"))
-
-            (defun malb/activate-venv ()
-              (hack-local-variables)
-              (when (boundp 'project-venv-name)
-                (venv-workon project-venv-name)))
-
-            (add-hook 'python-mode-hook #'malb/activate-venv)
-            (add-hook 'cython-mode-hook #'malb/activate-venv)
-            (add-hook 'eshell-mode-hook #'malb/activate-venv)))
+            (setq org-babel-default-header-args:sage '((:session . t)
+                                                       (:results . "output replace")
+                                                       (:exports . "both")
+                                                       (:eval . "never-export")
+                                                       (:cache .   "no")
+                                                       (:noweb . "no")
+                                                       (:hlines . "no")
+                                                       (:tangle . "no")))
+            (add-to-list 'org-structure-template-alist
+                         '("sg" "#+BEGIN_SRC sage\n?\n#+END_SRC"))))
 #+END_SRC
 
 ** Lisp
@@ -4576,6 +4531,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                                (output-dvi "Okular")
                                                (output-pdf "Emacs")
                                                (output-html "xdg-open")))
+
+            (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
 
             (defun malb/latex-add-environments ()
               (LaTeX-add-environments
@@ -5626,11 +5583,26 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
   :ensure t
-  :init (progn
-          (add-hook 'pdf-view-mode-hook 'auto-revert-mode))
   :config (progn
             (pdf-tools-install)
             (setq-default pdf-view-display-size 'fit-page)
+
+            (defun malb/pdf-view-llncs-from-bounding-box (&optional window)
+              "Set the height from the page's bounding-box."
+              (interactive)
+              (let* ((bb (pdf-cache-boundingbox (pdf-view-current-page window)))
+                     (h-margin (max 0.25 (or pdf-view-bounding-box-margin 0.0)))
+                     (w-margin (max 0.05 (or pdf-view-bounding-box-margin 0.0)))
+                     (slice (list (- (nth 0 bb)
+                                     (/ h-margin 2.0))
+                                  (- (nth 1 bb)
+                                     (/ w-margin 2.0))
+                                  (+ (- (nth 2 bb) (nth 0 bb))
+                                     h-margin)
+                                  (+ (- (nth 3 bb) (nth 1 bb))
+                                     w-margin))))
+                (apply 'pdf-view-set-slice
+                       (append slice (and window (list window))))))
 
             (defun pdf-tools-org-edges-to-region (edges)
               "Attempt to get 4-entry region \(LEFT TOP RIGHT BOTTOM\) from several EDGES.
@@ -5744,6 +5716,7 @@ need region."
               ("M" malb/pdf-annot-export-as-md "markdown")
               ("q" nil "cancel"))
 
+            (bind-key "s h" #'malb/pdf-view-llncs-from-bounding-box pdf-view-mode-map)
             (bind-key "D" #'dedicated-mode pdf-view-mode-map)
             (bind-key "x" #'malb/hydra-pdf-annot/body pdf-view-mode-map)))
 #+END_SRC
@@ -6465,7 +6438,6 @@ Try the repeated popping up to 10 times. ARGS is passed through."
 (advice-add 'pop-to-mark-command :around #'malb/multi-pop-to-mark)
 #+END_SRC
 
-
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
@@ -6537,13 +6509,22 @@ then enter the text in that file's own buffer.
 ")
 #+END_SRC
 
-** [[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
+** Emacs from Chrome
+
+[[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package edit-server
   :ensure t
   :config (progn
             (edit-server-start)))
+#+END_SRC
+
+** Memory Usage
+
+#+BEGIN_SRC emacs-lisp
+(use-package memory-usage
+  :ensure t)
 #+END_SRC
 
 * File Types
@@ -6696,7 +6677,7 @@ The result looks like this:
 
                 (eval-after-load "pdf-tools"
                   (progn
-                    (setq pdf-view-midnight-colors (cons (solarized-with-color-variables 'light base1)
+                    (setq pdf-view-midnight-colors (cons "#444444"
                                                          (solarized-with-color-variables 'light base03)))
                     nil))))))
 #+END_SRC
