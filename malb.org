@@ -5197,6 +5197,28 @@ View emails with width restriction, but wider for HTML
 (bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun malb/search-for-sender (msg)
+  "Search for messages sent by the sender of the message at point."
+  (mu4e-headers-search
+   (concat "from:" (cdar (mu4e-message-field msg :from)))))
+
+(defun malb/search-for-sender-extended (msg)
+  "Search for messages sent by the sender of the message at point."
+  (mu4e-headers-search
+   (concat "from:"  (mu4e-headers-search (cdar (mu4e-message-field msg :from)))
+           "OR to:" (mu4e-headers-search (cdar (mu4e-message-field msg :from)))
+           "OR cc:" (mu4e-headers-search (cdar (mu4e-message-field msg :from))))))
+
+;; define 'x' as the shortcut
+(add-to-list 'mu4e-view-actions
+             '("xsender search (from)" . malb/search-for-sender) t)
+
+(add-to-list 'mu4e-view-actions
+             '("Xsender search" . malb/search-for-sender-extended) t)
+#+END_SRC
+
+
 ** Contacts
 
 - My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
