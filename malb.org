@@ -1988,7 +1988,15 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
       org-list-allow-alphabetical t
       org-goto-interface 'org-outline-path-complete
-      org-outline-path-complete-in-steps nil)
+      org-outline-path-complete-in-steps nil
+      org-blank-before-new-entry (quote ((heading . auto)
+                                         (plain-list-item . nil)))
+      org-yank-adjusted-subtrees t
+      org-treat-S-cursor-todo-selection-as-state-change nil
+      org-show-context-detail '((agenda . lineage) ;; instead of "local"
+                                (bookmark-jump . lineage)
+                                (isearch . lineage)
+                                (default . ancestors)))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
@@ -2005,6 +2013,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
       org-agenda-default-appointment-duration 60
+      org-agenda-skip-additional-timestamps-same-entry nil
+      org-agenda-skip-timestamp-if-deadline-is-shown t
       org-agenda-skip-deadline-prewarning-if-scheduled t
       org-agenda-ignore-drawer-properties '(effort appt category)
       org-agenda-window-setup 'current-window  ; Current window gets agenda
@@ -2136,6 +2146,7 @@ delete SCHEDULED if new state is WAITING
                                  ("@office" . ?o)
                                  ("@train" . ?t)
                                  ("quick" . ?q)
+                                 ("noxport" . ?n)
                                  (:endgroup)))
 #+END_SRC
 
@@ -2683,37 +2694,44 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
   :bind ("<f9>" . org-capture)
   :config (progn
             (setq org-capture-templates
-                  '(("t" "task"
+                  '(("t" "tasks")
+
+                    ("tt" "standard task"
                      entry (file malb/inbox-org)
-                     "** TODO %?\n%i" :prepend t)
-
-                    ("T" "todo from email"
-                     entry (file+headline malb/inbox-org "Email")
-                     "* TODO %?\n%U SCHEDULED: %(org-time-stamp nil)\n\nSee %a by %:fromname\n\n"
-                     :immediate-finish nil
-                     :prepend t)
-
-                    ("P" "project task" plain (function malb/org-capture-projectile)
                      "** TODO %?\n%i\n%a\n" :prepend t)
 
-                    ("r" "respond ro email"
+                    ("tc" "standard task (capturing context)"
+                     entry (file malb/inbox-org)
+                     "** TODO %?\n%i\n" :prepend t)
+
+                    ("tp" "project specific task" plain (function malb/org-capture-projectile)
+                     "** TODO %?\n%i\n%a\n" :prepend t)
+
+                    ("e" "e-mail")
+
+                    ("er" "respond to e-mail"
                      entry (file+headline malb/inbox-org "Email")
                      "* REPLY to %:fromname on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
                      :immediate-finish t
                      :prepend t)
 
-                    ("F" "file email search"
-                     entry (file+headline malb/inbox-org "Email")
-                     "* %a\n\n"
-                     :immediate-finish nil
-                     :prepend nil)
-
-                    ("f" "file email"
+                    ("ef" "file e-mail"
                      entry (file+headline malb/inbox-org "Email")
                      "* %a by %:fromname\n%U\n\n"
                      :immediate-finish nil
                      :prepend nil)
 
+                    ("es" "file e-mail search"
+                     entry (file+headline malb/inbox-org "Email")
+                     "* %a\n\n"
+                     :immediate-finish nil
+                     :prepend nil)
+
+                    ("et" "turn e-mail into task"
+                     entry (file+headline malb/inbox-org "Email")
+                     "* TODO %?\n%U SCHEDULED: %(org-time-stamp nil)\n\nSee %a by %:fromname\n\n"
+                     :immediate-finish nil
+                     :prepend t)
 
                     ("j" "journal entry"
                      entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
@@ -2735,10 +2753,10 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      :prepend t)))
 
             (setq org-capture-templates-contexts
-                  '(("r" ((in-mode . "mu4e-view-mode")))
-                    ("T" ((in-mode . "mu4e-view-mode")))
-                    ("f" ((in-mode . "mu4e-view-mode")))
-                    ("F" ((in-mode . "mu4e-headers-mode")))))))
+                  '(("er" ((in-mode . "mu4e-view-mode")))
+                    ("et" ((in-mode . "mu4e-view-mode")))
+                    ("ef" ((in-mode . "mu4e-view-mode")))
+                    ("es" ((in-mode . "mu4e-headers-mode")))))))
 #+END_SRC
 
 ** Auto Completion
