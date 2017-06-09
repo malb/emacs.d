@@ -2687,9 +2687,11 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      entry (file malb/inbox-org)
                      "** TODO %?\n%i" :prepend t)
 
-                    ("T" "task with context"
-                     entry (file malb/inbox-org)
-                     "** TODO %?\n%i\n%a" :prepend t)
+                    ("T" "todo from email"
+                     entry (file+headline malb/inbox-org "Email")
+                     "* TODO %?\n%U SCHEDULED: %(org-time-stamp nil)\n\nSee %a by %:fromname\n\n"
+                     :immediate-finish nil
+                     :prepend t)
 
                     ("P" "project task" plain (function malb/org-capture-projectile)
                      "** TODO %?\n%i\n%a\n" :prepend t)
@@ -2734,6 +2736,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
             (setq org-capture-templates-contexts
                   '(("r" ((in-mode . "mu4e-view-mode")))
+                    ("T" ((in-mode . "mu4e-view-mode")))
                     ("f" ((in-mode . "mu4e-view-mode")))
                     ("F" ((in-mode . "mu4e-headers-mode")))))))
 #+END_SRC
