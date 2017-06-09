@@ -5118,67 +5118,6 @@ Put attachments at end of buffer ([[http://mbork.pl/2015-11-28_Fixing_mml-attach
 (advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
 #+END_SRC
 
-Use Helm to re-arrange recipients of an e-mail.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/fixup-recipients ()
-  (interactive)
-  (let (address
-        addresses
-        to
-        cc
-        point-end-of-line
-        (search-regexp "^to: \\|^cc: ")
-        (case-fold-search t))
-
-    ;; extract addresses
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward search-regexp nil t)
-        (save-excursion
-          (setq point-end-of-line (re-search-forward "$")))
-        (setq addresses (append addresses
-                                (split-string (buffer-substring-no-properties
-                                               (point) point-end-of-line)
-                                              "[^ ]+@[^ ]+," t " "))))
-      (setq addresses (mapcar (lambda (address)
-                                (format "\"%s\" <%s>" (malb/canonicalise-contact-name address)
-                                        (replace-regexp-in-string
-                                         ".*\\(^\\| \\)<?\\([^< ]+@[^ >]+\\)>?.*" "\\2" address)))
-                              addresses)))
-
-    ;; ask user to split into To and CC
-    (helm :sources `(((name . "To:")
-                      (candidates . addresses)
-                      (action . (("Select" . (lambda (x) (setq to (helm-marked-candidates))))
-                                 ("Ignore" . (lambda (x))))))))
-
-    (dolist (address to)
-      (setq addresses (delete address addresses)))
-
-    (if addresses
-        (helm :sources `(((name . "CC:")
-                          (candidates . addresses)
-                          (action . (("Select" . (lambda (x) (setq cc (helm-marked-candidates))))
-                                     ("Ignore" . (lambda (x)))))))))
-
-    ;; Replace To: and CC: fields
-    (save-excursion
-      (goto-char (point-min))
-
-      (while (re-search-forward search-regexp nil t)
-        (kill-whole-line))
-
-      (message-goto-from)
-
-      (if to (progn (newline)
-                    (insert "To:")
-                    (insert (mapconcat #'identity to ", "))))
-      (if cc (progn (newline)
-                    (insert "Cc:")
-                    (insert (mapconcat #'identity cc ", ")))))))
-#+END_SRC
-
 
 #+BEGIN_SRC emacs-lisp
 (bind-key "C-c g t" #'message-goto-to mu4e-compose-mode-map)
@@ -5290,6 +5229,30 @@ View emails with width restriction, but wider for HTML
 
 (add-to-list 'mu4e-view-actions
              '("Xsender search" . malb/search-for-sender-extended) t)
+
+(defun malb/find-correspondence (msg)
+  "Find messages involving all recipients."
+  (let ((addresses (append (mapcar (lambda (x) (cdr x))
+                                   (mu4e-message-field msg :to))
+                           (mapcar (lambda (x) (cdr x))
+                                   (mu4e-message-field msg :cc))
+                           (mapcar (lambda (x) (cdr x))
+                                   (mu4e-message-field msg :from)))))
+    (helm :sources `(((name . "Filter candidates:")
+                      (candidates . addresses)
+                      (after-init-hook . (lambda () (with-helm-buffer
+                                                      (run-at-time 0.01 nil #'helm-mark-all))))
+                      (action . (("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
+                                 ("Use all" . (lambda (x))))))))
+    (mu4e-headers-search
+     (format "contact:(%s)"
+             (mapconcat 'identity addresses " AND ")))))
+
+(add-to-list 'mu4e-view-actions
+             '("Find messages" . malb/find-correspondence) t)
+
+(add-to-list 'mu4e-headers-actions
+             '("Find messages" . malb/find-correspondence) t)
 #+END_SRC
 
 ** Contacts
@@ -5442,6 +5405,90 @@ it is to insert the contact.
 (key-chord-define mu4e-compose-mode-map ",," #'malb/helm-mu-contacts)
 (bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map)
 #+END_SRC
+
+Extract a pretty-ish list of contacts from an e-mail.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/extract-contacts (search-regexp)
+  (let (address
+        addresses
+        point-end-of-line
+        (case-fold-search t))
+
+    ;; extract addresses
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward search-regexp nil t)
+        (save-excursion
+          (setq point-end-of-line (re-search-forward "$")))
+        (setq addresses (append
+                         addresses
+                         (let ((string (buffer-substring-no-properties (point) point-end-of-line))
+                               (separator "[^ ]+@[^ ]+,"))
+                           (cl-loop with len = (length string)
+                                    with start = 0
+                                    for end = (if (string-match separator string start)
+                                                  (string-match "," string (string-match separator string start))
+                                                len)
+                                    for chunk = (substring string start end)
+                                    collect (string-trim (replace-regexp-in-string "^," "" chunk))
+                                    while (< end len)
+                                    do (progn (setf start end) (message "%s" chunk)))
+                           )))))
+    (setq addresses (mapcar (lambda (address)
+                              (format "\"%s\" <%s>" (malb/canonicalise-contact-name address)
+                                      (replace-regexp-in-string
+                                       ".*\\(^\\| \\)<?\\([^< ]+@[^ >]+\\)>?.*" "\\2" address)))
+                            addresses))))
+#+END_SRC
+
+Use Helm to re-arrange recipients of an e-mail.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/helm-fixup-recipients ()
+  "Re-distribute addresses to To: and CC: fields."
+  (interactive)
+  (let* ((search-regexp "^to: \\|^cc: ")
+         (addresses (malb/extract-contacts search-regexp))
+         (case-fold-search t)
+         to cc)
+
+    ;; ask user to split into To and CC
+    (helm :sources `(((name . "To:")
+                      (candidates . addresses)
+                      (action . (("Select" . (lambda (x) (setq to (helm-marked-candidates))))
+                                 ("Ignore" . (lambda (x))))))))
+
+    (dolist (address to)
+      (setq addresses (delete address addresses)))
+
+    (if addresses
+        (helm :sources `(((name . "CC:")
+                          (candidates . addresses)
+                          (action . (("Select" . (lambda (x) (setq cc (helm-marked-candidates))))
+                                     ("Ignore" . (lambda (x)))))))))
+
+    ;; Replace To: and CC: fields
+    (save-excursion
+      (goto-char (point-min))
+
+      (while (re-search-forward search-regexp nil t)
+        (kill-whole-line))
+
+      (message-goto-from)
+
+      (if to (progn (newline)
+                    (insert "To:")
+                    (insert (mapconcat #'identity to ", "))))
+      (if cc (progn (newline)
+                    (insert "Cc:")
+                    (insert (mapconcat #'identity cc ", ")))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "C-c ]" #'malb/helm-fixup-recipients mu4e-compose-mode-map)
+#+END_SRC
+
 
 ** Dedicated Email Frame
 
