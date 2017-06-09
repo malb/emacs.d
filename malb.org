@@ -6770,6 +6770,20 @@ then enter the text in that file's own buffer.
   :ensure t)
 #+END_SRC
 
+** Speed Reading
+
+Spray is a speed reading mode.
+
+[[https://gitlab.com/iankelling/spray/blob/master/screencast.gif]]
+
+([[https://gitlab.com/iankelling/spray][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package spray
+  :ensure t
+  :config (add-to-list 'spray-unsupported-minor-modes 'beacon-mode))
+#+END_SRC
+
 * File Types
 ** Log Files
 
