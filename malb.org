@@ -4956,7 +4956,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 
 * Email (Mu4e)
 
-Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]].
+Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]]. See this [[https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/#more-1336][blog post]] for details.
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e
@@ -4986,13 +4986,11 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-use-fancy-chars t
       mu4e-headers-draft-mark     '("D" . "⚒ ") ; draft
-      ;; mu4e-headers-seen-mark      '("S" . "☑ ")  ; seen
-      ;; mu4e-headers-unread-mark    '("u" . "☐ ")  ; unseen
-      mu4e-headers-new-mark       '("N" .  "")
+      mu4e-headers-new-mark       '("N" . "")
       mu4e-headers-seen-mark      '("S" . "")    ; seen
       mu4e-headers-unread-mark    '("u" . "")    ; unseen
-      mu4e-headers-flagged-mark   '("F" .  "⚵ ") ; flagged
-      mu4e-headers-new-mark       '("N" .  "✉ ")  ; new
+      mu4e-headers-flagged-mark   '("F" . "⚵ ") ; flagged
+      mu4e-headers-new-mark       '("N" . "✉ ")  ; new
       mu4e-headers-replied-mark   '("R" . "↵ ")  ; replied
       mu4e-headers-passed-mark    '("P" . "⇉ ")  ; passed
       mu4e-headers-encrypted-mark '("x" . "⚷ ")   ; encrypted
@@ -5016,11 +5014,11 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
         ("/[Google Mail]/.Sent Mail"     . ?s)
         ("/[Google Mail]/.Bin"           . ?t)
         ("/royal holloway/.msc projects" . ?m)))
-
-(setq mu4e-attachment-dir "~/Downloads")
 #+END_SRC
 
 ** Queries
+
+Canned queries.
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list
@@ -5054,101 +5052,293 @@ Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and par
    "Sent in last 7 days" ?s) t)
 #+END_SRC
 
-** Retrieving Mail
+** Retrieving
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync googlemail-default"
       mu4e-update-interval nil)
 #+END_SRC
 
-** Sending Email
+** Contacts
 
-email is sent with [[https://www.opensmtpd.org][opensmtpd]]’s =sendmail=.
+Handling contacts semi-automagically is one of mu4e’s big selling points to me. The functions below make it more automagic.
 
-Set =format=flowed= ([[https://vxlabs.com/2017/02/07/mu4e-0-9-18-e-mailing-with-emacs-now-even-better/][source]])
-
-#+BEGIN_SRC emacs-lisp
-(setq mu4e-compose-format-flowed t)
-#+END_SRC
-
-To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=. Also set email width to 72 characters.
+My shitty regexp for detecting e-mail addresses
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
-(add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
-(add-hook 'message-mode-hook #'flyspell-mode)
-(add-hook 'message-mode-hook #'turn-on-orgstruct)
-(add-hook 'message-mode-hook #'turn-on-orgstruct++)
-(add-hook 'message-mode-hook #'turn-on-orgtbl)
-(add-hook 'message-mode-hook #'typo-mode)
-(add-hook 'message-mode-hook #'adict-guess-dictionary)
-(add-hook 'message-mode-hook #'malb/company-ispell-setup)
-(bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
+(defconst malb/email-regexp "<?\\([^ ]+@[^ ]+\.[^ >]+\\)>?")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-;; https://github.com/iqbalansari/dotEmacs/blob/master/config/mail.org
-;; TODO: this means the header does not end
-;; (defun malb/strip-message-mode-problematic-text-props ()
-;;   (save-excursion
-;;     (goto-char (point-min))
-;;     (when (search-forward-regexp (concat "^" mail-heaqder-separator) nil t)
-;;       (remove-text-properties (match-beginning 0) (match-end 0) '(rear-nonsticky)))))
-
-;; (add-hook 'message-mode-hook #'malb/strip-message-mode-problematic-text-props)
-;; (add-hook 'mu4e-compose-mode-hook #'malb/iqbal-strip-message-mode-problematic-text-props)
+(defun malb/extract-email (str)
+  (string-match malb/email-regexp str) (match-string 1 str))
 #+END_SRC
 
-Don’t add an empty line when quoting email ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
+
+*** Replacement Table
+
+A table of canonical names for people who cannot seem to fix their headers …
 
 #+BEGIN_SRC emacs-lisp
-(require 'nnheader)
-
-(defun malb/message-insert-citation-line ()
-  "Insert a simple citation line."
-  (when message-reply-headers
-    (newline)
-    (insert (mail-header-from message-reply-headers) " writes:")
-    (newline)))
-
-(setq message-citation-line-function #'malb/message-insert-citation-line)
+(defcustom malb-mu4e-name-replacements nil
+  "replacement names from e-mail addresses"
+  :type '(alist :key-type string :value-type string)
+  :group 'malb)
 #+END_SRC
 
-Put attachments at end of buffer ([[http://mbork.pl/2015-11-28_Fixing_mml-attach-file_using_advice][source]])
+… and a function to add new replacements.
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/mml-attach-file--go-to-eob (orig-fun &rest args)
-  "Go to the end of buffer before attaching files."
-  (save-excursion
-    (save-restriction
-      (widen)
-      (goto-char (point-max))
-      (apply orig-fun args))))
-
-(advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
+(defun malb/add-mu4e-name-replacement ()
+  (interactive)
+  (let* ((email (helm-read-string "E-mail: " (get-text-property (point) 'email)))
+         (name  (helm-read-string "Name: "
+                                  (malb/canonicalise-contact-name
+                                   (get-text-property (point) 'long)))))
+    (add-to-list 'malb-mu4e-name-replacements (cons email name) t)
+    (customize-save-variable 'malb-mu4e-name-replacements malb-mu4e-name-replacements)))
 #+END_SRC
-
 
 #+BEGIN_SRC emacs-lisp
-(bind-key "C-c g t" #'message-goto-to mu4e-compose-mode-map)
-(bind-key "C-c g c" #'message-goto-cc mu4e-compose-mode-map)
-(bind-key "C-c g b" #'message-goto-bcc mu4e-compose-mode-map)
-(bind-key "C-c g f" #'message-goto-from mu4e-compose-mode-map)
-(bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
+(bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map)
 #+END_SRC
 
-** Viewing Email
+*** Canonicalisation
 
-Render HTML emails in =eww= = =shr=
+- My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
+- Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
+- Some people like to send incomplete data, so we maintain a local replacement list
 
 #+BEGIN_SRC emacs-lisp
-;; use imagemagick, if available
-(when (fboundp 'imagemagick-register-types)
-  (imagemagick-register-types))
-
-(use-package mu4e-contrib
-  :config (setq mu4e-html2text-command #'mu4e-shr2text))
+(defun malb/canonicalise-contact-name (name)
+  (let* ((case-fold-search nil)
+         (name (or name ""))
+         (email (replace-regexp-in-string malb/email-regexp
+                                          (format "^.* %s" malb/email-regexp)
+                                          "\\1" name))
+         ;; look up email address and use entry if found
+         (candidate (cdr (assoc email malb-mu4e-name-replacements))))
+    (if candidate
+        candidate
+      (progn
+        (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop email address
+        (setq name (replace-regexp-in-string "^\\(\"\\|\'\\)\\(.*\\)\\(\"\\|\'\\)" "\\2" name)) ;; strip quotes
+        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
+        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)))))) ;; Foo, Bar becomes Bar Foo
 #+END_SRC
+
+Canonicalise contacts as they appear from mu4e.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-contact-rewrite-function (contact)
+  (let* ((name (or (plist-get contact :name) ""))
+         (mail (plist-get contact :mail))
+         (case-fold-search t))
+    (plist-put contact :name (malb/canonicalise-contact-name (format "%s <%s>" name mail)))
+    contact))
+
+(setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
+#+END_SRC
+
+Ignore some e-mail addresses when auto completing:
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-compose-complete-ignore-address-regexp (rx  (or (seq "no" (zero-or-one "-") "reply")
+                                                           (seq "replyto-" (one-or-more char) "@plus.google.com")
+                                                           (seq "@" (one-or-more char) ".twitter.com")
+                                                           (seq "do-not-reply" (zero-or-more char) "@"))))
+#+END_SRC
+
+The following is useful in e-mail templates
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/get-names-from-fields (fields)
+  (let (names
+        ret
+        name
+        point-end-of-line
+        (search-regexp (mapconcat (lambda (arg)
+                                    (concat "^" arg ": "))
+                                  fields "\\|"))
+        (case-fold-search t))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward search-regexp nil t)
+        (save-excursion
+          (setq point-end-of-line (re-search-forward "$")))
+        (setq name (buffer-substring-no-properties (point) point-end-of-line))
+        (setq name (split-string name (format "%s," malb/email-regexp) t " ")) ;; split on email@address,
+        (setq names (append names name)))
+      (dolist (name names)
+        (setq name (malb/canonicalise-contact-name name))
+        (if (string-match "\\([^ ,]+\\)" name)
+            (progn
+              (setq name (capitalize (replace-regexp-in-string "~" " " (match-string 1 name))))
+              (if ret
+                  (setq ret (concat ret ", " name))
+                (setq ret name)))))
+      (if ret ret "there"))))
+
+(defun malb/get-names-from-to-field ()
+  (interactive)
+  (malb/get-names-from-fields '("To")))
+#+END_SRC
+
+Extract a pretty-ish list of contacts from an e-mail, this is mainly used for Helm below.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/extract-contacts (fields)
+  "Return a list of 'name <email>' entries."
+  (let (address
+        addresses
+        point-end-of-line
+        (case-fold-search t)
+        (search-regexp (mapconcat (lambda (arg) (concat "^" arg ": *"))
+                                  fields "\\|")))
+
+    ;; extract addresses
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward search-regexp nil t)
+        (save-excursion
+          (setq point-end-of-line (re-search-forward "$")))
+        (setq addresses (append addresses
+                                (let ((string (buffer-substring-no-properties (point) point-end-of-line))
+                                      (separator (format "%s," malb/email-regexp)))
+                                  ;; split at e-mail address but don't eat the separator
+                                  (cl-loop with len = (length string)
+                                           with start = 0
+                                           for end = (if (string-match separator string start)
+                                                         (string-match "," string (string-match separator string start))
+                                                       len)
+                                           for chunk = (substring string start end)
+                                           collect (string-trim (replace-regexp-in-string "^," "" chunk))
+                                           while (< end len)
+                                           do (setf start end))
+                                  )))))
+    (setq addresses (mapcar (lambda (address)
+                              (format "\"%s\" <%s>"
+                                      (malb/canonicalise-contact-name address)
+                                      (malb/extract-email address)))
+                            addresses))))
+#+END_SRC
+
+Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with Charley in CC which prompts me to send an e-mail to Charley with Bob in CC.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/helm-reorder-recipients ()
+  "Re-distribute addresses to To: and CC: fields."
+  (interactive)
+  (let* ((search-regexp "^to: *\\|^cc: *")
+         (addresses (malb/extract-contacts '("to" "cc")))
+         (case-fold-search t)
+         to cc)
+
+    ;; ask user to split into To and CC
+    (helm :sources `(((name . "To:")
+                      (candidates . addresses)
+                      (action . (("Select" . (lambda (x) (setq to (helm-marked-candidates))))
+                                 ("Ignore" . (lambda (x))))))))
+
+    (dolist (address to)
+      (setq addresses (delete address addresses)))
+
+    (if addresses
+        (helm :sources `(((name . "CC:")
+                          (candidates . addresses)
+                          (action . (("Select" . (lambda (x) (setq cc (helm-marked-candidates))))
+                                     ("Ignore" . (lambda (x)))))))))
+
+    ;; Replace To: and CC: fields
+    (save-excursion
+      (goto-char (point-min))
+
+      (while (re-search-forward search-regexp nil t)
+        (kill-whole-line))
+
+      (message-goto-from)
+
+      (if to (progn (newline)
+                    (insert "To: ")
+                    (insert (mapconcat #'identity to ", "))))
+      (if cc (progn (newline)
+                    (insert "Cc: ")
+                    (insert (mapconcat #'identity cc ", ")))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "C-c ]" #'malb/helm-reorder-recipients mu4e-compose-mode-map)
+#+END_SRC
+
+** Searching
+
+#+BEGIN_SRC emacs-lisp
+(unbind-key "s" mu4e-main-mode-map)
+#+END_SRC
+
+A helm menu for contacts, based on ([[http://kitchingroup.cheme.cmu.edu/blog/2015/03/14/A-helm-mu4e-contact-selector/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/helm-mu-contacts (arg)
+  "Helm interface to e-mail addresses.
+
+When ARG equals then the persistent action is search, otherwise
+it is to insert the contact.
+"
+  (interactive "p")
+
+  (let ((malb/helm-mu-actions
+         '(("Insert" . (lambda (x)
+                         (insert (mapconcat 'identity
+                                            (helm-marked-candidates) ","))))
+           ("Messages" . (lambda (x)
+                           (mu4e-headers-search
+                            (format "contact:(%s)"
+                                    (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
+           ("Copy to clipboard" . (lambda (x)
+                                    (kill-new (mapconcat 'identity
+                                                         (helm-marked-candidates) ","))))
+           ("Google search" . (lambda (x) (helm-google (replace-regexp-in-string
+                                                        (format "^\\(.*\\) %s" malb/email-regexp) "\\1" x)))))))
+
+    (helm :sources `(((name . "E-mail address candidates")
+                      (candidates . ,(append
+                                      ;; mu contacts
+                                      (loop for contact being the hash-key of mu4e~contacts
+                                            collect (cons contact contact))))
+                      (action . ,(cond ((equal arg 4) (cons (cadr malb/helm-mu-actions)
+                                                            (cons (car malb/helm-mu-actions)
+                                                                  (cddr  malb/helm-mu-actions))))
+                                       (t malb/helm-mu-actions))))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(key-chord-define mu4e-compose-mode-map ",," #'malb/helm-mu-contacts)
+(bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map)
+(bind-key "sc" (lambda () (interactive) (malb/helm-mu 4)) mu4e-main-mode-map)
+#+END_SRC
+
+Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-mu
+  :ensure t
+  :config (progn
+
+            (defun malb/helm-mu (arg)
+              (interactive "p")
+              (let ((current-prefix-arg nil))
+                (cond
+                 ((equal arg 4) (malb/helm-mu-contacts 4))
+                 (t (helm-mu)))))
+
+            (bind-key "ss" #'mu4e-headers-search mu4e-main-mode-map)
+            (bind-key "sh" #'malb/helm-mu mu4e-main-mode-map)))
+#+END_SRC
+
+[[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
+
+** Viewing
 
 Use =<TAB>= to preview messages and =q= to close previews.
 
@@ -5172,13 +5362,21 @@ Use =<TAB>= to preview messages and =q= to close previews.
           (select-window other-win)
           (sleep-for 0.1)
           (mu4e~view-quit-buffer))
-      (mu4e~headers-quit-buffer))
-    ))
+      (mu4e~headers-quit-buffer))))
 
 (bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
 (bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
 (bind-key "z" #'malb/close-message-view mu4e-headers-mode-map)
 #+END_SRC
+
+Visual-line mode all the way.
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
+(bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
+#+END_SRC
+
+Headers to show in header view.
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-headers-fields '((:human-date . 10)
@@ -5188,10 +5386,22 @@ Use =<TAB>= to preview messages and =q= to close previews.
                             (:subject)))
 #+END_SRC
 
+Render HTML emails in =eww= aka =shr=
+
+#+BEGIN_SRC emacs-lisp
+;; use imagemagick, if available
+(when (fboundp 'imagemagick-register-types)
+  (imagemagick-register-types))
+
+(use-package mu4e-contrib
+  :config (setq mu4e-html2text-command #'mu4e-shr2text))
+#+END_SRC
+
 View emails with width restriction, but wider for HTML
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
+  "View emails with width restriction, but wider for HTML."
   (let* ((txt (mu4e-message-field msg :body-txt))
          (html (mu4e-message-field msg :body-html)))
     (cond
@@ -5207,17 +5417,19 @@ View emails with width restriction, but wider for HTML
 (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
 
+Actions to view e-mails in external browser.
+
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'mu4e-view-actions
              '("browser" . mu4e-action-view-in-browser) t)
+#+END_SRC
 
+Action to view e-mails in EWW.
+
+#+BEGIN_SRC emacs-lisp
 (defun malb/view-in-eww (msg)
   (eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
 (add-to-list 'mu4e-view-actions '("Eww view" . malb/view-in-eww) t)
-
-
-(bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
-(bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -5265,242 +5477,101 @@ View emails with width restriction, but wider for HTML
              '("Find messages" . malb/find-correspondence) t)
 #+END_SRC
 
-** Contacts
+** Writing
 
-- My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
-- Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
-- Some people like to send incomplete data, so we maintain a local replacement list
+Set =format=flowed= ([[https://vxlabs.com/2017/02/07/mu4e-0-9-18-e-mailing-with-emacs-now-even-better/][source]])
 
 #+BEGIN_SRC emacs-lisp
-(defcustom malb-mu4e-name-replacements nil
-  "replacement names from e-mail addresses"
-  :type '(alist :key-type string :value-type string)
-  :group 'malb)
+(setq mu4e-compose-format-flowed t)
 #+END_SRC
+
+To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=. Also set e-mail width to 72 characters.
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/canonicalise-contact-name (name)
-  (let* ((case-fold-search nil)
-         (name (or name ""))
-         (email (replace-regexp-in-string "^.* <?\\([^ ]+@[^ ]+\.[^ >]+\\)>?" "\\1" name))
-         ;; look up email address and use entry if found
-         (candidate (cdr (assoc email malb-mu4e-name-replacements))))
-    (if candidate candidate
-      (progn
-        (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop email address
-        (setq name (replace-regexp-in-string "^\\(\"\\|\'\\)\\(.*\\)\\(\"\\|\'\\)" "\\2" name)) ;; strip quotes
-        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
-        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)))))) ;; Foo, Bar becomes Bar Foo
+(add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
+(add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
+(add-hook 'message-mode-hook #'flyspell-mode)
+(add-hook 'message-mode-hook #'turn-on-orgstruct)
+(add-hook 'message-mode-hook #'turn-on-orgstruct++)
+(add-hook 'message-mode-hook #'turn-on-orgtbl)
+(add-hook 'message-mode-hook #'typo-mode)
+(add-hook 'message-mode-hook #'adict-guess-dictionary)
+(add-hook 'message-mode-hook #'malb/company-ispell-setup)
+
+;; TODO this isn’t as nice as it could be
+(bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
 #+END_SRC
+
+Don’t add an empty line when quoting e-mail ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/mu4e-contact-rewrite-function (contact)
-  (let* ((name (or (plist-get contact :name) ""))
-         (mail (plist-get contact :mail))
-         (case-fold-search t))
-    (plist-put contact :name (malb/canonicalise-contact-name (format "%s <%s>" name mail)))
-    contact))
+(require 'nnheader)
 
-(setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
+(defun malb/message-insert-citation-line ()
+  "Insert a simple citation line."
+  (when message-reply-headers
+    (newline)
+    (insert (mail-header-from message-reply-headers) " writes:")
+    (newline)))
+
+(setq message-citation-line-function #'malb/message-insert-citation-line)
 #+END_SRC
 
-Useful in email templates
+Various shortcuts to jump to/create headers.
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/yas-get-names-from-fields (fields)
-  (let (names
-        ret
-        name
-        point-end-of-line
-        (search-regexp (mapconcat (lambda (arg)
-                                    (concat "^" arg ": "))
-                                  fields "\\|"))
-        (case-fold-search t))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward search-regexp nil t)
-        (save-excursion
-          (setq point-end-of-line (re-search-forward "$")))
-        (setq name (buffer-substring-no-properties (point) point-end-of-line))
-        (setq name (split-string name "[^ ]+@[^ ]+," t " ")) ;; split on email@address,
-        (setq names (append names name)))
-      (dolist (name names)
-        (setq name (malb/canonicalise-contact-name name))
-        (if (string-match "\\([^ ,]+\\)" name)
-            (progn
-              (setq name (capitalize (replace-regexp-in-string "~" " " (match-string 1 name))))
-              (if ret
-                  (setq ret (concat ret ", " name))
-                (setq ret name)))))
-      (if ret ret "there"))))
-
-(defun malb/yas-get-names-from-to-fields ()
-  (interactive)
-  (malb/yas-get-names-from-fields '("To")))
+(bind-key "C-c g t" #'message-goto-to mu4e-compose-mode-map)
+(bind-key "C-c g c" #'message-goto-cc mu4e-compose-mode-map)
+(bind-key "C-c g b" #'message-goto-bcc mu4e-compose-mode-map)
+(bind-key "C-c g f" #'message-goto-from mu4e-compose-mode-map)
+(bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
 #+END_SRC
 
-We also add a convenient function to add new replacements.
+*** Attachments
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/add-mu4e-name-replacement ()
-  (interactive)
-  (let* ((email (helm-read-string "Email: " (get-text-property (point) 'email)))
-         (name  (helm-read-string "Name: "
-                                  (malb/canonicalise-contact-name
-                                   (get-text-property (point) 'long)))))
-    (add-to-list 'malb-mu4e-name-replacements (cons email name) t)
-    (customize-save-variable 'malb-mu4e-name-replacements malb-mu4e-name-replacements)))
+(setq mu4e-attachment-dir "~/Downloads")
 #+END_SRC
+
+Attachments are mostly handled using the helm baloo interface below, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-(bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map)
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+
+(use-package gnus-dired
+  :config
+  (progn
+    ;; make the `gnus-dired-mail-buffers' function also work on
+    ;; message-mode derived modes, such as mu4e-compose-mode
+    (defun gnus-dired-mail-buffers ()
+      "Return a list of active message buffers."
+      (let (buffers)
+        (save-current-buffer
+          (dolist (buffer (buffer-list t))
+            (set-buffer buffer)
+            (when (and (derived-mode-p 'message-mode)
+                       (null message-sent-message-via))
+              (push (buffer-name buffer) buffers))))
+        (nreverse buffers)))
+
+    (setq gnus-dired-mail-mode 'mu4e-user-agent)))
 #+END_SRC
 
-Ignore some email addresses when auto completing:
+Put attachments at end of buffer ([[http://mbork.pl/2015-11-28_Fixing_mml-attach-file_using_advice][source]])
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-compose-complete-ignore-address-regexp (rx  (or (seq "no" (zero-or-one "-") "reply")
-                                                           (seq "replyto-" (one-or-more char) "@plus.google.com")
-                                                           (seq "@" (one-or-more char) ".twitter.com")
-                                                           (seq "do-not-reply" (zero-or-more char) "@"))))
+(defun malb/mml-attach-file--go-to-eob (orig-fun &rest args)
+  "Go to the end of buffer before attaching files."
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-max))
+      (apply orig-fun args))))
+
+(advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
 #+END_SRC
 
-Helm menu for contacts, based on ([[http://kitchingroup.cheme.cmu.edu/blog/2015/03/14/A-helm-mu4e-contact-selector/][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/helm-mu-contacts (arg)
-  "Helm interface to email addresses.
-
-When ARG equals then search is the persistent action, otherwise
-it is to insert the contact.
-"
-  (interactive "p")
-
-  (let* ((malb/helm-mu-actions
-          '(("Insert." . (lambda (x)
-                           (insert (mapconcat 'identity
-                                              (helm-marked-candidates) ","))))
-            ("Show messages" . (lambda (x)
-                                        (let ((contacts
-                                               (concat "("
-                                                       (mapconcat
-                                                        (lambda (str)
-                                                          (replace-regexp-in-string
-                                                           ".*\\(^\\| \\)<?\\([^< ]+@[^ >]+\\)>?.*" "\\2"
-                                                           str))
-                                                        (helm-marked-candidates) " OR ")
-                                                       ")")))
-                                          (mu4e-headers-search (concat "contact:" contacts)))))
-            ("Copy contacts to clipboard." . (lambda (x)
-                                               (kill-new
-                                                (mapconcat 'identity
-                                                           (helm-marked-candidates) ","))))
-            ("Google contact" . (lambda (x)
-                                  (helm-google (replace-regexp-in-string
-                                                "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" x))))))
-
-         (malb/helm-mu-actions (cond ((equal arg 4) (cons (cadr malb/helm-mu-actions)
-                                                          (cons (car malb/helm-mu-actions)
-                                                                (cddr  malb/helm-mu-actions))))
-                                     (t malb/helm-mu-actions))))
-
-    (message "helm-mu-actions %s" malb/helm-mu-actions)
-    (helm :sources `(((name . "Email address candidates")
-                      (candidates . ,(append
-                                      ;; mu contacts
-                                      (loop for contact being the hash-key of mu4e~contacts
-                                            collect (cons contact contact))))
-                      (action . malb/helm-mu-actions))))))
-
-(key-chord-define mu4e-compose-mode-map ",," #'malb/helm-mu-contacts)
-(bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map)
-#+END_SRC
-
-Extract a pretty-ish list of contacts from an e-mail.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/extract-contacts (search-regexp)
-  (let (address
-        addresses
-        point-end-of-line
-        (case-fold-search t))
-
-    ;; extract addresses
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward search-regexp nil t)
-        (save-excursion
-          (setq point-end-of-line (re-search-forward "$")))
-        (setq addresses (append
-                         addresses
-                         (let ((string (buffer-substring-no-properties (point) point-end-of-line))
-                               (separator "[^ ]+@[^ ]+,"))
-                           (cl-loop with len = (length string)
-                                    with start = 0
-                                    for end = (if (string-match separator string start)
-                                                  (string-match "," string (string-match separator string start))
-                                                len)
-                                    for chunk = (substring string start end)
-                                    collect (string-trim (replace-regexp-in-string "^," "" chunk))
-                                    while (< end len)
-                                    do (progn (setf start end) (message "%s" chunk)))
-                           )))))
-    (setq addresses (mapcar (lambda (address)
-                              (format "\"%s\" <%s>" (malb/canonicalise-contact-name address)
-                                      (replace-regexp-in-string
-                                       ".*\\(^\\| \\)<?\\([^< ]+@[^ >]+\\)>?.*" "\\2" address)))
-                            addresses))))
-#+END_SRC
-
-Use Helm to re-arrange recipients of an e-mail.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/helm-fixup-recipients ()
-  "Re-distribute addresses to To: and CC: fields."
-  (interactive)
-  (let* ((search-regexp "^to: \\|^cc: ")
-         (addresses (malb/extract-contacts search-regexp))
-         (case-fold-search t)
-         to cc)
-
-    ;; ask user to split into To and CC
-    (helm :sources `(((name . "To:")
-                      (candidates . addresses)
-                      (action . (("Select" . (lambda (x) (setq to (helm-marked-candidates))))
-                                 ("Ignore" . (lambda (x))))))))
-
-    (dolist (address to)
-      (setq addresses (delete address addresses)))
-
-    (if addresses
-        (helm :sources `(((name . "CC:")
-                          (candidates . addresses)
-                          (action . (("Select" . (lambda (x) (setq cc (helm-marked-candidates))))
-                                     ("Ignore" . (lambda (x)))))))))
-
-    ;; Replace To: and CC: fields
-    (save-excursion
-      (goto-char (point-min))
-
-      (while (re-search-forward search-regexp nil t)
-        (kill-whole-line))
-
-      (message-goto-from)
-
-      (if to (progn (newline)
-                    (insert "To:")
-                    (insert (mapconcat #'identity to ", "))))
-      (if cc (progn (newline)
-                    (insert "Cc:")
-                    (insert (mapconcat #'identity cc ", ")))))))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "C-c ]" #'malb/helm-fixup-recipients mu4e-compose-mode-map)
-#+END_SRC
-
-
-** Dedicated Email Frame
+** Window Management
 
 Create a new mu4e session in a new frame.
 
@@ -5526,9 +5597,7 @@ Kill mu4e frame.
 (bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map)
 #+END_SRC
 
-** Window Management
-
-I patched mu4e to be way less clever about window management after sending an email, my local =mu4e~compose-handler= looks like this:
+I patched mu4e to be way less clever about window management after sending an e-mail, my local =mu4e~compose-handler= looks like this:
 
 #+BEGIN_SRC emacs-lisp :tangle no
 (defun* mu4e~compose-handler (compose-type &optional original-msg includes)
@@ -5591,53 +5660,6 @@ Link to mu4e messages and threads.
 #+BEGIN_SRC emacs-lisp
 (use-package org-mu4e
   :config (setq org-mu4e-link-query-in-headers-mode t))
-#+END_SRC
-
-** Search in Email
-
-Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-mu
-  :ensure t
-  :config (progn
-
-            (defun malb/helm-mu (arg)
-              (interactive "p")
-              (let ((current-prefix-arg nil))
-                (cond
-                 ((equal arg 4) (malb/helm-mu-contacts 4))
-                 (t (helm-mu)))))
-
-            (bind-key "S" #'malb/helm-mu mu4e-main-mode-map)))
-#+END_SRC
-
-[[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
-
-** Attachments
-
-Attachments are mostly handled using the helm baloo interface below, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
-
-(use-package gnus-dired
-  :config
-  (progn
-    ;; make the `gnus-dired-mail-buffers' function also work on
-    ;; message-mode derived modes, such as mu4e-compose-mode
-    (defun gnus-dired-mail-buffers ()
-      "Return a list of active message buffers."
-      (let (buffers)
-        (save-current-buffer
-          (dolist (buffer (buffer-list t))
-            (set-buffer buffer)
-            (when (and (derived-mode-p 'message-mode)
-                       (null message-sent-message-via))
-              (push (buffer-name buffer) buffers))))
-        (nreverse buffers)))
-
-    (setq gnus-dired-mail-mode 'mu4e-user-agent)))
 #+END_SRC
 
 * Blogging
