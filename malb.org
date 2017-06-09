@@ -3858,14 +3858,7 @@ On our system port 8888 is already taken.
             (when (boundp 'company-global-modes)
               (add-to-list 'company-global-modes 'ein:notebook-multilang-mode t)
               (add-to-list 'company-global-modes 'ein:notebook-python-mode t))
-
-            (require 'ein-cell)
-            (set-face-attribute 'ein:cell-input-area   nil :background (solarized-with-color-variables
-                                                                         'light
-                                                                         (solarized-color-blend base02 base03 0.5)))
-            (set-face-attribute 'ein:cell-input-prompt nil
-                                :background nil
-                                :foreground "#657b83" :weight 'bold)))
+            ))
 #+END_SRC
 
 *** Virtual Environments
@@ -4265,7 +4258,6 @@ Diminish ~flyspell-mode~ as we always use it.
 
 #+BEGIN_SRC emacs-lisp
 (eval-after-load "flyspell"
-
   '(diminish 'flyspell-mode))
 #+END_SRC
 
@@ -6908,7 +6900,7 @@ The result looks like this:
                   (set-face-attribute 'which-func nil :foreground "#DEB542"))
 
                 ;; steal spacemacs flycheck style
-                (eval-after-load "fylcheck"
+                (when (boundp 'flycheck-mode)
                   (progn
                     (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
                     (set-face-attribute 'flycheck-warning nil :underline "#b58900")
@@ -6924,19 +6916,29 @@ The result looks like this:
                                         :foreground "#69B7F0" :weight 'bold)))
 
                 (eval-after-load "eshell-git-prompt"
-                  (progn
-                    (set-face-attribute 'eshell-git-prompt-powerline-dir-face nil
-                                        :foreground (solarized-with-color-variables 'light base03))
-                    (set-face-attribute 'eshell-git-prompt-powerline-clean-face nil
-                                        :foreground (solarized-with-color-variables 'light base03))
-                    (set-face-attribute 'eshell-git-prompt-powerline-not-clean-face nil
-                                        :foreground (solarized-with-color-variables 'light base03))))
+                  '(progn
+                     (set-face-attribute 'eshell-git-prompt-powerline-dir-face nil
+                                         :foreground (solarized-with-color-variables 'light base03))
+                     (set-face-attribute 'eshell-git-prompt-powerline-clean-face nil
+                                         :foreground (solarized-with-color-variables 'light base03))
+                     (set-face-attribute 'eshell-git-prompt-powerline-not-clean-face nil
+                                         :foreground (solarized-with-color-variables 'light base03))))
 
                 (eval-after-load "pdf-tools"
-                  (progn
-                    (setq pdf-view-midnight-colors (cons "#444444"
-                                                         (solarized-with-color-variables 'light base03)))
-                    nil))))))
+                  '(progn
+                     (setq pdf-view-midnight-colors (cons "#444444"
+                                                          (solarized-with-color-variables 'light base03)))
+                     nil))
+
+                (eval-after-load "ein-cell"
+                  '(progn
+                     (set-face-attribute 'ein:cell-input-area nil
+                                         :background (solarized-with-color-variables
+                                                       'light
+                                                       (solarized-color-blend base02 base03 0.5)))
+                     (set-face-attribute 'ein:cell-input-prompt nil
+                                         :background nil
+                                         :foreground "#657b83" :weight 'bold)))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
