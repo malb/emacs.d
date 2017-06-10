@@ -5158,6 +5158,8 @@ Ignore some e-mail addresses when auto completing:
                                                            (seq "do-not-reply" (zero-or-more char) "@"))))
 #+END_SRC
 
+*** Extract Contacts
+
 The following is useful in e-mail templates
 
 #+BEGIN_SRC emacs-lisp
