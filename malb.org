@@ -634,9 +634,9 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 #+BEGIN_SRC emacs-lisp
 (use-package bm
   :ensure t
-  :bind (("C-c b m ." . bm-next)
-         ("C-c b m ," . bm-previous)
-         ("C-c b m t" . bm-toggle)))
+  :bind (("C-c b b ." . bm-next)
+         ("C-c b b ," . bm-previous)
+         ("C-c b b t" . bm-toggle)))
 #+END_SRC
 
 * Snippets
