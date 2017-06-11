@@ -15,23 +15,22 @@
 
 We assume that the following variables are defined:
 
-- ~malb/projects-dir~ - a superepository of which all of my projects are subprojects
+- ~malb/common-file-targets~ - for helm
+- ~malb/documents-dir~ - documents
+- ~malb/inbox-org~ - this is where I store tasks
 - ~malb/literature-dirs~ - PDFs of papers
 - ~malb/literature-notes-dir~ - notes on papers
-- ~malb/documents-dir~ - documents
-- ~malb/sync-dir~ - documents that are syncronised
-- ~malb/paradox-github-token~ - github login
-- ~malb/org-files-dir~ - org files go here
-- ~malb/org-mode-ics~ - icalendar file
-- ~malb/private-org~ - this is where I store tasks
-- ~malb/inbox-org~ - this is where I store tasks
-- ~malb/org-files~ - org files go here
-- ~malb/common-file-targets~ - for helm
-- ~malb/projectile-ignored-projects~ - ignored projects
-- ~malb/sage-executable~ - full path of Sage executable
-- ~malb/theme~ - theme choice
 - ~malb/mu4e-name-replacements~ - e-mail name replacements
-
+- ~malb/org-files-dir~ - org files go here
+- ~malb/org-files~ - org files
+- ~malb/org-mode-ics~ - icalendar file
+- ~malb/paradox-github-token~ - github login
+- ~malb/private-org~ - this is where I store tasks
+- ~malb/projectile-ignored-projects~ - ignored projects
+- ~malb/projects-dir~ - a super-repository of which all of my projects are subprojects
+- ~malb/sage-executable~ - full path of Sage executable
+- ~malb/sync-dir~ - documents that are synchronised
+- ~malb/theme~ - theme choice
 
 #+BEGIN_SRC emacs-lisp
 ;;; init.el --- personal emacs config file -*- lexical-binding: t ; eval: (read-only-mode 1)-*-
