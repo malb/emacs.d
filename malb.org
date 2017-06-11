@@ -595,6 +595,7 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 (use-package avy
   :ensure t
   :bind (("C-c C-<SPC>" . avy-goto-char-timer)
+         ("C-c j j" . avy-goto-word-or-subword-1)
          ("M-g g" . avy-goto-line))
   :config (progn
             (setq avy-background t)
@@ -620,8 +621,8 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 #+BEGIN_SRC emacs-lisp
 (use-package goto-chg
   :ensure t
-  :bind (("C-c b ," . goto-last-change)
-         ("C-c b ." . goto-last-change-reverse)))
+  :bind (("C-c j ," . goto-last-change)
+         ("C-c j ." . goto-last-change-reverse)))
 #+END_SRC
 
 *Tip* =C-u 0 C-c b ,​= description of the change at a particular stop on your tour
@@ -633,9 +634,9 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 #+BEGIN_SRC emacs-lisp
 (use-package bm
   :ensure t
-  :bind (("C-c b b ." . bm-next)
-         ("C-c b b ," . bm-previous)
-         ("C-c b b t" . bm-toggle)))
+  :bind (("C-c j b ." . bm-next)
+         ("C-c j b ," . bm-previous)
+         ("C-c j b t" . bm-toggle)))
 #+END_SRC
 
 * Snippets
