@@ -30,7 +30,7 @@ We assume that the following variables are defined:
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/sage-executable~ - full path of Sage executable
 - ~malb/theme~ - theme choice
-- ~malb/mu4e-name-replacements~ - email name replacements
+- ~malb/mu4e-name-replacements~ - e-mail name replacements
 
 
 #+BEGIN_SRC emacs-lisp
@@ -1228,7 +1228,7 @@ Switch themes with helm.
                                     (expand-file-name ".locate.db" (getenv "HOME")))))
                     (concat "locate -d " databases  " %s -e --regex %s")))
 
-            (helm-add-action-to-source "Attach to Email" #'mml-attach-file helm-source-locate)
+            (helm-add-action-to-source "Attach to E-mail" #'mml-attach-file helm-source-locate)
             ))
 #+END_SRC
 
@@ -2719,25 +2719,25 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("e" "e-mail")
 
                     ("er" "respond to e-mail"
-                     entry (file+headline malb/inbox-org "Email")
+                     entry (file+headline malb/inbox-org "E-mail")
                      "* REPLY to %:fromname on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
                      :immediate-finish t
                      :prepend t)
 
                     ("ef" "file e-mail"
-                     entry (file+headline malb/inbox-org "Email")
+                     entry (file+headline malb/inbox-org "E-mail")
                      "* %a by %:fromname\n%U\n\n"
                      :immediate-finish nil
                      :prepend nil)
 
                     ("es" "file e-mail search"
-                     entry (file+headline malb/inbox-org "Email")
+                     entry (file+headline malb/inbox-org "E-mail")
                      "* %a\n\n"
                      :immediate-finish nil
                      :prepend nil)
 
                     ("et" "turn e-mail into task"
-                     entry (file+headline malb/inbox-org "Email")
+                     entry (file+headline malb/inbox-org "E-mail")
                      "* TODO %?\n%U SCHEDULED: %(org-time-stamp nil)\n\nSee %a by %:fromname\n\n"
                      :immediate-finish nil
                      :prepend t)
@@ -4963,9 +4963,9 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
             (helm-add-action-to-source "Find online" 'helm-malb/bibtex-completion-google-this helm-source-bibtex)))
 #+END_SRC
 
-* Email (Mu4e)
+* E-mail (Mu4e)
 
-Email is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]]. See this [[https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/#more-1336][blog post]] for details.
+E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]]. See this [[https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/#more-1336][blog post]] for details.
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e
@@ -5398,7 +5398,7 @@ Headers to show in header view.
                             (:subject)))
 #+END_SRC
 
-Render HTML emails in =eww= aka =shr=
+Render HTML e-mails in =eww= aka =shr=
 
 #+BEGIN_SRC emacs-lisp
 ;; use imagemagick, if available
@@ -5409,11 +5409,11 @@ Render HTML emails in =eww= aka =shr=
   :config (setq mu4e-html2text-command #'mu4e-shr2text))
 #+END_SRC
 
-View emails with width restriction, but wider for HTML
+View e-mails with width restriction, but wider for HTML
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
-  "View emails with width restriction, but wider for HTML."
+  "View e-mails with width restriction, but wider for HTML."
   (let* ((txt (mu4e-message-field msg :body-txt))
          (html (mu4e-message-field msg :body-html)))
     (cond
@@ -6437,7 +6437,7 @@ exports.boxes = [ "INBOX"];
   :init (progn
           (prodigy-define-tag
             :name 'email
-            :ready-message "Checking Email using IMAP IDLE. Ctrl-C to shutdown.")
+            :ready-message "Checking E-mail using IMAP IDLE. Ctrl-C to shutdown.")
 
           (prodigy-define-service
             :name "imapnotify"
@@ -7249,7 +7249,7 @@ Easily change the text size:
     :candidates-process #'helm-baloo-search
     :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
     :action '(("Open"                   . (lambda (x) (helm-find-many-files x)))
-              ("Attach to Email"        . (lambda (x) (malb/helm-mml-attach-files x)))
+              ("Attach to E-mail"        . (lambda (x) (malb/helm-mml-attach-files x)))
               ("Transfer.sh"            . (lambda (x) (malb/helm-transfer-sh-files x)))
               ("Find file as root"      . (lambda (x) (helm-find-file-as-root x)))
               ("Find file other window" . (lambda (x) (helm-find-files-other-window x)))
