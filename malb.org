@@ -649,7 +649,7 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 
 Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is on ~yasnippet~.
 
-Call ~yas-decribe-tables~ to see currently defined snippets.
+You can call ~yas-decribe-tables~ to see currently defined snippets, I usually just use [[Helm YaSnippet]].
 
 We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/yasnippet/issues/669][source]])
 
@@ -670,7 +670,7 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
 ** Auto YASnippet
 
 #+BEGIN_QUOTE
-This is a hybrid of keyboard macros and yasnippet. You create the snippet on the go, usually to be used just in the one place. It's fast, because you're not leaving the current buffer, and all you do is enter the code you'd enter anyway, just placing ~ where you'd like yasnippet fields and mirrors to be.
+[[https://github.com/abo-abo/auto-yasnippet][auto-yasnippet]] is a hybrid of keyboard macros and yasnippet. You create the snippet on the go, usually to be used just in the one place. It's fast, because you're not leaving the current buffer, and all you do is enter the code you'd enter anyway, just placing ~ where you'd like yasnippet fields and mirrors to be.
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
@@ -721,7 +721,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :ensure t
-  :bind (("M-/"        . company-complete))
+  :bind (("M-/" . company-complete))
 
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
@@ -787,6 +787,8 @@ For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company
                   #'malb/ede-object-system-include-path)
             ))
 #+END_SRC
+
+*** TODO try company-rtags or company-gtags
 
 ** Python
 
@@ -952,13 +954,8 @@ See [[https://tuhdo.github.io/helm-intro.html][A Package in a league of its own:
 |---------+-----------------------|
 | =C-w=   | yanks word at point   |
 | =M-n=   | yanks symbol at point |
-| =C-h f= | ~describe-function~   |
-| =C-h v= | ~describe-variable~   |
-| =C-h w= | ~where-is~            |
 
 ** Buffers, Files
-
-[[https://github.com/emacs-helm/helm/raw/master/doc/helm-buffers-list.gif]] ([[https://github.com/emacs-helm/helm/raw/master/doc/helm-buffers-list.gif][source]])
 
 Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many sources to create =malb/helm-omni.= ([[http://stackoverflow.com/a/19284509][source]])
 
@@ -1094,6 +1091,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (helm-flx-mode +1)))
 #+END_SRC
 
+*Note:* disabled because it slows down helm after a day or so of Emacs uptime.
+
 ** Helm Ring
 
 =helm-ring= makes the kill ring actually useful, let’s use it.
@@ -1228,8 +1227,7 @@ Switch themes with helm.
                                     (expand-file-name ".locate.db" (getenv "HOME")))))
                     (concat "locate -d " databases  " %s -e --regex %s")))
 
-            (helm-add-action-to-source "Attach to E-mail" #'mml-attach-file helm-source-locate)
-            ))
+            (helm-add-action-to-source "Attach to E-mail" #'mml-attach-file helm-source-locate)))
 #+END_SRC
 
 ** Helm YaSnippet
@@ -1243,6 +1241,8 @@ Switch themes with helm.
 #+END_SRC
 
 ** Helm Org Rifle
+
+[[https://github.com/alphapapa/helm-org-rifle][Helm + Grep for Org-files]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org-rifle
@@ -1509,7 +1509,7 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
     :diminish volatile-highlights-mode)
 #+END_SRC
 
-** [#A] Zap up to char
+** Zap up to char
 
 Kill everything up to character, e.g. if we have “Lorem| ipsum” typing ~M-z u~ would leave us with “Lorem|um”.
 
@@ -1525,6 +1525,7 @@ Automatically revert buffers.
 
 #+BEGIN_SRC emacs-lisp
 (setq global-auto-revert-non-file-buffers t
+      global-auto-revert-ignore-modes '(pdf-view-mode)
       auto-revert-verbose nil)
 
 (global-auto-revert-mode 1)
@@ -1663,7 +1664,8 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
              ("_" "_" nil org-mode)
              ("$" "$" nil org-mode)
              ("#+BEGIN_QUOTE\n" "#+END_QUOTE\n" "q" org-mode)
-             ("#+BEGIN_SRC \n" "\n#+END_SRC" "s" org-mode)))
+             ("#+BEGIN_SRC \n" "\n#+END_SRC" "s" org-mode)
+             ("#+BEGIN_CENTER \n" "\n#+END_CENTER" "c" org-mode)))
   (add-hook 'org-mode-hook 'wrap-region-mode))
 #+END_SRC
 
@@ -1810,7 +1812,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 
 [[http://magit.vc][Magit]] is a very nice Git interface.
 
-[[http://magit.vc/img/shot/top.png]] ([[http://magit.vc][source]])
+[[https://magit.vc/screenshots/status.png]] ([[http://magit.vc][source]])
 
 We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
@@ -7485,6 +7487,12 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 ** Resetting a =defvar= Value
 
 =C-M-x= - =eval-defun= is your friend ([[http://irreal.org/blog/?p=5929][source]])
+
+** Finding Help
+
+| =C-h f= | ~describe-function~   |
+| =C-h v= | ~describe-variable~   |
+| =C-h w= | ~where-is~            |
 
 ** Stuck Emacs
 
