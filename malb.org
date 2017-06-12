@@ -1498,8 +1498,14 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 (use-package drag-stuff
   :ensure t
   :diminish drag-stuff-mode
-  :bind (("M-p" . drag-stuff-up)
-         ("M-n" . drag-stuff-down)))
+  :config (progn
+            (defhydra malb/hydra-drag-stuff (:color red)
+              "drag stuff"
+              ("<up>" drag-stuff-up "↑")
+              ("<down>" drag-stuff-down "↓")
+              ("SPC" nil)
+              ("q" nil))
+            (bind-key "C-c d" #'malb/hydra-drag-stuff/body)))
 #+END_SRC
 
 ** Visualise the undo tree
