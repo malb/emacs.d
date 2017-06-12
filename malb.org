@@ -3457,6 +3457,7 @@ Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package semantic
+  :defer t
   :init (progn
           (use-package semantic/ia)
           (use-package semantic/bovine/gcc)
