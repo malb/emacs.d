@@ -2187,7 +2187,8 @@ delete SCHEDULED if new state is WAITING
                                  ("@office" . ?o)
                                  ("@train" . ?t)
                                  ("quick" . ?q)
-                                 ("noxport" . ?n)
+                                 ("noexport" . ?n)
+                                 ("ignore" . ?i)
                                  (:endgroup)))
 #+END_SRC
 
