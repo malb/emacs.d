@@ -1886,6 +1886,8 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
   :config (magithub-feature-autoinject t))
 #+END_SRC
 
+*Notes* disabled because it slows down magit.
+
 ** Org Links for Magit Buffers
 
 [[https://github.com/magit/orgit][orgit]]
@@ -3770,6 +3772,8 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 | ~M-?~   | =anaconda-mode-show-doc=         |
 |---------+----------------------------------|
 
+Fall back to dumb jump if anaconda fails.
+
 #+BEGIN_SRC emacs-lisp
 (use-package anaconda-mode
   :ensure t
@@ -4022,7 +4026,7 @@ Shortcut for Sage Jupyter notebook.
 
 *Note:* If you get =[warn] Null value passed to ein:get-ipython-major-version= try =(ein:query-ipython-version 8890 t)=
 
-([[https://github.com/stakemori/ob-sagemath][source]])
+org babel for Sage can be quite handy for writing talks etc. ([[https://github.com/stakemori/ob-sagemath][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package ob-sagemath
