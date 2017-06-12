@@ -3403,9 +3403,9 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
             (unbind-key "C-M-g" dumb-jump-mode-map)
             (unbind-key "C-M-p" dumb-jump-mode-map)
             (unbind-key "C-M-q" dumb-jump-mode-map)
-            (bind-key "C-c d ." #'dumb-jump-go dumb-jump-mode-map)
-            (bind-key "C-c d ," #'dumb-jump-back dumb-jump-mode-map)
-            (bind-key "C-c d q" #'dumb-jump-quick-look dumb-jump-mode-map)
+            (bind-key "C-c j d ." #'dumb-jump-go dumb-jump-mode-map)
+            (bind-key "C-c j d ," #'dumb-jump-back dumb-jump-mode-map)
+            (bind-key "C-c j d q" #'dumb-jump-quick-look dumb-jump-mode-map)
             (dumb-jump-mode)))
 #+END_SRC
 
