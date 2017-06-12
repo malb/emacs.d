@@ -2924,7 +2924,7 @@ In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =v
 
 *Note* the order matters, i.e. open the file first then call =org-latex-export-to-pdf=
 
-#+BEGIN_SRC sh :tangle no
+#+BEGIN_SRC shell :tangle no
 emacs --batch -l ~/.emacs.d/org-export-init.el file.org -f org-latex-export-to-pdf
 #+END_SRC
 
