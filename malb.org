@@ -3898,7 +3898,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 [[https://github.com/millejoh/emacs-ipython-notebook][EIN]] is a interface to iPython.
 
-[[https://github.com/millejoh/emacs-ipython-notebook/wiki/images/demo_plotnormal.PNG]] ([[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png][source]])
+[[https://github.com/millejoh/emacs-ipython-notebook/wiki/images/R-kernel-example.PNG]] ([[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png][source]])
 
 On our system port 8888 is already taken.
 
