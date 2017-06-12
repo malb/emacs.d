@@ -3792,8 +3792,7 @@ Fall back to dumb jump if anaconda fails.
                 (if (equal p (point))
                     (dumb-jump-go))))
 
-            (bind-key "M-." #'malb/anaconda-mode-find-definitions anaconda-mode-map)
-            ))
+            (bind-key "M-." #'malb/anaconda-mode-find-definitions anaconda-mode-map)))
 #+END_SRC
 
 *** Pydoc
