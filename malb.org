@@ -5601,14 +5601,14 @@ Put attachments at end of my writing ([[http://mbork.pl/2015-11-28_Fixing_mml-at
     (save-restriction
       (widen)
       (goto-char (point-min))
-      (let ((point (re-search-forward "^.*writes:\n$" nil t)))
+      (let ((point (re-search-forward "^.*writes:$" nil t)))
         (if point
             (progn
               (goto-char point)
               (previous-line))
           (goto-char (point-max))))
-      (apply orig-fun args)
-      (newline))))
+      (newline)
+      (apply orig-fun args))))
 
 (advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
 #+END_SRC
