@@ -5270,7 +5270,7 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
 
     ;; ask user to split into To and CC
     (helm :sources `(((name . "To:")
-                      (candidates . addresses)
+                      (candidates . ,addresses)
                       (action . (("Select" . (lambda (x) (setq to (helm-marked-candidates))))
                                  ("Ignore" . (lambda (x))))))))
 
@@ -5279,7 +5279,7 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
 
     (if addresses
         (helm :sources `(((name . "CC:")
-                          (candidates . addresses)
+                          (candidates . ,addresses)
                           (action . (("Select" . (lambda (x) (setq cc (helm-marked-candidates))))
                                      ("Ignore" . (lambda (x)))))))))
 
