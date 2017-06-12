@@ -3252,7 +3252,13 @@ mouse-3: go to end")
 #+BEGIN_SRC emacs-lisp
 (use-package highlight-symbol
   :diminish highlight-symbol-mode
-  :ensure t)
+  :ensure t
+  :after cc-mode
+  :config (progn
+            (bind-key "M-n" #'highlight-symbol-next prog-mode-map)
+            (bind-key "M-p" #'highlight-symbol-prev prog-mode-map)
+            (bind-key "M-n" #'highlight-symbol-next c-mode-base-map)
+            (bind-key "M-p" #'highlight-symbol-prev c-mode-base-map)))
 #+END_SRC
 
 *** [#C] Line numbers
