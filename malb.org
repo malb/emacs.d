@@ -2772,7 +2772,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
                     ("et" "turn e-mail into task"
                      entry (file+headline malb/inbox-org "E-mail")
-                     "* TODO %?\n%U SCHEDULED: %(org-time-stamp nil)\n\nSee %a by %:fromname\n\n"
+                     "* TODO %?\nSCHEDULED: %(org-time-stamp nil)\n\nSee %a by %:fromname\n\n"
                      :immediate-finish nil
                      :prepend t)
 
