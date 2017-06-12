@@ -7222,8 +7222,7 @@ Easily change the text size:
     (setq malb/theme-loaded t)))
 
 (if (daemonp)
-    (add-hook 'after-make-frame-functions #'malb/load-theme)
-  (malb/load-theme (selected-frame)))
+    (add-hook 'after-make-frame-functions #'malb/load-theme))
 #+END_SRC
 
 * KDE Desktop Search with Baloo
