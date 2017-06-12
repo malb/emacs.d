@@ -375,6 +375,7 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\`\\*Helm Find Files\\*\\'"
                              "\\`\\*Help\\*\\'"
                              "\\`\\*ielm\\*\\'"
+                             "\\`\\*Synonyms List\\*\\'"
                              "\\`\\*anaconda-doc\\*\\'"
                              "\\`\\*Google Translate\\*\\'"
                              "\\` \\*LanguageTool Errors\\* \\'"
@@ -1255,6 +1256,27 @@ Switch themes with helm.
                  ((equal arg 4) (call-interactively #'helm-org-rifle-agenda-files nil))
                  ((equal arg 16) (helm-org-rifle-occur-agenda-files))
                  (t (helm-org-agenda-files-headings)))))))
+#+END_SRC
+
+** Helm Google
+
+[[https://github.com/steckerhalter/helm-google][helm-google]] is a simple interface for Google which comes in handy when we want to add a quick link for a term.
+
+[[https://raw.githubusercontent.com/steckerhalter/helm-google/master/screenshot.png]] ([[https://github.com/steckerhalter/helm-google/blob/master/screenshot.png][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-google
+  :ensure t
+  :bind ("C-c h g" . helm-google)
+  :config
+  (progn
+    (add-to-list 'helm-google-actions
+                 '("Copy URL" . (lambda (candidate)
+                                  (let ((url
+                                         (replace-regexp-in-string
+                                          "https://.*q=\\(.*\\)\&sa=.*"
+                                          "\\1" candidate)))
+                                    (kill-new url)))) t)))
 #+END_SRC
 
 * History
@@ -4347,9 +4369,14 @@ Prose linting using … [[http://proselint.com][proselint]].
 #+BEGIN_SRC emacs-lisp
 (use-package synosaurus
   :ensure t
+  :bind (("C-c w s" . synosaurus-lookup)
+         ("C-c w r" . synosaurus-choose-and-replace))
   :config (progn
             (setq synosaurus-choose-method 'popup)
-            (add-hook 'org-mode-hook #'synosaurus-mode)))
+            (unbind-key "C-c s l" synosaurus-mode-map)
+            (unbind-key "C-c s r" synosaurus-mode-map)
+            (add-hook 'org-mode-hook #'synosaurus-mode)
+            (add-hook 'latex-mode-hook #'synosaurus-mode)))
 #+END_SRC
 
 *** Dictionary
@@ -4359,8 +4386,7 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 #+BEGIN_SRC emacs-lisp
 (use-package define-word
   :ensure t
-  :bind (("C-c d" . define-word-at-point)
-         ("C-c D" . define-word)))
+  :bind (("C-c w d" . define-word-at-point)))
 #+END_SRC
 
 *** Translating
@@ -4368,30 +4394,9 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 #+BEGIN_SRC emacs-lisp
 (use-package google-translate
   :ensure t
-  :bind ("C-c t" . google-translate-smooth-translate)
+  :bind ("C-c w t" . google-translate-smooth-translate)
   :init (progn (setq google-translate-translation-directions-alist
                      '(("en" . "de") ("de" . "en")))))
-#+END_SRC
-
-*** Googling
-
-[[https://github.com/steckerhalter/helm-google][helm-google]] is a simple interface for Google which comes in handy when we want to add a quick link for a term.
-
-[[https://raw.githubusercontent.com/steckerhalter/helm-google/master/screenshot.png]] ([[https://github.com/steckerhalter/helm-google/blob/master/screenshot.png][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-google
-  :ensure t
-  :bind ("C-c h g" . helm-google)
-  :config
-  (progn
-    (add-to-list 'helm-google-actions
-                 '("Copy URL" . (lambda (candidate)
-                                  (let ((url
-                                         (replace-regexp-in-string
-                                          "https://.*q=\\(.*\\)\&sa=.*"
-                                          "\\1" candidate)))
-                                    (kill-new url)))) t)))
 #+END_SRC
 
 ** Taking Notes
@@ -5084,7 +5089,6 @@ My shitty regexp for detecting e-mail addresses
 (defun malb/extract-email (str)
   (string-match malb/email-regexp str) (match-string 1 str))
 #+END_SRC
-
 
 *** Replacement Table
 
