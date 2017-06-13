@@ -2103,6 +2103,7 @@ Working with source code in org-mode.
                (shell . t)
                (latex . t)
                (ditaa . t)
+               (dot . t)
                (plantuml . t)
                (makefile . t)))
 
