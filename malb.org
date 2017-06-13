@@ -4683,7 +4683,7 @@ Run =latexmk -pvc= in async shell
   (interactive "p")
   (let*  ((engine (if arg "-xelatex" ""))
           (filename (file-name-sans-extension (buffer-file-name))))
-    (async-shell-command (format "latexmk -pvc -pdf %s -interaction=nonstopmode %s.tex"
+    (async-shell-command (format "latexmk -pvc -pdf \"%s\" -interaction=nonstopmode \"%s.tex\""
                                  engine filename))))
 #+END_SRC
 
