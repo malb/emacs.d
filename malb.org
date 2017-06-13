@@ -1283,6 +1283,7 @@ Switch themes with helm.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/helm-in-buffer ()
+  "the right kind™ of buffer menu"
   (interactive)
   (if (eq major-mode 'org-mode)
       (call-interactively #'helm-org-in-buffer-headings)
