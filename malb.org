@@ -1279,6 +1279,17 @@ Switch themes with helm.
                                     (kill-new url)))) t)))
 #+END_SRC
 
+** Helm Semantic, Imenu, Org
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/helm-in-buffer ()
+  (interactive)
+  (if (eq major-mode 'org-mode)
+      (call-interactively #'helm-org-in-buffer-headings)
+    (call-interactively #'helm-semantic-or-imenu)))
+#+END_SRC
+
+
 * History
 ** Recent Files
 
@@ -7454,7 +7465,7 @@ prefix argument is given ask for voice first."
 (malb/set-menu-key "d" "\C-a\C- \C-n\M-w\C-y\C-p") ; duplicate previous line
 (malb/set-menu-key "e" #'malb/eshell-here)
 (malb/set-menu-key "f" #'helm-find-files)
-(malb/set-menu-key "i" #'helm-semantic-or-imenu)
+(malb/set-menu-key "i" #'malb/helm-in-buffer)
 (malb/set-menu-key "j" #'avy-goto-word-1)
 (malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex)
