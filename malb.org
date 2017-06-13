@@ -2032,7 +2032,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-outline-path-complete-in-steps nil
       org-blank-before-new-entry (quote ((heading . auto)
                                          (plain-list-item . nil)))
-      org-yank-adjusted-subtrees t
+      org-yank-adjusted-subtrees nil
       org-treat-S-cursor-todo-selection-as-state-change nil
       org-show-context-detail '((agenda . lineage) ;; instead of "local"
                                 (bookmark-jump . lineage)
