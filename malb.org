@@ -5270,19 +5270,19 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
          to cc)
 
     ;; ask user to split into To and CC
-    (helm :sources `(((name . "To:")
-                      (candidates . ,addresses)
-                      (action . (("Select" . (lambda (x) (setq to (helm-marked-candidates))))
-                                 ("Ignore" . (lambda (x))))))))
+    (setq to (helm :sources (helm-build-sync-source "To:"
+                              :candidates addresses
+                              :action  '(("Select" . (lambda (x) (helm-marked-candidates)))
+                                         ("Ignore" . (lambda (x)))))))
 
     (dolist (address to)
       (setq addresses (delete address addresses)))
 
     (if addresses
-        (helm :sources `(((name . "CC:")
-                          (candidates . ,addresses)
-                          (action . (("Select" . (lambda (x) (setq cc (helm-marked-candidates))))
-                                     ("Ignore" . (lambda (x)))))))))
+        (setq cc (helm :sources (helm-build-sync-source "CC:"
+                                  :candidates addresses
+                                  :action  '(("Select" . (lambda (x) (helm-marked-candidates)))
+                                             ("Ignore" . (lambda (x))))))))
 
     ;; Replace To: and CC: fields
     (save-excursion
@@ -5336,15 +5336,15 @@ it is to insert the contact.
            ("Google search" . (lambda (x) (helm-google (replace-regexp-in-string
                                                         (format "^\\(.*\\) %s" malb/email-regexp) "\\1" x)))))))
 
-    (helm :sources `(((name . "E-mail address candidates")
-                      (candidates . ,(append
-                                      ;; mu contacts
-                                      (loop for contact being the hash-key of mu4e~contacts
-                                            collect (cons contact contact))))
-                      (action . ,(cond ((equal arg 4) (cons (cadr malb/helm-mu-actions)
-                                                            (cons (car malb/helm-mu-actions)
-                                                                  (cddr  malb/helm-mu-actions))))
-                                       (t malb/helm-mu-actions))))))))
+    (helm :sources (helm-build-sync-source "E-mail address candidates"
+                     :candidates  (append
+                                   ;; mu contacts
+                                   (loop for contact being the hash-key of mu4e~contacts
+                                         collect (cons contact contact)))
+                     :action  (cond ((equal arg 4) (cons (cadr malb/helm-mu-actions)
+                                                         (cons (car malb/helm-mu-actions)
+                                                               (cddr  malb/helm-mu-actions))))
+                                    (t malb/helm-mu-actions))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
