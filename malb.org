@@ -2768,11 +2768,11 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
                     ("tt" "standard task"
                      entry (file malb/inbox-org)
-                     "** TODO %?\n%i\n%a\n" :prepend t)
+                     "** TODO %?\n%i\n" :prepend t)
 
                     ("tc" "standard task (capturing context)"
                      entry (file malb/inbox-org)
-                     "** TODO %?\n%i\n" :prepend t)
+                     "** TODO %?\n%i\n%a\n" :prepend t)
 
                     ("tp" "project specific task" plain (function malb/org-capture-projectile)
                      "** TODO %?\n%i\n%a\n" :prepend t)
