@@ -277,6 +277,15 @@ Resize windows to accommodate new ones.
 (winner-mode 1)
 #+END_SRC
 
+[[https://github.com/louiskottmann/zygospore.el][zygospore]] lets you revert =C-x 1= =(delete-other-window)= by pressing =C-x 1= again.
+
+#+BEGIN_SRC emacs-lisp
+(use-package zygospore
+  :ensure t
+  :bind (("C-x 1" . zygospore-toggle-delete-other-windows)))
+#+END_SRC
+
+
 ** Multiple window configurations
 
 [[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
