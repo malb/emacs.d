@@ -5310,9 +5310,9 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
 
       (message-goto-from)
 
-      (if to (progn (newline)
-                    (insert "To: ")
-                    (insert (mapconcat #'identity to ", "))))
+      (progn (newline)
+             (insert "To: ")
+             (insert (mapconcat #'identity to ", ")))
       (if cc (progn (newline)
                     (insert "Cc: ")
                     (insert (mapconcat #'identity cc ", ")))))))
