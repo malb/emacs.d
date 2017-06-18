@@ -5164,8 +5164,7 @@ A table of canonical names for people who cannot seem to fix their headers …
 (defun malb/canonicalise-contact-name (name)
   (let* ((case-fold-search nil)
          (name (or name ""))
-         (email (replace-regexp-in-string malb/email-regexp
-                                          (format "^.* %s" malb/email-regexp)
+         (email (replace-regexp-in-string (format "^.* %s" malb/email-regexp)
                                           "\\1" name))
          ;; look up email address and use entry if found
          (candidate (cdr (assoc email malb-mu4e-name-replacements))))
