@@ -1299,7 +1299,6 @@ Switch themes with helm.
     (call-interactively #'helm-semantic-or-imenu)))
 #+END_SRC
 
-
 * History
 ** Recent Files
 
