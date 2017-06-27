@@ -5375,7 +5375,6 @@ it is to insert the contact.
 #+BEGIN_SRC emacs-lisp
 (key-chord-define mu4e-compose-mode-map ",," #'malb/helm-mu-contacts)
 (bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map)
-(bind-key "sc" (defun malb/helm-mu-contacts-messages () (interactive) (malb/helm-mu-contacts 4)) mu4e-main-mode-map)
 #+END_SRC
 
 Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
