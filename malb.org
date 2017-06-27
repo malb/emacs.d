@@ -6886,7 +6886,9 @@ Spray is a speed reading mode.
 #+BEGIN_SRC emacs-lisp
 (use-package spray
   :ensure t
-  :config (add-to-list 'spray-unsupported-minor-modes 'beacon-mode))
+  :config (progn
+            (setq spray-wpm 500)
+            (add-to-list 'spray-unsupported-minor-modes 'beacon-mode)))
 #+END_SRC
 
 * File Types
