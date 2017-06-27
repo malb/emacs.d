@@ -5392,9 +5392,14 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
                  ((equal arg 4) (malb/helm-mu-contacts 4))
                  (t (helm-mu)))))
 
-            (bind-key "ss" #'mu4e-headers-search mu4e-main-mode-map)
-            (bind-key "sm" #'mu4e-headers-search mu4e-main-mode-map)
-            (bind-key "sh" #'malb/helm-mu mu4e-main-mode-map)))
+            (dolist (mode-map '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map))
+              (unbind-key "s" mode-map)
+              (bind-key "ss" #'mu4e-headers-search mode-map)
+              (bind-key "sm" #'mu4e-headers-search mode-map)
+              (bind-key "sh" #'malb/helm-mu mode-map)
+              (bind-key "sc" (defun malb/helm-mu-contacts-messages ()
+                               (interactive)
+                               (malb/helm-mu-contacts 4)) mode-map))))
 #+END_SRC
 
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
