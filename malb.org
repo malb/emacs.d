@@ -2241,6 +2241,7 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
 (add-to-list 'org-structure-template-alist '("ll" "#+BEGIN_lemma\n<<lem:?>>\n#+END_lemma"))
 (add-to-list 'org-structure-template-alist '("lt" "#+BEGIN_theorem\n<<thm:?>>\n#+END_theorem"))
 (add-to-list 'org-structure-template-alist '("lp" "#+BEGIN_proof\n?\n#+END_proof"))
+(add-to-list 'org-structure-template-alist '("fb" "#+BEAMER: \\framebreak" ""))
 (add-to-list 'org-structure-template-alist '("lh" "#+LATEX_HEADER: " ""))
 (add-to-list 'org-structure-template-alist '("ao" "#+ATTR_ORG: " ""))
 (add-to-list 'org-structure-template-alist '("al" "#+ATTR_LATEX: " ""))
