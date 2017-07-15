@@ -5430,10 +5430,15 @@ Use =<TAB>= to preview messages and =q= to close previews.
 ;; based on (mu4e-select-other-view)
 (defun malb/close-message-view ()
   (interactive)
-  (let* ((other-buf mu4e~view-buffer)
-         (other-win (and other-buf (get-buffer-window other-buf))))
+  (let* ((other-buf
+	   (cond
+	     ((eq major-mode 'mu4e-headers-mode)
+	       (mu4e-get-view-buffer))
+	     ((eq major-mode 'mu4e-view-mode)
+	       (mu4e-get-headers-buffer))))
+	  (other-win (and other-buf (get-buffer-window other-buf))))
     (if (window-live-p other-win)
-        (progn
+      (progn
           (select-window other-win)
           (sleep-for 0.1)
           (mu4e~view-quit-buffer))
