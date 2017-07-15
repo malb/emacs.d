@@ -285,7 +285,6 @@ Resize windows to accommodate new ones.
   :bind (("C-x 1" . zygospore-toggle-delete-other-windows)))
 #+END_SRC
 
-
 ** Multiple window configurations
 
 [[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
@@ -1819,7 +1818,7 @@ This library provides easy project management and navigation. The concept of a p
                   projectile-ignored-projects malb/projectile-ignored-projects
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
                   projectile-switch-project-action 'helm-projectile
-                  projectile-mode-line  '(:eval (format "\xf07c[%s]" (projectile-project-name))))
+                  projectile-mode-line  '(:eval (format "»{%s}" (projectile-project-name))))
 
             (projectile-global-mode)))
 #+END_SRC
@@ -3325,52 +3324,51 @@ mouse-3: go to end")
 
 *** GNU Global
 
-Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]])
+Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and optionally for C++
 
 #+BEGIN_SRC emacs-lisp
 (use-package ggtags
   :ensure t
   :config (progn  (add-hook 'c-mode-common-hook
                             (lambda ()
-                              (when (derived-mode-p 'java-mode)
-                                (ggtags-mode t))))
+                              (ggtags-mode t)))
 
-                  (bind-key "C-c g s" #'ggtags-find-other-symbol ggtags-mode-map)
-                  (bind-key "C-c g h" #'ggtags-view-tag-history ggtags-mode-map)
-                  (bind-key "C-c g r" #'ggtags-find-reference ggtags-mode-map)
-                  (bind-key "C-c g f" #'ggtags-find-file ggtags-mode-map)
-                  (bind-key "C-c g c" #'ggtags-create-tags ggtags-mode-map)
-                  (bind-key "C-c g u" #'ggtags-update-tags ggtags-mode-map)
-                  (bind-key "M-," #'pop-tag-mark ggtags-mode-map)))
+                  (unbind-key "M-." ggtags-mode-map)
+                  (unbind-key "M-," ggtags-mode-map)
+                  (bind-key "C-c j g s" #'ggtags-find-other-symbol ggtags-mode-map)
+                  (bind-key "C-c j g h" #'ggtags-view-tag-history ggtags-mode-map)
+                  (bind-key "C-c j g r" #'ggtags-find-reference ggtags-mode-map)
+                  (bind-key "C-c j g f" #'ggtags-find-file ggtags-mode-map)
+                  (bind-key "C-c j g c" #'ggtags-create-tags ggtags-mode-map)
+                  (bind-key "C-c j g u" #'ggtags-update-tags ggtags-mode-map)))
 #+END_SRC
 
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-gtags
   :ensure t
-  :init (setq helm-gtags-prefix-key "\C-cg"
-              helm-gtags-suggested-key-mapping t)
+  :init (setq helm-gtags-prefix-key "\C-cjg")
   :diminish helm-gtags-mode
   :config (progn  (setq helm-gtags-ignore-case t
                         helm-gtags-auto-update t
                         helm-gtags-use-input-at-cursor t
                         helm-gtags-pulse-at-cursor t)
 
-                  (add-hook 'java-mode-hook #'helm-gtags-mode)
+                  (add-hook 'c-mode-common-hook #'helm-gtags-mode)
 
-                  (bind-key "C-c g a" #'helm-gtags-tags-in-this-function helm-gtags-mode-map)
-                  (bind-key "C-j"     #'helm-gtags-select helm-gtags-mode-map)
-                  (bind-key "M-."     #'helm-gtags-dwim helm-gtags-mode-map)
-                  (bind-key "M-,"     #'helm-gtags-pop-stack helm-gtags-mode-map)
-                  (bind-key "C-c <"   #'helm-gtags-previous-history helm-gtags-mode-map)
-                  (bind-key "C-c >"   #'helm-gtags-next-history helm-gtags-mode-map)))
+                  (bind-key "C-c j g a" #'helm-gtags-tags-in-this-function helm-gtags-mode-map)
+                  (bind-key "C-c j g j" #'helm-gtags-select helm-gtags-mode-map)
+                  (bind-key "C-c j g ." #'helm-gtags-dwim helm-gtags-mode-map)
+                  (bind-key "C-c j g ," #'helm-gtags-pop-stack helm-gtags-mode-map)
+                  (bind-key "C-c j g <"   #'helm-gtags-previous-history helm-gtags-mode-map)
+                  (bind-key "C-c j g >"   #'helm-gtags-next-history helm-gtags-mode-map)))
 #+END_SRC
 
 *** RTags
 
 [[https://github.com/Andersbakken/rtags][RTags]] can come in handy.
 
-1. create a =compile_commands.json= file using [[https://github.com/rizsotto/Bear][bear]].
+1. create a =compile_commands.json= file using [[https://github.com/rizsotto/Bear][bear]], e.g. =bear make check=
 2. launch =rdm=
 3. tell rtags about the project =cd /project/dir/ && rc -J /path/to/compile_commands.json=
 
@@ -3379,14 +3377,16 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 #+BEGIN_SRC emacs-lisp
 (use-package rtags
   :ensure t
-  :config (progn
-            (rtags-enable-standard-keybindings)
-            (setq rtags-use-helm t
-                  rtags-autostart-diagnostics t)
-            (add-hook 'c-mode-hook #'rtags-start-process-unless-running)
-            (add-hook 'c++-mode-hook #'rtags-start-process-unless-running)
-            (add-to-list 'company-backends '(company-rtags :with company-yasnippet) t)))
+  :config  (progn
+             (rtags-enable-standard-keybindings nil "C-c j r")
+             (setq rtags-use-helm t
+                   rtags-autostart-diagnostics t)
+             (add-hook 'c-mode-hook #'rtags-start-process-unless-running)
+             (add-hook 'c++-mode-hook #'rtags-start-process-unless-running)
+             (add-to-list 'company-backends '(company-rtags :with company-yasnippet) t)))
 #+END_SRC
+
+*Note* See [[https://syamajala.github.io/c-ide.html][this post]] for a nice intro to rtags.
 
 *** CamelCase
 
@@ -3522,8 +3522,16 @@ Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]]
 
           (bind-key "M-?"   #'semantic-analyze-proto-impl-toggle c-mode-base-map)
           (bind-key "M-."   #'semantic-ia-fast-jump c-mode-base-map)
-          (bind-key "C-M-." #'semantic-complete-jump c-mode-base-map)
-          (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)))
+          (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)
+
+          (bind-key "C-c j s ?"   #'semantic-analyze-proto-impl-toggle c-mode-base-map)
+          (bind-key "C-c j s ."   #'semantic-ia-fast-jump c-mode-base-map)
+          (bind-key "C-c j s J"   #'semantic-complete-jump c-mode-base-map)
+          (bind-key "C-c j s r"   #'semantic-symref-symbol c-mode-base-map)
+          (bind-key "C-c j s p"   #'senator-previous-tag c-mode-base-map)
+          (bind-key "C-c j s n"   #'senator-next-tag c-mode-base-map)
+          (bind-key "C-c j s C-w" #'senator-kill-tag c-mode-base-map)
+          (bind-key "C-c j s M-w" #'senator-copy-tag c-mode-base-map)))
 #+END_SRC
 
 **** Force semantic parsing
@@ -4537,7 +4545,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
             (delight 'pandoc-mode
-                     '(:eval (concat " \xf064[" (pandoc--get 'write) "]")))
+                     '(:eval (concat " p[" (pandoc--get 'write) "]")))
 
             (defun malb/copy-as (arg)
               (interactive "P")
@@ -5353,7 +5361,7 @@ it is to insert the contact.
          '(("Insert" . (lambda (x)
                          (insert (mapconcat 'identity
                                             (helm-marked-candidates) ","))))
-           ("Messages" . (lambda (x)
+           ("Find Messages" . (lambda (x)
                            (mu4e-headers-search
                             (format "contact:(%s)"
                                     (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
