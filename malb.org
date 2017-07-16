@@ -403,14 +403,25 @@ We then use =malb/quit-bottom-side-windows= to close them.
 In case we just want to kill the bottom window, set a shortcut do to this.
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/quit-bottom-side-windows ()
-  "Quit side windows of the current frame."
+(defun malb/quit-bottom-disposable-windows ()
+  "Quit disposable windows of the current frame."
   (interactive)
   (dolist (window (window-at-side-list))
-    (delete-window window)))
+    (if (<= (window-height window) (/ (frame-height) 3))
+        (delete-window window))))
 
-(bind-key "C-§" #'malb/quit-bottom-side-windows)
-(key-chord-define-global "qq" #'malb/quit-bottom-side-windows)
+(defun malb/promote-disposable-window ()
+  "Promote disposable window to real window."
+  (interactive)
+  (dolist (window (window-at-side-list))
+    (let ((buffer (window-buffer window))
+          (display-buffer-alist nil))
+      (delete-window window)
+      (display-buffer buffer))))
+
+(bind-key "C-§" #'malb/quit-bottom-disposable-windows)
+(key-chord-define-global "qq" #'malb/quit-bottom-disposable-windows)
+(key-chord-define-global "qw" #'malb/promote-disposable-window)
 #+END_SRC
 
 *** Compilation window
