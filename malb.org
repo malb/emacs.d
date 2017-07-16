@@ -3971,14 +3971,14 @@ Fold logical units
 
 Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-completion and stuff, it runs [[https://github.com/tkf/emacs-jedi][jedi]] for us. In particular it offers:
 
-|---------+----------------------------------|
-| ~C-M-i~ | =anaconda-mode-complete=         |
-| ~M-.~   | =anaconda-mode-find-definitions= |
-| ~M-,​~   | =anaconda-mode-find-assignments= |
-| ~M-r~   | =anaconda-mode-find-references=  |
-| ~M-*~   | =anaconda-mode-go-back=          |
-| ~M-?~   | =anaconda-mode-show-doc=         |
-|---------+----------------------------------|
+|---------+-------------------------------------|
+| ~C-M-i~ | =anaconda-mode-complete=            |
+| ~M-.~   | =malb/python-mode-find-definitions= |
+| ~M-,​~   | =anaconda-mode-find-assignments=    |
+| ~M-r~   | =anaconda-mode-find-references=     |
+| ~M-*~   | =anaconda-mode-go-back=             |
+| ~M-?~   | =anaconda-mode-show-doc=            |
+|---------+-------------------------------------|
 
 Fall back to dumb jump if anaconda fails.
 
@@ -3991,7 +3991,7 @@ Fall back to dumb jump if anaconda fails.
             (add-hook 'python-mode-hook #'anaconda-mode)
             (add-hook 'python-mode-hook #'anaconda-eldoc-mode)
 
-            (defun malb/anaconda-mode-find-definitions (&optional arg)
+            (defun malb/python-mode-find-definitions (&optional arg)
               (interactive "P")
               (let ((p (point)))
                 (if (not (called-interactively-p 'any))
@@ -4000,7 +4000,7 @@ Fall back to dumb jump if anaconda fails.
                 (if (equal p (point))
                     (dumb-jump-go))))
 
-            (bind-key "M-." #'malb/anaconda-mode-find-definitions anaconda-mode-map)))
+            (bind-key "M-." #'malb/python-mode-find-definitions anaconda-mode-map)))
 #+END_SRC
 
 *** Pydoc
