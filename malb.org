@@ -118,14 +118,6 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
                 paradox-automatically-star t))
 #+END_SRC
 
-** Try out packages
-
-#+BEGIN_SRC emacs-lisp
-(use-package try
-  :commands try
-  :ensure t)
-#+END_SRC
-
 * Fullscreen
 
 Allow pixel-wise scaling
