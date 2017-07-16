@@ -5688,40 +5688,25 @@ Kill mu4e frame.
 (bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map)
 #+END_SRC
 
-I patched mu4e to be way less clever about window management after sending an e-mail, my local =mu4e~compose-handler= looks like this:
+I patched mu4e to be way less clever about window management after sending an e-mail,  my =mu4e-message-kill-buffer= looks like this:
 
 #+BEGIN_SRC emacs-lisp :tangle no
-(defun* mu4e~compose-handler (compose-type &optional original-msg includes)
-  …
-  (when mu4e-compose-in-new-frame
-    ;; make sure to close the frame when we're done with the message these are
-    ;; all buffer-local;
-    ;; (push 'delete-frame message-exit-actions)
-    ;; (push 'delete-frame message-postpone-actions)
-    ))
-#+END_SRC
-
-and my =mu4e-message-kill-buffer= looks like this:
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(defun mu4e-message-kill-buffer ()
-  "Wrapper around `message-kill-buffer'.
-It restores mu4e window layout after killing the compose-buffer."
-  (interactive)
-  (let ((current-buffer (current-buffer)))
-    (message-kill-buffer)
-    ;; Compose buffer killed
-    (when (not (equal current-buffer (current-buffer)))
-      ;; Restore mu4e
-      ;; (if mu4e-compose-in-new-frame
-      ;; 	  (delete-frame)
-      ;; 	(if (buffer-live-p mu4e~view-buffer)
-      ;; 	    (switch-to-buffer mu4e~view-buffer)
-      ;; 	  (if (buffer-live-p mu4e~headers-buffer)
-      ;; 	      (switch-to-buffer mu4e~headers-buffer)
-      ;; 	    ;; if all else fails, back to the main view
-      ;; 	    (when (fboundp 'mu4e) (mu4e)))))
-      )))
+(defun mu4e-sent-handler (docid path)
+  "Handler function, called with DOCID and PATH for the just-sent
+message. For Forwarded ('Passed') and Replied messages, try to set
+the appropriate flag at the message forwarded or replied-to."
+  (mu4e~compose-set-parent-flag path)
+  (when (file-exists-p path) ;; maybe the draft was not saved at all
+    (mu4e~proc-remove docid))
+  ;; kill any remaining buffers for the draft file, or they will hang around...
+  ;; this seems a bit hamfisted...
+  (dolist (buf (buffer-list))
+    (when (and (buffer-file-name buf)
+	       (string= (buffer-file-name buf) path))
+      (if message-kill-buffer-on-exit
+	  (kill-buffer buf))))
+  ;; (mu4e~switch-back-to-mu4e-buffer)
+  (mu4e-message "Message sent"))
 #+END_SRC
 
 I set my compose frame to be a dedicated window, which then takes care of all window management for me.
