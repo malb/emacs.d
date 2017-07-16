@@ -385,17 +385,8 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\`\\*prodigy-.*\\*\\'"
                              "\\`\\*Org Export Dispatcher\\*\\'"
                              "\\`\\*Helm Swoop\\*\\'"
-                             "\\`\\*Backtrace\\*\\'"))
-
-(dolist (name malb/popup-windows)
-  (add-to-list 'display-buffer-alist
-               `(,name
-                 (display-buffer-reuse-window
-                  display-buffer-in-side-window)
-                 (reusable-frames . visible)
-                 (side            . bottom)
-                 ;; height only applies when golden-ratio-mode is off
-                 (window-height   . 0.3))))
+                             "\\`\\*Backtrace\\*\\'"
+                             "\\`\\*Messages\\*\\'"))
 #+END_SRC
 
 *** Closing side windows
@@ -459,6 +450,175 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 #+BEGIN_SRC emacs-lisp
 (setq compilation-scroll-output 'first-error)
+#+END_SRC
+
+*** Dispatch buffers to specific frames
+
+Separate Mu4e windows from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
+
+Mu4e buffers start with =*mu4e-=:
+
+#+BEGIN_SRC emacs-lisp
+(defvar malb/mu4e-buffer-regexps '("mu4e-.*")
+  "Buffer names of mu4e buffers.")
+
+(defvar malb/mu4e-buffer-allowed-regexps '("\\`\\*helm.*\\*\\'")
+  "Buffer names allowed in mu4e frame.")
+#+END_SRC
+
+Check if any regexp matches string:
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/regexp-match-p (regexps string)
+  (and string
+       (catch 'matched
+         (let ((inhibit-changing-match-data t))
+           (dolist (regexp regexps)
+             (when (string-match regexp string)
+               (throw 'matched t)))))))
+#+END_SRC
+
+Get frame by name or return passed frame.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/get-frame (frame)
+  "Return a frame, if any, named FRAME (a frame or a string).
+If none, return nil.
+If FRAME is a frame, it is returned."
+  (let ((malb/get-frame-name
+         (lambda (&optional frame)
+           (unless frame (setq frame (selected-frame)))
+           (if (framep frame)
+               (cdr (assq 'name (frame-parameters frame)))
+             (error "Argument not a frame: `%s'" frame)))))
+    (cond ((framep frame) frame)
+          ((stringp frame)
+           (catch 'get-a-frame-found
+             (dolist (fr (frame-list))
+               (when (string= frame (funcall malb/get-frame-name fr))
+                 (throw 'get-a-frame-found fr)))
+             nil))
+          (t
+           (error "Arg neither a string nor a frame: `%s'" frame)))))
+#+END_SRC
+
+Find a frame which isn’t the mu4e frame or create a fresh one.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/switch-to-mu4e ()
+  (let ((other-frame (catch 'other-frame
+                       (dolist (frame (frame-list))
+                         (if (string-match "mu4e" (frame-parameter frame 'name)) ;; emacsclient
+                             (throw 'other-frame frame)
+                           nil)))))
+    (if other-frame
+        (select-frame-set-input-focus other-frame)
+      (malb/mail))))
+
+(defun malb/switch-away-from-mu4e ()
+  (let ((other-frame (catch 'other-frame
+                       (dolist (frame (frame-list))
+                         (if (and (not (string-match "mu4e" (frame-parameter frame 'name)))
+                                  (not (string-match "F1" (frame-parameter frame 'name)))) ;; emacsclient
+                             (throw 'other-frame frame)
+                           nil)))))
+    (if other-frame
+        (select-frame-set-input-focus other-frame)
+      (select-frame-set-input-focus  (make-frame)))))
+#+END_SRC
+
+Main dispatch function:
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/frame-dispatch (buffer alist)
+  "Dispatch buffers to frames."
+  (message (format "dispatching %s" (buffer-name buffer)))
+  (cond
+   ;;  mu4e
+   ((malb/regexp-match-p malb/mu4e-buffer-regexps (buffer-name buffer))
+    (if (malb/get-frame "mu4e") (select-frame-set-input-focus (malb/get-frame "mu4e"))
+      (make-frame (list '(name . "mu4e"))))
+    (unless (get-buffer-window buffer)
+      (set-window-buffer (get-largest-window) buffer))
+    (select-window (get-buffer-window buffer))
+    t ;; we are done
+    )
+
+   ;; !mu4e && file
+   ((and (string-match "mu4e" (frame-parameter nil 'name))
+         (not (malb/regexp-match-p malb/mu4e-buffer-regexps (buffer-name buffer)))
+         (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
+    (malb/switch-away-from-mu4e)
+    nil ;; pass control back to display-buffer-alist
+    )
+   ;; rest
+   (t nil))
+  nil)
+#+END_SRC
+
+Overwrite =find-file= to avoid =mu4e= frame.
+
+#+BEGIN_SRC emacs-lisp
+(defun find-file (filename &optional wildcards)
+  "Edit file FILENAME.
+Switch to a buffer visiting file FILENAME,
+creating one if none already exists.
+Interactively, the default if you just type RET is the current directory,
+but the visited file name is available through the minibuffer history:
+type M-n to pull it into the minibuffer.
+
+You can visit files on remote machines by specifying something
+like /ssh:SOME_REMOTE_MACHINE:FILE for the file name.  You can
+also visit local files as a different user by specifying
+/sudo::FILE for the file name.
+See the Info node `(tramp)File name Syntax' in the Tramp Info
+manual, for more about this.
+
+Interactively, or if WILDCARDS is non-nil in a call from Lisp,
+expand wildcards (if any) and visit multiple files.  You can
+suppress wildcard expansion by setting `find-file-wildcards' to nil.
+
+To visit a file without any kind of conversion and without
+automatically choosing a major mode, use \\[find-file-literally]."
+  (interactive
+   (find-file-read-args "Find file: "
+                        (confirm-nonexistent-file-or-buffer)))
+  (let ((value (find-file-noselect filename nil nil wildcards)))
+    (if (string-match "mu4e" (frame-parameter nil 'name))
+        (progn
+          (if (listp value)
+              (mapcar display-buffer (nreverse value))
+            (display-buffer value)
+            (switch-to-buffer value)))
+      (progn
+        (if (listp value)
+            (mapcar switch-to-buffer (nreverse value))
+          (switch-to-buffer value))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/clean-display-buffer-alist (old-function &rest arguments)
+  "call function with a clean display-buffers-alist"
+  (let ((display-buffer-alist nil))
+    (apply old-function arguments)))
+#+END_SRC
+
+*** Execute
+
+#+BEGIN_SRC emacs-lisp
+; (setq display-buffer-alist nil)
+(dolist (name malb/popup-windows)
+  (add-to-list 'display-buffer-alist
+               `(,name
+                 (malb/frame-dispatch
+                  display-buffer-reuse-window
+                  display-buffer-in-side-window)
+                 (reusable-frames . visible)
+                 (side            . bottom)
+                 ;; height only applies when golden-ratio-mode is off
+                 (window-height   . 0.3))) t)
+
+(add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
 #+END_SRC
 
 ** Golden Ratio
@@ -5610,6 +5770,12 @@ Various shortcuts to jump to/create headers.
 (bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
 #+END_SRC
 
+Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
+
+#+BEGIN_SRC emacs-lisp
+(advice-add #'mu4e-compose :around #'malb/clean-display-buffer-alist)
+#+END_SRC
+
 *** Attachments
 
 #+BEGIN_SRC emacs-lisp
@@ -5735,7 +5901,12 @@ Link to mu4e messages and threads.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-mu4e
-  :config (setq org-mu4e-link-query-in-headers-mode t))
+  :config (progn
+            (setq org-mu4e-link-query-in-headers-mode t)
+            (defun malb/switch-to-mu4e-advice (old-function &rest arguments)
+                   (malb/switch-to-mu4e)
+                   (apply old-function arguments))
+            (advice-add 'org-mu4e-open :around  #'malb/switch-to-mu4e-advice)))
 #+END_SRC
 
 * Blogging
