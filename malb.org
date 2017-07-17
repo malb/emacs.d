@@ -4686,7 +4686,7 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
               (let* ((buf-this (buffer-name (current-buffer)))
                      (buf-html (get-buffer-create
                                 (format "*md-html (%s)*" buf-this))))
-                (markdown-other-window (buffer-name buf-html))
+                (markdown (buffer-name buf-html))
                 (shr-render-buffer buf-html)
                 (kill-buffer buf-html)))
 
