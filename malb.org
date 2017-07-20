@@ -75,6 +75,20 @@ Enable TLS cert checking ([[https://glyph.twistedmatrix.com/2015/11/editor-malwa
 ;;                   (lambda (retrieved) t))))
 #+END_SRC
 
+* Utilities
+
+Check if any regexp matches string, because OR is hard …
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/regexp-match-p (regexps string)
+  (and string
+       (catch 'matched
+         (let ((inhibit-changing-match-data t))
+           (dolist (regexp regexps)
+             (when (string-match regexp string)
+               (throw 'matched t)))))))
+#+END_SRC
+
 * Package Management
 
 Configure package repositories
@@ -160,14 +174,16 @@ We have RAM, lots of it.
 
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/minibuffer-setup-hook ()
+(defun malb/disable-garbage-collection ()
+  "Disable garbage collection."
   (setq gc-cons-threshold most-positive-fixnum))
 
-(defun malb/minibuffer-exit-hook ()
+(defun malb/enable-garbage-collection ()
+  "Reset garbage collection to small-ish limit."
   (setq gc-cons-threshold 1048576))
 
-(add-hook 'minibuffer-setup-hook #'malb/minibuffer-setup-hook)
-(add-hook 'minibuffer-exit-hook #'malb/minibuffer-exit-hook)
+(add-hook 'minibuffer-setup-hook #'malb/disable-garbage-collection)
+(add-hook 'minibuffer-exit-hook #'malb/enable-garbage-collection)
 #+END_SRC
 
 *Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
@@ -233,7 +249,9 @@ Don’t split horizontally.
 
 (defun malb/split-window-sensibly (&optional window)
   (let ((window (or window (selected-window))))
+    ;; DIFF: prefer horizontal split
     (or (and (window-splittable-p window t)
+             ;; DIFF: restrict to two windows side-by-side
              (= (length (window-list)) 1)
              ;; Split window horizontally.
              (with-selected-window window
@@ -287,12 +305,14 @@ Resize windows to accommodate new ones.
 (use-package eyebrowse
   :ensure t
   :diminish eyebrowse-mode
+  :after latex-preview-pane
   :init (setq eyebrowse-keymap-prefix (kbd "C-c e"))
   :config (progn
             (setq eyebrowse-wrap-around t)
             (eyebrowse-mode t)
 
             (defun malb/eyebrowse-new-window-config ()
+              "make new eyebrowse config, re-using indices 1 - (1)0"
               (interactive)
               (let ((done nil))
                 (dotimes (i 10)
@@ -303,8 +323,6 @@ Resize windows to accommodate new ones.
                       (eyebrowse-switch-to-window-config j)
                       (call-interactively 'eyebrowse-rename-window-config j)
                       (setq done t))))))
-
-            (use-package latex-preview-pane :ensure t)
 
             (defun malb/close-latex-preview-pane-before-eyebrowse-switch ()
               ;; latex-preview-pane uses window-parameters which are not preserved by eyebrowse, so
@@ -346,26 +364,15 @@ Quickly jump back and forth between buffers ([[http://www.emacswiki.org/emacs/Sw
 #+BEGIN_SRC emacs-lisp
 (defun malb/switch-to-previous-buffer ()
   "Switch to previously open buffer.
+
 Repeated invocations toggle between the two most recently open buffers."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 #+END_SRC
 
-Bind =M-1= and =M-2= to cycle through buffers.
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "M-1" #'previous-buffer)
-(bind-key "M-2" #'next-buffer)
-#+END_SRC
-
 ** Special windows
 
-Some buffers should behave like pop ups:
-
-- display at the bottom with 0.3 height
-- display as a side-window
-
-We then use =malb/quit-bottom-side-windows= to close them.
+Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 height.
 
 #+BEGIN_SRC emacs-lisp
 (defvar malb/popup-windows '("\\`\\*helm flycheck\\*\\'"
@@ -389,7 +396,7 @@ We then use =malb/quit-bottom-side-windows= to close them.
                              "\\`\\*Messages\\*\\'"))
 #+END_SRC
 
-*** Closing side windows
+*** Closing bottom most pop-up-style windows
 
 In case we just want to kill the bottom window, set a shortcut do to this.
 
@@ -410,7 +417,6 @@ In case we just want to kill the bottom window, set a shortcut do to this.
       (delete-window window)
       (display-buffer buffer))))
 
-(bind-key "C-§" #'malb/quit-bottom-disposable-windows)
 (key-chord-define-global "qq" #'malb/quit-bottom-disposable-windows)
 (key-chord-define-global "qw" #'malb/promote-disposable-window)
 #+END_SRC
@@ -454,28 +460,20 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 *** Dispatch buffers to specific frames
 
-Separate Mu4e windows from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
+Separate mu4e windows from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
 
 Mu4e buffers start with =*mu4e-=:
 
 #+BEGIN_SRC emacs-lisp
 (defvar malb/mu4e-buffer-regexps '("mu4e-.*")
   "Buffer names of mu4e buffers.")
-
-(defvar malb/mu4e-buffer-allowed-regexps '("\\`\\*helm.*\\*\\'")
-  "Buffer names allowed in mu4e frame.")
 #+END_SRC
 
-Check if any regexp matches string:
+But we allow helm buffers in the mu4e frame, e.g. to pick attachments.
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/regexp-match-p (regexps string)
-  (and string
-       (catch 'matched
-         (let ((inhibit-changing-match-data t))
-           (dolist (regexp regexps)
-             (when (string-match regexp string)
-               (throw 'matched t)))))))
+(defvar malb/mu4e-buffer-allowed-regexps '("\\`\\*helm.*\\*\\'")
+  "Buffer names allowed in mu4e frame.")
 #+END_SRC
 
 Get frame by name or return passed frame.
@@ -502,7 +500,7 @@ If FRAME is a frame, it is returned."
            (error "Arg neither a string nor a frame: `%s'" frame)))))
 #+END_SRC
 
-Find a frame which isn’t the mu4e frame or create a fresh one.
+Find a frame which isn’t the =mu4e= frame or create a fresh one.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/switch-to-mu4e ()
@@ -514,7 +512,11 @@ Find a frame which isn’t the mu4e frame or create a fresh one.
     (if other-frame
         (select-frame-set-input-focus other-frame)
       (malb/mail))))
+#+END_SRC
 
+Find a frame not named =mu4e= if there is any, make one otherwise.
+
+#+BEGIN_SRC emacs-lisp
 (defun malb/switch-away-from-mu4e ()
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
@@ -531,10 +533,10 @@ Main dispatch function:
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/frame-dispatch (buffer alist)
-  "Dispatch buffers to frames."
-  (message (format "dispatching %s" (buffer-name buffer)))
+  "Assigning buffers to frames."
+  ;; (message (format "dispatching %s" (buffer-name buffer)))
   (cond
-   ;;  mu4e
+   ;; this is a mu4e buffer
    ((malb/regexp-match-p malb/mu4e-buffer-regexps (buffer-name buffer))
     (if (malb/get-frame "mu4e") (select-frame-set-input-focus (malb/get-frame "mu4e"))
       (make-frame (list '(name . "mu4e"))))
@@ -544,20 +546,19 @@ Main dispatch function:
     t ;; we are done
     )
 
-   ;; !mu4e && file
+   ;; this is not a mu4e buffer but we’re in the mu4e frame
    ((and (string-match "mu4e" (frame-parameter nil 'name))
          (not (malb/regexp-match-p malb/mu4e-buffer-regexps (buffer-name buffer)))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
     (malb/switch-away-from-mu4e)
     nil ;; pass control back to display-buffer-alist
     )
-   ;; rest
+   ;; just hand back control to diplay-buffer-alist
    (t nil))
   nil)
 #+END_SRC
 
 Overwrite =find-file= to avoid =mu4e= frame.
-
 #+BEGIN_SRC emacs-lisp
 (defun find-file (filename &optional wildcards)
   "Edit file FILENAME.
@@ -596,14 +597,16 @@ automatically choosing a major mode, use \\[find-file-literally]."
           (switch-to-buffer value))))))
 #+END_SRC
 
+Run =old-function= with an empty =display-buffer-alist=
+
 #+BEGIN_SRC emacs-lisp
 (defun malb/clean-display-buffer-alist (old-function &rest arguments)
-  "call function with a clean display-buffers-alist"
+  "Call old-function with an empty display-buffers-alist"
   (let ((display-buffer-alist nil))
     (apply old-function arguments)))
 #+END_SRC
 
-*** Execute
+*** Apply special buffer rules
 
 #+BEGIN_SRC emacs-lisp
 ; (setq display-buffer-alist nil)
@@ -621,15 +624,16 @@ automatically choosing a major mode, use \\[find-file-literally]."
 (add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
 #+END_SRC
 
-** Golden Ratio
+** Golden ratio
 
-[[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows is enabled by default. We also inhibit when modes in =golden-ratio-exclude-modes= are active any window, not only in the target window.
+[[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows. We also inhibit when modes in =golden-ratio-exclude-modes= are active any window, not only in the target window.
 
 [[https://camo.githubusercontent.com/26b1ac5fec67a2c557cfbe87382a0134d3443fd0/68747470733a2f2f7261772e6769746875622e636f6d2f726f6d616e2f676f6c64656e2d726174696f2e656c2f6173736574732f676f6c64656e5f726174696f5f656c2e676966][screenshot]] ([[https://github.com/roman/golden-ratio.el][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package golden-ratio
   :ensure t
+  :after ispell
   :diminish golden-ratio-mode
   :config (progn
 
@@ -669,7 +673,7 @@ automatically choosing a major mode, use \\[find-file-literally]."
             (setq golden-ratio-inhibit-functions '(malb/golden-ratio-inhibit-functions))))
 #+END_SRC
 
-** Hydra
+** Window management Hydra
 
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
@@ -748,8 +752,7 @@ Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mention
   :ensure t)
 #+END_SRC
 
-[[http://www.emacswiki.org/emacs/DelightedModes][delight.el]] allows us to rewrite mode-line statuses of minor modes. Which we use when the diminish
-keyword is not enough.
+[[http://www.emacswiki.org/emacs/DelightedModes][delight.el]] allows us to rewrite mode-line statuses of minor modes. Which we use when the diminish keyword is not enough.
 
 #+BEGIN_SRC emacs-lisp
 (use-package delight
@@ -762,16 +765,14 @@ keyword is not enough.
 
 See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mode~ which inspired [[https://github.com/abo-abo/avy][avy]].
 
-
 #+BEGIN_SRC emacs-lisp
 (use-package avy
   :ensure t
-  :bind (("C-c C-<SPC>" . avy-goto-char-timer)
+  :bind (("C-c C-<SPC>" . avy-goto-word-or-subword-1) ;; avy-goto-char-timer
          ("C-c j j" . avy-goto-word-or-subword-1)
          ("M-g g" . avy-goto-line))
   :config (progn
-            (setq avy-background t)
-            (key-chord-define-global "jj"  #'avy-goto-word-or-subword-1)))
+            (setq avy-background t)))
 #+END_SRC
 
 ** Jumping to links
@@ -797,7 +798,7 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
          ("C-c j ." . goto-last-change-reverse)))
 #+END_SRC
 
-*Tip* =C-u 0 C-c b ,​= description of the change at a particular stop on your tour
+*Tip* =C-u 0 C-c j ,​= description of the change at a particular stop on your tour
 
 ** Visual bookmarks
 
@@ -808,7 +809,7 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
   :ensure t
   :bind (("C-c j b ." . bm-next)
          ("C-c j b ," . bm-previous)
-         ("C-c j b t" . bm-toggle)))
+         ("C-c j b SPC" . bm-toggle)))
 #+END_SRC
 
 * Snippets
@@ -3350,7 +3351,8 @@ Make bug references in comments and string clickable
 
 #+BEGIN_SRC emacs-lisp
 (use-package dtrt-indent
-  :ensure t)
+  :ensure t
+  :config (progn (dtrt-indent-mode t)))
 #+END_SRC
 
 **** Agressive Indenting
@@ -5220,14 +5222,14 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 (setq mu4e-use-fancy-chars t
       mu4e-headers-draft-mark     '("D" . "⚒ ") ; draft
       mu4e-headers-new-mark       '("N" . "")
-      mu4e-headers-seen-mark      '("S" . "")    ; seen
-      mu4e-headers-unread-mark    '("u" . "")    ; unseen
-      mu4e-headers-flagged-mark   '("F" . "⚵ ") ; flagged
-      mu4e-headers-new-mark       '("N" . "✉ ")  ; new
-      mu4e-headers-replied-mark   '("R" . "↵ ")  ; replied
-      mu4e-headers-passed-mark    '("P" . "⇉ ")  ; passed
-      mu4e-headers-encrypted-mark '("x" . "⚷ ")   ; encrypted
-      mu4e-headers-signed-mark    '("s" . "✍ ")  ; signed
+      mu4e-headers-seen-mark      '("S" . "")   ; seen
+      mu4e-headers-unread-mark    '("u" . "")   ; unseen
+      mu4e-headers-flagged-mark   '("F" . "★ ") ; flagged
+      mu4e-headers-new-mark       '("N" . "✉ ") ; new
+      mu4e-headers-replied-mark   '("R" . "↵ ") ; replied
+      mu4e-headers-passed-mark    '("P" . "⇉ ") ; passed
+      mu4e-headers-encrypted-mark '("x" . "⚷ ") ; encrypted
+      mu4e-headers-signed-mark    '("s" . "✍ ") ; signed
       mu4e-headers-empty-parent-prefix '("-" . "○")
       mu4e-headers-first-child-prefix '("\\" . "▶")
       mu4e-headers-has-child-prefix '("+" . "●"))
@@ -5254,35 +5256,45 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 Canned queries.
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list
- 'mu4e-bookmarks
- '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
-   "Unread bulk messages" ?l))
+(setq mu4e-bookmarks nil)               ; clear out
+
+(add-to-list 'mu4e-bookmarks '("flag:unread AND NOT flag:trashed" "Unread" ?u) t)
 
 (add-to-list
  'mu4e-bookmarks
  '("flag:unread NOT flag:trashed AND NOT flag:list AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
-   "Unread messages addressed to me" ?i))
+   "Unread (direct)" ?i) t)
 
 (add-to-list
  'mu4e-bookmarks
- '("mime:application/* AND NOT mime:application/pgp* AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:30d..today"
-   "Messages with attachments for me in last 30 days" ?d) t)
+ '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
+   "Unread (bulk)" ?l) t)
 
 (add-to-list
  'mu4e-bookmarks
  '("flag:flagged"
-   "Flagged messages" ?f) t)
+   "Flagged" ?f) t)
+
+(add-to-list 'mu4e-bookmarks '("date:today..now" "Today's" ?t) t)
+(add-to-list 'mu4e-bookmarks '("date:7d..now" "Last 7 days" ?w) t)
 
 (add-to-list
  'mu4e-bookmarks
  '("NOT flag:trashed AND NOT flag:list AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:7d..today"
-   "Messages addressed to me in last 7 days" ?W) t)
+   "Last 7 days (direct)" ?W) t)
 
 (add-to-list
  'mu4e-bookmarks
  '("(maildir:\"/[Google Mail]/.Sent Mail\" OR maildir:\"/royal holloway/.sent\") AND date:7d..now"
-   "Sent in last 7 days" ?s) t)
+   "Last 7 days (sent)" ?s) t)
+
+;; (add-to-list 'mu4e-bookmarks ("mime:image/*" "Messages with images" 112))
+
+;; (add-to-list
+;;  'mu4e-bookmarks
+;;  '("mime:application/* AND NOT mime:application/pgp* AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:30d..today"
+;;    "Messages with attachments for me in last 30 days" ?d) t)
+
 #+END_SRC
 
 ** Retrieving
@@ -5741,6 +5753,10 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'adict-guess-dictionary)
 (add-hook 'message-mode-hook #'malb/company-ispell-setup)
 
+;; otherwise, too the wrong kind of buffers might get killed
+(add-hook 'message-send-hook (lambda ()
+                               (set-window-dedicated-p
+                                (get-buffer-window (current-buffer)) t)))
 ;; TODO this isn’t as nice as it could be
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
 #+END_SRC
@@ -7167,6 +7183,9 @@ The result looks like this:
                                                   'light
                                                   (solarized-color-blend base02 base03 0.3)))
                 (unicode-fonts-setup)
+
+                (eval-after-load "bm"
+                  '(set-face-attribute 'bm-face nil :background "#FFE6E4"))
 
                 (when (boundp 'hl-sentence-mode)
                   (set-face-attribute 'hl-sentence-face nil
