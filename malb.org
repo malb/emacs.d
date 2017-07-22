@@ -11,6 +11,12 @@
 #+TYP_TODO: TRY(y) TEST(t) IMPLEMENT(i) TODO(o) | DONE(d)
 #+TODO: | DISABLED(d)
 
+* Header
+
+#+BEGIN_SRC emacs-lisp
+;;; init.el --- personal emacs config file -*- lexical-binding: t ; eval: (read-only-mode 1)-*-
+#+END_SRC
+
 * Assumptions & Init
 
 We assume that the following variables are defined:
@@ -31,10 +37,6 @@ We assume that the following variables are defined:
 - ~malb/sage-executable~ - full path of Sage executable
 - ~malb/sync-dir~ - documents that are synchronised
 - ~malb/theme~ - theme choice
-
-#+BEGIN_SRC emacs-lisp
-;;; init.el --- personal emacs config file -*- lexical-binding: t ; eval: (read-only-mode 1)-*-
-#+END_SRC
 
 We collect our own customisations in the =malb= group.
 
