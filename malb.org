@@ -5288,21 +5288,23 @@ Canned queries.
 
 (add-to-list
  'mu4e-bookmarks
- '("NOT flag:trashed AND NOT flag:list AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:7d..today"
+ '("(maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:7d..today AND NOT (flag:trashed OR flag:list)"
    "Last 7 days (direct)" ?W) t)
+
+(add-to-list
+ 'mu4e-bookmarks
+ '("(maildir:\"/royal holloway\" OR maildir:/INBOX) AND (date:7d..today) AND NOT (flag:replied OR flag:passed OR flag:trashed OR flag:list)"
+   "Last 7 days (direct, unanswered)" ?R) t)
 
 (add-to-list
  'mu4e-bookmarks
  '("(maildir:\"/[Google Mail]/.Sent Mail\" OR maildir:\"/royal holloway/.sent\") AND date:7d..now"
    "Last 7 days (sent)" ?s) t)
 
-;; (add-to-list 'mu4e-bookmarks ("mime:image/*" "Messages with images" 112))
-
-;; (add-to-list
-;;  'mu4e-bookmarks
-;;  '("mime:application/* AND NOT mime:application/pgp* AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:30d..today"
-;;    "Messages with attachments for me in last 30 days" ?d) t)
-
+(add-to-list
+ 'mu4e-bookmarks
+ '("mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:30d..today"
+   "Documents (30 days)" ?d) t)
 #+END_SRC
 
 ** Retrieving
