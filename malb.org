@@ -1456,7 +1456,16 @@ Switch themes with helm.
                                          (replace-regexp-in-string
                                           "https://.*q=\\(.*\\)\&sa=.*"
                                           "\\1" candidate)))
-                                    (kill-new url)))) t)))
+                                    (kill-new url)))) t)
+
+    (add-to-list 'helm-google-actions
+                 '("Org Store Link" . (lambda (candidate)
+                                        (let ((title (car (split-string candidate "[\n]+")))
+                                              (url
+                                               (replace-regexp-in-string
+                                                "https://.*q=\\(.*\\)\&sa=.*"
+                                                "\\1" candidate)))
+                                          (push (list url title) org-stored-links)))) t)))
 #+END_SRC
 
 ** Helm Semantic, Imenu, Org
