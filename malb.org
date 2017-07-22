@@ -97,9 +97,7 @@ Configure package repositories
 
 #+BEGIN_SRC emacs-lisp
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ;; ("org" . "http://orgmode.org/elpa/") ;; no TLS :(
-))
+                         ("melpa" . "https://melpa.org/packages/")))
 #+END_SRC
 
 Get the package manager going, but do not autoload packages.
