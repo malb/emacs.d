@@ -559,6 +559,7 @@ Main dispatch function:
 #+END_SRC
 
 Overwrite =find-file= to avoid =mu4e= frame.
+
 #+BEGIN_SRC emacs-lisp
 (defun find-file (filename &optional wildcards)
   "Edit file FILENAME.
@@ -580,7 +581,7 @@ expand wildcards (if any) and visit multiple files.  You can
 suppress wildcard expansion by setting `find-file-wildcards' to nil.
 
 To visit a file without any kind of conversion and without
-automatically choosing a major mode, use \\[find-file-literally]."
+automatically choosing a major mode, use `find-file-literally’."
   (interactive
    (find-file-read-args "Find file: "
                         (confirm-nonexistent-file-or-buffer)))
@@ -814,8 +815,10 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 
 * Snippets
 
+
+
 #+BEGIN_QUOTE
-[[https://github.com/capitaomorte/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. Bundled language templates include: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. ([[https://github.com/capitaomorte/yasnippet][source]])
+[[https://github.com/capitaomorte/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. ([[https://github.com/capitaomorte/yasnippet][source]])
 #+END_QUOTE
 
 [[http://blog.refu.co/wp-content/uploads/2015/07/wpid-yasnippet1.gif]] ([[http://blog.refu.co/?p=1355][source]])
@@ -871,7 +874,9 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
                    (if template (yas--template-content template) nil))))
     (when (and is-yasnippet-on snippet)
       (yas-expand-snippet snippet))))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
 (use-package autoinsert
   :after yasnippet
   :config (progn
@@ -884,6 +889,8 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
                               (vector `(lambda () (malb/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule))))))
              `(("/announcements/20.+\\.md$"  "isg-announce"  markdown-mode)))))
 #+END_SRC
+
+*** TODO split data from implementation
 
 * Auto Completion
 
@@ -938,7 +945,7 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-flx
-  :disabled
+  :disabled ;; performance
   :ensure t
   :config (company-flx-mode t))
 #+END_SRC
@@ -1013,7 +1020,7 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
 
 ** YaSnippet
 
-Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
+Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
 
 *Note:* Do this at the end of =company-mode= config.
 
@@ -1035,7 +1042,7 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
 
 ** All the words
 
-([[https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-company.el][source]])
+Enable/disable company completion from ispell dictionaries ([[https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-company.el][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/toggle-company-ispell ()
@@ -1064,13 +1071,14 @@ Add yasnippet support for all company backends. ([[https://github.com/syl20bnr/s
 
 ** Tab DWIM
 
-=yas-expand= is run first and does what it has to, then it calls =malb/indent-or-complete=.
+1. =yas-expand= is run first and does what it has to, then it calls =malb/indent-or-complete=.
 
-This function then hopefully does what I want:
+2. This function then hopefully does what I want:
 
-- if a region is active, just indent
-- if we’re looking at a space after a non-whitespace character, we try some company-expansion
-- otherwise call whatever would have been called otherwise.
+   a. if a region is active, just indent
+   b. if we’re looking at a space after a non-whitespace character, we try some company-expansion
+   c. If =origami-mode= or =outline-minor-mode= is active, try those next
+   d. otherwise call whatever would have been called otherwise.
 
 ([[http://emacs.stackexchange.com/q/21182/8930][source]], [[http://emacs.stackexchange.com/q/7908/8930][source]])
 
