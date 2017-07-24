@@ -4182,7 +4182,7 @@ On our system port 8888 is already taken.
   :config (progn
             (venv-initialize-interactive-shells)
             (venv-initialize-eshell)
-            (setq venv-location (expand-file-name ".virtualenvs" "~"))
+            ;; (setq venv-location (expand-file-name ".virtualenvs" "~"))
 
             (defun malb/activate-venv ()
               (hack-local-variables)
