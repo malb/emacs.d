@@ -4174,7 +4174,7 @@ On our system port 8888 is already taken.
 
 *** Virtual Environments
 
-[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices.
+[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices. I added some features from [[https://github.com/jorgenschaefer/pyvenv/][pyvenv]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package virtualenvwrapper
@@ -4184,14 +4184,34 @@ On our system port 8888 is already taken.
             (venv-initialize-eshell)
             ;; (setq venv-location (expand-file-name ".virtualenvs" "~"))
 
-            (defun malb/activate-venv ()
+            (defun malb/track-venv ()
               (hack-local-variables)
-              (when (boundp 'project-venv-name)
-                (venv-workon project-venv-name)))
+              (if (boundp 'project-venv-name)
+                  (venv-workon project-venv-name)
+                (venv-deactivate)))
 
-            (add-hook 'python-mode-hook #'malb/activate-venv)
-            (add-hook 'cython-mode-hook #'malb/activate-venv)
-            (add-hook 'eshell-mode-hook #'malb/activate-venv)))
+            (define-minor-mode malb/venv-tracking-mode
+              "Global minor mode to track the current virtualenv.
+When this mode is active, venv will activate a buffer-specific
+virtualenv whenever the user switches to a buffer with a
+buffer-local `project-venv-nam' variable."
+              :global t
+              (if malb/venv-tracking-mode
+                  (add-hook 'post-command-hook #'malb/track-venv)
+                (remove-hook 'post-command-hook #'malb/track-venv)))
+
+            (eval-after-load "spaceline"
+              '(progn
+                 (spaceline-define-segment python-venv
+                   "The current python venv.  Works with `venv'."
+                   (when (and active
+                              (bound-and-true-p venv-current-name))
+                     (propertize venv-current-name
+                                 'face 'spaceline-python-venv
+                                 'help-echo (format "Virtual environment (via venv): %s"
+                                                    venv-current-name))))))
+
+            (malb/venv-tracking-mode t)))
 #+END_SRC
 
 ** Sage
