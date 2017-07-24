@@ -6455,51 +6455,83 @@ We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/m
               (term-send-raw-string "\t"))
             (add-to-list 'term-bind-key-alist '("<tab>" . malb/term-send-tab))
 
-            (defun malb/multi-term-here ()
-              "Opens up a new multi-term in the directory associated with the
-current buffer's file."
+            (defun malb/toggle-multi-term ()
+              "Toggles an multi-term in the project/directory associated with the current buffer.
+
+The multi-term is renamed to match the current projectile project
+or directory to make multiple multi-term windows easier. If a
+multi-term of the same name already exists, it is reused.
+
+If a multi-term with the same name is already shown, its window
+is closed."
               (interactive)
               (let* ((parent (if (buffer-file-name)
                                  (file-name-directory (buffer-file-name))
                                default-directory))
                      (height (/ (window-total-height) 3))
-                     (name   (car (last (split-string parent "/" t))))
-                     (golden-ratio-mode nil))
-                (split-window-vertically (- height))
-                (other-window 1)
-                (multi-term)
-                (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
-                (insert (concat "ls"))
-                (term-send-input)))))
+                     (name   (concat "*terminal<" (if (projectile-project-p)
+                                                      (projectile-project-name)
+                                                    (car (last (split-string parent "/" t)))) ">*"))
+                     (golden-ratio-mode nil)
+                     (window (get-buffer-window name)))
+                (if (and window (<= (window-height window) (/ (frame-height) 3)))
+                    (progn
+                      (select-window window)
+                      (delete-window))
+                  (progn
+                    (split-window-vertically (- height))
+                    (other-window 1)
+                    (if (get-buffer name)
+                        (switch-to-buffer name)
+                      (progn (multi-term)
+                             (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+                             (rename-buffer name)
+                             (insert (concat "ls"))
+                             (term-send-input)))))))))
 #+END_SRC
 
 ** EShell
 
-=malb/eshell-here= opens terminal at point, close with =q= ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]) and other stuff ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
+=malb/toggle-eshell= ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]) and other stuff ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package eshell
   :config (progn
-            (defun malb/eshell-here ()
-              "Opens up a new shell in the directory associated with the
-current buffer's file. The eshell is renamed to match that
-directory to make multiple eshell windows easier."
+            (defun malb/toggle-eshell ()
+              "Toggles an eshell in the project/directory associated with the current buffer.
+
+The eshell is renamed to match the current projectile project or
+directory to make multiple eshell windows easier. If an eshell of
+the same name already exists, it is reused.
+
+If an eshell with the same name is already shown, its window is closed."
               (interactive)
               (let* ((parent (if (buffer-file-name)
                                  (file-name-directory (buffer-file-name))
                                default-directory))
                      (height (/ (window-total-height) 3))
-                     (name   (car (last (split-string parent "/" t))))
-                     (golden-ratio-mode nil))
-                (split-window-vertically (- height))
-                (other-window 1)
-                (eshell "new")
-                (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
-                (rename-buffer (concat "*eshell: " name "*"))
-                (insert (concat "ls"))
-                (eshell-send-input)))
+                     (name   (concat "*eshell<" (if (projectile-project-p)
+                                                    (projectile-project-name)
+                                                  (car (last (split-string parent "/" t)))) ">*"))
+                     (golden-ratio-mode nil)
+                     (window (get-buffer-window name)))
+                (if (and window (<= (window-height window) (/ (frame-height) 3)))
+                    (progn
+                      (select-window window)
+                      (delete-window))
+                  (progn
+                    (split-window-vertically (- height))
+                    (other-window 1)
+                    (if (get-buffer name)
+                        (switch-to-buffer name)
+                      (progn
+                        (eshell "new")
+                        (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+                        (rename-buffer name)
+                        (insert (concat "ls"))
+                        (eshell-send-input)))))))
 
-            (bind-key "C-!" #'malb/eshell-here)
+            (bind-key "C-§" #'malb/toggle-eshell)
 
             (defun malb/eshell-keys ()
               (bind-key "<home>" #'eshell-bol eshell-mode-map)
@@ -6519,11 +6551,12 @@ directory to make multiple eshell windows easier."
 
             (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
 
-            ;; mapped to 'q' in eshell
-            (defun eshell/q ()
+            ;; mapped to 'x' in eshell
+            (defun eshell/x ()
               (delete-window)
               (eshell/exit))
 
+            (defalias 'eshell/q     'malb/quit-bottom-disposable-windows)
             (defalias 'eshell/en    'find-file)
             (defalias 'eshell/d     'dired)
             (defalias 'eshell/emacs 'find-file)
@@ -7343,7 +7376,7 @@ enabled."
             (defun malb/load-mode-line-theme ()
               (setq spaceline-workspace-numbers-unicode nil)
 
-              (spaceline-spacemacs-theme)
+              (spaceline-spacemacs-theme 'python-venv)
               (spaceline-helm-mode)
 
               (spaceline-toggle-hud-off)
@@ -7708,7 +7741,7 @@ prefix argument is given ask for voice first."
 (malb/set-menu-key "C" #'helm-calcul-expression)
 (malb/set-menu-key "c" #'mu4e-compose-new)
 (malb/set-menu-key "d" "\C-a\C- \C-n\M-w\C-y\C-p") ; duplicate previous line
-(malb/set-menu-key "e" #'malb/eshell-here)
+(malb/set-menu-key "e" #'malb/toggle-eshell)
 (malb/set-menu-key "f" #'helm-find-files)
 (malb/set-menu-key "i" #'malb/helm-in-buffer)
 (malb/set-menu-key "j" #'avy-goto-word-1)
@@ -7722,7 +7755,7 @@ prefix argument is given ask for voice first."
 (malb/set-menu-key "p" #'pandoc-main-hydra/body)
 (malb/set-menu-key "s" #'helm-swoop)
 (malb/set-menu-key "x" #'helm-M-x)
-(malb/set-menu-key "z" #'malb/multi-term-here)
+(malb/set-menu-key "z" #'malb/toggle-multi-term)
 #+END_SRC
 
 Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
