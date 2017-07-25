@@ -4193,7 +4193,7 @@ On our system port 8888 is already taken.
               "Global minor mode to track the current virtualenv.
 When this mode is active, venv will activate a buffer-specific
 virtualenv whenever the user switches to a buffer with a
-buffer-local `project-venv-nam' variable."
+buffer-local `project-venv-name' variable."
               :global t
               (if malb/venv-tracking-mode
                   (add-hook 'post-command-hook #'malb/track-venv)
