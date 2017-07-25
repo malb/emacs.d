@@ -4242,6 +4242,7 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
             (add-hook 'sage-shell-mode-hook #'eldoc-mode)
             (setq sage-shell:use-prompt-toolkit t)
 
+            ;; at this point the list starts with not, i.e. is negated
             (when (boundp 'company-global-modes)
               (add-to-list 'company-global-modes 'sage-shell:sage-mode t)
               (add-to-list 'company-global-modes 'sage-shell-mode t))
