@@ -4174,7 +4174,7 @@ On our system port 8888 is already taken.
 
 *** Virtual Environments
 
-[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices. I added some features from [[https://github.com/jorgenschaefer/pyvenv/][pyvenv]].
+[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices. I also added some features from [[https://github.com/jorgenschaefer/pyvenv/][pyvenv]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package virtualenvwrapper
