@@ -7869,7 +7869,6 @@ prefix argument is given ask for voice first."
 (malb/set-menu-key "o" #'malb/helm-org-rifle-agenda-files)
 (malb/set-menu-key "P" #'prodigy)
 (malb/set-menu-key "p" #'pandoc-main-hydra/body)
-(malb/set-menu-key "s" #'helm-swoop)
 (malb/set-menu-key "x" #'helm-M-x)
 (malb/set-menu-key "z" #'malb/toggle-multi-term)
 #+END_SRC
