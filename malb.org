@@ -4892,16 +4892,15 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
               (malb/-copy-as "org"))
 
             (defun malb/-copy-as (what)
-              (let ((pandoc-use-async nil))
+              (let ((pandoc-use-async nil)
+                    (buffer (get-buffer-create pandoc--output-buffer-name)))
                 (pandoc--set 'read (cdr (assq major-mode pandoc-major-modes)))
-                (or (buffer-live-p pandoc--output-buffer)
-                    (setq pandoc--output-buffer (get-buffer-create " *Pandoc output*")))
                 (pandoc--call-external what  nil
                                        (if (use-region-p)
-                                           (cons (region-beginning) (region-end)))))
-              (switch-to-buffer pandoc--output-buffer)
-              (kill-new (buffer-string))
-              (bury-buffer))
+                                           (cons (region-beginning) (region-end))))
+                (switch-to-buffer buffer)
+                (kill-new (buffer-string))
+                (bury-buffer)))
 
             (bind-key "M-W" #'malb/copy-as)))
 #+END_SRC
