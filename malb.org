@@ -473,7 +473,7 @@ Mu4e buffers start with =*mu4e-=:
 But we allow helm buffers in the mu4e frame, e.g. to pick attachments.
 
 #+BEGIN_SRC emacs-lisp
-(defvar malb/mu4e-buffer-allowed-regexps malb/popup-windows ;; '("\\`\\*helm.*\\*\\'" "\\`\\*Calendar\\*\\'")
+(defvar malb/mu4e-buffer-allowed-regexps (append malb/popup-windows '("\\`\\*helm.*\\*\\'"))
   "Buffer names allowed in mu4e frame.")
 #+END_SRC
 
