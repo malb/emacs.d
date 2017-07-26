@@ -1231,6 +1231,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-grep-default-recurse-command "ag --vimgrep -z %p %f")
 
             (setq helm-M-x-fuzzy-match                  t
+                  helm-eshell-fuzzy-match               t
                   helm-buffers-fuzzy-matchiqng          t
                   helm-completion-in-region-fuzzy-match t
                   helm-mode-fuzzy-match                 t
@@ -6660,20 +6661,26 @@ If an eshell with the same name is already shown, its window is closed."
             (defun malb/eshell-keys ()
               (bind-key "<home>" #'eshell-bol eshell-mode-map)
               (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
+              (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map)
               (define-key eshell-mode-map [remap eshell-pcomplete] #'company-complete))
 
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
             ;; for some reason this needs to be a hook
             (add-hook 'eshell-mode-hook #'malb/eshell-keys)
 
-
             (setenv "PAGER" "cat") ;; https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org
             (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
 
             (defun malb/eshell-add-visual-commands ()
-              (add-to-list 'eshell-visual-commands "htop"))
+              (add-to-list 'eshell-visual-commands "htop")
+              (add-to-list 'eshell-visual-commands "tmux"))
 
             (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
+
+            (defun malb/eshell-minor-modes ()
+              (smartparens-mode t))
+
+            (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
 
             ;; mapped to 'x' in eshell
             (defun eshell/x ()
@@ -6691,6 +6698,8 @@ If an eshell with the same name is already shown, its window is closed."
                     pcomplete-ignore-case t)
               (setq-local company-idle-delay nil))
 
+            (add-hook 'eshell-mode-hook #'malb/enable-company-pcomplete)
+
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
             (setq eshell-scroll-to-bottom-on-input t
@@ -6698,7 +6707,7 @@ If an eshell with the same name is already shown, its window is closed."
                   eshell-buffer-maximum-lines 16384
                   eshell-hist-ignoredups t
                   eshell-list-files-after-cd t
-                  eshell-ls-initial-args "-h"
+                  eshell-ls-initial-args "-hk"
                   eshell-buffer-shorthand t
                   eshell-plain-echo-behavior t)))
 #+END_SRC
