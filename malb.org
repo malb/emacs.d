@@ -6523,6 +6523,28 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 (use-package dired-x)
 #+END_SRC
 
+Show dired histories you have visited.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-dired-history
+  :ensure t)
+#+END_SRC
+
+[[https://github.com/Fuco1/dired-hacks][dired-collapse]] renders directories with just one file like GitHub does.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-collapse
+  :ensure t)
+#+END_SRC
+
+[[https://github.com/Fuco1/dired-hacks#dired-narrow][dired-narrow]] to … narrow down dired buffers
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-narrow
+  :ensure t
+  :bind (:map dired-mode-map ("/" . dired-narrow)))
+#+END_SRC
+
 * Neotree
 
 [[https://github.com/jaypei/emacs-neotree][Neotree]]
