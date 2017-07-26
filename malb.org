@@ -738,7 +738,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("8" eyebrowse-switch-to-window-config-8 :color blue)
   ("9" eyebrowse-switch-to-window-config-9 :color blue)
   ("SPC" nil)
-  ("`" nil))
+  ("`" other-window :color blue))
 
 (key-chord-define-global "z`" #'malb/hydra-window/body)
 (bind-key "C-x o" #'malb/hydra-window/body)
