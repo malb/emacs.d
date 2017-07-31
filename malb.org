@@ -6160,6 +6160,8 @@ Link to mu4e messages and threads.
             (advice-add 'org-mu4e-open :around  #'malb/switch-to-mu4e-advice)))
 #+END_SRC
 
+*** TODO check if advise can be removed since we’re now checking for major-mode
+
 * Blogging
 
 We change the default template to not include the title which is filled in by deft. We also query the user for a date/time for the blog post.
