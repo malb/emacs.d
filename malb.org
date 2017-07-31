@@ -3025,27 +3025,34 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("j" "journal entry"
                      entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
                      "** research\n%?\n** critique\n\n")
-                    ("m" "meeting" entry (file+headline malb/inbox-org "Meetings")
+
+                    ("m" "meeting nodes" entry (file+headline malb/inbox-org "Meetings")
                      "* Meeting with %^{who}\n%U\n\n%i%?\n\n"
-                     :clock-in t :clock-resume t)
-
-                    ("p" "Protocol" entry
-                     (file+headline (expand-file-name "inbox.org" malb/org-files-dir) "Links")
-                     "* %?[[%:link][%:description]]\nCaptured On: %U\n\n#+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n"
-                     :immediate-finish nil
-                     :prepend t)
-
-                    ("L" "Protocol link" entry
-                     (file+headline (expand-file-name "inbox.org" malb/org-files-dir) "Links")
-                     "* %?[[%:link][%:description]]\nCaptured On: %U\n\n"
-                     :immediate-finish nil
-                     :prepend t)))
+                     :clock-in t :clock-resume t)))
 
             (setq org-capture-templates-contexts
                   '(("er" ((in-mode . "mu4e-view-mode")))
                     ("et" ((in-mode . "mu4e-view-mode")))
                     ("ef" ((in-mode . "mu4e-view-mode")))
                     ("es" ((in-mode . "mu4e-headers-mode")))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-protocol-capture-html
+  :after org-capture
+  :config (add-to-list 'org-capture-templates
+                       '("w" "add website from bookmarklet" entry
+                         (file+headline (expand-file-name "inbox.org" malb/org-files-dir) "Links")
+                         "* %?%a\nCaptured On: %U\n\n%:initial\n\n"
+                         :immediate-finish nil
+                         :prepend t) t))
+#+END_SRC
+
+** Web Tools
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-web-tools
+  :after org)
 #+END_SRC
 
 ** Auto Completion
