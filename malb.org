@@ -6644,6 +6644,34 @@ Show dired histories you have visited.
 (setq diff-switches "-u")
 #+END_SRC
 
+** PDF Diff
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/diff-pdf (arg)
+  "Run pdftotext on two PDFs and open ediff buffer on texts.
+
+Uses baloo to find files."
+  (interactive "P")
+  (let*  ((baloofn (helm-build-async-source "Baloo"
+                     :candidates-process #'helm-baloo-search
+                     :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
+                     :keymap helm-generic-files-map
+                     :help-message #'helm-generic-file-help-message))
+
+          (left (if arg
+                    (read-file-name "Original: ")
+                  (helm :sources baloofn :prompt "Original: ")))
+          (right (if arg
+                     (read-file-name "New: ")
+                   (helm :sources baloofn :prompt "New: ")))
+          (left-tmp (make-temp-name "/tmp/left"))
+          (right-tmp (make-temp-name "/tmp/right")))
+
+    (shell-command (format "pdftotext -nopgbrk %s %s" left left-tmp) nil)
+    (shell-command (format "pdftotext -nopgbrk %s %s" right right-tmp) nil)
+    (ediff-files left-tmp right-tmp)))
+#+END_SRC
+
 * Shells
 
 We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#eshell-and-shell-environment][source]])
