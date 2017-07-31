@@ -4204,13 +4204,16 @@ On our system port 8888 is already taken.
             (venv-initialize-eshell)
 
             (defun malb/track-venv ()
-              (hack-local-variables)
+              "Enable virtualenv if local variable `project-venv-name' is set.
+
+Otherwise disable virtualenv."
+              ;; (if (buffer-file-name) (hack-local-variables))
               (if (boundp 'project-venv-name)
-                  (venv-workon project-venv-name)
-                (venv-deactivate)))
+                  (venv-workon project-venv-name)))
 
             (define-minor-mode malb/venv-tracking-mode
               "Global minor mode to track the current virtualenv.
+
 When this mode is active, venv will activate a buffer-specific
 virtualenv whenever the user switches to a buffer with a
 buffer-local `project-venv-name' variable."
@@ -4219,6 +4222,28 @@ buffer-local `project-venv-name' variable."
                   (add-hook 'post-command-hook #'malb/track-venv)
                 (remove-hook 'post-command-hook #'malb/track-venv)))
 
+            (malb/venv-tracking-mode t) ; enable
+
+            (defun malb/venv-workon-buffer (arg)
+              "Enable virtualenv for current buffer.
+
+ When `venv-tracking-mode' is on, `venv-workon' has no effect as
+ it is immediately overruled. This function sets
+ `project-venv-name' and thus circumvents that issue."
+              (interactive "P")
+              (cond (arg (progn
+                           (set (make-local-variable 'project-venv-name) nil)
+                           (venv-deactivate)))
+                    (t
+                     (progn
+                       (set (make-local-variable 'project-venv-name)
+                            (venv-read-name (if venv-current-name
+                                                (format "Choose a virtualenv (currently %s): "
+                                                        venv-current-name)
+                                              "Choose a virtualenv: ")))
+                       (venv-workon project-venv-name)))))
+
+            ;; virtualenv in spaceline, enabled below
             (eval-after-load "spaceline"
               '(progn
                  (spaceline-define-segment python-venv
@@ -4228,9 +4253,7 @@ buffer-local `project-venv-name' variable."
                      (propertize venv-current-name
                                  'face 'spaceline-python-venv
                                  'help-echo (format "Virtual environment (via venv): %s"
-                                                    venv-current-name))))))
-
-            (malb/venv-tracking-mode t)))
+                                                    venv-current-name))))))))
 #+END_SRC
 
 ** Sage
