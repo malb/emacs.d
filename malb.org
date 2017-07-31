@@ -4459,17 +4459,56 @@ org babel for Sage can be quite handy for writing talks etc. ([[https://github.c
 short and sweet LISP editing ([[https://github.com/abo-abo/lispy][source]])
 #+END_QUOTE
 
-| command                       | binding | binding | command           |
-| =paredit-forward=             | =C-M-f= | =j=     | =lispy-down=      |
-| =paredit-backward=            | =C-M-b= | =k=     | =lispy-up=        |
-| =paredit-backward-up=         | =C-M-u= | =h=     | =lispy-left=      |
-| =paredit-forward-up=          | =C-M-n= | =l=     | =lispy-right=     |
-| =paredit-raise-sexp=          | =M-r=   | =r=     | =lispy-raise=     |
-| =paredit-convolute-sexp=      | =M-?=   | =C=     | =lispy-convolute= |
-| =paredit-forward-slurp-sexp=  | =C-)=   | =>=     | =lispy-slurp=     |
-| =paredit-forward-barf-sexp=   | =C-}=   | =<=     | =lispy-barf=      |
-| =paredit-backward-slurp-sexp= | =C-(=   | =>=     | =lispy-slurp=     |
-| =paredit-backward-barf-sexp=  | =C-{=   | =<=     | =lispy-barf=      |
+Basic navigation by-list and by-region:
+
+| binding | command                                      |
+|---------+----------------------------------------------|
+| ~h~     | moves left                                   |
+| ~j~     | moves down                                   |
+| ~k~     | moves up                                     |
+| ~l~     | moves right                                  |
+| ~f~     | steps inside the list                        |
+| ~b~     | moves back in history for all above commands |
+| ~d~     | moves to different side of sexp              |
+
+Paredit transformations, callable by plain letters:
+
+| binding | command    |
+| ~>~     | slurps     |
+|---------+------------|
+| ~<~     | barfs      |
+| ~r~     | raises     |
+| ~C~     | convolutes |
+| ~s~     | moves down |
+| ~w~     | moves up   |
+
+IDE-like features for Elisp, Clojure, Scheme, Common Lisp, Hy, Python and Julia:
+
+| binding | command                                                          |
+|---------+------------------------------------------------------------------|
+| ~e~     | evals                                                            |
+| ~E~     | evals and inserts                                                |
+| ~g~     | jumps to any tag in the current directory with semantic          |
+| ~G~     | jumps to any tag in the current file                             |
+| ~M-.~   | jumps to symbol, ~M-~, jumps back                                |
+| ~F~     | jumps to symbol, ~D~ jumps back                                  |
+| ~C-1~   | shows documentation in an overlay                                |
+| ~C-2~   | shows arguments in an overlay                                    |
+| ~Z~     | breaks out of edebug, while storing current function's arguments |
+
+Code manipulation:
+
+| binding | command                                                                 |
+|---------+-------------------------------------------------------------------------|
+| ~i~     | prettifies code (remove extra space, hanging parens ...)                |
+| ~xi~    | transforms cond expression to equivalent if expressions                 |
+| ~xc~    | transforms if expressions to an equivalent cond expression              |
+| ~xf~    | flattens function or macro call (extract body and substitute arguments) |
+| ~xr~    | evals and replaces                                                      |
+| ~xl~    | turns current defun into a lambda                                       |
+| ~xd~    | turns current lambda into a defun                                       |
+| ~O~     | formats the code into one line                                          |
+| ~M~     | formats the code into multiple lines                                    |
 
 #+BEGIN_SRC emacs-lisp
 (use-package lispy
