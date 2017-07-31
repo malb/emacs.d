@@ -5992,10 +5992,6 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'adict-guess-dictionary)
 (add-hook 'message-mode-hook #'malb/company-ispell-setup)
 
-;; otherwise, too the wrong kind of buffers might get killed
-(add-hook 'message-send-hook (lambda ()
-                               (set-window-dedicated-p
-                                (get-buffer-window (current-buffer)) t)))
 ;; TODO this isn’t as nice as it could be
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
 #+END_SRC
