@@ -3988,6 +3988,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
             (bind-key "C-c C-c" #'elpy-shell-send-region-or-buffer python-mode-map)
             (bind-key "C-c C-r" #'pyvenv-restart-python python-mode-map)
+            (bind-key "C-c C-r" #'pyvenv-restart-python inferior-python-mode-map)
             (bind-key "C-<tab>" #'origami-toggle-node python-mode-map)
             (bind-key "C-S-<iso-lefttab>" #'origami-toggle-all-nodes python-mode-map)
             (bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
