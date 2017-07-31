@@ -6727,7 +6727,9 @@ is closed."
                     (split-window-vertically (- height))
                     (other-window 1)
                     (if (get-buffer name)
-                        (switch-to-buffer name)
+                        (progn
+                          (switch-to-buffer name)
+                          (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
                       (progn (multi-term)
                              (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
                              (rename-buffer name)
@@ -6768,11 +6770,13 @@ If an eshell with the same name is already shown, its window is closed."
                     (split-window-vertically (- height))
                     (other-window 1)
                     (if (get-buffer name)
-                        (switch-to-buffer name)
+                        (progn
+                          (switch-to-buffer name)
+                          (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
                       (progn
                         (eshell "new")
-                        (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
                         (rename-buffer name)
+                        (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
                         (insert (concat "ls"))
                         (eshell-send-input)))))))
 
