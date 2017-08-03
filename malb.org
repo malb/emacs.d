@@ -8100,67 +8100,6 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 #+END_SRC
 
 * ToDos
-* Notes
-** Resetting a =defvar= Value
-
-=C-M-x= - =eval-defun= is your friend ([[http://irreal.org/blog/?p=5929][source]])
-
-** Finding Help
-
-| =C-h f= | ~describe-function~   |
-| =C-h v= | ~describe-variable~   |
-| =C-h w= | ~where-is~            |
-
-** Stuck Emacs
-
-#+BEGIN_QUOTE
-If your instance hangs and won't respond to =C-g=, you can use =pkill -SIGUSR2 emacs= to force emacs to stop whatever it's doing.
-#+END_QUOTE
-
-([[http://irreal.org/blog/?p=4763][source]])
-** Compile .emacs
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(byte-recompile-directory (expand-file-name "elpa" user-emacs-directory) nil t)
-#+END_SRC
-
-** Commands to remember
-
-- You can scroll the other window with ~C-M-v~ and ~C-M-S-v~.
-- =C-x SPC= rectangle-mark-mode
-- =C-u C-SPC= jump back locally
-- =C-x C-SPC= jump back globally
-- =C-x z= repeat last command (and again with just =z=)
-- =align-regexp= to align on regexp
-- =C-h c= invokes describe-key-briefly.
-- =%&= in =dired= marks garbage files
-- =C-<down>= and =C-<up>= to move backwards and forwards through paragraphs
-- ~M-|~ to send the contents of a region to a shell command
-- =C-x 4 C-o= (~display-buffer~) opens another window, but instead if showing the same buffer, shows another one, the name of which is read from the minibuffer. Note that the newly opened window does not get selected!
-- =C-x 4 0= (~kill-buffer-and-window~), which not only deletes the current window (like ~C-x 0~), but also kills its buffer.
-- ~C-x 4 c~ (~clone-indirect-buffer-other-window~) splits the current window, clones the current buffer and visits the clone in the newly opened window.
-
-** TRAMP syntax
-
-To SSH to host do =/ssh:host:/=
-
-** C++ mode ([[https://stackoverflow.com/questions/3312114/how-to-tell-emacs-to-open-h-file-in-c-mode][source]])
-
-Another approach for using both c-mode and c++-mode as appropriate, is to use directory local variables to set the mode.
-
-Directory variables are evaluated after the mode has been set, so you can actually write a =.dir-locals.el= file for your C++ project containing this:
-
-#+BEGIN_SRC emacs-lisp :tangle no
-((c-mode . ((mode . c++))))
-#+END_SRC
-
-And Emacs will change the mode to ~c++-mode~ whenever it had initially set it to ~c-mode~.
-
-** Macros ([[https://github.com/howardabrams/pdx-emacs-hackers/blob/master/workshops/keyboard-macros.org][source]])
-
-- =C-x C-k= prefix for macro actions
-- =C-x C-k C-c= sets a counter value, =F3= inserts a counter value when defining a macro
-- =C-x C-k C-e= to edit macros
 
 * Technical Artefacts
 
