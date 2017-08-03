@@ -4072,26 +4072,10 @@ It makes sense to highlight indentation in Python.
   :config (progn (add-hook 'python-mode-hook #'highlight-indentation-mode)))
 #+END_SRC
 
-*** Folding
 
-Fold indentation ([[https://stackoverflow.com/questions/1587972/how-to-display-indentation-guides-in-emacs/4459159#4459159][source]])
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/toggle-indent-fold ()
-  "Toggle fold all lines larger than indentation on current line"
-  (interactive)
-  (let ((col 1))
-    (save-excursion
-      (back-to-indentation)
-      (setq col (+ 1 (current-column)))
-      (set-selective-display
-       (if selective-display nil (or col 1))))))
-#+END_SRC
 
-Fold logical units
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'python-mode-hook #'origami-mode)
 #+END_SRC
 
 *** Autocompletion
