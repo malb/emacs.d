@@ -1705,29 +1705,6 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                              :post-handlers '(("[d1]" "SPC"))))))
 #+END_SRC
 
-** Misc
-
-A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/beginning-of-line-dwim ()
-  "Toggles between moving point to the first non-whitespace character, and
-  the start of the line."
-  (interactive)
-  (let ((start-position (point)))
-    ;; Move to the first non-whitespace character.
-    (back-to-indentation)
-
-    ;; If we haven't moved position, go to start of the line.
-    (when (= (point) start-position)
-      (move-beginning-of-line nil))))
-
-
-(bind-key "C-a" #'malb/beginning-of-line-dwim)
-(bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
-
-#+END_SRC
-
 * Editing
 ** Dragging lines around
 
@@ -1958,6 +1935,39 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
   :bind (("C-<backspace>" . nv-delete-back-all)
          ("M-<backspace>" . nv-delete-back))
   :ensure t)
+#+END_SRC
+
+** Beginning of …
+
+A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/beginning-of-line-dwim ()
+  "Toggles between moving point to the first non-whitespace character, and
+  the start of the line."
+  (interactive)
+  (let ((start-position (point)))
+    ;; Move to the first non-whitespace character.
+    (back-to-indentation)
+
+    ;; If we haven't moved position, go to start of the line.
+    (when (= (point) start-position)
+      (move-beginning-of-line nil))))
+
+
+(bind-key "C-a" #'malb/beginning-of-line-dwim)
+(bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
+#+END_SRC
+
+Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-min= and =point-max=) are still accessible by pressing the same key again. ([[https://github.com/DamienCassou/beginend][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package beginend
+  :ensure t
+  :config (progn
+            (beginend-global-mode)
+            (dolist (mode beginend-modes)
+              (diminish (cdr mode)))))
 #+END_SRC
 
 * Projects (Projectile)
