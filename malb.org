@@ -692,10 +692,10 @@ _T_oggle ded  _d_lt this      _a_ce 1          _g_olden-ratio   _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap
 ^^            _o_nly this
 "
-  ("<left>" windmove-left )
-  ("<down>" windmove-down )
-  ("<up>" windmove-up )
-  ("<right>" windmove-right )
+  ("<left>" windmove-left  :color blue)
+  ("<down>" windmove-down  :color blue)
+  ("<up>" windmove-up  :color blue)
+  ("<right>" windmove-right  :color blue)
   ("j" avy-goto-word-1 :color blue)
   ("l" avy-goto-line :color blue)
   ("q" shrink-window-horizontally)
