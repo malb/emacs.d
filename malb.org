@@ -2994,52 +2994,104 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
   :bind ("<f9>" . org-capture)
   :config (progn
             (setq org-capture-templates
-                  '(("t" "tasks")
-
-                    ("tt" "standard task"
+                  '(("t" "[t]asks")
+                    ("tt" "capture a standard [t]ask"
                      entry (file malb/inbox-org)
-                     "** TODO %?\n%i\n" :prepend t)
+                     "* TODO %?
+:PROPERTIES:
+:CREATED: %U
+:END:
 
-                    ("tc" "standard task (capturing context)"
+%i" :prepend t :empty-lines 1)
+
+                    ("tc" "capture a standard task and the current [c]ontext"
                      entry (file malb/inbox-org)
-                     "** TODO %?\n%i\n%a\n" :prepend t)
+                     "* TODO %?
+:PROPERTIES:
+:CREATED: %U
+:END:
 
-                    ("tp" "project specific task" plain (function malb/org-capture-projectile)
-                     "** TODO %?\n%i\n%a\n" :prepend t)
+%i
+%a" :prepend t :empty-lines 1)
 
-                    ("e" "e-mail")
+                    ("tp" "capture a task for current projectile [p]roject" plain (function malb/org-capture-projectile)
+                     "** TODO %?
+:PROPERTIES:
+:CREATED: %U
+:END:
+%i
+%a" :prepend t :empty-lines 1)
 
-                    ("er" "respond to e-mail"
+                    ("e" "[e]-mail")
+
+                    ("er" "quick capture of task for [r]esponding to an [e]-mail"
                      entry (file+headline malb/inbox-org "E-mail")
-                     "* REPLY to %:fromname on %a\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n%U\n\n"
-                     :immediate-finish t
-                     :prepend t)
+                     "* REPLY to %:fromname on %a
+:PROPERTIES:
+:CREATED: %U
+:END:
+DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
 
-                    ("ef" "file e-mail"
+%U" :prepend t :empty-lines 1 :immediate-finish t)
+
+                    ("ef" "[f]ile an [e]-mail"
                      entry (file+headline malb/inbox-org "E-mail")
-                     "* %a by %:fromname\n%U\n\n"
-                     :immediate-finish nil
-                     :prepend nil)
+                     "* %a by %:fromname
+:PROPERTIES:
+:CREATED: %U
+:END:" :immediate-finish nil :prepend nil :empty-lines 1)
 
-                    ("es" "file e-mail search"
+                    ("es" "keep an [e]-mail [s]earch"
                      entry (file+headline malb/inbox-org "E-mail")
-                     "* %a\n\n"
-                     :immediate-finish nil
-                     :prepend nil)
+                     "* %a"
+                     :immediate-finish nil :prepend nil :empty-lines 0)
 
-                    ("et" "turn e-mail into task"
+                    ("et" "create a [t]ask linked to an [e]-mail"
                      entry (file+headline malb/inbox-org "E-mail")
-                     "* TODO %?\nSCHEDULED: %(org-time-stamp nil)\n\nSee %a by %:fromname\n\n"
-                     :immediate-finish nil
-                     :prepend t)
+                     "* TODO %?
+SCHEDULED: %(org-time-stamp nil)
+:PROPERTIES:
+:EFFORT: %^{effort|1:00|0:05|0:15|0:30|2:00|4:00}
+:CREATED: %U
+:END:
 
-                    ("j" "journal entry"
-                     entry (file+datetree (expand-file-name "journal.org" malb/org-files-dir))
-                     "** research\n%?\n** critique\n\n")
 
-                    ("m" "meeting nodes" entry (file+headline malb/inbox-org "Meetings")
-                     "* Meeting with %^{who}\n%U\n\n%i%?\n\n"
-                     :clock-in t :clock-resume t)))
+See %a by %:fromname
+" :immediate-finish nil :prepend t :empty-lines 1)
+
+                    ("j" "add entry to [j]ournal"
+                     entry (file+datetree (expand-file-name "journal.org"
+                                                            malb/org-files-dir))
+                     "** research
+%?
+,** critique
+")
+
+                    ("m" "record notes on a [m]eeting" entry (file+headline malb/inbox-org "Meetings")
+                     "* Meeting with %^{who}
+%U
+
+%i%?
+" :clock-in t :clock-resume t :empty-lines 1)
+
+                    ("n" "create a [n]ote"
+                     entry (file malb/inbox-org)
+                     "* %?
+:PROPERTIES:
+:CREATED: %U
+:END:
+
+%i" :empty-lines 1)
+
+                    ("s" "create note/tip on a piece of [s]oftware" entry
+                     (file+headline (expand-file-name "software.org" deft-directory) "Incoming")
+                     "* %?
+:PROPERTIES:
+:CREATED: %U
+:END:
+
+%i
+%a" :prepend t :empty-lines 1)))
 
             (setq org-capture-templates-contexts
                   '(("er" ((in-mode . "mu4e-view-mode")))
@@ -3052,7 +3104,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 (use-package org-protocol-capture-html
   :after org-capture
   :config (add-to-list 'org-capture-templates
-                       '("w" "add website from bookmarklet" entry
+                       '("w" "capture [w]ebsite" entry
                          (file+headline (expand-file-name "inbox.org" malb/org-files-dir) "Links")
                          "* %?%a\nCaptured On: %U\n\n%:initial\n\n"
                          :immediate-finish nil
