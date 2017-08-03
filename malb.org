@@ -7339,6 +7339,13 @@ Try the repeated popping up to 10 times. ARGS is passed through."
 (advice-add 'pop-to-mark-command :around #'malb/multi-pop-to-mark)
 #+END_SRC
 
+Diminish =abbrev-mode=
+
+#+BEGIN_SRC emacs-lisp
+(diminish 'abbrev-mode)
+#+END_SRC
+
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
