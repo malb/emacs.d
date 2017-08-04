@@ -2148,8 +2148,6 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
   :config (magithub-feature-autoinject t))
 #+END_SRC
 
-*Notes* disabled because it slows down magit.
-
 ** Org Links for Magit Buffers
 
 [[https://github.com/magit/orgit][orgit]]
