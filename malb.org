@@ -5622,7 +5622,7 @@ My shitty regexp for detecting e-mail addresses
 A table of canonical names for people who cannot seem to fix their headers …
 
 #+BEGIN_SRC emacs-lisp
-(defcustom malb-mu4e-name-replacements nil
+(defcustom malb/mu4e-name-replacements nil
   "replacement names from e-mail addresses"
   :type '(alist :key-type string :value-type string)
   :group 'malb)
@@ -5633,12 +5633,13 @@ A table of canonical names for people who cannot seem to fix their headers …
 #+BEGIN_SRC emacs-lisp
 (defun malb/add-mu4e-name-replacement ()
   (interactive)
-  (let* ((email (helm-read-string "E-mail: " (get-text-property (point) 'email)))
+  (let* ((email (helm-read-string "E-mail: " (downcase (get-text-property (point) 'email))))
          (name  (helm-read-string "Name: "
                                   (malb/canonicalise-contact-name
-                                   (get-text-property (point) 'long)))))
-    (add-to-list 'malb-mu4e-name-replacements (cons email name) t)
-    (customize-save-variable 'malb-mu4e-name-replacements malb-mu4e-name-replacements)))
+                                   (get-text-property (point) 'long))))
+         (nick  (helm-read-string "Nick: " (replace-regexp-in-string "(.*) " "\\1" name))))
+    (add-to-list 'malb/mu4e-name-replacements (cons email (cons name nick)) t)
+    (customize-save-variable 'malb/mu4e-name-replacements malb-mu4e-name-replacements)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -5652,20 +5653,23 @@ A table of canonical names for people who cannot seem to fix their headers …
 - Some people like to send incomplete data, so we maintain a local replacement list
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/canonicalise-contact-name (name)
+(defun malb/canonicalise-contact-name (name &optional nick)
   (let* ((case-fold-search nil)
          (name (or name ""))
-         (email (replace-regexp-in-string (format "^.* %s" malb/email-regexp)
-                                          "\\1" name))
+         (email (downcase (replace-regexp-in-string (format "^.* %s" malb/email-regexp)
+                                                    "\\1" name)))
          ;; look up email address and use entry if found
-         (candidate (cdr (assoc email malb-mu4e-name-replacements))))
+         (candidate (if nick
+                        (cddr (assoc email malb/mu4e-name-replacements))
+                      (cadr (assoc email malb/mu4e-name-replacements)))))
     (if candidate
         candidate
       (progn
         (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop email address
         (setq name (replace-regexp-in-string "^\\(\"\\|\'\\)\\(.*\\)\\(\"\\|\'\\)" "\\2" name)) ;; strip quotes
         (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
-        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name)))))) ;; Foo, Bar becomes Bar Foo
+        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
+        (setq name (capitalize name)))))) ;; Foo, Bar becomes Bar Foo
 #+END_SRC
 
 Canonicalise contacts as they appear from mu4e.
@@ -5713,10 +5717,12 @@ The following is useful in e-mail templates
         (setq name (split-string name (format "%s," malb/email-regexp) t " ")) ;; split on email@address,
         (setq names (append names name)))
       (dolist (name names)
-        (setq name (malb/canonicalise-contact-name name))
+        (setq name (malb/canonicalise-contact-name name t))
         (if (string-match "\\([^ ,]+\\)" name)
             (progn
-              (setq name (capitalize (replace-regexp-in-string "~" " " (match-string 1 name))))
+              ;; I don't remember why I did the regexp replace, so let's see where it bites me
+              ;; (setq name (replace-regexp-in-string "~" " " (match-string 1 name)))
+              (setq name (match-string 1 name))
               (if ret
                   (setq ret (concat ret ", " name))
                 (setq ret name)))))
