@@ -1914,9 +1914,12 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 
 ** Folding
 
+disabled until https://github.com/gregsexton/origami.el/issues/55 is fixed
+
 #+BEGIN_SRC emacs-lisp
 (use-package origami
   :ensure t
+  :disabled
   :commands (origami-toggle-node))
 #+END_SRC
 
@@ -1925,7 +1928,18 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 #+BEGIN_SRC emacs-lisp
 (use-package outshine
   :ensure t
-  :config (add-hook 'outline-minor-mode-hook 'outshine-hook-function))
+  ;; breaks LaTeX
+  ;; :config (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
+  :config (progn
+            (defun malb/save-excursion (old-function &rest arguments)
+              "Call old-function with `save-mark-and-excursion'"
+              (let ((current (point)))
+                (save-excursion
+                  (call-interactively old-function)
+                  (if (not (= current (point)))
+                      (call-interactively old-function)))))
+
+            (advice-add #'outline-cycle :around #'malb/save-excursion)))
 #+END_SRC
 
 ** Hungry Delete
@@ -4056,9 +4070,11 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (add-to-list 'python-indent-trigger-commands 'malb/indent-or-complete)
 
             ;; Fold logical units
-            (add-hook 'python-mode-hook #'origami-mode)
-            (bind-key "C-<tab>" #'origami-toggle-node python-mode-map)
-            (bind-key "C-S-<iso-lefttab>" #'origami-toggle-all-nodes python-mode-map)))
+            ;; (add-hook 'python-mode-hook #'origami-mode)
+            ;; (bind-key "C-<tab>" #'origami-toggle-node python-mode-map)
+            ;; (bind-key "C-S-<iso-lefttab>" #'origami-toggle-all-nodes python-mode-map)
+            (add-hook 'python-mode-hook #'outline-minor-mode)
+            (bind-key "C-<tab>" #'outline-cycle python-mode-map)))
 #+END_SRC
 
 *** Highlight indentation
