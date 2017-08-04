@@ -1978,6 +1978,7 @@ Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-mi
 #+BEGIN_SRC emacs-lisp
 (use-package beginend
   :ensure t
+  :diminish beginend-global-mode
   :config (progn
             (beginend-global-mode)
             (dolist (mode beginend-modes)
