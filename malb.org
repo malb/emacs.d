@@ -3690,29 +3690,9 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 
 *** CamelCase
 
-Convert =CamelCase= to =under_scores= ([[https://stackoverflow.com/questions/9288181/converting-from-camelcase-to-in-emacs][source]])
-
 #+BEGIN_SRC emacs-lisp
-(defun malb/toggle-camelcase-underscores ()
-  "Toggle between camcelcase and underscore notation for the symbol at point."
-  (interactive)
-  (save-excursion
-    (let* ((bounds (bounds-of-thing-at-point 'symbol))
-           (start (car bounds))
-           (end (cdr bounds))
-           (currently-using-underscores-p (progn (goto-char start)
-                                                 (re-search-forward "_" end t)))
-           (i 0)
-           (case-fold-search nil))
-      (if currently-using-underscores-p
-          (progn
-            (upcase-initials-region start end)
-            (replace-string "_" "" nil start end)
-            (downcase-region start (1+ start)))
-        (while (re-search-forward "\\([a-z]\\)\\([A-Z]\\)" (+ end i) t)
-          (replace-match "\\1_\\2" nil nil)
-          (setq i (+ i 1)))
-        (downcase-region start (+ end i))))))
+(use-package string-inflection
+  :ensure t)
 #+END_SRC
 
 *** Dump Jump
