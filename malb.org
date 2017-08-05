@@ -5598,59 +5598,56 @@ My shitty regexp for detecting e-mail addresses
   (string-match malb/email-regexp str) (match-string 1 str))
 #+END_SRC
 
-*** Replacement Table
+*** Canonicalisation
 
 A table of canonical names for people who cannot seem to fix their headers …
 
 #+BEGIN_SRC emacs-lisp
 (defcustom malb/mu4e-name-replacements nil
   "replacement names from e-mail addresses"
-  :type '(alist :key-type string :value-type string)
+  :type '(list :type string)
   :group 'malb)
 #+END_SRC
-
-… and a function to add new replacements.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/add-mu4e-name-replacement ()
-  (interactive)
-  (let* ((email (helm-read-string "E-mail: " (downcase (get-text-property (point) 'email))))
-         (name  (helm-read-string "Name: "
-                                  (malb/canonicalise-contact-name
-                                   (get-text-property (point) 'long))))
-         (nick  (helm-read-string "Nick: " (replace-regexp-in-string "(.*) " "\\1" name))))
-    (add-to-list 'malb/mu4e-name-replacements (cons email (cons name nick)) t)
-    (customize-save-variable 'malb/mu4e-name-replacements malb-mu4e-name-replacements)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map)
-#+END_SRC
-
-*** Canonicalisation
 
 - My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
 - Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
 - Some people like to send incomplete data, so we maintain a local replacement list
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/canonicalise-contact-name (name &optional nick)
-  (let* ((case-fold-search nil)
-         (name (or name ""))
-         (email (downcase (replace-regexp-in-string (format "^.* %s" malb/email-regexp)
-                                                    "\\1" name)))
+(defun malb/canonicalise-contact-name (email  &optional name nick)
+  ""
+  (let* ((name (or name ""))
+         (case-fold-search nil)
          ;; look up email address and use entry if found
-         (candidate (if nick
-                        (cddr (assoc email malb/mu4e-name-replacements))
+         (candidate (if nick (cddr (assoc email malb/mu4e-name-replacements))
                       (cadr (assoc email malb/mu4e-name-replacements)))))
     (if candidate
         candidate
       (progn
-        (setq name (replace-regexp-in-string "^\\(.*\\) [^ ]+@[^ ]+\.[^ ]" "\\1" name)) ;; drop email address
-        (setq name (replace-regexp-in-string "^\\(\"\\|\'\\)\\(.*\\)\\(\"\\|\'\\)" "\\2" name)) ;; strip quotes
-        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name)) ;; deal with YELL’d last names
+        ;; deal with YELL’d last names
+        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name))
+        ;; Foo, Bar becomes Bar Foo
         (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
-        (setq name (capitalize name)))))) ;; Foo, Bar becomes Bar Foo
+        ;; foo bar becomes Foo Bar
+        (setq name (capitalize name))))))
+#+END_SRC
+
+A function to add new replacements.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/add-mu4e-name-replacement ()
+  (interactive)
+  (let* ((email (helm-read-string "E-mail: " (downcase (get-text-property (point) 'email))))
+         (name  (helm-read-string "Name: "
+                                  (malb/canonicalise-contact-name email
+                                                                  (get-text-property (point) 'long))))
+         (nick  (helm-read-string "Nick: " (replace-regexp-in-string "(.*) " "\\1" name))))
+    (add-to-list 'malb/mu4e-name-replacements '(email name nick) t)
+    (customize-save-variable 'malb/mu4e-name-replacements malb/mu4e-name-replacements)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map)
 #+END_SRC
 
 Canonicalise contacts as they appear from mu4e.
@@ -5658,9 +5655,9 @@ Canonicalise contacts as they appear from mu4e.
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-contact-rewrite-function (contact)
   (let* ((name (or (plist-get contact :name) ""))
-         (mail (plist-get contact :mail))
+         (email (downcase (plist-get contact :mail)))
          (case-fold-search t))
-    (plist-put contact :name (malb/canonicalise-contact-name (format "%s <%s>" name mail)))
+    (plist-put contact :name (malb/canonicalise-contact-name email name))
     contact))
 
 (setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
@@ -5675,46 +5672,7 @@ Ignore some e-mail addresses when auto completing:
                                                            (seq "do-not-reply" (zero-or-more char) "@"))))
 #+END_SRC
 
-*** Extract Contacts
-
-The following is useful in e-mail templates
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/get-names-from-fields (fields)
-  (let (names
-        ret
-        name
-        point-end-of-line
-        (search-regexp (mapconcat (lambda (arg)
-                                    (concat "^" arg ": "))
-                                  fields "\\|"))
-        (case-fold-search t))
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward search-regexp nil t)
-        (save-excursion
-          (setq point-end-of-line (re-search-forward "$")))
-        (setq name (buffer-substring-no-properties (point) point-end-of-line))
-        (setq name (split-string name (format "%s," malb/email-regexp) t " ")) ;; split on email@address,
-        (setq names (append names name)))
-      (dolist (name names)
-        (setq name (malb/canonicalise-contact-name name t))
-        (if (string-match "\\([^ ,]+\\)" name)
-            (progn
-              ;; I don't remember why I did the regexp replace, so let's see where it bites me
-              ;; (setq name (replace-regexp-in-string "~" " " (match-string 1 name)))
-              (setq name (match-string 1 name))
-              (if ret
-                  (setq ret (concat ret ", " name))
-                (setq ret name)))))
-      (if ret ret "there"))))
-
-(defun malb/get-names-from-to-field ()
-  (interactive)
-  (malb/get-names-from-fields '("To")))
-#+END_SRC
-
-Extract a pretty-ish list of contacts from an e-mail, this is mainly used for Helm below.
+Extract a pretty-ish list of contacts from an e-mail.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/extract-contacts (fields)
@@ -5733,25 +5691,57 @@ Extract a pretty-ish list of contacts from an e-mail, this is mainly used for He
         (save-excursion
           (setq point-end-of-line (re-search-forward "$")))
         (setq addresses (append addresses
-                                (let ((string (buffer-substring-no-properties (point) point-end-of-line))
-                                      (separator (format "%s," malb/email-regexp)))
-                                  ;; split at e-mail address but don't eat the separator
-                                  (cl-loop with len = (length string)
-                                           with start = 0
-                                           for end = (if (string-match separator string start)
-                                                         (string-match "," string (string-match separator string start))
-                                                       len)
-                                           for chunk = (substring string start end)
-                                           collect (string-trim (replace-regexp-in-string "^," "" chunk))
-                                           while (< end len)
-                                           do (setf start end))
-                                  )))))
+                                (mail-header-parse-addresses
+                                 (buffer-substring-no-properties (point) point-end-of-line))))))
     (setq addresses (mapcar (lambda (address)
                               (format "\"%s\" <%s>"
-                                      (malb/canonicalise-contact-name address)
-                                      (malb/extract-email address)))
+                                      (malb/canonicalise-contact-name (car address) (cdr address))
+                                      (car address)))
                             addresses))))
 #+END_SRC
+
+The following is useful in e-mail templates
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/get-names-from-fields (fields)
+  (let (names
+        ret
+        name
+        point-end-of-line
+        (search-regexp (mapconcat (lambda (arg)
+                                    (concat "^" arg ": "))
+                                  fields "\\|"))
+        (case-fold-search t))
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward search-regexp nil t)
+        (save-excursion
+          (setq point-end-of-line (re-search-forward "$")))
+        (setq contacts (append contacts
+                               (mail-header-parse-addresses
+                                (buffer-substring-no-properties (point)
+                                                                point-end-of-line)))))
+      (dolist (contact contacts)
+        (setq name (malb/canonicalise-contact-name (car contact) (cdr contact) t))
+        ;; extract first name
+        (if (string-match "\\([^ ,]+\\)" name)
+            (progn
+              (setq name (match-string 1 name))
+              (if ret
+                  (setq ret (concat ret ", " name))
+                (setq ret name)))))
+      (if ret ret "there"))))
+#+END_SRC
+
+A shortcut:
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/get-names-from-to-field ()
+  (interactive)
+  (malb/get-names-from-fields '("To")))
+#+END_SRC
+
+*** Rearrange To and CC
 
 Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with Charley in CC which prompts me to send an e-mail to Charley with Bob in CC.
 
@@ -5817,14 +5807,24 @@ it is to insert the contact.
 "
   (interactive "p")
 
+  (if (not mu4e~contacts)
+      (progn
+        ;; request contacts
+        (mu4e~request-contacts)
+        (let ((i 0))
+          ;; sleep for at most 2 seconds to wait for contacts to be filed
+          (while (and (not mu4e~contacts) (> 2 i))
+            (sleep-for 1)
+            (+ i 1)))))
+
   (let ((malb/helm-mu-actions
          '(("Insert" . (lambda (x)
                          (insert (mapconcat 'identity
                                             (helm-marked-candidates) ","))))
            ("Find Messages" . (lambda (x)
-                           (mu4e-headers-search
-                            (format "contact:(%s)"
-                                    (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
+                                (mu4e-headers-search
+                                 (format "contact:(%s)"
+                                         (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
            ("Copy to clipboard" . (lambda (x)
                                     (kill-new (mapconcat 'identity
                                                          (helm-marked-candidates) ","))))
