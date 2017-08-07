@@ -5704,9 +5704,9 @@ The following is useful in e-mail templates
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/get-names-from-fields (fields)
-  (let (names
+  (let (contacts
         ret
-        name
+        contact
         point-end-of-line
         (search-regexp (mapconcat (lambda (arg)
                                     (concat "^" arg ": "))
