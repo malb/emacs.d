@@ -2401,7 +2401,7 @@ Working with source code in org-mode.
                   "DONE(d)"
                   "CANCELLED(c@/!)") ;;generic
 
-        (sequence "EXPLORE"
+        (sequence "EXPLORE(x)"
                   "WRITE"
                   "READ(r)"
                   "COAUTHOR(@/!)"
@@ -2420,7 +2420,6 @@ Working with source code in org-mode.
         (type "BLOG(b)"
               "REPLY(r)"
               "TALK(k)"
-              "STUDY(y)"
               "LOAD"
               "|" "DONE")))
 
@@ -2447,13 +2446,14 @@ delete SCHEDULED if new state is WAITING
 ** Tags
 
 #+BEGIN_SRC emacs-lisp
-(setq org-tag-persistent-alist '((:startgroup)
+(setq org-tag-persistent-alist '((:startgroup . nil)
                                  ("@office" . ?o)
                                  ("@train" . ?t)
+                                 ("@home" . ?h)
+                                 (:endgroup . nil)
                                  ("quick" . ?q)
                                  ("noexport" . ?n)
-                                 ("ignore" . ?i)
-                                 (:endgroup)))
+                                 ("ignore" . ?i)))
 #+END_SRC
 
 ** Tables
