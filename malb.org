@@ -6073,6 +6073,7 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 
 #+BEGIN_SRC emacs-lisp
 (advice-add #'mu4e-compose :around #'malb/clean-display-buffer-alist)
+(advice-add #'mu4e~compose-handler :around #'malb/clean-display-buffer-alist)
 #+END_SRC
 
 *** Attachments
