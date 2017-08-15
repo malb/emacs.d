@@ -147,6 +147,7 @@ Maximise the window as soon as possible
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
+
 * Startup
 
 #+BEGIN_SRC emacs-lisp
