@@ -3042,10 +3042,10 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("er" "quick capture of task for [r]esponding to an [e]-mail"
                      entry (file+headline malb/inbox-org "E-mail")
                      "* REPLY to %:fromname on %a
+DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
 :PROPERTIES:
 :CREATED: %U
 :END:
-DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
 
 %U" :prepend t :empty-lines 1 :immediate-finish t)
 
