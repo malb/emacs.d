@@ -36,6 +36,7 @@ We assume that the following variables are defined:
 - ~malb/projects-dir~ - a super-repository of which all of my projects are subprojects
 - ~malb/sage-executable~ - full path of Sage executable
 - ~malb/sync-dir~ - documents that are synchronised
+- ~malb/deft-directory~ - where deft files live
 - ~malb/theme~ - theme choice
 
 We collect our own customisations in the =malb= group.
@@ -4915,7 +4916,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
   :init (progn
           (setq deft-extensions '("org" "md")
                 deft-default-extension "org"
-                deft-directory (expand-file-name "deft" malb/sync-dir)
+                deft-directory malb/deft-directory
                 deft-text-mode 'org-mode
                 deft-use-filename-as-title nil
                 deft-auto-save-interval 300.0
@@ -4938,7 +4939,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
           (defun malb/deft ()
             (interactive)
-            (malb/deft-in-dir (expand-file-name "deft" malb/sync-dir)))
+            (malb/deft-in-dir malb/deft-directory))
 
           (add-hook 'deft-mode-hook #'hl-line-mode)))
 #+END_SRC
