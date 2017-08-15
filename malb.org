@@ -7572,9 +7572,6 @@ The result looks like this:
                                                   (solarized-color-blend base02 base03 0.3)))
                 (unicode-fonts-setup)
 
-                (eval-after-load "bm"
-                  '(set-face-attribute 'bm-face nil :background "#FFE6E4"))
-
                 (when (boundp 'hl-sentence-mode)
                   (set-face-attribute 'hl-sentence-face nil
                                       :background (solarized-with-color-variables
