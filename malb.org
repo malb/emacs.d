@@ -7575,7 +7575,7 @@ The result looks like this:
                 (unicode-fonts-setup)
 
                 (when (boundp 'hl-sentence-mode)
-                  (set-face-attribute 'hl-sentence-face nil
+                  (set-face-attribute 'hl-sentence nil
                                       :background (solarized-with-color-variables
                                                     'light
                                                     (solarized-color-blend base02 base03 0.6))))
