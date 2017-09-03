@@ -3040,7 +3040,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("e" "[e]-mail")
 
                     ("er" "quick capture of task for [r]esponding to an [e]-mail"
-                     entry (file+headline malb/inbox-org "E-mail")
+                     entry (file+headline malb/inbox-org "E-Mail")
                      "* REPLY to %:fromname on %a
 DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
 :PROPERTIES:
@@ -3050,19 +3050,19 @@ DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
 %U" :prepend t :empty-lines 1 :immediate-finish t)
 
                     ("ef" "[f]ile an [e]-mail"
-                     entry (file+headline malb/inbox-org "E-mail")
+                     entry (file+headline malb/inbox-org "E-Mail")
                      "* %a by %:fromname
 :PROPERTIES:
 :CREATED: %U
 :END:" :immediate-finish nil :prepend nil :empty-lines 1)
 
                     ("es" "keep an [e]-mail [s]earch"
-                     entry (file+headline malb/inbox-org "E-mail")
+                     entry (file+headline malb/inbox-org "E-Mail")
                      "* %a"
                      :immediate-finish nil :prepend nil :empty-lines 0)
 
                     ("et" "create a [t]ask linked to an [e]-mail"
-                     entry (file+headline malb/inbox-org "E-mail")
+                     entry (file+headline malb/inbox-org "E-Mail")
                      "* TODO %?
 SCHEDULED: %(org-time-stamp nil)
 :PROPERTIES:
