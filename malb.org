@@ -4979,7 +4979,9 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
             (bind-key "M-." #'markdown-jump markdown-mode-map)
             (bind-key "C-c C-e o" #'malb/markdown-preview-buffer markdown-mode-map) ;; inspired by org-mode-export
             (add-hook 'markdown-mode-hook #'flyspell-mode)
-            (add-hook 'markdown-mode-hook #'malb/company-ispell-setup)))
+            (add-hook 'markdown-mode-hook #'malb/company-ispell-setup)
+            (add-hook 'markdown-mode-hook #'outline-minor-mode)
+            (bind-key "C-<tab>" #'outline-cycle markdown-mode-map)))
 #+END_SRC
 
 *** Pandoc
