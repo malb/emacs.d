@@ -5599,7 +5599,13 @@ My shitty regexp for detecting e-mail addresses
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/extract-email (str)
-  (string-match malb/email-regexp str) (match-string 1 str))
+  ;; return last sub-string looking like an email address
+  (let ((tokens (reverse (split-string-and-unquote str)))
+        (match))
+    (dolist (token tokens)
+      (string-match malb/email-regexp token)
+      (setq match (or match (match-string 1 token))))
+    match))
 #+END_SRC
 
 *** Canonicalisation
