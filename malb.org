@@ -5833,15 +5833,23 @@ it is to insert the contact.
          '(("Insert" . (lambda (x)
                          (insert (mapconcat 'identity
                                             (helm-marked-candidates) ","))))
-           ("Find Messages" . (lambda (x)
-                                (mu4e-headers-search
-                                 (format "contact:(%s)"
-                                         (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
+           ("Find Messages (combine multiple with AND)" .
+            (lambda (x)
+              (mu4e-headers-search
+               (format "contact:(%s)"
+                       (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
+
            ("Copy to clipboard" . (lambda (x)
                                     (kill-new (mapconcat 'identity
                                                          (helm-marked-candidates) ","))))
            ("Google search" . (lambda (x) (helm-google (replace-regexp-in-string
-                                                        (format "^\\(.*\\) %s" malb/email-regexp) "\\1" x)))))))
+                                                        (format "^\\(.*\\) %s" malb/email-regexp) "\\1" x))))
+
+           ("Find Messages (combine multiple with OR)" .
+            (lambda (x)
+              (mu4e-headers-search
+               (format "contact:(%s)"
+                       (mapconcat 'malb/extract-email (helm-marked-candidates) " OR "))))))))
 
     (helm :sources (helm-build-sync-source "E-mail address candidates"
                      :candidates  (append
