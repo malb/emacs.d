@@ -7887,7 +7887,7 @@ Easily change the text size:
               ("Find file as root"      . (lambda (x) (helm-find-file-as-root x)))
               ("Find file other window" . (lambda (x) (helm-find-files-other-window x)))
               ("Find file other frame"  . (lambda (x) (find-file-other-frame x)))
-              ("Open dired in file's directory" . (lambda (x) (helm-open-dired x)))
+              ("Open Dired in file's directory" . (lambda (x) (helm-open-dired x)))
               ("Grep File(s) `C-u recurse'"     . (lambda (x) (helm-find-files-grep x)))
               ("Zgrep File(s) `C-u Recurse'"    . (lambda (x) (helm-ff-zgrep x)))
               ("Pdfgrep File(s)"                . (lambda (x) (helm-ff-pdfgrep x)))
