@@ -1215,6 +1215,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
          ("C-c <SPC>" . helm-all-mark-rings))
   :config (progn
             (require 'helm-config)
+            (require 'helm-for-files)
+            (require 'helm-bookmark)
             (bind-key "C-c h" #'helm-command-prefix)
             (unbind-key "C-x c")
 
@@ -6603,6 +6605,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 #+BEGIN_SRC emacs-lisp
 (use-package dired
   :config (progn
+            (require 'dired-x)
             (setq dired-listing-switches "-laGh1v --group-directories-first")
 
             (defvar malb/unimportant-files
