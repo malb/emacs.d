@@ -4484,6 +4484,7 @@ Shortcut for Sage Jupyter notebook.
           (venv-deactivate) ;; avoid weird interactions
           (prodigy-start-service sage)
           (sleep-for 1.5))))
+  (ein:query-ipython-version 8890 t)
   (ein:notebooklist-login 8890 malb/sage-notebook-password)
   (ein:notebooklist-open 8890))
 #+END_SRC
