@@ -4623,6 +4623,13 @@ Code manipulation:
             (add-hook 'hy-mode-hook #'lispy-mode)))
 #+END_SRC
 
+** Web
+
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+  :ensure t)
+#+END_SRC
+
 ** JSON
 
 #+BEGIN_SRC emacs-lisp
