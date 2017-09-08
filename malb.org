@@ -980,12 +980,6 @@ For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company
             (add-to-list 'company-backends #'company-c-headers)))
 #+END_SRC
 
-*** TODO try company-rtags or company-gtags
-
-#+BEGIN_SRC emacs-lisp
-;; (add-to-list 'company-backends '(company-rtags :with company-yasnippet) t)
-#+END_SRC
-
 ** Python
 
 For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]].
@@ -3691,6 +3685,19 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 #+END_SRC
 
 *Note* See [[https://syamajala.github.io/c-ide.html][this post]] for a nice intro to rtags.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-rtags
+  :after flycheck
+  :ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-rtags
+  :after flycheck
+  :ensure t)
+#+END_SRC
+
 
 *** CamelCase
 
