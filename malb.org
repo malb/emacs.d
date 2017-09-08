@@ -3071,8 +3071,8 @@ See %a by %:fromname
 " :immediate-finish nil :prepend t :empty-lines 1)
 
                     ("j" "add entry to [j]ournal"
-                     entry (file+datetree (expand-file-name "journal.org"
-                                                            malb/org-files-dir))
+                     entry (file+datetree (lambda () (expand-file-name "journal.org"
+                                                                       malb/org-files-dir)))
                      "** research
 %?
 ,** critique
@@ -3095,7 +3095,7 @@ See %a by %:fromname
 %i" :empty-lines 1)
 
                     ("s" "create note/tip on a piece of [s]oftware" entry
-                     (file+headline (expand-file-name "software.org" deft-directory) "Incoming")
+                     (file+headline (lambda () (expand-file-name "software.org" deft-directory)) "Incoming")
                      "* %?
 :PROPERTIES:
 :CREATED: %U
