@@ -37,6 +37,7 @@ We assume that the following variables are defined:
 - ~malb/sage-executable~ - full path of Sage executable
 - ~malb/sync-dir~ - documents that are synchronised
 - ~malb/deft-directory~ - where deft files live
+- ~malb/dropbox-dir~ - where Dropbox is mounted
 - ~malb/theme~ - theme choice
 
 We collect our own customisations in the =malb= group.
@@ -3169,6 +3170,21 @@ See `org-latex-format-inlinetask-function' for details."
               (concat "\\todo[inline]{\\textbf{" todo "}: " title "}\n"))
             (setq org-latex-format-inlinetask-function #'malb/org-latex-format-inlinetask-function)
             (setq org-inlinetask-min-level 6)))
+#+END_SRC
+
+** Dropbox
+
+#+BEGIN_QUOTE
+[[https://github.com/heikkil/org-dropbox][This minor mode]] syncs DropBox notes from mobile devices into org datetree file that can be part of org agenda. The minor mode starts a daemon that periodically scans the note directory.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-dropbox
+  :ensure t
+  :config (progn
+            (setq org-dropbox-note-dir (expand-file-name "notes/" malb/dropbox-dir)
+                  org-dropbox-datetree-file (expand-file-name "dropbox.org" malb/org-files-dir))
+            (org-dropbox-mode)))
 #+END_SRC
 
 ** Functions
