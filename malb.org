@@ -3126,6 +3126,7 @@ See %a by %:fromname
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-web-tools
+  :ensure t
   :after org)
 #+END_SRC
 
