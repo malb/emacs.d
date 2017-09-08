@@ -3621,9 +3621,11 @@ mouse-3: go to end")
   :bind ("C-c h ." . helm-dash-at-point)
   :config (progn
             (setq helm-dash-common-docsets '("Bash"
+                                             "Bootstrap_4"
                                              "C"
                                              "C++"
                                              "Emacs Lisp"
+                                             "Flask"
                                              "HTML"
                                              "Java"
                                              "LaTeX"
@@ -3631,6 +3633,8 @@ mouse-3: go to end")
                                              "NumPy"
                                              "Python 2"
                                              "Python 3"
+                                             "SQLAlchemy"
+                                             "SQLite"
                                              "Vagrant"
                                              )
                   helm-dash-browser-func 'eww)))
@@ -4644,7 +4648,8 @@ Code manipulation:
 
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode
-  :ensure t)
+  :ensure t
+  :config (setq web-mode-enable-engine-detection t))
 #+END_SRC
 
 ** JSON
