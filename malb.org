@@ -1,3 +1,4 @@
+#+TITLE: My Emacs Config
 #+STARTUP: overview indent
 
 #+TYP_TODO: TRY(y) TEST(t) IMPLEMENT(i) TODO(o) | DONE(d)
