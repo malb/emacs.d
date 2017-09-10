@@ -3621,7 +3621,7 @@ mouse-3: go to end")
   :bind ("C-c h ." . helm-dash-at-point)
   :config (progn
             (setq helm-dash-common-docsets '("Bash"
-                                             "Bootstrap_4"
+                                             "Bootstrap 4"
                                              "C"
                                              "C++"
                                              "Emacs Lisp"
