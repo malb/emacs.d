@@ -2317,7 +2317,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-agenda-sticky t                      ; Use sticky agenda's so they persist
       org-agenda-compact-blocks t              ; Compact the block agenda view
       org-agenda-span 14                       ; span 14 days of agenda
-      org-agenda-start-on-weekday nil          ; start today not on Monday
+      org-agenda-start-on-weekday 1            ; start on Monday
       )
 
 (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
