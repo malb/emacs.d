@@ -6943,6 +6943,10 @@ If an eshell with the same name is already shown, its window is closed."
             (defalias 'eshell/emacs 'find-file)
             (defalias 'eshell/less  'view-file)
 
+            (defun eshell/ag (&optional dir)
+              (malb/helm-ag (file-name-as-directory
+                             (expand-file-name (or dir ".")))))
+
             (defun malb/config-eshell-completion ()
               (setq pcomplete-cycle-completions t
                     pcomplete-ignore-case t)
