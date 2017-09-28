@@ -6623,40 +6623,6 @@ need region."
             (bind-key "x" #'malb/hydra-pdf-annot/body pdf-view-mode-map)))
 #+END_SRC
 
-We make ~scroll-other-window~ work for PDF tools ([[https://github.com/politza/pdf-tools/issues/55][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defvar malb/scroll-functions
-  '(("default" :down scroll-down :up scroll-up)
-    (pdf-view-mode :down pdf-view-scroll-down-or-previous-page :up pdf-view-scroll-up-or-next-page)
-    (help-mode :down Info-scroll-down :up Info-scroll-up)
-    )
-  "The functions that should be used when scrolling other windows of a particular buffer type.
-If buffer type is not included, 'default' will be used. Used by malb/smart-other-scroll")
-
-(defun malb/smart-other-scroll (dir)
-  "Scroll the other window with appropriate function; `dir' should be :up or :down "
-  (interactive)
-  (let* ((other-buffer-mode (with-current-buffer (window-buffer (other-window-for-scrolling)) major-mode))
-         (fun (or (plist-get (cdr (assoc other-buffer-mode malb/scroll-functions)) dir)
-                  (plist-get (cdr (assoc "default" malb/scroll-functions)) dir))))
-    (if fun
-        (with-selected-window (other-window-for-scrolling)
-          (call-interactively fun))
-      )))
-
-(defun malb/other-scroll-up ()
-  "use `malb/smart-other-scroll' :up"
-  (interactive) (malb/smart-other-scroll :up))
-
-(defun malb/other-scroll-down ()
-  "use `malb/smart-other-scroll' :down"
-  (interactive) (malb/smart-other-scroll :down))
-
-(define-key global-map (kbd "C-M-v") 'malb/other-scroll-up)
-(define-key global-map (kbd "C-M-S-v") 'malb/other-scroll-down)
-#+END_SRC
-
 * Dired
 
 =dired-listing-switches= explained:
