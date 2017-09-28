@@ -3021,6 +3021,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("tt" "capture a standard [t]ask"
                      entry (file malb/inbox-org)
                      "* TODO %?
+DEADLINE: %t
 :PROPERTIES:
 :CREATED: %U
 :END:
