@@ -4704,7 +4704,18 @@ Put everything back on one line if =M-q= is pressed twice and use ~visual-line-m
            fill-column)))
     (call-interactively #'fill-paragraph)))
 
+(defun malb/org-fill-or-unfill ()
+  "Like `org-fill-paragraph', but unfill if used twice."
+  (interactive)
+  (let ((fill-column
+         (if (eq last-command 'malb/org-fill-or-unfill)
+             (progn (setq this-command nil)
+                    (point-max))
+           fill-column)))
+    (call-interactively #'org-fill-paragraph)))
+
 (bind-key [remap fill-paragraph] #'malb/fill-or-unfill)
+(bind-key "M-q" #'malb/org-fill-or-unfill org-mode-map)
 #+END_SRC
 
 Indent correctly in ~visual-line-mode~ (~org-mode~ has its own thing).
