@@ -673,6 +673,27 @@ Run =old-function= with an empty =display-buffer-alist=
             (setq golden-ratio-inhibit-functions '(malb/golden-ratio-inhibit-functions))))
 #+END_SRC
 
+** Dedicated mode
+
+([[https://github.com/jwiegley/dot-emacs/blob/master/site-lisp/dedicated.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defvar dedicated-mode nil
+  "Mode variable for dedicated minor mode.")
+
+(make-variable-buffer-local 'dedicated-mode)
+
+(defun dedicated-mode (&optional arg)
+  "Dedicated minor mode."
+  (interactive "P")
+  (setq dedicated-mode (not dedicated-mode))
+  (set-window-dedicated-p (selected-window) dedicated-mode)
+  (if (not (assq 'dedicated-mode minor-mode-alist))
+      (setq minor-mode-alist
+	    (cons '(dedicated-mode " D")
+		  minor-mode-alist))))
+#+END_SRC
+
 ** Window management Hydra
 
 #+BEGIN_SRC emacs-lisp
