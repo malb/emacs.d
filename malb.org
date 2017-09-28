@@ -907,7 +907,7 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
              (lambda (rule) (define-auto-insert
                               (nth 0 rule)
                               (vector `(lambda () (malb/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule))))))
-             `(("/announcements/20.+\\.md$"  "isg-announce"  markdown-mode)))))
+             `(("/announcements/20.+\\.md$"  "isg-seminar-announce"  markdown-mode)))))
 #+END_SRC
 
 *** TODO split data from implementation
