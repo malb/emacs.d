@@ -6154,7 +6154,7 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 (advice-add #'mu4e~compose-handler :around #'malb/clean-display-buffer-alist)
 #+END_SRC
 
-*** Attachments
+** Attachments
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-attachment-dir "~/Downloads")
