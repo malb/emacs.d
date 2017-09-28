@@ -704,7 +704,7 @@ Run =old-function= with an empty =display-buffer-alist=
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ new      _C_enter   _j_ump      _W_ store cfg
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_ine      _J_ load cfg
 _↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _i_ imenu list
-_→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close
+_→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close                           _F_ treemacs
 _T_oggle ded  _d_lt this      _a_ce 1          _g_olden-ratio   _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap
 ^^            _o_nly this
@@ -737,6 +737,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("o" delete-other-windows :color blue)
   ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
   ("Z" winner-redo)
+  ("F" treemacs-projectile :color blue)
   ("[" malb/eyebrowse-new-window-config :color blue)
   (";" (lambda () (interactive) (eyebrowse-prev-window-config nil)) :color red)
   ("'" (lambda () (interactive) (eyebrowse-next-window-config nil)) :color red)
@@ -763,7 +764,6 @@ _SPC_ cancel  _D_lt other     _s_wap
 (bind-key "C-x o" #'malb/hydra-window/body)
 (bind-key "±" #'other-window)
 #+END_SRC
-
 * Clean Mode Line
 
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
