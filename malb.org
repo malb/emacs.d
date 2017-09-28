@@ -3129,7 +3129,7 @@ See %a by %:fromname
   :after org-capture
   :config (add-to-list 'org-capture-templates
                        '("w" "capture [w]ebsite" entry
-                         (file+headline (expand-file-name "inbox.org" malb/org-files-dir) "Links")
+                         (file+headline (lambda () (expand-file-name "inbox.org" malb/org-files-dir)) "Links")
                          "* %?%a\nCaptured On: %U\n\n%:initial\n\n"
                          :immediate-finish nil
                          :prepend t) t))
