@@ -1385,27 +1385,24 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/helm-ag-projects ()
-  "run helm-ag in projects directory"
-  (interactive)
-  (let* ((ignored (mapconcat (lambda (i)
-                              (concat "--ignore " i))
-                            (append grep-find-ignored-files grep-find-ignored-directories)
-                            " "))
-        (helm-ag-base-command (concat helm-ag-base-command " " ignored)))
-    (helm-do-ag (file-name-as-directory malb/projects-dir))))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/helm-ag-literature ()
-  "run helm-ag in projects directory"
-  (interactive)
+(defun malb/helm-ag (dir)
+  "run helm-ag in DIR."
   (let* ((ignored (mapconcat (lambda (i)
                                (concat "--ignore " i))
                              (append grep-find-ignored-files grep-find-ignored-directories)
                              " "))
          (helm-ag-base-command (concat helm-ag-base-command " " ignored)))
-    (helm-do-ag (file-name-as-directory (car malb/literature-dirs)))))
+    (helm-do-ag (file-name-as-directory dir))))
+
+(defun malb/helm-ag-projects ()
+  "run helm-ag in projects directory."
+  (interactive)
+  (malb/helm-ag malb/projects-dir))
+
+(defun malb/helm-ag-literature ()
+  "run helm-ag in projects directory"
+  (interactive)
+  (malb/helm-ag (file-name-as-directory (car malb/literature-dirs))))
 #+END_SRC
 
 ** Helm Themes
