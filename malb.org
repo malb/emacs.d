@@ -6623,7 +6623,8 @@ need region."
             (bind-key "x" #'malb/hydra-pdf-annot/body pdf-view-mode-map)))
 #+END_SRC
 
-* Dired
+* Directories
+** Dired
 
 =dired-listing-switches= explained:
 
@@ -6709,7 +6710,7 @@ Show dired histories you have visited.
   :bind (:map dired-mode-map ("/" . dired-narrow)))
 #+END_SRC
 
-* Neotree
+** Neotree
 
 [[https://github.com/jaypei/emacs-neotree][Neotree]]
 
@@ -6720,6 +6721,35 @@ Show dired histories you have visited.
   :config (progn
             (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
                   neo-smart-open t)))
+#+END_SRC
+
+** Treemacs
+
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs
+  :ensure t
+  :defer t
+  :config (progn
+            (setq treemacs-follow-after-init          t
+                  treemacs-width                      35
+                  treemacs-indentation                2
+                  treemacs-git-integration            t
+                  treemacs-collapse-dirs              3
+                  treemacs-silent-refresh             t
+                  treemacs-change-root-without-asking nil
+                  treemacs-sorting                    'alphabetic-desc
+                  treemacs-show-hidden-files          t
+                  treemacs-never-persist              t
+                  treemacs-is-never-other-window      nil
+                  treemacs-goto-tag-strategy          'refetch-index)
+
+            (treemacs-follow-mode t)
+            (treemacs-filewatch-mode t)))
+
+(use-package treemacs-projectile
+  :defer t
+  :ensure t
+  :config (setq treemacs-header-function #'treemacs-projectile-create-header))
 #+END_SRC
 
 * Diff
