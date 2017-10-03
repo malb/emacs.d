@@ -7322,6 +7322,21 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
   :after org)
 #+END_SRC
 
+* Large Files
+
+A file is large if it is 32MB in my world.
+
+#+BEGIN_SRC emacs-lisp
+(setq large-file-warning-threshold 33554432)
+#+END_SRC
+
+[[https://github.com/m00natic/vlfi][vlf]] for large files.
+
+#+BEGIN_SRC emacs-lisp
+(use-package vlf-setup
+  :ensure vlf)
+#+END_SRC
+
 * Misc
 ** Settings
 
@@ -7367,12 +7382,6 @@ In emacs minibuffer prompt, when you press the left arrow key, the cursor will m
 
 #+BEGIN_SRC emacs-lisp
 (setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
-#+END_SRC
-
-A file is large if it is 32MB in my world.
-
-#+BEGIN_SRC emacs-lisp
-(setq large-file-warning-threshold 33554432)
 #+END_SRC
 
 Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
