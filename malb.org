@@ -764,6 +764,7 @@ _SPC_ cancel  _D_lt other     _s_wap
 (bind-key "C-x o" #'malb/hydra-window/body)
 (bind-key "±" #'other-window)
 #+END_SRC
+
 * Clean Mode Line
 
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
@@ -7473,6 +7474,9 @@ Diminish =abbrev-mode=
 (diminish 'abbrev-mode)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(setq search-default-mode 'char-fold-to-regexp)
+#+END_SRC
 
 ** Functions
 
