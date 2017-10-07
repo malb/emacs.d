@@ -779,7 +779,7 @@ Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mention
   :ensure t)
 #+END_SRC
 
-* Jumping around
+* Jumping Around
 
 [[https://raw.githubusercontent.com/wiki/nloyola/avy/images/avy-goto-char.png]] ([[https://github.com/abo-abo/avy][source]])
 
