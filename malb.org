@@ -1147,17 +1147,19 @@ Enable/disable company completion from ispell dictionaries ([[https://github.com
 
 (defun malb/toggle-fold ()
   (interactive)
-  (cond ((bound-and-true-p hs-minor-mode)
+  (cond ((eq major-mode 'org-mode)
+         (org-force-cycle-archived))
+        ((bound-and-true-p hs-minor-mode)
          (save-excursion
            (end-of-line)
            (hs-toggle-hiding)))
 
         ((bound-and-true-p outline-minor-mode)
-         (save-excursion (outline-cycle)))))
-
+         (save-excursion
+           (outline-cycle)))))
 
 (bind-key "<tab>" #'malb/indent-fold-or-complete)
-(bind-key "<backtab>" #'malb/toggle-fold)
+(bind-key "C-<tab>" #'malb/toggle-fold)
 #+END_SRC
 
 * Helm
@@ -1975,7 +1977,6 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                           (json-mode "{" "}" "/[*/]" nil)
                           (javascript-mode  "{" "}" "/[*/]" nil)))))
 #+END_SRC
-
 
 ** Hungry Delete
 
@@ -3811,7 +3812,7 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
 (use-package cc-mode
   :config (progn
             (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
-
+            (add-hook 'c-mode-common-hook #'hs-minor-mode)
             (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
             (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+END_SRC
@@ -4669,6 +4670,11 @@ Code manipulation:
 (use-package suggest
   :ensure t)
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
+#+END_SRC
+
 
 *** Hy
 
@@ -8228,7 +8234,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 #+BEGIN_SRC emacs-lisp
 (define-prefix-command 'malb/toggle-map)
-(define-key ctl-x-map "t" ’malb/toggle-map)
+(define-key ctl-x-map "t" 'malb/toggle-map)
 
 (bind-key "e" #'toggle-debug-on-error   malb/toggle-map)
 (bind-key "f" #'malb/toggle-fold        malb/toggle-map)
