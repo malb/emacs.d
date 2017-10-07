@@ -703,9 +703,9 @@ Run =old-function= with an empty =display-buffer-alist=
 ^----^--------^-----^---------^------^---------^------^---------^---------^^-----^------^---^-------^---^--------------^
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ new      _C_enter   _j_ump      _W_ store cfg
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_ine      _J_ load cfg
-_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _i_ imenu list
-_→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close                           _F_ treemacs
-_T_oggle ded  _d_lt this      _a_ce 1          _g_olden-ratio   _!_ \\/ rename
+_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _F_ treemacs
+_→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close
+              _d_lt this      _a_ce 1          _g_olden-ratio   _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap
 ^^            _o_nly this
 "
@@ -721,13 +721,11 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("r" enlarge-window-horizontally)
   ("g" golden-ratio-mode)
   ("H" malb/helm-omni :color blue)
-  ("i" imenu-list-smart-toggle :color blue)
   ("1" previous-buffer)
   ("2" next-buffer)
   ("p" previous-buffer)
   ("n" next-buffer)
   ("t" malb/switch-to-previous-buffer :color blue)
-  ("T" dedicated-mode)
   ("a" (lambda () (interactive) (ace-window 1)) :color blue)
   ("v" malb/vsplit-last-buffer)
   ("h" malb/hsplit-last-buffer)
@@ -1104,7 +1102,7 @@ Enable/disable company completion from ispell dictionaries ([[https://github.com
 
    a. if a region is active, just indent
    b. if we’re looking at a space after a non-whitespace character, we try some company-expansion
-   c. If =origami-mode= or =outline-minor-mode= is active, try those next
+   c. If =hs-minor-mode= or =outline-minor-mode= is active, try those next
    d. otherwise call whatever would have been called otherwise.
 
 ([[http://emacs.stackexchange.com/q/21182/8930][source]], [[http://emacs.stackexchange.com/q/7908/8930][source]])
@@ -1133,10 +1131,8 @@ Enable/disable company completion from ispell dictionaries ([[https://github.com
          (looking-back "[^[:space:]]")
          (not (looking-back "^")))
     (cond
-     ((bound-and-true-p origami-mode)
-      (origami-toggle-node (current-buffer) (point)))
      ((bound-and-true-p hs-minor-mode)
-      (save-excursion (hs-toggle-hiding)))
+      (save-excursion (end-of-line) (hs-toggle-hiding)))
      ((bound-and-true-p outline-minor-mode)
       (save-excursion (outline-cycle)))))
 
@@ -1151,11 +1147,10 @@ Enable/disable company completion from ispell dictionaries ([[https://github.com
 
 (defun malb/toggle-fold ()
   (interactive)
-  (cond ((bound-and-true-p origami-mode)
-         (origami-toggle-node (current-buffer) (point)))
-
-        ((bound-and-true-p hs-minor-mode)
-         (save-excursion (hs-toggle-hiding)))
+  (cond ((bound-and-true-p hs-minor-mode)
+         (save-excursion
+           (end-of-line)
+           (hs-toggle-hiding)))
 
         ((bound-and-true-p outline-minor-mode)
          (save-excursion (outline-cycle)))))
@@ -1949,15 +1944,6 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 
 ** Folding
 
-disabled until https://github.com/gregsexton/origami.el/issues/55 is fixed
-
-#+BEGIN_SRC emacs-lisp
-(use-package origami
-  :ensure t
-  :disabled
-  :commands (origami-toggle-node))
-#+END_SRC
-
 [[https://github.com/alphapapa/outshine][oushine]] provides =outline-cycle=
 
 #+BEGIN_SRC emacs-lisp
@@ -1999,6 +1985,7 @@ disabled until https://github.com/gregsexton/origami.el/issues/55 is fixed
          ("M-<backspace>" . nv-delete-back))
   :ensure t)
 #+END_SRC
+
 
 ** Beginning of …
 
@@ -3826,8 +3813,6 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
             (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
 
             (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
-            (bind-key "M-l" #'malb/toggle-camelcase-underscores c-mode-base-map)
-            (bind-key "M-u" #'malb/toggle-camelcase-underscores c-mode-base-map)
             (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+END_SRC
 
@@ -8217,6 +8202,23 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 #+BEGIN_SRC emacs-lisp
 (bind-key "M-SPC" #'cycle-spacing)
+#+END_SRC
+
+** Toggle Map
+
+([[http://endlessparentheses.com/the-toggle-map-and-wizardry.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(define-prefix-command 'malb/toggle-map)
+(define-key ctl-x-map "t" ’malb/toggle-map)
+
+(bind-key "e" #'toggle-debug-on-error   malb/toggle-map)
+(bind-key "f" #'malb/toggle-fold        malb/toggle-map)
+(bind-key "l" #'toggle-truncate-lines   malb/toggle-map)
+(bind-key "q" #'toggle-debug-on-quit    malb/toggle-map)
+(bind-key "i" #'imenu-list-smart-toggle malb/toggle-map)
+(bind-key "d" #'dedicated-mode          malb/toggle-map)
+(bind-key "c" #'visual-fill-column-mode malb/toggle-map)
 #+END_SRC
 
 ** Learn key bindings
