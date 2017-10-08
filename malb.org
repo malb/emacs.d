@@ -705,7 +705,7 @@ _←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ ne
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_ine      _J_ load cfg
 _↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _F_ treemacs
 _→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close
-              _d_lt this      _a_ce 1          _g_olden-ratio   _!_ \\/ rename
+^^            _d_lt this      _a_ce 1          _g_olden-ratio   _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap
 ^^            _o_nly this
 "
