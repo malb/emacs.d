@@ -6782,6 +6782,18 @@ Show dired histories you have visited.
   :bind (:map dired-mode-map ("/" . dired-narrow)))
 #+END_SRC
 
+[[https://github.com/Fuco1/dired-hacks#dired-subtree][dired-subtree]] to insert subtrees.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-subtree
+  :ensure t
+  :config
+  (bind-keys :map dired-mode-map
+             ("i" . dired-subtree-insert)
+             (";" . dired-subtree-remove)))
+#+END_SRC
+
+
 ** Neotree
 
 [[https://github.com/jaypei/emacs-neotree][Neotree]]
@@ -7798,7 +7810,33 @@ The result looks like this:
                                                        (solarized-color-blend base02 base03 0.5)))
                      (set-face-attribute 'ein:cell-input-prompt nil
                                          :background nil
-                                         :foreground "#657b83" :weight 'bold)))))))
+                                         :foreground "#657b83" :weight 'bold)))
+                (eval-after-load "dired-subtree"
+                  (progn
+                     (set-face-attribute 'dired-subtree-depth-1-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-2-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-3-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-4-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-5-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-6-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
