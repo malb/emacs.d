@@ -6509,7 +6509,7 @@ We change the default template to not include the title which is filled in by de
 
 [[https://github.com/politza/pdf-tools][PDF tools]] is a reasonable PDF viewer for Emacs.
 
-We also add support to extract PDF annotations to a temporary org-mode/markdown buffer, based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]].
+We also add support to extract PDF annotations to a temporary org-mode/markdown buffer, based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]], and calling [[https://github.com/tabulapdf/tabula-java][tabular]] or [[https://en.wikipedia.org/wiki/Pdftotext][pdftotext]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
@@ -6517,6 +6517,40 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
   :config (progn
             (pdf-tools-install)
             (setq-default pdf-view-display-size 'fit-page)
+
+            (defun malb/pdf-extract-table (&optional format)
+              (let* ((format- (upcase (or format "CSV")))
+                     (pdf-filename (buffer-file-name))
+                     (txt-filename (make-temp-name "/tmp/tabula-"))
+                     (buffer (generate-new-buffer
+                              (generate-new-buffer-name (format "*tabular<%s>*" (file-name-base pdf-filename))))))
+                (shell-command (format "java -jar %s -f %s -p %d -o \"%s\" \"%s\""
+                                       malb/tabular-jar
+                                       format-
+                                       (pdf-view-current-page)
+                                       txt-filename
+                                       pdf-filename) nil)
+                (switch-to-buffer buffer)
+                (insert-file-contents txt-filename)
+                (cond
+                 ((eq format nil) (progn
+                                    (org-mode)
+                                    (call-interactively 'mark-whole-buffer)
+                                    (call-interactively 'org-table-convert-region)))
+                 ((string-equal format "JSON") (progn
+                                                 (json-mode)
+                                                 (json-pretty-print-buffer))))
+                (delete-file txt-filename)))
+
+            (defun malb/pdf-extract-text ()
+              (let* ((pdf-filename (buffer-file-name))
+                     (txt-filename (make-temp-name "/tmp/tabula-"))
+                     (buffer (generate-new-buffer
+                              (generate-new-buffer-name (format "*pdftotext<%s>*" (file-name-base pdf-filename))))))
+                (shell-command (format "pdftotext -layout -nopgbrk \"%s\" \"%s\"" pdf-filename txt-filename) nil)
+                (switch-to-buffer buffer)
+                (insert-file-contents txt-filename)
+                (delete-file txt-filename)))
 
             (defun malb/pdf-view-llncs-from-bounding-box (&optional window)
               "Set the height from the page's bounding-box."
@@ -6574,14 +6608,15 @@ need region."
                  (lambda (annot) ;; traverse all annotations
                    (progn
                      (let ((page (cdr (assoc 'page annot)))
-                           (highlighted-text (if (pdf-annot-get annot 'markup-edges)
-                                                 (let ((highlighted-text
-                                                        (with-current-buffer source-buffer
-                                                          (pdf-info-gettext (pdf-annot-get annot 'page)
-                                                                            (pdf-tools-org-edges-to-region
-                                                                             (pdf-annot-get annot 'markup-edges))))))
-                                                   (replace-regexp-in-string "\n" " " highlighted-text))
-                                               nil))
+                           (highlighted-text
+                            (if (pdf-annot-get annot 'markup-edges)
+                                (let ((highlighted-text
+                                       (with-current-buffer source-buffer
+                                         (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                           (pdf-tools-org-edges-to-region
+                                                            (pdf-annot-get annot 'markup-edges))))))
+                                  (replace-regexp-in-string "\n" " " highlighted-text))
+                              nil))
                            (note (pdf-annot-get annot 'contents)))
 
                        (insert (if compact "- " "* "))
@@ -6639,17 +6674,25 @@ need region."
                   annots)
                  )))
 
-            (defhydra malb/hydra-pdf-annot (:color blue)
-              "export annotations to"
-              ("o" (lambda () (interactive) (malb/pdf-annot-export-as-org 1)) "org-mode (compact)")
-              ("O" malb/pdf-annot-export-as-org "org-mode")
-              ("m" (lambda () (interactive) (malb/pdf-annot-export-as-md  1)) "markdown (compact)")
-              ("M" malb/pdf-annot-export-as-md "markdown")
+            (defhydra malb/hydra-pdf-extract (:color blue)
+              "
+Org:       _o_ compact  _O_ normal     _t_ table
+Markdown:  _m_ compact  _M_ normal
+Other:     _p_ plain    _c_ csv table  _j_ json table
+"
+              ("o" (lambda () (interactive) (malb/pdf-annot-export-as-org 1)))
+              ("O" malb/pdf-annot-export-as-org)
+              ("m" (lambda () (interactive) (malb/pdf-annot-export-as-md  1)))
+              ("M" malb/pdf-annot-export-as-md)
+              ("c" (lambda () (interactive) (malb/pdf-extract-table "CSV")))
+              ("j" (lambda () (interactive) (malb/pdf-extract-table "JSON")))
+              ("t" (lambda () (interactive) (malb/pdf-extract-table)))
+              ("p" (lambda () (interactive) (malb/pdf-extract-text)))
               ("q" nil "cancel"))
 
             (bind-key "s h" #'malb/pdf-view-llncs-from-bounding-box pdf-view-mode-map)
             (bind-key "D" #'dedicated-mode pdf-view-mode-map)
-            (bind-key "x" #'malb/hydra-pdf-annot/body pdf-view-mode-map)))
+            (bind-key "x" #'malb/hydra-pdf-extract/body pdf-view-mode-map)))
 #+END_SRC
 
 * Directories
