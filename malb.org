@@ -6875,8 +6875,8 @@ Uses baloo to find files."
           (left-tmp (make-temp-name "/tmp/left"))
           (right-tmp (make-temp-name "/tmp/right")))
 
-    (shell-command (format "pdftotext -nopgbrk %s %s" left left-tmp) nil)
-    (shell-command (format "pdftotext -nopgbrk %s %s" right right-tmp) nil)
+    (shell-command (format "pdftotext -layout -nopgbrk %s %s" left left-tmp) nil)
+    (shell-command (format "pdftotext -layout -nopgbrk %s %s" right right-tmp) nil)
     (ediff-files left-tmp right-tmp)))
 #+END_SRC
 
