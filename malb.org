@@ -1338,7 +1338,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
   (thing-at-point 'symbol)) ;; I’m going back and forth what I prefer
 
 (setq malb/helm-swoop-ignore-major-mode
-      '(dired-mode paradox-menu-mode doc-view-mode pdf-view-mode mu4e-headers-mode org-mode markdown-mode latex-mode))
+      '(dired-mode paradox-menu-mode doc-view-mode pdf-view-mode mu4e-headers-mode org-mode markdown-mode latex-mode ein:notebook-multilang-mode))
 
 (defun malb/swoop-or-search ()
   (interactive)
