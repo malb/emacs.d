@@ -7434,9 +7434,9 @@ In emacs minibuffer prompt, when you press the left arrow key, the cursor will m
 Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-(setq history-length t)
+(setq history-length 128)
 (setq history-delete-duplicates t)
-(setq savehist-save-minibuffer-history 1)
+(setq savehist-save-minibuffer-history t)
 (setq savehist-additional-variables
       '(kill-ring
         search-ring
