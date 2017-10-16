@@ -3541,7 +3541,8 @@ Make bug references in comments and string clickable
 #+BEGIN_SRC emacs-lisp
 (use-package dtrt-indent
   :ensure t
-  :config (progn (dtrt-indent-mode t)))
+  :config (progn (dtrt-indent-mode t)
+                 (setq dtrt-indent-active-mode-line-info "")))
 #+END_SRC
 
 **** Agressive Indenting
