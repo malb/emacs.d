@@ -4282,14 +4282,15 @@ On our system port 8888 is already taken.
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
-  :commands (ein:notebook-open)
+  :commands (ein:notebook-open ein:query-ipython-version)
   :config (progn
             (setq ein:use-auto-complete t
                   ein:complete-on-dot nil
                   ein:completion-backend 'ein:use-company-backend
                   ein:url-or-port '(8890 8889)
                   ein:default-url-or-port 8890
-                  ein:console-args '("--simple-prompt"))
+                  ein:console-args '("--simple-prompt")
+                  ein:console-security-dir "")
 
             (defun malb/ein-hook ()
               (toggle-truncate-lines t))
@@ -4538,6 +4539,7 @@ Shortcut for Sage Jupyter notebook.
           (venv-deactivate) ;; avoid weird interactions
           (prodigy-start-service sage)
           (sleep-for 1.5))))
+  (venv-workon "sage-devel")
   (ein:query-ipython-version 8890 t)
   (ein:notebooklist-login 8890 malb/sage-notebook-password)
   (ein:notebooklist-open 8890))
