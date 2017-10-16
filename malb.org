@@ -4117,6 +4117,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
+            (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
 
             ;; Fold logical units
             ;; (add-hook 'python-mode-hook #'origami-mode)
