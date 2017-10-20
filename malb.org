@@ -4401,9 +4401,51 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
               (add-to-list 'company-global-modes 'sage-shell:sage-mode t)
               (add-to-list 'company-global-modes 'sage-shell-mode t))
 
+
+            (add-hook 'sage-shell-after-prompt-hook #'sage-shell-view-mode)
+            (setq sage-shell-view-default-commands 'plots
+                  sage-shell-view-scale 1.5)
+
             (setq sage-shell:input-history-cache-file (concat user-emacs-directory "sage_shell_input_history")
                   sage-shell:sage-executable malb/sage-executable
                   ac-sage-show-quick-help t)
+
+            (defun malb/toggle-sage ()
+              ""
+              (interactive)
+              (let* ((parent (if (buffer-file-name)
+                                 (file-name-directory (buffer-file-name))
+                               default-directory))
+                     (height (/ (window-total-height) 3))
+                     (name   "*Sage*" ;; (concat "*Sage<" (if (projectile-project-p)
+                             ;;                      (projectile-project-name)
+                             ;;                    (car (last (split-string parent "/" t)))) ">*")
+                             )
+                     (golden-ratio-mode nil)
+                     (window (get-buffer-window name)))
+                (if (and window (<= (window-height window) (/ (frame-height) 3)))
+                    (progn
+                      (select-window window)
+                      (delete-window))
+                  (progn
+                    (split-window-vertically (- height))
+                    (other-window 1)
+                    (if (get-buffer name)
+                        (progn
+                          (switch-to-buffer name)
+                          (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+                      (progn
+                        (venv-deactivate)
+                        (sage-shell:run-sage "sage")
+                        (rename-buffer name)
+                        (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))))))
+
+            (defun malb/kill-buffer (old-function &rest arguments)
+              (apply old-function arguments)
+              (let ((kill-buffer-query-functions nil))
+                (kill-buffer)))
+
+            (advice-add 'sage-shell:send-eof :around  #'malb/kill-buffer)
 
             (bind-key "C-<up>" #'comint-previous-matching-input-from-input sage-shell-mode-map)
             (bind-key "C-<down>" #'comint-next-matching-input-from-input sage-shell-mode-map)
@@ -8282,6 +8324,7 @@ prefix argument is given ask for voice first."
 (malb/set-menu-key "o" #'malb/helm-org-rifle-agenda-files)
 (malb/set-menu-key "P" #'prodigy)
 (malb/set-menu-key "p" #'pandoc-main-hydra/body)
+(malb/set-menu-key "s" #'malb/toggle-sage)
 (malb/set-menu-key "x" #'helm-M-x)
 (malb/set-menu-key "z" #'malb/toggle-multi-term)
 #+END_SRC
