@@ -2455,7 +2455,7 @@ Working with source code in org-mode.
 
         (type "BLOG(b)"
               "REPLY(r)"
-              "TALK(k)"
+              "CALL"
               "LOAD"
               "|" "DONE")))
 
