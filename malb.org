@@ -7059,11 +7059,12 @@ If an eshell with the same name is already shown, its window is closed."
             (add-hook 'eshell-mode-hook #'malb/eshell-keys)
 
             (setenv "PAGER" "cat") ;; https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org
-            (setq eshell-visual-subcommands '(("git" "log" "diff" "show")))
+            (setq eshell-visual-subcommands '(("git"  ("log" "diff" "show"))
+                                              ("tmux" ("attach" "new"))))
 
             (defun malb/eshell-add-visual-commands ()
               (add-to-list 'eshell-visual-commands "htop")
-              (add-to-list 'eshell-visual-commands "tmux"))
+              (add-to-list 'eshell-visual-commands "ssh"))
 
             (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
 
@@ -7083,6 +7084,17 @@ If an eshell with the same name is already shown, its window is closed."
             (defalias 'eshell/emacs 'find-file)
             (defalias 'eshell/less  'view-file)
 
+            (defun eshell/clear ()
+              "Clear the eshell buffer."
+              (let ((inhibit-read-only t))
+                (erase-buffer)
+                (eshell-send-input)))
+
+            (setq eshell-input-filter
+                  (lambda (str)
+                    (not (or (string= "" str)
+                             (string-prefix-p " " str)))))
+
             (defun eshell/ag (&optional dir)
               (malb/helm-ag (file-name-as-directory
                              (expand-file-name (or dir ".")))))
@@ -7097,6 +7109,7 @@ If an eshell with the same name is already shown, its window is closed."
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
             (setq eshell-scroll-to-bottom-on-input t
+                  eshell-destroy-buffer-when-process-dies t
                   eshell-history-size 8192
                   eshell-buffer-maximum-lines 16384
                   eshell-hist-ignoredups t
