@@ -7192,6 +7192,14 @@ Cat directly into a buffer (select with =C-c M-b=)
 cat mylog.log >> #<buffer *scratch*>
 #+END_SRC
 
+** Tmux
+
+#+BEGIN_SRC emacs-lisp
+(use-package emamux
+  :ensure t
+  :config (setq emamux:completing-read-type 'helm))
+#+END_SRC
+
 * Diagrams
 ** [[http://plantuml.com/][PlantUML]]
 
