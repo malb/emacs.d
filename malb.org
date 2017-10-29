@@ -5520,17 +5520,39 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
             (helm-bibtex-helmify-action malb/bibtex-completion-google-this
                                         helm-malb/bibtex-completion-google-this)
 
-            (defun bibtex-completion-find-pdf-in-library (key-or-entry)
-              "Searches the directories in `helm-bibtex-library-path' for a
-PDF whose names is composed of the BibTeX key plus \".pdf\".  The
-path of the first matching PDF is returned."
+
+            (defun bibtex-completion-find-pdf-in-library (key-or-entry &optional find-additional)
+              "Searches the directories in `bibtex-completion-library-path'
+for a PDF whose name is composed of the BibTeX key plus
+`bibtex-completion-pdf-extension'.  The path of the first matching
+PDF is returned.
+
+If FIND-ADDITIONAL is non-nil, the paths of all PDFs whose name
+starts with the BibTeX key and ends with
+`bibtex-completion-pdf-extension' are returned instead."
               (let* ((key (if (stringp key-or-entry)
                               key-or-entry
                             (bibtex-completion-get-value "=key=" key-or-entry)))
-                     (path (-first 'f-file?
-                                   (--map (f-join it (s-concat (s-replace ":" "_" key) ".pdf"))
-                                          (-flatten (list bibtex-completion-library-path))))))
-                (when path (list path))))
+                     (main-pdf (cl-loop
+                                for dir in (-flatten bibtex-completion-library-path)
+                                append (cl-loop
+                                        for ext in (-flatten bibtex-completion-pdf-extension)
+                                        collect (f-join dir (s-concat (s-replace ":" "_" key) ext))))))
+                (if find-additional
+                    (sort ; move main pdf on top of the list if needed
+                     (cl-loop
+                      for dir in (-flatten bibtex-completion-library-path)
+                      append (directory-files dir t
+                                              (s-concat "^" (regexp-quote (s-replace ":" "_" key))
+                                                        ".*\\("
+                                                        (mapconcat 'regexp-quote
+                                                                   (-flatten bibtex-completion-pdf-extension)
+                                                                   "\\|")
+                                                        "\\)$")))
+                     (lambda (x y)
+                       (and (member x main-pdf)
+                            (not (member y main-pdf)))))
+                  (-flatten (-first 'f-file? main-pdf)))))
 
             (defun bibtex-completion-add-pdf-to-library (keys)
               "Add a PDF to the library for the first selected entry. The PDF
