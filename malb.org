@@ -1714,10 +1714,6 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                                        sp-point-before-same-p
                                        sp-latex-point-after-backslash)))
 
-            (add-to-list 'sp-navigate-consider-stringlike-sexp 'latex-mode)
-
-            ;; (add-to-list 'sp-ignore-modes-list 'latex-mode)
-
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
 
