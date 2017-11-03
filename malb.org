@@ -7731,6 +7731,14 @@ Spray is a speed reading mode.
             (add-to-list 'spray-unsupported-minor-modes 'beacon-mode)))
 #+END_SRC
 
+* Alert
+
+#+BEGIN_SRC emacs-lisp
+(use-package alert
+  :config (setq alert-default-style 'libnotify))
+#+END_SRC
+
+
 * File Types
 ** Log Files
 
