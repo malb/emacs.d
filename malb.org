@@ -6961,6 +6961,9 @@ We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/m
             (setq term-buffer-maximum-size 16384)
             (add-to-list 'term-bind-key-alist '("S-<left>"  . multi-term-prev))
             (add-to-list 'term-bind-key-alist '("S-<right>" . multi-term-next))
+            ;; rebind C-r to the terminal's native one
+            (setq term-bind-key-alist (remove* '"C-r" term-bind-key-alist :test 'equal :key 'car))
+            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
             (bind-key "C-y" #'term-paste term-raw-map)
 
             (defun malb/term-send-tab ()
