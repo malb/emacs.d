@@ -7663,8 +7663,6 @@ buffer is not visiting a file."
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 #+END_SRC
 
-
-
 ** Scratch
 
 We don’t want the *scratch* buffer to be killed ever.
