@@ -2551,8 +2551,7 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
 
 Targets include this file and any file contributing to the agenda - up to 9 levels deep
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9)))
-      org-refile-use-outline-path nil)
+(setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9))))
 #+END_SRC
 
 Stop using paths for refile targets - we file directly with helm
