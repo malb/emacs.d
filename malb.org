@@ -5687,50 +5687,57 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 ** Queries
 
+([[https://melpa.org/#/mu4e-query-fragments][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-query-fragments
+  :ensure t
+  :config (setq mu4e-query-fragments-list
+                '(("%hidden" . "flag:trashed")
+                  ("%unread" . "flag:unread AND NOT %hidden")
+                  ("%today"  . "date:today..now")
+                  ("%week"   . "date:7d..now")
+                  ("%month"  . "date:31d..now")
+                  ("%inbox"  . "maildir:\"/royal holloway\" OR maildir:/INBOX")
+                  ("%sent"   . "maildir:\"/[Google Mail]/.Sent Mail\" OR maildir:\"/royal holloway/.sent\"")
+                  ("%direct" . "%inbox AND NOT flag:list AND NOT %hidden"))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-jump-to-list
+  :ensure t)
+#+END_SRC
+
 Canned queries.
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-bookmarks nil)               ; clear out
 
-(add-to-list 'mu4e-bookmarks '("flag:unread AND NOT flag:trashed" "Unread" ?u) t)
+(add-to-list 'mu4e-bookmarks '("%unread" "Unread" ?u) t)
+
+(add-to-list 'mu4e-bookmarks '("%unread AND %direct" "Unread (direct)" ?i) t)
+
+(add-to-list 'mu4e-bookmarks
+             '("%unread AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
+               "Unread (bulk)" ?l) t)
+
+(add-to-list 'mu4e-bookmarks '("flag:flagged" "Flagged" ?f) t)
+
+(add-to-list 'mu4e-bookmarks '("%today" "Today's" ?t) t)
+(add-to-list 'mu4e-bookmarks '("%week"  "Last 7 days" ?w) t)
+
+(add-to-list 'mu4e-bookmarks '("%direct AND %week" "Last 7 days (direct)" ?W) t)
+
+(add-to-list
+ 'mu4e-bookmarks '("%inbox AND %week AND NOT (flag:replied OR flag:passed OR flag:trashed OR flag:list)"
+                   "Last 7 days (direct, unanswered)" ?R) t)
+
+(add-to-list 'mu4e-bookmarks '("%sent AND %week" "Last 7 days (sent)" ?s) t)
 
 (add-to-list
  'mu4e-bookmarks
- '("flag:unread NOT flag:trashed AND NOT flag:list AND (maildir:\"/royal holloway\" OR maildir:/INBOX)"
-   "Unread (direct)" ?i) t)
-
-(add-to-list
- 'mu4e-bookmarks
- '("flag:unread NOT flag:trashed AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
-   "Unread (bulk)" ?l) t)
-
-(add-to-list
- 'mu4e-bookmarks
- '("flag:flagged"
-   "Flagged" ?f) t)
-
-(add-to-list 'mu4e-bookmarks '("date:today..now" "Today's" ?t) t)
-(add-to-list 'mu4e-bookmarks '("date:7d..now" "Last 7 days" ?w) t)
-
-(add-to-list
- 'mu4e-bookmarks
- '("(maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:7d..today AND NOT (flag:trashed OR flag:list)"
-   "Last 7 days (direct)" ?W) t)
-
-(add-to-list
- 'mu4e-bookmarks
- '("(maildir:\"/royal holloway\" OR maildir:/INBOX) AND (date:7d..today) AND NOT (flag:replied OR flag:passed OR flag:trashed OR flag:list)"
-   "Last 7 days (direct, unanswered)" ?R) t)
-
-(add-to-list
- 'mu4e-bookmarks
- '("(maildir:\"/[Google Mail]/.Sent Mail\" OR maildir:\"/royal holloway/.sent\") AND date:7d..now"
-   "Last 7 days (sent)" ?s) t)
-
-(add-to-list
- 'mu4e-bookmarks
- '("mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M AND (maildir:\"/royal holloway\" OR maildir:/INBOX) AND date:30d..today"
-   "Documents (30 days)" ?d) t)
+ '("mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M AND %inbox AND %month"
+   "Documents (31 days)" ?d) t)
 #+END_SRC
 
 ** Retrieving
@@ -6034,8 +6041,8 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
             (dolist (mode-map '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map))
               (unbind-key "s" mode-map)
-              (bind-key "ss" #'mu4e-headers-search mode-map)
-              (bind-key "sm" #'mu4e-headers-search mode-map)
+              (bind-key "ss" #'mu4e-query-fragments-search mode-map)
+              (bind-key "sm" #'mu4e-query-fragments-search mode-map)
               (bind-key "sh" #'malb/helm-mu mode-map)
               (bind-key "sc" (defun malb/helm-mu-contacts-messages ()
                                (interactive)
