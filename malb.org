@@ -2550,6 +2550,7 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
 ** Refiling
 
 Targets include this file and any file contributing to the agenda - up to 9 levels deep
+
 #+BEGIN_SRC emacs-lisp
 (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 9))))
 #+END_SRC
@@ -7744,7 +7745,6 @@ Spray is a speed reading mode.
 (use-package alert
   :config (setq alert-default-style 'libnotify))
 #+END_SRC
-
 
 * File Types
 ** Log Files
