@@ -7144,6 +7144,16 @@ If an eshell with the same name is already shown, its window is closed."
                   eshell-plain-echo-behavior t)))
 #+END_SRC
 
+*** Fish completion
+
+([[https://github.com/Ambrevar/emacs-fish-completion][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package fish-completion
+  :ensure t
+  :config (global-fish-completion-mode))
+#+END_SRC
+
 *** Git prompt
 
 #+BEGIN_SRC emacs-lisp
