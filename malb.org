@@ -1307,15 +1307,25 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 #+BEGIN_SRC emacs-lisp
 (use-package helm-flx
   :ensure t
-  :disabled
+  :disabled ;; performance
   :config (progn
-            ;; these are helm configs, but they kind of fit here nicely
             (setq  helm-flx-for-helm-find-files t
                    helm-flx-for-helm-locate     t)
             (helm-flx-mode +1)))
 #+END_SRC
 
-*Note:* disabled because it slows down helm after a day or so of Emacs uptime.
+From the website:
+
+#+BEGIN_QUOTE
+The =flx= algorithm willingly sacrifices memory usage for speed. For 10k file names, about 10 MB of memory will be used to speed up future matching. This memory is never released to keep the match speed fast. So far with modern computers, this feels like a reasonable design decision. It may change in future.
+#+END_QUOTE
+
+To reset call:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq flx-file-cache (flx-make-filename-cache))
+(setq flx-strings-cache (flx-make-string-cache))
+#+END_SRC
 
 ** Helm Ring
 
