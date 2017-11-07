@@ -7089,7 +7089,8 @@ If an eshell with the same name is already shown, its window is closed."
 
             (defun malb/eshell-add-visual-commands ()
               (add-to-list 'eshell-visual-commands "htop")
-              (add-to-list 'eshell-visual-commands "ssh"))
+              (add-to-list 'eshell-visual-commands "ssh")
+              (add-to-list 'eshell-visual-commands "vim"))
 
             (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
 
@@ -7105,6 +7106,7 @@ If an eshell with the same name is already shown, its window is closed."
 
             (defalias 'eshell/q     'malb/quit-bottom-disposable-windows)
             (defalias 'eshell/en    'find-file)
+            (defalias 'eshell/vim    'find-file) ;; muscle memory
             (defalias 'eshell/d     'dired)
             (defalias 'eshell/emacs 'find-file)
             (defalias 'eshell/less  'view-file)
