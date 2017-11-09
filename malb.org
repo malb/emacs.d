@@ -3083,7 +3083,7 @@ DEADLINE: %t
 
                     ("e" "[e]-mail")
 
-                    ("er" "quick capture of task for [r]esponding to an [e]-mail"
+                    ("er" "quick create a task for [r]esponding to an [e]-mail"
                      entry (file+headline malb/inbox-org "E-Mail")
                      "* REPLY to %:fromname on %a
 DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
@@ -3106,7 +3106,7 @@ DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
                      :immediate-finish nil :prepend nil :empty-lines 0)
 
                     ("et" "create a [t]ask linked to an [e]-mail"
-                     entry (file+headline malb/inbox-org "E-Mail")
+                     entry (file+headline malb/work-org "Admin")
                      "* TODO %?
 SCHEDULED: %(org-time-stamp nil)
 :PROPERTIES:
@@ -3117,6 +3117,32 @@ SCHEDULED: %(org-time-stamp nil)
 
 See %a by %:fromname
 " :immediate-finish nil :prepend t :empty-lines 1)
+
+                    ("eo" "quick create an [o]ffice task linked to an [e]-mail"
+                     entry (file+headline malb/work-org "Admin")
+                     "* TODO %a (%:fromname) :@office:
+SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
+                             (thu (org-read-date nil t \"Thu\")))
+                         (if (time-less-p tue thu)
+                             tue
+                           thu)))
+:PROPERTIES:
+:CREATED: %U
+:END:
+" :immediate-finish t :prepend t :empty-lines 1)
+
+                    ("en" "quick create an on-the-trai[n] task linked to an [e]-mail"
+                     entry (file+headline malb/work-org "Admin")
+                     "* TODO %a (%:fromname) :@train:
+SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
+                             (thu (org-read-date nil t \"Thu\")))
+                         (if (time-less-p tue thu)
+                             tue
+                           thu)))
+:PROPERTIES:
+:CREATED: %U
+:END:
+" :immediate-finish t :prepend t :empty-lines 1)
 
                     ("j" "add entry to [j]ournal"
                      entry (file+datetree (lambda () (expand-file-name "journal.org"
@@ -3155,6 +3181,8 @@ See %a by %:fromname
             (setq org-capture-templates-contexts
                   '(("er" ((in-mode . "mu4e-view-mode")))
                     ("et" ((in-mode . "mu4e-view-mode")))
+                    ("eo" ((in-mode . "mu4e-view-mode")))
+                    ("en" ((in-mode . "mu4e-view-mode")))
                     ("ef" ((in-mode . "mu4e-view-mode")))
                     ("es" ((in-mode . "mu4e-headers-mode")))))))
 #+END_SRC
@@ -3169,6 +3197,17 @@ See %a by %:fromname
                          :immediate-finish nil
                          :prepend t) t))
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-view-org-capture (arg)
+  "Call `org-capture' followed by removing flag from e-mail."
+  (interactive "P")
+  (org-capture arg)
+  (mu4e-view-mark-for-unflag))
+
+(bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
+#+END_SRC
+
 
 ** Web Tools
 
