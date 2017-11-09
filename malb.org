@@ -8015,7 +8015,7 @@ Diminish =abbrev-mode=
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
 
 #+BEGIN_SRC emacs-lisp
-(defun rename-current-buffer-file ()
+(defun malb/rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
   (let ((name (buffer-name))
