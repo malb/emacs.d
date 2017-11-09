@@ -8063,6 +8063,20 @@ buffer is not visiting a file."
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 #+END_SRC
 
+Run a command in a named compile buffer ([[https://ivanmalison.github.io/dotfiles/#namedcompile][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/named-compile (command)
+  (interactive
+   (list
+    (let ((command (eval compile-command)))
+      (if (or compilation-read-command current-prefix-arg)
+          (compilation-read-command command)
+        command))))
+  (compilation-start command nil (lambda (&rest args)
+                                   (format "*compilation %s*" command))))
+#+END_SRC
+
 ** Scratch
 
 We don’t want the *scratch* buffer to be killed ever.
