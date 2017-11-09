@@ -4458,35 +4458,11 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                   sage-shell:sage-executable malb/sage-executable
                   ac-sage-show-quick-help t)
 
-            (defun malb/toggle-sage ()
-              ""
-              (interactive)
-              (let* ((parent (if (buffer-file-name)
-                                 (file-name-directory (buffer-file-name))
-                               default-directory))
-                     (height (/ (window-total-height) 3))
-                     (name   "*Sage*" ;; (concat "*Sage<" (if (projectile-project-p)
-                             ;;                      (projectile-project-name)
-                             ;;                    (car (last (split-string parent "/" t)))) ">*")
-                             )
-                     (golden-ratio-mode nil)
-                     (window (get-buffer-window name)))
-                (if (and window (<= (window-height window) (/ (frame-height) 3)))
-                    (progn
-                      (select-window window)
-                      (delete-window))
-                  (progn
-                    (split-window-vertically (- height))
-                    (other-window 1)
-                    (if (get-buffer name)
-                        (progn
-                          (switch-to-buffer name)
-                          (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-                      (progn
-                        (venv-deactivate)
-                        (sage-shell:run-sage "sage")
-                        (rename-buffer name)
-                        (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))))))
+            (fset 'malb/toggle-sage
+                  (malb/make-toggle-shell "Sage"
+                                          '(progn (venv-deactivate) (sage-shell:run-sage "sage"))
+                                          nil
+                                          nil))
 
             (defun malb/kill-buffer (old-function &rest arguments)
               (apply old-function arguments)
@@ -7336,107 +7312,96 @@ We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/m
 (setenv "PAGER" "cat")
 #+END_SRC
 
+** Toggle Shells
+
+ Open various shells at point, close with =x= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]] and from ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]).
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/make-toggle-shell (shell-name shell-cmd &optional post-exec per-project)
+  "Create function to toggle a shell-like thing in current project/directory.
+
+The function behaves as follows:
+
+- The shell-like buffer is renamed to match the current projectile
+  project or directory to make multiple windows easier.
+- If a buffer of the same name already exists, it is reused.
+- If a buffer with the same name is already shown, its window is closed.
+- `post-exec` is run after the shell is created.
+"
+  `(lambda ()
+     (interactive)
+     (let* ((parent (if (buffer-file-name)
+                        (file-name-directory (buffer-file-name))
+                      default-directory))
+            (height (/ (window-total-height) 3))
+            (name   (if ,per-project
+                        (concat "*" ,shell-name
+                                "[" (if (projectile-project-p)
+                                        (projectile-project-name)
+                                      (car (last (split-string parent "/" t)))) "]" "*")
+                      ,shell-name))
+            (golden-ratio-mode nil)
+            (window (get-buffer-window name)))
+       (if (and window (<= (window-height window) (/ (frame-height) 3)))
+           (progn
+             (select-window window)
+             (delete-window))
+         (progn
+           (split-window-vertically (- height))
+           (other-window 1)
+           (if (get-buffer name)
+               (progn
+                 (switch-to-buffer name)
+                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+             (progn
+               ,shell-cmd
+               (rename-buffer name)
+               (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+               ,post-exec)))))))
+#+END_SRC
+
 ** Multi-Term
 
-[[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs. =malb/multi-term-here= opens terminal at point, close with =q= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]].
+[[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs.
 
 #+BEGIN_SRC emacs-lisp
 (use-package multi-term
   :ensure t
   :config (progn
             (setq term-buffer-maximum-size 16384)
+
             (add-to-list 'term-bind-key-alist '("S-<left>"  . multi-term-prev))
             (add-to-list 'term-bind-key-alist '("S-<right>" . multi-term-next))
+            (add-to-list 'term-bind-key-alist '("<tab>" . malb/term-send-tab))
+            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
+
+            (bind-key "C-y" #'term-paste term-raw-map)
+
             ;; rebind C-r to the terminal's native one
             (setq term-bind-key-alist (remove* '"C-r" term-bind-key-alist :test 'equal :key 'car))
-            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
-            (bind-key "C-y" #'term-paste term-raw-map)
 
             (defun malb/term-send-tab ()
               "Send tab in term mode."
               (interactive)
               (term-send-raw-string "\t"))
-            (add-to-list 'term-bind-key-alist '("<tab>" . malb/term-send-tab))
 
-            (defun malb/toggle-multi-term ()
-              "Toggles an multi-term in the project/directory associated with the current buffer.
-
-The multi-term is renamed to match the current projectile project
-or directory to make multiple multi-term windows easier. If a
-multi-term of the same name already exists, it is reused.
-
-If a multi-term with the same name is already shown, its window
-is closed."
-              (interactive)
-              (let* ((parent (if (buffer-file-name)
-                                 (file-name-directory (buffer-file-name))
-                               default-directory))
-                     (height (/ (window-total-height) 3))
-                     (name   (concat "*terminal<" (if (projectile-project-p)
-                                                      (projectile-project-name)
-                                                    (car (last (split-string parent "/" t)))) ">*"))
-                     (golden-ratio-mode nil)
-                     (window (get-buffer-window name)))
-                (if (and window (<= (window-height window) (/ (frame-height) 3)))
-                    (progn
-                      (select-window window)
-                      (delete-window))
-                  (progn
-                    (split-window-vertically (- height))
-                    (other-window 1)
-                    (if (get-buffer name)
-                        (progn
-                          (switch-to-buffer name)
-                          (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-                      (progn (multi-term)
-                             (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
-                             (rename-buffer name)
-                             (insert (concat "ls"))
-                             (term-send-input)))))))))
+            (fset 'malb/toggle-multi-term
+                  (malb/make-toggle-shell "multi-term"
+                                          '(multi-term)
+                                          '(progn (insert "ls") (term-send-input)) t))))
 #+END_SRC
 
 ** EShell
 
-=malb/toggle-eshell= ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]) and other stuff ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
+([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package eshell
   :config (progn
-            (defun malb/toggle-eshell ()
-              "Toggles an eshell in the project/directory associated with the current buffer.
-
-The eshell is renamed to match the current projectile project or
-directory to make multiple eshell windows easier. If an eshell of
-the same name already exists, it is reused.
-
-If an eshell with the same name is already shown, its window is closed."
-              (interactive)
-              (let* ((parent (if (buffer-file-name)
-                                 (file-name-directory (buffer-file-name))
-                               default-directory))
-                     (height (/ (window-total-height) 3))
-                     (name   (concat "*eshell<" (if (projectile-project-p)
-                                                    (projectile-project-name)
-                                                  (car (last (split-string parent "/" t)))) ">*"))
-                     (golden-ratio-mode nil)
-                     (window (get-buffer-window name)))
-                (if (and window (<= (window-height window) (/ (frame-height) 3)))
-                    (progn
-                      (select-window window)
-                      (delete-window))
-                  (progn
-                    (split-window-vertically (- height))
-                    (other-window 1)
-                    (if (get-buffer name)
-                        (progn
-                          (switch-to-buffer name)
-                          (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-                      (progn
-                        (eshell "new")
-                        (rename-buffer name)
-                        (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
-                        (insert (concat "ls"))
-                        (eshell-send-input)))))))
+            (fset 'malb/toggle-eshell
+                  (malb/make-toggle-shell "eshell"
+                                          '(eshell "new")
+                                          '(progn (insert "ls") (eshell-send-input)) t))
 
             (bind-key "C-§" #'malb/toggle-eshell)
 
@@ -7449,7 +7414,6 @@ If an eshell with the same name is already shown, its window is closed."
             ;; for some reason this needs to be a hook
             (add-hook 'eshell-mode-hook #'malb/eshell-keys)
 
-            (setenv "PAGER" "cat") ;; https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org
             (setq eshell-visual-subcommands '(("git"  ("log" "diff" "show"))
                                               ("tmux" ("attach" "new"))))
 
