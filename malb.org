@@ -7602,6 +7602,47 @@ cat mylog.log >> #<buffer *scratch*>
   :config (setq emamux:completing-read-type 'helm))
 #+END_SRC
 
+** Zsh History
+
+#+BEGIN_SRC emacs-lisp
+(defvar malb/helm-c-source-zsh-history
+  '((name . "Zsh History")
+    (candidates . malb/helm-c-zsh-history-set-candidates)
+    (action . (("Insert" . malb/helm-c-zsh-history-insert)
+               ("Execute" . malb/helm-c-zsh-history-run)))
+    (volatile)
+    (requires-pattern . 3)
+    (delayed)))
+
+(defun malb/helm-c-zsh-history-set-candidates (&optional request-prefix)
+  (let ((pattern (replace-regexp-in-string
+                  " " ".*"
+                  (or (and request-prefix
+                           (concat request-prefix
+                                   " " helm-pattern))
+                      helm-pattern))))
+    (with-current-buffer (find-file-noselect "~/.zsh_history" t t)
+      (auto-revert-mode -1)
+      (goto-char (point-max))
+      (loop for pos = (re-search-backward pattern nil t)
+            while pos
+            collect (replace-regexp-in-string
+                     "\\`:.+?;" ""
+                     (buffer-substring (line-beginning-position)
+                                       (line-end-position)))))))
+
+(defun malb/helm-c-zsh-history-insert (candidate)
+  (insert candidate))
+
+(defun malb/helm-c-zsh-history-run (candidate)
+  (malb/named-compile candidate))
+
+(defun malb/helm-command-from-zsh ()
+  (interactive)
+  (require 'helm)
+  (helm-other-buffer 'malb/helm-c-source-zsh-history "*helm zsh history*"))
+#+END_SRC
+
 * Diagrams
 ** [[http://plantuml.com/][PlantUML]]
 
