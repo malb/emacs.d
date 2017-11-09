@@ -6963,7 +6963,8 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
             (pdf-tools-install)
             (setq-default pdf-view-display-size 'fit-page)
 
-            (setq pdf-annot-activate-created-annotations t)
+            (setq pdf-view-resize-factor 1.1
+                  pdf-annot-activate-created-annotations t)
 
             (defun malb/pdf-extract-table (&optional format)
               (let* ((format- (upcase (or format "CSV")))
