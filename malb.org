@@ -7651,9 +7651,12 @@ deactivate Client
   :ensure t
   :config (setq calendar-week-start-day 1))
 
-(use-package calfw-cal)
-(use-package calfw-ical)
-(use-package calfw-org)
+(use-package calfw-cal
+  :ensure t)
+(use-package calfw-ical
+  :ensure t)
+(use-package calfw-org
+  :ensure t)
 #+END_SRC
 
 * Transfer.sh
