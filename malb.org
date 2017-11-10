@@ -8202,6 +8202,15 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
             (set-face-attribute 'stripe-highlight nil :background "#eee8d5")))
 #+END_SRC
 
+** Auto Dim other Buffers
+
+([[https://github.com/mina86/auto-dim-other-buffers.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package auto-dim-other-buffers
+  :ensure t)
+#+END_SRC
+
 ** Theme
 
 Use a solarized patched to be less yellow by changing
@@ -8256,6 +8265,11 @@ The result looks like this:
                                     :foreground "#657b83" :slant 'normal)
                 (set-face-attribute 'org-block nil
                                     :foreground "#657b83"
+                                    :background (solarized-with-color-variables
+                                                  'light
+                                                  (solarized-color-blend base02 base03 0.3)))
+
+                (set-face-attribute 'auto-dim-other-buffers-face nil
                                     :background (solarized-with-color-variables
                                                   'light
                                                   (solarized-color-blend base02 base03 0.3)))
