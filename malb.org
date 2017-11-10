@@ -2568,7 +2568,7 @@ Targets include this file and any file contributing to the agenda - up to 9 leve
 
 Stop using paths for refile targets - we file directly with helm
 #+BEGIN_SRC emacs-lisp
-(setq org-refile-use-outline-path nil)
+(setq org-refile-use-outline-path t)
 #+END_SRC
 
 Allow refile to create parent tasks with confirmation
