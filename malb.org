@@ -7328,13 +7328,13 @@ The function behaves as follows:
 - If a buffer with the same name is already shown, its window is closed.
 - `post-exec` is run after the shell is created.
 "
-  `(lambda ()
-     (interactive)
+  `(lambda (arg)
+     (interactive "P")
      (let* ((parent (if (buffer-file-name)
                         (file-name-directory (buffer-file-name))
                       default-directory))
             (height (/ (window-total-height) 3))
-            (name   (if ,per-project
+            (name   (if (and (not arg) ,per-project)
                         (concat "*" ,shell-name
                                 "[" (if (projectile-project-p)
                                         (projectile-project-name)
@@ -7380,6 +7380,8 @@ The function behaves as follows:
             ;; rebind C-r to the terminal's native one
             (setq term-bind-key-alist (remove* '"C-r" term-bind-key-alist :test 'equal :key 'car))
 
+            (setq multi-term-switch-after-close nil)
+
             (defun malb/term-send-tab ()
               "Send tab in term mode."
               (interactive)
@@ -7387,7 +7389,7 @@ The function behaves as follows:
 
             (fset 'malb/toggle-multi-term
                   (malb/make-toggle-shell "multi-term"
-                                          '(multi-term)
+                                          '(let ((current-prefix-arg nil)) (multi-term))
                                           '(progn (insert "ls") (term-send-input)) t))))
 #+END_SRC
 
