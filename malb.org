@@ -3356,6 +3356,312 @@ In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =v
 emacs --batch -l ~/.emacs.d/org-export-init.el file.org -f org-latex-export-to-pdf
 #+END_SRC
 
+* Shells
+
+We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#eshell-and-shell-environment][source]])
+
+#+BEGIN_SRC emacs-lisp
+(setenv "PAGER" "cat")
+#+END_SRC
+
+** Toggle Shells
+
+ Open various shells at point, close with =x= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]] and from ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]).
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/make-toggle-shell (shell-name shell-cmd &optional post-exec per-project)
+  "Create function to toggle a shell-like thing in current project/directory.
+
+The function behaves as follows:
+
+- The shell-like buffer is renamed to match the current projectile
+  project or directory to make multiple windows easier.
+- If a buffer of the same name already exists, it is reused.
+- If a buffer with the same name is already shown, its window is closed.
+- `post-exec` is run after the shell is created.
+"
+  `(lambda (arg)
+     (interactive "P")
+     (let* ((parent (if (buffer-file-name)
+                        (file-name-directory (buffer-file-name))
+                      default-directory))
+            (height (/ (window-total-height) 3))
+            (name   (if (and (not arg) ,per-project)
+                        (concat "*" ,shell-name
+                                "[" (if (projectile-project-p)
+                                        (projectile-project-name)
+                                      (car (last (split-string parent "/" t)))) "]" "*")
+                      ,shell-name))
+            (golden-ratio-mode nil)
+            (window (get-buffer-window name)))
+       (if (and window (<= (window-height window) (/ (frame-height) 3)))
+           (progn
+             (select-window window)
+             (delete-window))
+         (progn
+           (split-window-vertically (- height))
+           (other-window 1)
+           (if (get-buffer name)
+               (progn
+                 (switch-to-buffer name)
+                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+             (progn
+               ,shell-cmd
+               (rename-buffer name)
+               (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+               ,post-exec)))))))
+#+END_SRC
+
+** Multi-Term
+
+[[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package multi-term
+  :ensure t
+  :config (progn
+            (setq term-buffer-maximum-size 16384)
+
+            (add-to-list 'term-bind-key-alist '("S-<left>"  . multi-term-prev))
+            (add-to-list 'term-bind-key-alist '("S-<right>" . multi-term-next))
+            (add-to-list 'term-bind-key-alist '("<tab>" . malb/term-send-tab))
+            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
+
+            (bind-key "C-y" #'term-paste term-raw-map)
+
+            ;; rebind C-r to the terminal's native one
+            (setq term-bind-key-alist (remove* '"C-r" term-bind-key-alist :test 'equal :key 'car))
+
+            (setq multi-term-switch-after-close nil)
+
+            (defun malb/term-send-tab ()
+              "Send tab in term mode."
+              (interactive)
+              (term-send-raw-string "\t"))
+
+            (fset 'malb/toggle-multi-term
+                  (malb/make-toggle-shell "multi-term"
+                                          '(let ((current-prefix-arg nil)) (multi-term))
+                                          '(progn (insert "ls") (term-send-input)) t))))
+#+END_SRC
+
+** EShell
+
+([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package eshell
+  :config (progn
+            (fset 'malb/toggle-eshell
+                  (malb/make-toggle-shell "eshell"
+                                          '(eshell "new")
+                                          '(progn (insert "ls") (eshell-send-input)) t))
+
+            (bind-key "C-§" #'malb/toggle-eshell)
+
+            (defun malb/eshell-keys ()
+              (bind-key "<home>" #'eshell-bol eshell-mode-map)
+              (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
+              (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map))
+
+            ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
+            ;; for some reason this needs to be a hook
+            (add-hook 'eshell-mode-hook #'malb/eshell-keys)
+
+            (setq eshell-visual-subcommands '(("git"  ("log" "diff" "show"))
+                                              ("tmux" ("attach" "new"))))
+
+            (defun malb/eshell-add-visual-commands ()
+              (add-to-list 'eshell-visual-commands "htop")
+              (add-to-list 'eshell-visual-commands "ssh")
+              (add-to-list 'eshell-visual-commands "vim"))
+
+            (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
+
+            (defun malb/eshell-minor-modes ()
+              (smartparens-mode t))
+
+            (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
+
+            ;; mapped to 'x' in eshell
+            (defun eshell/x ()
+              (delete-window)
+              (eshell/exit))
+
+            (defalias 'eshell/q     'malb/quit-bottom-disposable-windows)
+            (defalias 'eshell/en    'find-file)
+            (defalias 'eshell/vim    'find-file) ;; muscle memory
+            (defalias 'eshell/d     'dired)
+            (defalias 'eshell/emacs 'find-file)
+            (defalias 'eshell/less  'view-file)
+
+            (defun eshell/clear ()
+              "Clear the eshell buffer."
+              (let ((inhibit-read-only t))
+                (erase-buffer)
+                (eshell-send-input)))
+
+            (setq eshell-input-filter
+                  (lambda (str)
+                    (not (or (string= "" str)
+                             (string-prefix-p " " str)))))
+
+            (defun eshell/ag (&optional dir)
+              (malb/helm-ag (file-name-as-directory
+                             (expand-file-name (or dir ".")))))
+
+            (defun malb/config-eshell-completion ()
+              (setq pcomplete-cycle-completions t
+                    pcomplete-ignore-case t)
+              (setq-local company-idle-delay nil)
+              ;; (malb/enable-company-pcomplete)
+              (define-key eshell-mode-map [remap eshell-pcomplete] #'company-complete))
+
+            (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
+
+            (setq eshell-scroll-to-bottom-on-input t
+                  eshell-destroy-buffer-when-process-dies t
+                  eshell-history-size 8192
+                  eshell-buffer-maximum-lines 16384
+                  eshell-hist-ignoredups t
+                  eshell-list-files-after-cd t
+                  eshell-ls-initial-args "-hk"
+                  eshell-buffer-shorthand t
+                  eshell-plain-echo-behavior t)))
+#+END_SRC
+
+*** Fish completion
+
+([[https://github.com/Ambrevar/emacs-fish-completion][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package fish-completion
+  :ensure t
+  :config (global-fish-completion-mode))
+#+END_SRC
+
+*** Git prompt
+
+#+BEGIN_SRC emacs-lisp
+(use-package eshell-git-prompt
+  :ensure t
+  :config (progn (eshell-git-prompt-use-theme "powerline")))
+#+END_SRC
+
+*** Git completion
+
+([[https://tsdh.wordpress.com/2013/05/31/eshell-completion-for-git-bzr-and-hg/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun pcmpl-git-commands ()
+  "Return the most common git commands by parsing the git output."
+  (with-temp-buffer
+    (call-process-shell-command "git" nil (current-buffer) nil "help" "--all")
+    (goto-char 0)
+    (search-forward "available git commands in")
+    (let (commands)
+      (while (re-search-forward
+	      "^[[:blank:]]+\\([[:word:]-.]+\\)[[:blank:]]*\\([[:word:]-.]+\\)?"
+	      nil t)
+	(push (match-string 1) commands)
+	(when (match-string 2)
+	  (push (match-string 2) commands)))
+      (sort commands #'string<))))
+
+(defconst pcmpl-git-commands (pcmpl-git-commands)
+  "List of `git' commands.")
+
+(defvar pcmpl-git-ref-list-cmd "git for-each-ref refs/ --format='%(refname)'"
+  "The `git' command to run to get a list of refs.")
+
+(defun pcmpl-git-get-refs (type)
+  "Return a list of `git' refs filtered by TYPE."
+  (with-temp-buffer
+    (insert (shell-command-to-string pcmpl-git-ref-list-cmd))
+    (goto-char (point-min))
+    (let (refs)
+      (while (re-search-forward (concat "^refs/" type "/\\(.+\\)$") nil t)
+	(push (match-string 1) refs))
+      (nreverse refs))))
+
+(defun pcmpl-git-remotes ()
+  "Return a list of remote repositories."
+  (split-string (shell-command-to-string "git remote")))
+
+(defun pcomplete/git ()
+  "Completion for `git'."
+  ;; Completion for the command argument.
+  (pcomplete-here* pcmpl-git-commands)
+  (cond
+   ((pcomplete-match "help" 1)
+    (pcomplete-here* pcmpl-git-commands))
+   ((pcomplete-match (regexp-opt '("pull" "push")) 1)
+    (pcomplete-here (pcmpl-git-remotes)))
+   ;; provide branch completion for the command `checkout'.
+   ((pcomplete-match "checkout" 1)
+    (pcomplete-here* (append (pcmpl-git-get-refs "heads")
+			     (pcmpl-git-get-refs "tags"))))
+   (t
+    (while (pcomplete-here (pcomplete-entries))))))
+#+END_SRC
+
+*** Tips
+
+Cat directly into a buffer (select with =C-c M-b=)
+
+#+BEGIN_SRC shell :tangle no
+cat mylog.log >> #<buffer *scratch*>
+#+END_SRC
+
+** Tmux
+
+#+BEGIN_SRC emacs-lisp
+(use-package emamux
+  :ensure t
+  :config (setq emamux:completing-read-type 'helm))
+#+END_SRC
+
+** Zsh History
+
+#+BEGIN_SRC emacs-lisp
+(defvar malb/helm-c-source-zsh-history
+  '((name . "Zsh History")
+    (candidates . malb/helm-c-zsh-history-set-candidates)
+    (action . (("Insert" . malb/helm-c-zsh-history-insert)
+               ("Execute" . malb/helm-c-zsh-history-run)))
+    (volatile)
+    (requires-pattern . 3)
+    (delayed)))
+
+(defun malb/helm-c-zsh-history-set-candidates (&optional request-prefix)
+  (let ((pattern (replace-regexp-in-string
+                  " " ".*"
+                  (or (and request-prefix
+                           (concat request-prefix
+                                   " " helm-pattern))
+                      helm-pattern))))
+    (with-current-buffer (find-file-noselect "~/.zsh_history" t t)
+      (auto-revert-mode -1)
+      (goto-char (point-max))
+      (loop for pos = (re-search-backward pattern nil t)
+            while pos
+            collect (replace-regexp-in-string
+                     "\\`:.+?;" ""
+                     (buffer-substring (line-beginning-position)
+                                       (line-end-position)))))))
+
+(defun malb/helm-c-zsh-history-insert (candidate)
+  (insert candidate))
+
+(defun malb/helm-c-zsh-history-run (candidate)
+  (malb/named-compile candidate))
+
+(defun malb/helm-command-from-zsh ()
+  (interactive)
+  (require 'helm)
+  (helm-other-buffer 'malb/helm-c-source-zsh-history "*helm zsh history*"))
+#+END_SRC
+
 * Programming (languages)
 ** General
 *** REPL
@@ -7304,312 +7610,6 @@ Uses baloo to find files."
     (ediff-files left-tmp right-tmp)))
 #+END_SRC
 
-* Shells
-
-We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#eshell-and-shell-environment][source]])
-
-#+BEGIN_SRC emacs-lisp
-(setenv "PAGER" "cat")
-#+END_SRC
-
-** Toggle Shells
-
- Open various shells at point, close with =x= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]] and from ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]).
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/make-toggle-shell (shell-name shell-cmd &optional post-exec per-project)
-  "Create function to toggle a shell-like thing in current project/directory.
-
-The function behaves as follows:
-
-- The shell-like buffer is renamed to match the current projectile
-  project or directory to make multiple windows easier.
-- If a buffer of the same name already exists, it is reused.
-- If a buffer with the same name is already shown, its window is closed.
-- `post-exec` is run after the shell is created.
-"
-  `(lambda (arg)
-     (interactive "P")
-     (let* ((parent (if (buffer-file-name)
-                        (file-name-directory (buffer-file-name))
-                      default-directory))
-            (height (/ (window-total-height) 3))
-            (name   (if (and (not arg) ,per-project)
-                        (concat "*" ,shell-name
-                                "[" (if (projectile-project-p)
-                                        (projectile-project-name)
-                                      (car (last (split-string parent "/" t)))) "]" "*")
-                      ,shell-name))
-            (golden-ratio-mode nil)
-            (window (get-buffer-window name)))
-       (if (and window (<= (window-height window) (/ (frame-height) 3)))
-           (progn
-             (select-window window)
-             (delete-window))
-         (progn
-           (split-window-vertically (- height))
-           (other-window 1)
-           (if (get-buffer name)
-               (progn
-                 (switch-to-buffer name)
-                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-             (progn
-               ,shell-cmd
-               (rename-buffer name)
-               (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
-               ,post-exec)))))))
-#+END_SRC
-
-** Multi-Term
-
-[[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs.
-
-#+BEGIN_SRC emacs-lisp
-(use-package multi-term
-  :ensure t
-  :config (progn
-            (setq term-buffer-maximum-size 16384)
-
-            (add-to-list 'term-bind-key-alist '("S-<left>"  . multi-term-prev))
-            (add-to-list 'term-bind-key-alist '("S-<right>" . multi-term-next))
-            (add-to-list 'term-bind-key-alist '("<tab>" . malb/term-send-tab))
-            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
-
-            (bind-key "C-y" #'term-paste term-raw-map)
-
-            ;; rebind C-r to the terminal's native one
-            (setq term-bind-key-alist (remove* '"C-r" term-bind-key-alist :test 'equal :key 'car))
-
-            (setq multi-term-switch-after-close nil)
-
-            (defun malb/term-send-tab ()
-              "Send tab in term mode."
-              (interactive)
-              (term-send-raw-string "\t"))
-
-            (fset 'malb/toggle-multi-term
-                  (malb/make-toggle-shell "multi-term"
-                                          '(let ((current-prefix-arg nil)) (multi-term))
-                                          '(progn (insert "ls") (term-send-input)) t))))
-#+END_SRC
-
-** EShell
-
-([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell
-  :config (progn
-            (fset 'malb/toggle-eshell
-                  (malb/make-toggle-shell "eshell"
-                                          '(eshell "new")
-                                          '(progn (insert "ls") (eshell-send-input)) t))
-
-            (bind-key "C-§" #'malb/toggle-eshell)
-
-            (defun malb/eshell-keys ()
-              (bind-key "<home>" #'eshell-bol eshell-mode-map)
-              (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
-              (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map))
-
-            ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
-            ;; for some reason this needs to be a hook
-            (add-hook 'eshell-mode-hook #'malb/eshell-keys)
-
-            (setq eshell-visual-subcommands '(("git"  ("log" "diff" "show"))
-                                              ("tmux" ("attach" "new"))))
-
-            (defun malb/eshell-add-visual-commands ()
-              (add-to-list 'eshell-visual-commands "htop")
-              (add-to-list 'eshell-visual-commands "ssh")
-              (add-to-list 'eshell-visual-commands "vim"))
-
-            (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
-
-            (defun malb/eshell-minor-modes ()
-              (smartparens-mode t))
-
-            (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
-
-            ;; mapped to 'x' in eshell
-            (defun eshell/x ()
-              (delete-window)
-              (eshell/exit))
-
-            (defalias 'eshell/q     'malb/quit-bottom-disposable-windows)
-            (defalias 'eshell/en    'find-file)
-            (defalias 'eshell/vim    'find-file) ;; muscle memory
-            (defalias 'eshell/d     'dired)
-            (defalias 'eshell/emacs 'find-file)
-            (defalias 'eshell/less  'view-file)
-
-            (defun eshell/clear ()
-              "Clear the eshell buffer."
-              (let ((inhibit-read-only t))
-                (erase-buffer)
-                (eshell-send-input)))
-
-            (setq eshell-input-filter
-                  (lambda (str)
-                    (not (or (string= "" str)
-                             (string-prefix-p " " str)))))
-
-            (defun eshell/ag (&optional dir)
-              (malb/helm-ag (file-name-as-directory
-                             (expand-file-name (or dir ".")))))
-
-            (defun malb/config-eshell-completion ()
-              (setq pcomplete-cycle-completions t
-                    pcomplete-ignore-case t)
-              (setq-local company-idle-delay nil)
-              ;; (malb/enable-company-pcomplete)
-              (define-key eshell-mode-map [remap eshell-pcomplete] #'company-complete))
-
-            (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
-
-            (setq eshell-scroll-to-bottom-on-input t
-                  eshell-destroy-buffer-when-process-dies t
-                  eshell-history-size 8192
-                  eshell-buffer-maximum-lines 16384
-                  eshell-hist-ignoredups t
-                  eshell-list-files-after-cd t
-                  eshell-ls-initial-args "-hk"
-                  eshell-buffer-shorthand t
-                  eshell-plain-echo-behavior t)))
-#+END_SRC
-
-*** Fish completion
-
-([[https://github.com/Ambrevar/emacs-fish-completion][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package fish-completion
-  :ensure t
-  :config (global-fish-completion-mode))
-#+END_SRC
-
-*** Git prompt
-
-#+BEGIN_SRC emacs-lisp
-(use-package eshell-git-prompt
-  :ensure t
-  :config (progn (eshell-git-prompt-use-theme "powerline")))
-#+END_SRC
-
-*** Git completion
-
-([[https://tsdh.wordpress.com/2013/05/31/eshell-completion-for-git-bzr-and-hg/][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun pcmpl-git-commands ()
-  "Return the most common git commands by parsing the git output."
-  (with-temp-buffer
-    (call-process-shell-command "git" nil (current-buffer) nil "help" "--all")
-    (goto-char 0)
-    (search-forward "available git commands in")
-    (let (commands)
-      (while (re-search-forward
-	      "^[[:blank:]]+\\([[:word:]-.]+\\)[[:blank:]]*\\([[:word:]-.]+\\)?"
-	      nil t)
-	(push (match-string 1) commands)
-	(when (match-string 2)
-	  (push (match-string 2) commands)))
-      (sort commands #'string<))))
-
-(defconst pcmpl-git-commands (pcmpl-git-commands)
-  "List of `git' commands.")
-
-(defvar pcmpl-git-ref-list-cmd "git for-each-ref refs/ --format='%(refname)'"
-  "The `git' command to run to get a list of refs.")
-
-(defun pcmpl-git-get-refs (type)
-  "Return a list of `git' refs filtered by TYPE."
-  (with-temp-buffer
-    (insert (shell-command-to-string pcmpl-git-ref-list-cmd))
-    (goto-char (point-min))
-    (let (refs)
-      (while (re-search-forward (concat "^refs/" type "/\\(.+\\)$") nil t)
-	(push (match-string 1) refs))
-      (nreverse refs))))
-
-(defun pcmpl-git-remotes ()
-  "Return a list of remote repositories."
-  (split-string (shell-command-to-string "git remote")))
-
-(defun pcomplete/git ()
-  "Completion for `git'."
-  ;; Completion for the command argument.
-  (pcomplete-here* pcmpl-git-commands)
-  (cond
-   ((pcomplete-match "help" 1)
-    (pcomplete-here* pcmpl-git-commands))
-   ((pcomplete-match (regexp-opt '("pull" "push")) 1)
-    (pcomplete-here (pcmpl-git-remotes)))
-   ;; provide branch completion for the command `checkout'.
-   ((pcomplete-match "checkout" 1)
-    (pcomplete-here* (append (pcmpl-git-get-refs "heads")
-			     (pcmpl-git-get-refs "tags"))))
-   (t
-    (while (pcomplete-here (pcomplete-entries))))))
-#+END_SRC
-
-*** Tips
-
-Cat directly into a buffer (select with =C-c M-b=)
-
-#+BEGIN_SRC shell :tangle no
-cat mylog.log >> #<buffer *scratch*>
-#+END_SRC
-
-** Tmux
-
-#+BEGIN_SRC emacs-lisp
-(use-package emamux
-  :ensure t
-  :config (setq emamux:completing-read-type 'helm))
-#+END_SRC
-
-** Zsh History
-
-#+BEGIN_SRC emacs-lisp
-(defvar malb/helm-c-source-zsh-history
-  '((name . "Zsh History")
-    (candidates . malb/helm-c-zsh-history-set-candidates)
-    (action . (("Insert" . malb/helm-c-zsh-history-insert)
-               ("Execute" . malb/helm-c-zsh-history-run)))
-    (volatile)
-    (requires-pattern . 3)
-    (delayed)))
-
-(defun malb/helm-c-zsh-history-set-candidates (&optional request-prefix)
-  (let ((pattern (replace-regexp-in-string
-                  " " ".*"
-                  (or (and request-prefix
-                           (concat request-prefix
-                                   " " helm-pattern))
-                      helm-pattern))))
-    (with-current-buffer (find-file-noselect "~/.zsh_history" t t)
-      (auto-revert-mode -1)
-      (goto-char (point-max))
-      (loop for pos = (re-search-backward pattern nil t)
-            while pos
-            collect (replace-regexp-in-string
-                     "\\`:.+?;" ""
-                     (buffer-substring (line-beginning-position)
-                                       (line-end-position)))))))
-
-(defun malb/helm-c-zsh-history-insert (candidate)
-  (insert candidate))
-
-(defun malb/helm-c-zsh-history-run (candidate)
-  (malb/named-compile candidate))
-
-(defun malb/helm-command-from-zsh ()
-  (interactive)
-  (require 'helm)
-  (helm-other-buffer 'malb/helm-c-source-zsh-history "*helm zsh history*"))
-#+END_SRC
-
 * Diagrams
 ** [[http://plantuml.com/][PlantUML]]
 
@@ -8310,30 +8310,30 @@ The result looks like this:
                                          :foreground "#657b83" :weight 'bold)))
                 (eval-after-load "dired-subtree"
                   (progn
-                     (set-face-attribute 'dired-subtree-depth-1-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-2-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-3-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-4-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-5-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-6-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))))))))
+                    (set-face-attribute 'dired-subtree-depth-1-face nil :background
+                                        (solarized-with-color-variables
+                                          'light
+                                          (solarized-color-blend base02 base03 0.3)))
+                    (set-face-attribute 'dired-subtree-depth-2-face nil :background
+                                        (solarized-with-color-variables
+                                          'light
+                                          (solarized-color-blend base02 base03 0.3)))
+                    (set-face-attribute 'dired-subtree-depth-3-face nil :background
+                                        (solarized-with-color-variables
+                                          'light
+                                          (solarized-color-blend base02 base03 0.3)))
+                    (set-face-attribute 'dired-subtree-depth-4-face nil :background
+                                        (solarized-with-color-variables
+                                          'light
+                                          (solarized-color-blend base02 base03 0.3)))
+                    (set-face-attribute 'dired-subtree-depth-5-face nil :background
+                                        (solarized-with-color-variables
+                                          'light
+                                          (solarized-color-blend base02 base03 0.3)))
+                    (set-face-attribute 'dired-subtree-depth-6-face nil :background
+                                        (solarized-with-color-variables
+                                          'light
+                                          (solarized-color-blend base02 base03 0.3)))))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
