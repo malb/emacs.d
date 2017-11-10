@@ -2459,6 +2459,7 @@ Working with source code in org-mode.
 
         (sequence "REVIEW(v)"
                   "INFO(i@/!)"
+                  "DISCUSS(D@/!)"
                   "|"
                   "REVIEWED(V!)") ;; reviews
 
