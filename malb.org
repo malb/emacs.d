@@ -937,7 +937,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
                   company-tooltip-align-annotations t
                   company-minimum-prefix-length 1
                   company-global-modes '(not)
-                  company-lighter-base "\xf04f")
+                  company-lighter-base "(C)")
 
             (global-company-mode 1)
 
