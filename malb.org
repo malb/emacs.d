@@ -8185,6 +8185,13 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
         " - " invocation-name))
 #+END_SRC
 
+** Unicode Fonts
+
+#+BEGIN_SRC emacs-lisp
+(use-package unicode-fonts
+   :ensure t)
+#+END_SRC
+
 ** Stripe Buffer
 
 [[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png]] ([[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png][source]])
