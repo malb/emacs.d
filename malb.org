@@ -760,7 +760,7 @@ _SPC_ cancel  _D_lt other     _s_wap
 
 (key-chord-define-global "z`" #'malb/hydra-window/body)
 (bind-key "C-x o" #'malb/hydra-window/body)
-(bind-key "±" #'other-window)
+(bind-key "¬" #'other-window)
 #+END_SRC
 
 * Clean Mode Line
