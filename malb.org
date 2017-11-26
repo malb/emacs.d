@@ -4020,7 +4020,6 @@ mouse-3: go to end")
                                              "Emacs Lisp"
                                              "Flask"
                                              "HTML"
-                                             "Java"
                                              "LaTeX"
                                              "Markdown"
                                              "NumPy"
