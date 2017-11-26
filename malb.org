@@ -3161,7 +3161,6 @@ SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
 (bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
 #+END_SRC
 
-
 ** Web Tools
 
 #+BEGIN_SRC emacs-lisp
@@ -8175,6 +8174,7 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 #+END_SRC
 
 * Theme & Look
+
 ** Frame Title
 
 Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob/master/init.org#display-buffer-name-in-frame-titles][source]])
