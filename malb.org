@@ -2386,54 +2386,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-image-actual-width '(1024))
 #+END_SRC
 
-** Org Babel
-
-Working with source code in org-mode.
-
-#+BEGIN_SRC emacs-lisp
-(use-package ob
-  :config (progn
-            ;; load more languages for org-babel
-            (org-babel-do-load-languages
-             'org-babel-load-languages
-             '((python . t)
-               (shell . t)
-               (latex . t)
-               (ditaa . t)
-               (dot . t)
-               (plantuml . t)
-               (makefile . t)))
-
-            (setq org-src-tab-acts-natively nil  ;; BUG
-                  org-confirm-babel-evaluate nil
-                  org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
-                  org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
-            (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
-#+END_SRC
-
-*** Org iPython
-
-[[https://github.com/gregsexton/ob-ipython][source]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package ob-ipython
-  :ensure t
-  :config (progn
-            (add-to-list 'org-structure-template-alist
-                         '("ip" "#+BEGIN_SRC ipython\n?\n#+END_SRC"
-                           "<src lang=\"python\">\n?\n</src>"))
-
-            (setq org-babel-default-header-args:ipython
-                  '((:results . "output replace")
-                    (:session . nil)
-                    (:exports . "both")
-                    (:cache .   "no")
-                    (:noweb . "no")
-                    (:eval . "never-export")
-                    (:hlines . "no")
-                    (:tangle . "no")))))
-#+END_SRC
-
 ** ToDo Keywords & Scheduling
 
 #+BEGIN_SRC emacs-lisp
@@ -3315,6 +3267,53 @@ Execute this command while the point is on or after the hyper-linked org link."
                              (concat "- "
                                      (replace-regexp-in-string "<\\|>" "" x)))
                            r "\n")))))
+                                     #+END_SRC
+
+** Org Babel
+
+Working with source code in org-mode.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ob
+  :config (progn
+            ;; load more languages for org-babel
+            (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((python . t)
+               (shell . t)
+               (latex . t)
+               (ditaa . t)
+               (dot . t)
+               (plantuml . t)
+               (makefile . t)))
+
+            (setq org-confirm-babel-evaluate nil
+                  org-plantuml-jar-path" /usr/share/plantuml/plantuml.jar"
+                  org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
+            (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
+#+END_SRC
+
+*** Org iPython
+
+[[https://github.com/gregsexton/ob-ipython][source]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package ob-ipython
+  :ensure t
+  :config (progn
+            (add-to-list 'org-structure-template-alist
+                         '(ip"" "#+BEGIN_SRC ipython\n?\n#+END_SRC"
+                           "<src lang=\"python\">\n?\n</src>"))
+
+            (setq org-babel-default-header-args:ipython
+                  '((:results . "output replace")
+                    (:session . nil)
+                    (:exports . "both")
+                    (:cache .   "no")
+                    (:noweb . "no")
+                    (:eval . "never-export")
+                    (:hlines . "no")
+                    (:tangle . "no")))))
 #+END_SRC
 
 ** Tips
