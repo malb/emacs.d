@@ -3459,7 +3459,7 @@ The function behaves as follows:
 
             (defun malb/eshell-keys ()
               (bind-key "<home>" #'eshell-bol eshell-mode-map)
-              (bind-key "M-l" #'helm-eshell-history eshell-mode-map)
+              (bind-key "M-r" #'helm-eshell-history eshell-mode-map)
               (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map))
 
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
