@@ -8173,6 +8173,14 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
          ("\\.a\\'"   . elf-mode)))
 #+END_SRC
 
+** YaML Files
+
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+  :ensure t)
+#+END_SRC
+
+
 * Theme & Look
 
 ** Frame Title
