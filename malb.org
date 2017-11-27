@@ -7730,7 +7730,7 @@ exports.boxes = [ "INBOX"];
           (prodigy-define-service
             :name "fpylll"
             :cwd (expand-file-name "lattices/fpylll" malb/projects-dir)
-            :command "/home/malb/Scripts/fpylll-jupyter.sh"
+            :command "fpylll-jupyter.sh"
             :port 8889
             :stop-signal 'sigkill
             :kill-process-buffer-on-stop t
@@ -7739,7 +7739,7 @@ exports.boxes = [ "INBOX"];
           (prodigy-define-service
             :name "sage-devel"
             :cwd (expand-file-name "sage/notebooks" malb/projects-dir)
-            :command "/home/malb/Scripts/sage-jupyter.sh"
+            :command "sage-jupyter.sh"
             :port 8890
             :stop-signal 'sigkill
             :kill-process-buffer-on-stop t
