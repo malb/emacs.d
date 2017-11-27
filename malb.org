@@ -3073,7 +3073,7 @@ See %a by %:fromname
 
                     ("eo" "quick create an [o]ffice task linked to an [e]-mail"
                      entry (file+headline malb/work-org "Admin")
-                     "* TODO %a (%:fromname) :@office:
+                     "* TODO %a (%:fromname) %^{tag|:office:|:train:}
 SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
                              (thu (org-read-date nil t \"Thu\")))
                          (if (time-less-p tue thu)
@@ -3084,14 +3084,13 @@ SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
 :END:
 " :immediate-finish t :prepend t :empty-lines 1)
 
-                    ("en" "quick create an on-the-trai[n] task linked to an [e]-mail"
+                    ("eq" "quick create a  task linked to an [e]-mail"
                      entry (file+headline malb/work-org "Admin")
-                     "* TODO %a (%:fromname) :@train:
-SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
-                             (thu (org-read-date nil t \"Thu\")))
-                         (if (time-less-p tue thu)
-                             tue
-                           thu)))
+                     "* TODO %a (%:fromname)
+SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
+                  (if (< hour 16)
+                    (insert (org-time-stamp nil))
+                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))
 :PROPERTIES:
 :CREATED: %U
 :END:
