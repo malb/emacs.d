@@ -758,7 +758,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("SPC" nil)
   ("`" other-window :color blue))
 
-(key-chord-define-global "z`" #'malb/hydra-window/body)
+(key-chord-define-global "xz" #'malb/hydra-window/body)
 (bind-key "C-x o" #'malb/hydra-window/body)
 (bind-key "¬" #'other-window)
 #+END_SRC
@@ -1915,7 +1915,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
   :ensure t
-  :bind ("C-`" . er/expand-region))
+  :bind ("C-\\" . er/expand-region))
 #+END_SRC
 
 ** Embrace
@@ -1924,7 +1924,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 (use-package embrace
   :ensure t
   :config (progn
-            (bind-key "M-`" #'embrace-commander)
+            (bind-key "M-\\" #'embrace-commander)
             (add-hook 'org-mode-hook #'embrace-org-mode-hook)))
 #+END_SRC
 
