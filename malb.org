@@ -8180,7 +8180,6 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
   :ensure t)
 #+END_SRC
 
-
 * Theme & Look
 
 ** Frame Title
