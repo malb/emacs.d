@@ -6294,7 +6294,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-completing-read-function 'completing-read
                  mu4e-compose-in-new-frame t
                  mu4e-split-view 'vertical
-                 mu4e-headers-visible-columns 116
+                 mu4e-headers-visible-columns 136
                  mu4e-headers-visible-lines 16
                  mu4e-context-policy 'pick-first
                  mu4e-compose-context-policy 'ask
@@ -6754,8 +6754,9 @@ Headers to show in header view.
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-headers-fields '((:human-date . 10)
                             (:flags . 4)
-                            (:mailing-list . 12)
+                            (:mailing-list . 16)
                             (:from . 22)
+                            (:to . 22)
                             (:subject)))
 #+END_SRC
 
@@ -6970,7 +6971,7 @@ Create a new mu4e session in a new frame.
   (sleep-for 0.1) ;; this is a HACK
   (toggle-frame-maximized)
   (sleep-for 0.1) ;; this is a HACK
-  (set-frame-size (selected-frame) 200 64)
+  (set-frame-size (selected-frame) 220 64)
   (set-frame-name "mu4e") ;; we use this in our window management
   (mu4e))
 #+END_SRC
