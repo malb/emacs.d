@@ -1915,7 +1915,17 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
   :ensure t
-  :bind ("C-\\" . er/expand-region))
+  :bind ("C-\\" . er/expand-region)
+  :config (progn
+            ;; https://github.com/magnars/expand-region.el
+            (defun er/add-text-mode-expansions ()
+              (make-variable-buffer-local 'er/try-expand-list)
+              (setq er/try-expand-list (append
+                                        er/try-expand-list
+                                        '(mark-paragraph
+                                          mark-page)))
+              (add-hook 'markdown-mode-hook 'er/add-text-mode-expansions)
+              (add-hook 'LaTeX-mode-hook 'er/add-text-mode-expansions))))
 #+END_SRC
 
 ** Embrace
