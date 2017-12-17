@@ -2004,7 +2004,6 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
   :ensure t)
 #+END_SRC
 
-
 ** Beginning of …
 
 A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
