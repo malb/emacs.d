@@ -2067,7 +2067,6 @@ Refine provides a convenient UI for editing variables. Refine is not for editing
   :ensure t)
 #+END_SRC
 
-
 * Projects (Projectile)
 
 #+BEGIN_QUOTE
