@@ -8198,6 +8198,18 @@ then enter the text in that file's own buffer.
   :config (setq alert-default-style 'libnotify))
 #+END_SRC
 
+** Assignments
+
+([[https://gitlab.com/akoehn/abgaben][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package abgaben
+  :ensure t
+  :config (setq abgaben-org-file malb/abgaben-org-file
+                abgaben-root-folder malb/abgaben-folder
+                abgaben-heading "Assignments"))
+#+END_SRC
+
 * File Types
 ** Log Files
 
