@@ -8206,7 +8206,7 @@ then enter the text in that file's own buffer.
   :ensure t)
 #+END_SRC
 
-* Alert
+** Alert
 
 #+BEGIN_SRC emacs-lisp
 (use-package alert
