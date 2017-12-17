@@ -3324,6 +3324,17 @@ Working with source code in org-mode.
                     (:tangle . "no")))))
 #+END_SRC
 
+** Org Download
+
+([[https://github.com/abo-abo/org-download][source]])
+
+This extension facilitates moving images from point A (e.g. an image inside your browser that you can drag to Emacs) to point B (an Emacs org-mode buffer where the inline link will be inserted).
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-download
+   :ensure t)
+#+END_SRC
+
 ** Tips
 
 *** Agenda commands
