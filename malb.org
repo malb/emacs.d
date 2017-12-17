@@ -6461,7 +6461,7 @@ A table of canonical names for people who cannot seem to fix their headers …
   (let* ((name (or name ""))
          (case-fold-search nil)
          ;; look up email address and use entry if found
-         (candidate (if nick (cddr (assoc (downcase email) malb/mu4e-name-replacements))
+         (candidate (if nick (caddr (assoc (downcase email) malb/mu4e-name-replacements))
                       (cadr (assoc (downcase email) malb/mu4e-name-replacements)))))
     (if candidate
         candidate
