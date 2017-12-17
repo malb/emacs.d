@@ -3450,7 +3450,13 @@ The function behaves as follows:
             (fset 'malb/toggle-multi-term
                   (malb/make-toggle-shell "multi-term"
                                           '(let ((current-prefix-arg nil)) (multi-term))
-                                          '(progn (insert "ls") (term-send-input)) t))))
+                                          '(progn
+                                             (when (boundp 'venv-current-name)
+                                               (insert (format "workon %s" venv-current-name))
+                                               (term-send-input))
+                                             (insert "ls")
+                                             (term-send-input))
+                                          t))))
 #+END_SRC
 
 ** EShell
