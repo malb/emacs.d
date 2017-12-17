@@ -8157,6 +8157,7 @@ then enter the text in that file's own buffer.
 
 #+BEGIN_SRC emacs-lisp
 (use-package alert
+  :ensure t
   :config (setq alert-default-style 'libnotify))
 #+END_SRC
 
