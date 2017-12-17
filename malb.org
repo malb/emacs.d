@@ -2039,6 +2039,36 @@ Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-mi
               (diminish (cdr mode)))))
 #+END_SRC
 
+* Emacs UX
+
+** Helpful
+
+#+BEGIN_QUOTE
+Helpful is an alternative to the built-in Emacs help that provides much more contextual information. — [[https://github.com/Wilfred/helpful][helpful]]
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package helpful
+  :ensure t
+  :config (progn
+            (bind-key "C-h f" #'helpful-callable)
+            (bind-key "C-h v" #'helpful-variable)
+            (bind-key "C-h k" #'helpful-key)
+            (bind-key "C-h ," #'helpful-at-point)))
+#+END_SRC
+
+** Refine
+
+#+BEGIN_QUOTE
+Refine provides a convenient UI for editing variables. Refine is not for editing files, but for changing elisp variables, particularly lists. — [[https://github.com/Wilfred/refine][refine]]
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package refine
+  :ensure t)
+#+END_SRC
+
+
 * Projects (Projectile)
 
 #+BEGIN_QUOTE
