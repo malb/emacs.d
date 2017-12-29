@@ -4187,6 +4187,19 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
             (dumb-jump-mode)))
 #+END_SRC
 
+*** Smart Jump
+
+#+BEGIN_QUOTE
+This packages tries to smartly go to definition leveraging several methods to do so. If one method fails, this package will go on to the next one, eventually falling back to dumb-jump. — [[https://github.com/jojojames/smart-jump][smart-jump]]
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package smart-jump
+  :ensure t
+  :config (smart-jump-setup-default-registers))
+#+END_SRC
+
+
 *** Debuggers
 
 [[https://github.com/realgud/realgud][All the debuggers]].
@@ -4567,16 +4580,17 @@ Fall back to dumb jump if anaconda fails.
             (add-hook 'python-mode-hook #'anaconda-mode)
             (add-hook 'python-mode-hook #'anaconda-eldoc-mode)
 
-            (defun malb/python-mode-find-definitions (&optional arg)
-              (interactive "P")
-              (let ((p (point)))
-                (if (not (called-interactively-p 'any))
-                    (anaconda-mode-find-definitions arg)
-                  (call-interactively 'anaconda-mode-find-definitions))
-                (if (equal p (point))
-                    (dumb-jump-go))))
+            ;; (defun malb/python-mode-find-definitions (&optional arg)
+            ;;   (interactive "P")
+            ;;   (let ((p (point)))
+            ;;     (if (not (called-interactively-p 'any))
+            ;;         (anaconda-mode-find-definitions arg)
+            ;;       (call-interactively 'anaconda-mode-find-definitions))
+            ;;     (if (equal p (point))
+            ;;         (dumb-jump-go))))
 
-            (bind-key "M-." #'malb/python-mode-find-definitions anaconda-mode-map)))
+            ;; (bind-key "M-." #'malb/python-mode-find-definitions anaconda-mode-map)
+            ))
 #+END_SRC
 
 *** Pydoc
