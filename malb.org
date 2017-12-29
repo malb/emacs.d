@@ -3336,6 +3336,15 @@ Working with source code in org-mode.
                     (:tangle . "no")))))
 #+END_SRC
 
+*** Async
+
+Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-async-org-babel-execute-src-block~.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ob-async
+  :ensure t)
+#+END_SRC
+
 ** Org Download
 
 ([[https://github.com/abo-abo/org-download][source]])
