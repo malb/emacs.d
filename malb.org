@@ -6229,18 +6229,18 @@ A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s
 AWS offers various voices to choose from
 
 #+BEGIN_SRC emacs-lisp
-(defcustom aws-polly-voices '(("Emma"     "en-GB") ("Joanna"    "en-US") ("Mizuki"   "ja-JP") ("Filiz"   "tr-TR")
-                              ("Astrid"   "sv-SE") ("Maxim"     "ru-RU") ("Tatyana"  "ru-RU") ("Carmen"  "ro-RO")
-                              ("Ines"     "pt-PT") ("Cristiano" "pt-PT") ("Vitoria"  "pt-BR") ("Ricardo" "pt-BR")
-                              ("Maja"     "pl-PL") ("Jan"       "pl-PL") ("Ewa"      "pl-PL") ("Ruben"   "nl-NL")
-                              ("Lotte"    "nl-NL") ("Liv"       "nb-NO") ("Giorgio"  "it-IT") ("Carla"   "it-IT")
-                              ("Karl"     "is-IS") ("Dora"      "is-IS") ("Mathieu"  "fr-FR") ("Celine"  "fr-FR")
-                              ("Chantal"  "fr-CA") ("Penelope"  "es-US") ("Miguel"   "es-US") ("Enrique" "es-ES")
-                              ("Conchita" "es-ES") ("Geraint"   "en-GB-WLS") ("Salli"  "en-US") ("Kimberly" "en-US")
-                              ("Kendra"   "en-US") ("Justin"    "en-US") ("Joey"  "en-US") ("Ivy"      "en-US")
-                              ("Raveena"  "en-IN") ("Brian"     "en-GB") ("Amy"   "en-GB") ("Russell"  "en-AU")
-                              ("Nicole"   "en-AU") ("Marlene"   "de-DE") ("Hans"  "de-DE") ("Naja"     "da-DK")
-                              ("Mads"     "da-DK") ("Gwyneth"  " cy-GB") ("Jacek" "pl-PL"))
+(defcustom aws-polly-voices '(("Emma"     "en-GB") ("Brian"     "en-GB") ("Joanna"    "en-US") ("Mizuki"   "ja-JP")
+                              ("Filiz"    "tr-TR") ("Astrid"    "sv-SE") ("Maxim"     "ru-RU") ("Tatyana"  "ru-RU")
+                              ("Carmen"   "ro-RO") ("Ines"      "pt-PT") ("Cristiano" "pt-PT") ("Vitoria"  "pt-BR")
+                              ("Ricardo"  "pt-BR") ("Maja"      "pl-PL") ("Jan"       "pl-PL") ("Ewa"      "pl-PL")
+                              ("Ruben"    "nl-NL") ("Lotte"     "nl-NL") ("Liv"       "nb-NO") ("Giorgio"  "it-IT")
+                              ("Carla"    "it-IT") ("Karl"      "is-IS") ("Dora"      "is-IS") ("Mathieu"  "fr-FR")
+                              ("Celine"   "fr-FR") ("Chantal"   "fr-CA") ("Penelope"  "es-US") ("Miguel"   "es-US")
+                              ("Enrique"  "es-ES") ("Conchita"  "es-ES") ("Geraint"   "en-GB-WLS") ("Salli" "en-US")
+                              ("Kimberly" "en-US") ("Kendra"    "en-US") ("Justin"    "en-US") ("Joey"     "en-US")
+                              ("Ivy"      "en-US") ("Raveena"   "en-IN")  ("Amy"      "en-GB") ("Russell"  "en-AU")
+                              ("Nicole"   "en-AU") ("Marlene"   "de-DE") ("Hans"      "de-DE") ("Naja"     "da-DK")
+                              ("Mads"     "da-DK") ("Gwyneth"  " cy-GB") ("Jacek"     "pl-PL"))
   "Voices to use in AWS polly in order of preference"
   :group 'aws-polly
   :type ''(alist :value-type (string string)))
@@ -6264,6 +6264,13 @@ AWS polly only renders to mp3, we use =mplayer= to play the produced file.
   :type 'string)
 #+END_SRC
 
+Decide if text is a quote
+
+#+BEGIN_SRC emacs-lisp
+(defun aws-polly-is-quote (text)
+  (equal (substring text 0 2) "  "))
+#+END_SRC
+
 Return the first voice matching detected language.
 
 #+BEGIN_SRC emacs-lisp
@@ -6272,11 +6279,16 @@ Return the first voice matching detected language.
   (let ((lang (with-temp-buffer
                 (insert text)
                 (adict-guess-buffer-language)))
-        (voice nil))
-    (dolist (entry aws-polly-voices voice)
-      (if (and (not voice) (string-prefix-p lang (cadr entry)))
-          (setq voice (car entry))))
-    (or voice (caar aws-polly-voices))))
+        (voices nil))
+    (dolist (entry aws-polly-voices)
+      (if (string-prefix-p lang (cadr entry))
+          (add-to-list 'voices (car entry) t)))
+    (cond
+     ((eq (length voices) 0) (caar aws-polly-voices))
+     ((eq (length voices) 1) (car voices))
+     (t (if (aws-polly-is-quote text)
+            (cadr voices)
+          (car voices))))))
 #+END_SRC
 
 Offer choice for user to pick voice.
