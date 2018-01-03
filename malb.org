@@ -5260,7 +5260,8 @@ Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparent
                        "'" "’" (car args))
                       (cdr args))))
 
-            (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)))
+            (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)
+            (setq ispell-silently-savep t)))
 #+END_SRC
 
 *** Visual Fill Column Mode
