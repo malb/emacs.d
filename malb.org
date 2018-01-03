@@ -7525,6 +7525,13 @@ Other:     _p_ plain    _c_ csv table  _j_ json table
             (bind-key "x" #'malb/hydra-pdf-extract/body pdf-view-mode-map)))
 #+END_SRC
 
+** Org Noter
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-noter
+  :ensure t)
+#+END_SRC
+
 * Directories
 ** Dired
 
