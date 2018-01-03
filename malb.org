@@ -6293,7 +6293,7 @@ AWS Polly will not read any text longer than 1500 characters as of writing.
 
 #+BEGIN_SRC emacs-lisp
 (defvar aws-polly-character-limit 1500
-  "number of characters accepted by AWS polly.")
+  "Number of characters accepted by AWS polly.")
 #+END_SRC
 
 We call =pandoc= to convert our buffer to plain text. This kills links etc. which we typically do not want read out.
@@ -6315,6 +6315,21 @@ We call =pandoc= to convert our buffer to plain text. This kills links etc. whic
       (buffer-substring beginning end))))
 #+END_SRC
 
+We may want to add some silence between paragraphs.
+
+#+BEGIN_SRC emacs-lisp
+(defcustom aws-polly-make-silence-command
+  "ffmpeg -f lavfi -y -i anullsrc=r=22050:cl=mono -t %f -q:a 9 -acodec libmp3lame %s"
+  "Command to make moments of slience"
+  :group 'aws-polly
+  :type 'string)
+
+(defun aws-polly-make-silence (length output-filename)
+  "Write LENGTH seconds of silence to OUTPUT-FILENAME"
+  (call-process-shell-command (format aws-polly-make-silence-command length output-filename) nil nil nil))
+#+END_SRC
+
+
 Binding it all together to read one paragraph (or region) at a time.
 
 #+BEGIN_SRC emacs-lisp
@@ -6330,14 +6345,22 @@ prefix argument is given ask for voice first."
          (end (if (not (use-region-p))
                   (save-excursion (forward-paragraph) (point))
                 (region-end)))
-         (text (aws-polly-plaintextify beginning end))
-         (output-filename (make-temp-file "emacs-aws-polly" nil ".mp3"))
-         (voice (if arg (aws-polly-voices-completing-read)
-                  (aws-polly-select-voice text))))
-    (if (> (length text) aws-polly-character-limit)
-        (error "AWS polly will only accept up 1500 characters but got %s" (length text)))
-    (shell-command (format aws-polly-command voice text output-filename))
-    (start-process-shell-command "aws-polly-play" nil (format aws-polly-play-command output-filename))))
+         (texts (split-string-and-unquote (aws-polly-plaintextify beginning end) "\n\n"))
+         (silence (make-temp-file "emacs-aws-polly-silence" nil ".mp3"))
+         (files nil))
+    (aws-polly-make-silence 1.0 silence)
+    (dolist (text texts)
+      (if (> (length text) aws-polly-character-limit)
+          (error "AWS polly will only accept up 1500 characters but got %d \"%s\"" (length text) (substring text 0 32))))
+    (dolist (text texts)
+      (let ((voice (if arg (aws-polly-voices-completing-read)
+                     (aws-polly-select-voice text)))
+            (output-filename (make-temp-file "emacs-aws-polly" nil ".mp3")))
+        (call-process-shell-command (format aws-polly-command voice text output-filename) nil nil nil)
+        (add-to-list 'files output-filename t)
+        (add-to-list 'files silence t)))
+    (start-process-shell-command "aws-polly-play" nil (format aws-polly-play-command
+                                                              (mapconcat 'identity files " ")))))
 #+END_SRC
 
 * E-mail (Mu4e)
