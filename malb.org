@@ -2382,7 +2382,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-show-context-detail '((agenda . lineage) ;; instead of "local"
                                 (bookmark-jump . lineage)
                                 (isearch . lineage)
-                                (default . ancestors)))
+                                (default . ancestors))
+      org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 
