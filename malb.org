@@ -6371,7 +6371,7 @@ prefix argument is given ask for voice first."
             (output-filename (make-temp-file "emacs-aws-polly" nil ".mp3")))
         (call-process-shell-command (format aws-polly-command voice text output-filename) nil nil nil)
         (add-to-list 'files output-filename t)
-        (add-to-list 'files silence t)))
+        (setq files (append files (list silence)))))
     (start-process-shell-command "aws-polly-play" nil (format aws-polly-play-command
                                                               (mapconcat 'identity files " ")))))
 #+END_SRC
