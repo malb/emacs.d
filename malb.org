@@ -2840,6 +2840,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                        "         stringstyle={\\color{darkgray}}, frame=single, basicstyle=\\tt\\scriptsize\\relax,\n"
                                        "         inputencoding=utf8, literate={…}{{\\ldots}}1, belowskip=0.0em,}\n"
                                        "\\newunicodechar{ }{~}\n"
+                                       "\\setmonofont[BoldFont={Cousine Bold},ItalicFont={Cousine Italic},BoldItalicFont={Cousine Bold Italic}]{Cousine}\n"
                                        "\\newtheorem{lemma}{Lemma}\n"
                                        "\\newtheorem{theorem}{Theorem}\n"
                                        "\\newtheorem{definition}{Definition}\n"
