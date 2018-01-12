@@ -6005,7 +6005,8 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
                                 (expand-file-name "rfc.bib" malb/common-latex)
                                 (expand-file-name "jacm.bib" malb/common-latex)
                                 (expand-file-name "dcc.bib" malb/common-latex)
-                                (expand-file-name "local.bib" malb/common-latex)))
+                                (expand-file-name "local.bib" malb/common-latex)
+                                (expand-file-name "nistpqc-r1.bib" malb/common-latex)))
 
 (setq reftex-default-bibliography malb/bibtex-files)
 #+END_SRC
