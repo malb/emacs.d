@@ -6256,15 +6256,6 @@ We call the command line client which can be obtained by =pip install awscli=
   :type 'string)
 #+END_SRC
 
-AWS polly only renders to mp3, we use =mplayer= to play the produced file.
-
-#+BEGIN_SRC emacs-lisp
-(defcustom aws-polly-play-command "mplayer %s"
-  "Command to play mp3"
-  :group 'aws-polly
-  :type 'string)
-#+END_SRC
-
 Decide if text is a quote
 
 #+BEGIN_SRC emacs-lisp
@@ -6373,8 +6364,9 @@ prefix argument is given ask for voice first."
         (call-process-shell-command (format aws-polly-command voice text output-filename) nil nil nil)
         (add-to-list 'files output-filename t)
         (setq files (append files (list silence)))))
-    (start-process-shell-command "aws-polly-play" nil (format aws-polly-play-command
-                                                              (mapconcat 'identity files " ")))))
+    (dolist (file files)
+      (emms-add-file file))
+    (emms-start)))
 #+END_SRC
 
 * E-mail (Mu4e)
@@ -7899,6 +7891,22 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
               ("]" forward-page "forward")
               ("M-p" helm-pages "helm" :color blue)
               ("RET" nil "quit"))))
+#+END_SRC
+
+* EMMS
+
+#+BEGIN_SRC emacs-lisp
+(use-package emms-setup
+  :ensure emms)
+
+(use-package emms-player-mplayer
+  :config (progn (emms-standard)
+                 (emms-default-players)
+                 (define-emms-simple-player mplayer '(file url)
+                   (regexp-opt '(".ogg" ".mp3" ".wav" ".mpg" ".mpeg" ".wmv" ".wma"
+                                 ".mov" ".avi" ".divx" ".ogm" ".asf" ".mkv" "http://" "mms://"
+                                 ".rm" ".rmvb" ".mp4" ".flac" ".vob" ".m4a" ".flv" ".ogv" ".pls"))
+                   "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")))
 #+END_SRC
 
 * X11 Integration
