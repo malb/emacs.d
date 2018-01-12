@@ -6594,7 +6594,8 @@ Ignore some e-mail addresses when auto completing:
 (setq mu4e-compose-complete-ignore-address-regexp (rx  (or (seq "no" (zero-or-one "-") "reply")
                                                            (seq "replyto-" (one-or-more char) "@plus.google.com")
                                                            (seq "@" (one-or-more char) ".twitter.com")
-                                                           (seq "do-not-reply" (zero-or-more char) "@"))))
+                                                           (seq "do-not-reply" (zero-or-more char) "@")
+                                                           (seq "bounce-" (one-or-more char) "@"))))
 #+END_SRC
 
 Extract a pretty-ish list of contacts from an e-mail.
