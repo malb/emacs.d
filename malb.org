@@ -8445,7 +8445,7 @@ The result looks like this:
                 (set-face-attribute 'auto-dim-other-buffers-face nil
                                     :background (solarized-with-color-variables
                                                   'light
-                                                  (solarized-color-blend base02 base03 0.3)))
+                                                  (solarized-color-blend base02 base03 0.8)))
                 (unicode-fonts-setup)
 
                 (when (boundp 'hl-sentence-mode)
