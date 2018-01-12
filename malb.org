@@ -6428,16 +6428,16 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-maildir malb/mu4e-maildir
-      mu4e-drafts-folder "/[Google Mail]/.Drafts"
-      mu4e-sent-folder   "/[Google Mail]/.Sent Mail"
-      mu4e-trash-folder  "/[Google Mail]/.Bin")
+      mu4e-drafts-folder "/[Google Mail]/Drafts"
+      mu4e-sent-folder   "/[Google Mail]/Sent Mail"
+      mu4e-trash-folder  "/[Google Mail]/Bin")
 
 (setq mu4e-maildir-shortcuts
-      '(("/Inbox"                        . ?i)
-        ("/[Google Mail]/.Drafts"        . ?d)
-        ("/[Google Mail]/.Sent Mail"     . ?s)
-        ("/[Google Mail]/.Bin"           . ?t)
-        ("/royal holloway/.msc projects" . ?m)))
+      '(("/Inbox"                       . ?i)
+        ("/[Google Mail]/Drafts"        . ?d)
+        ("/[Google Mail]/Sent Mail"     . ?s)
+        ("/[Google Mail]/Bin"           . ?t)
+        ("/royal holloway/msc projects" . ?m)))
 #+END_SRC
 
 ** Queries
@@ -6454,7 +6454,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%week"   . "date:7d..now")
                   ("%month"  . "date:31d..now")
                   ("%inbox"  . "maildir:\"/royal holloway\" OR maildir:/INBOX")
-                  ("%sent"   . "maildir:\"/[Google Mail]/.Sent Mail\" OR maildir:\"/royal holloway/.sent\"")
+                  ("%sent"   . "maildir:\"/[Google Mail]/Sent Mail\" OR maildir:\"/royal holloway/sent\"")
                   ("%direct" . "%inbox AND NOT flag:list AND NOT %hidden"))))
 #+END_SRC
 
