@@ -7462,25 +7462,26 @@ need region."
                               nil))
                            (note (pdf-annot-get annot 'contents)))
 
-                       (insert (if compact "- " "* "))
-                       (insert (format "page %s" page))
+                       (when (or highlighted-text (> (length note) 0))
+                         (insert (if compact "- " "* "))
+                         (insert (format "page %s" page))
 
-                       (when highlighted-text
-                         (insert (if compact (format ": “%s” " highlighted-text)
-                                   (concat "\n\n#+BEGIN_QUOTE\n"
-                                           highlighted-text
-                                           "\n#+END_QUOTE"))))
-                       (if (> (length note) 0)
-                           (insert (if compact (format " %s\n" note)
-                                     (format "\n\n%s\n\n" note)))
-                         (insert (if compact "\n" "\n\n"))))))
+                         (when highlighted-text
+                           (insert (if compact (format ": “%s” " highlighted-text)
+                                     (concat "\n\n#+BEGIN_QUOTE\n"
+                                             highlighted-text
+                                             "\n#+END_QUOTE"))))
+                         (if (> (length note) 0)
+                             (insert (if compact (format " %s\n" note)
+                                       (format "\n\n%s\n\n" note)))
+                           (insert (if compact "\n" "\n\n")))))))
                  (cl-remove-if
                   (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
                   annots)
                  )))
 
             (defun malb/pdf-annot-export-as-md (compact)
-              "Export annotations to Markdown buffer."
+              "Export annotations to Makrdown buffer."
               (interactive "P")
               (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
                      (source-buffer (current-buffer))
@@ -7496,22 +7497,31 @@ need region."
                 (mapc
                  (lambda (annot) ;; traverse all annotations
                    (progn
-                     (insert (if compact
-                                 (format "- page %s: " (cdr (assoc 'page annot)))
-                               (format "On page %s:  \n" (cdr (assoc 'page annot)))))
-                     ;; insert text from marked-up region in an org-mode quote
-                     (when (pdf-annot-get annot 'markup-edges)
-                       (let ((highlighted-text (with-current-buffer source-buffer
-                                                 (pdf-info-gettext (pdf-annot-get annot 'page)
-                                                                   (pdf-tools-org-edges-to-region
-                                                                    (pdf-annot-get annot 'markup-edges))))))
-                         (if compact
-                             (insert (format "“%s”\n\n" (replace-regexp-in-string "\n" " " highlighted-text)))
-                           (insert (format "> %s\n\n" (replace-regexp-in-string "\n" "\n> " highlighted-text))))))
+                     (let ((page (cdr (assoc 'page annot)))
+                           (highlighted-text
+                            (if (pdf-annot-get annot 'markup-edges)
+                                (let ((highlighted-text
+                                       (with-current-buffer source-buffer
+                                         (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                           (pdf-tools-org-edges-to-region
+                                                            (pdf-annot-get annot 'markup-edges))))))
+                                  (replace-regexp-in-string "\n" " " highlighted-text))
+                              nil))
+                           (note (pdf-annot-get annot 'contents)))
 
-                     (let ((note (pdf-annot-get annot 'contents)))
-                       (if (> (length note) 0)
-                           (insert (format "%s\n\n" note))))))
+                       (when (or highlighted-text (> (length note) 0))
+                         (insert (if compact "- " "On "))
+                         (insert (format "page %s" page))
+
+                         (when highlighted-text
+                           (insert (if compact (format ": “%s” " highlighted-text)
+                                     (concat ":  \n> "
+                                             (replace-regexp-in-string "\n" "\n> " highlighted-text)
+                                             "\n"))))
+                         (if (> (length note) 0)
+                             (insert (if compact (format " %s\n" note)
+                                       (format "\n\n%s\n\n" note)))
+                           (insert (if compact "\n" "\n\n")))))))
                  (cl-remove-if
                   (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
                   annots)
