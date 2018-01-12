@@ -7550,6 +7550,10 @@ Other:     _p_ plain    _c_ csv table  _j_ json table
 
 ** Org Noter
 
+#+BEGIN_QUOTE
+“[[https://github.com/weirdNox/org-noter][Org-Noter]]’s purpose is to let you create notes that are kept in sync when you scroll through the document, but that are external to it - the notes themselves live in an Org-mode file. As such, this leverages the power of Org-mode (the notes may have outlines, latex fragments, babel, etc…) while acting like notes that are made inside the document. Also, taking notes is very simple: just press i and annotate away!”
+#+END_QUOTE
+
 #+BEGIN_SRC emacs-lisp
 (use-package org-noter
   :ensure t)
