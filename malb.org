@@ -1175,7 +1175,7 @@ See [[https://tuhdo.github.io/helm-intro.html][A Package in a league of its own:
 | =C-w=   | yanks word at point   |
 | =M-n=   | yanks symbol at point |
 
-** Buffers, Files
+** General, Buffers, Files
 
 Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many sources to create =malb/helm-omni.= ([[http://stackoverflow.com/a/19284509][source]])
 
