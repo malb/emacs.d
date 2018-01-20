@@ -8511,31 +8511,37 @@ The result looks like this:
                                          :background nil
                                          :foreground "#657b83" :weight 'bold)))
                 (eval-after-load "dired-subtree"
-                  (progn
-                    (set-face-attribute 'dired-subtree-depth-1-face nil :background
-                                        (solarized-with-color-variables
-                                          'light
-                                          (solarized-color-blend base02 base03 0.3)))
-                    (set-face-attribute 'dired-subtree-depth-2-face nil :background
-                                        (solarized-with-color-variables
-                                          'light
-                                          (solarized-color-blend base02 base03 0.3)))
-                    (set-face-attribute 'dired-subtree-depth-3-face nil :background
-                                        (solarized-with-color-variables
-                                          'light
-                                          (solarized-color-blend base02 base03 0.3)))
-                    (set-face-attribute 'dired-subtree-depth-4-face nil :background
-                                        (solarized-with-color-variables
-                                          'light
-                                          (solarized-color-blend base02 base03 0.3)))
-                    (set-face-attribute 'dired-subtree-depth-5-face nil :background
-                                        (solarized-with-color-variables
-                                          'light
-                                          (solarized-color-blend base02 base03 0.3)))
-                    (set-face-attribute 'dired-subtree-depth-6-face nil :background
-                                        (solarized-with-color-variables
-                                          'light
-                                          (solarized-color-blend base02 base03 0.3)))))))))
+                  '(progn
+                     (set-face-attribute 'dired-subtree-depth-1-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-2-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-3-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-4-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-5-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))
+                     (set-face-attribute 'dired-subtree-depth-6-face nil :background
+                                         (solarized-with-color-variables
+                                           'light
+                                           (solarized-color-blend base02 base03 0.3)))))
+
+                (eval-after-load "rtags"
+                  '(progn
+                     (set-face-attribute 'rtags-fixitline nil :background nil :foreground nil :slant 'normal :underline nil)
+                     (set-face-attribute 'rtags-errline nil :background nil :foreground nil :slant 'normal :underline nil)
+                     (set-face-attribute 'rtags-skippedline nil  :background "#eee8d5")))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
