@@ -6103,6 +6103,8 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
                   bibtex-completion-notes-template-one-file
                   "** ${title} cite:${=key=}\n:PROPERTIES:\n:CUSTOM_ID: ${=key=}\n:END:\n\nfullcite:${=key=}\n\n")
 
+            (add-to-list 'helm-commands-using-frame 'helm-bibtex)
+
             (defun malb/bibtex-completion-google-this (keys-or-entries)
               (dolist (key-or-entry keys-or-entries)
                 (let* ((key (if (stringp key-or-entry)
