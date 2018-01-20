@@ -6136,7 +6136,7 @@ starts with the BibTeX key and ends with
                                         for ext in (-flatten bibtex-completion-pdf-extension)
                                         collect (f-join dir (s-concat (s-replace ":" "_" key) ext))))))
                 (if find-additional
-                    (sort ; move main pdf on top of the list if needed
+                    (sort               ; move main pdf on top of the list if needed
                      (cl-loop
                       for dir in (-flatten bibtex-completion-library-path)
                       append (directory-files dir t
