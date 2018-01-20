@@ -4144,7 +4144,10 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
   :config  (progn
              (rtags-enable-standard-keybindings nil "C-c j r")
              (setq rtags-use-helm t
-                   rtags-autostart-diagnostics t)
+                   rtags-autostart-diagnostics t
+                   rtags-display-current-error-as-message nil
+                   rtags-display-current-error-as-tooltip nil
+                   rtags-diagnostics-summary-in-mode-line nil)
              (add-hook 'c-mode-hook #'rtags-start-process-unless-running)
              (add-hook 'c++-mode-hook #'rtags-start-process-unless-running)))
 #+END_SRC
