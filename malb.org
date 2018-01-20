@@ -8836,6 +8836,8 @@ Easily change the text size:
   (call-process-shell-command "balooctl check" nil 0)
   (helm :sources helm-source-baloo
         :buffer "*helm baloo*"))
+
+(add-to-list 'helm-commands-using-frame 'helm-baloo)
 #+END_SRC
 
 * Key Bindings
