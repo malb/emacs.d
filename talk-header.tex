@@ -43,11 +43,6 @@
   {}{}
 \makeatother
 
-\setmonofont[BoldFont={Cousine Bold},
-             ItalicFont={Cousine Italic},
-             BoldItalicFont={Cousine Bold Italic}, % Scale=MatchLowercase
-             ]{Cousine}
-
 %%%
 %%% Tikz
 %%%
@@ -118,10 +113,15 @@
 \renewcommand*{\UrlFont}{\ttfamily\smaller\relax}
 
 %%%
-%%% UTF-8
+%%% UTF-8 & Fonts
 %%% 
 
 \RequirePackage{unicodesymbols} % after metropolis which loads fontspec
+
+\setmonofont[BoldFont={Cousine Bold},
+             ItalicFont={Cousine Italic},
+             BoldItalicFont={Cousine Bold Italic}, % Scale=MatchLowercase
+             ]{Cousine}
 
 %%%
 %%% BibLaTeX
