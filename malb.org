@@ -3888,8 +3888,7 @@ Make flycheck prettier based on what spacemacs does.
             (flycheck-define-error-level 'info
               :overlay-category 'flycheck-info-overlay
               :fringe-bitmap 'my-flycheck-fringe-indicator
-              :fringe-face 'flycheck-fringe-info)
-            ))
+              :fringe-face 'flycheck-fringe-info)))
 #+END_SRC
 
 Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
