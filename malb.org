@@ -5359,7 +5359,8 @@ Automatically pick dictionary.
   :ensure t
   :config (progn
             (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")
-            (add-hook 'markdown-mode-hook #'adict-guess-dictionary)))
+            ;; (add-hook 'markdown-mode-hook #'adict-guess-dictionary)
+            ))
 #+END_SRC
 
 *** Grammar Checking
