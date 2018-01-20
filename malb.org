@@ -8356,7 +8356,6 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 #+END_SRC
 
 * Theme & Look
-
 ** Frame Title
 
 Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob/master/init.org#display-buffer-name-in-frame-titles][source]])
