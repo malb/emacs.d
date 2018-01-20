@@ -1259,6 +1259,10 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-grep-default-command "ag --vimgrep -z %p %f"
                   helm-grep-default-recurse-command "ag --vimgrep -z %p %f")
 
+            (setq helm-display-function #'helm-default-display-buffer
+                  helm-display-buffer-reuse-frame t
+                  helm-use-undecorated-frame-option t)
+
             (setq helm-M-x-fuzzy-match                  t
                   helm-eshell-fuzzy-match               t
                   helm-buffers-fuzzy-matchiqng          t
