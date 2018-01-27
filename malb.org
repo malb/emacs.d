@@ -8569,7 +8569,8 @@ The result looks like this:
                 (eval-after-load "rtags"
                   '(progn
                      (set-face-attribute 'rtags-fixitline nil :background nil :foreground nil :slant 'normal :underline nil)
-                     (set-face-attribute 'rtags-errline nil :background nil :foreground nil :slant 'normal :underline nil)
+                     (set-face-attribute 'rtags-errline nil   :background nil :foreground nil :slant 'normal :underline nil)
+                     (set-face-attribute 'rtags-warnline nil  :background nil :foreground nil :slant 'normal :underline nil)
                      (set-face-attribute 'rtags-skippedline nil  :background "#eee8d5")))))))
 #+END_SRC
 
