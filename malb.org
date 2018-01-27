@@ -4080,7 +4080,9 @@ mouse-3: go to end")
 
 #+BEGIN_SRC emacs-lisp
 (use-package nlinum
-  :ensure t)
+  :ensure t
+  :config (progn
+            (add-hook 'c-mode-common-hook 'nlinum-mode)))
 #+END_SRC
 
 *** Looking Stuff Up
