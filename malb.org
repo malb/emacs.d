@@ -1271,6 +1271,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
             (setq helm-display-function #'helm-default-display-buffer
                   helm-display-buffer-reuse-frame t
+                  helm-display-buffer-width 180
+                  helm-display-buffer-height 60
                   helm-use-undecorated-frame-option t)
 
             (setq helm-M-x-fuzzy-match                  t
@@ -1499,7 +1501,8 @@ Switch themes with helm.
                 (cond
                  ((equal arg 4) (call-interactively #'helm-org-rifle-agenda-files nil))
                  ((equal arg 16) (helm-org-rifle-occur-agenda-files))
-                 (t (helm-org-agenda-files-headings)))))))
+                 (t (helm-org-agenda-files-headings)))))
+            (add-to-list 'helm-commands-using-frame #'malb/helm-org-rifle-agenda-files)))
 #+END_SRC
 
 ** Helm Google
@@ -1541,6 +1544,8 @@ Switch themes with helm.
   (if (eq major-mode 'org-mode)
       (call-interactively #'helm-org-in-buffer-headings)
     (call-interactively #'helm-semantic-or-imenu)))
+
+(add-to-list 'helm-commands-using-frame #'malb/helm-in-buffer)
 #+END_SRC
 
 * History
