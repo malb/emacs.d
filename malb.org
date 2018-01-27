@@ -872,6 +872,13 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
             (add-hook 'yas-minor-mode-hook #'malb/disable-yas-if-no-snippets)))
 #+END_SRC
 
+The official yasnippet snippet collection
+
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet-snippets
+   :ensure t)
+#+END_SRC
+
 ** Auto YASnippet
 
 #+BEGIN_QUOTE
