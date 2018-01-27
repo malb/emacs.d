@@ -40,6 +40,47 @@ We collect our own customisations in the =malb= group.
   :group 'convenience)
 #+END_SRC
 
+* Memory
+
+We have RAM, lots of it.
+
+#+BEGIN_SRC emacs-lisp
+(setq global-mark-ring-max 256
+      mark-ring-max 256
+      kill-ring-max 256)
+#+END_SRC
+
+Define some functions to disable/enable GC ([[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/disable-garbage-collection ()
+  "Disable garbage collection."
+  (setq gc-cons-threshold most-positive-fixnum
+        gc-cons-percentage 0.6))
+
+(defun malb/enable-garbage-collection ()
+  "Reset garbage collection to small-ish limit."
+  (setq gc-cons-threshold 16777216
+        gc-cons-percentage 0.1))
+#+END_SRC
+
+Helm runs with GC disabled:
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'minibuffer-setup-hook #'malb/disable-garbage-collection)
+(add-hook 'minibuffer-exit-hook #'malb/enable-garbage-collection)
+#+END_SRC
+
+We disable GC during startup, we re-enable it below.
+
+#+BEGIN_SRC emacs-lisp
+(malb/disable-garbage-collection)
+(add-hook 'emacs-startup-hook #'malb/enable-garbage-collection)
+#+END_SRC
+
+*Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
+for a long-ish time.
+
 * TLS
 
 Enable TLS cert checking ([[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][source]])
@@ -155,35 +196,6 @@ Maximise the window as soon as possible
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 #+END_SRC
-
-* Memory
-
-We have RAM, lots of it.
-
-#+BEGIN_SRC emacs-lisp
-(setq global-mark-ring-max 256
-      mark-ring-max 256
-      kill-ring-max 256)
-#+END_SRC
-
-([[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][source]])
-
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/disable-garbage-collection ()
-  "Disable garbage collection."
-  (setq gc-cons-threshold most-positive-fixnum))
-
-(defun malb/enable-garbage-collection ()
-  "Reset garbage collection to small-ish limit."
-  (setq gc-cons-threshold 1048576))
-
-(add-hook 'minibuffer-setup-hook #'malb/disable-garbage-collection)
-(add-hook 'minibuffer-exit-hook #'malb/enable-garbage-collection)
-#+END_SRC
-
-*Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
-for a long-ish time.
 
 * Keyboard Shortcuts
 
