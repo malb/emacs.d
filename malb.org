@@ -770,7 +770,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("SPC" nil)
   ("`" other-window :color blue))
 
-(key-chord-define-global "xz" #'malb/hydra-window/body)
+(key-chord-define-global "\\x" #'malb/hydra-window/body)
 (bind-key "C-x o" #'malb/hydra-window/body)
 (bind-key "¬" #'other-window)
 #+END_SRC
