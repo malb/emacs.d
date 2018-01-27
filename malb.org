@@ -4452,6 +4452,7 @@ Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/2
 
 #+BEGIN_SRC emacs-lisp
 (use-package doxymacs
+  :disabled t
   :diminish doxymacs-mode
   :config (progn
             (defun malb/doxymacs ()
