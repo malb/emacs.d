@@ -2182,7 +2182,6 @@ This library provides easy project management and navigation. The concept of a p
             (setq projectile-make-test-cmd "make check"
                   projectile-ignored-projects malb/projectile-ignored-projects
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
-                  projectile-switch-project-action 'helm-projectile
                   projectile-mode-line  '(:eval (format "»{%s}" (projectile-project-name))))
 
             (projectile-global-mode)))
@@ -2206,17 +2205,12 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
                   "Create file"
                 :action 'find-file))
 
-            (add-to-list
-             'helm-projectile-sources-list
-             malb/helm-source-file-not-found t)
+            (add-to-list 'helm-projectile-sources-list malb/helm-source-file-not-found t)
 
-            (helm-delete-action-from-source
-             "Grep in projects `C-s'"
-             helm-source-projectile-projects)
+            (setq projectile-switch-project-action 'helm-projectile)
 
-            (helm-add-action-to-source
-             "Grep in projects `C-s'"
-             'helm-do-ag helm-source-projectile-projects 4)))
+            (helm-delete-action-from-source "Grep in projects `C-s'" helm-source-projectile-projects)
+            (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-projects 4)))
 #+END_SRC
 
 * Git
