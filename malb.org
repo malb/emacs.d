@@ -1509,7 +1509,7 @@ Switch themes with helm.
                  ((equal arg 4) (call-interactively #'helm-org-rifle-agenda-files nil))
                  ((equal arg 16) (helm-org-rifle-occur-agenda-files))
                  (t (helm-org-agenda-files-headings)))))
-            (add-to-list 'helm-commands-using-frame #'malb/helm-org-rifle-agenda-files)))
+            (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)))
 #+END_SRC
 
 ** Helm Google
@@ -1552,7 +1552,8 @@ Switch themes with helm.
       (call-interactively #'helm-org-in-buffer-headings)
     (call-interactively #'helm-semantic-or-imenu)))
 
-(add-to-list 'helm-commands-using-frame #'malb/helm-in-buffer)
+(add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
+(add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)
 #+END_SRC
 
 * History
