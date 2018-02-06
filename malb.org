@@ -3746,7 +3746,7 @@ cat mylog.log >> #<buffer *scratch*>
   (helm-other-buffer 'malb/helm-c-source-zsh-history "*helm zsh history*"))
 #+END_SRC
 
-* Programming (languages)
+* Programming (Languages)
 ** General
 *** REPL
 **** Comint
