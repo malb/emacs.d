@@ -6296,7 +6296,11 @@ Spray is a speed reading mode.
 (use-package spray
   :ensure t
   :config (progn
-            (setq spray-wpm 500)
+            (setq spray-wpm 512
+                  spray-margin-left 4
+                  spray-margin-top 12)
+            (bind-key "+" 'spray-faster spray-mode-map)
+            (bind-key "-" 'spray-slower spray-mode-map)
             (add-to-list 'spray-unsupported-minor-modes 'beacon-mode)))
 #+END_SRC
 
