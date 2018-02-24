@@ -402,7 +402,8 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\`\\*Helm Swoop\\*\\'"
                              "\\`\\*Backtrace\\*\\'"
                              "\\`\\*Messages\\*\\'"
-                             "\\`\\*Calendar\\*\\'"))
+                             "\\`\\*Calendar\\*\\'"
+                             "\\`\\*mscdb\\*\\'"))
 #+END_SRC
 
 *** Closing bottom most pop-up-style windows
@@ -3558,6 +3559,8 @@ The function behaves as follows:
             (defun malb/eshell-add-visual-commands ()
               (add-to-list 'eshell-visual-commands "htop")
               (add-to-list 'eshell-visual-commands "ssh")
+              (add-to-list 'eshell-visual-commands "ipython")
+              (add-to-list 'eshell-visual-commands "mscdb.sh")
               (add-to-list 'eshell-visual-commands "vim"))
 
             (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
@@ -3763,16 +3766,23 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
 
             (bind-key "M-r" #'helm-comint-input-ring comint-mode-map)
 
-            (setq comint-scroll-to-bottom-on-input t  ; always insert at the bottom
+            (setq comint-scroll-to-bottom-on-input t ; always insert at the bottom
                   comint-scroll-to-bottom-on-output t
-                  comint-input-ignoredups t           ; no duplicates in command history
-                  comint-prompt-read-only t           ; don’t overwrite prompt
+                  comint-input-ignoredups t ; no duplicates in command history
+                  comint-prompt-read-only t ; don’t overwrite prompt
                   comint-move-point-for-output t)
 
             (defun malb/kill-buffer-delete-window ()
               (interactive)
               (let ((kill-buffer-query-functions nil))
                 (kill-buffer)))
+
+            (defun malb/kill-buffer (old-function &rest arguments)
+              (apply old-function arguments)
+              (let ((kill-buffer-query-functions nil))
+                (kill-buffer)))
+
+            (advice-add 'comint-send-eof :around  #'malb/kill-buffer)
 
             (bind-key "C-S-w" #'malb/kill-buffer-delete-window comint-mode-map)))
 #+END_SRC
@@ -4181,6 +4191,8 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
                    rtags-display-current-error-as-message nil
                    rtags-display-current-error-as-tooltip nil
                    rtags-diagnostics-summary-in-mode-line nil)
+             ;; (push 'company-rtags company-backends)
+             ;; (setq rtags-completions-enabled t)
              (add-hook 'c-mode-hook #'rtags-start-process-unless-running)
              (add-hook 'c++-mode-hook #'rtags-start-process-unless-running)))
 #+END_SRC
@@ -4190,7 +4202,20 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-rtags
   :after flycheck
-  :ensure t)
+  :ensure t
+  ;; :config (progn
+  ;;           ;; ensure that we use only rtags checking
+  ;;           ;; https://github.com/Andersbakken/rtags#optional-1
+  ;;           (defun setup-flycheck-rtags ()
+  ;;             (flycheck-select-checker 'rtags)
+  ;;             (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+  ;;             (setq-local flycheck-check-syntax-automatically nil)
+  ;;             (rtags-set-periodic-reparse-timeout 2.0) ;; Run flycheck 2 seconds after being idle.
+  ;;             )
+  ;;           (add-hook 'c-mode-hook #'setup-flycheck-rtags)
+  ;;           (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
+  ;;           )
+  ))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -4877,11 +4902,6 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                                           '(progn (venv-deactivate) (sage-shell:run-sage "sage"))
                                           nil
                                           nil))
-
-            (defun malb/kill-buffer (old-function &rest arguments)
-              (apply old-function arguments)
-              (let ((kill-buffer-query-functions nil))
-                (kill-buffer)))
 
             (advice-add 'sage-shell:send-eof :around  #'malb/kill-buffer)
 
