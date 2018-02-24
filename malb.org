@@ -5289,10 +5289,11 @@ Indicate soft wrapped lines.
   :ensure t
   :diminish typo-mode
   :config (progn
-            (setq-default  typo-language "English")
-            (add-hook 'markdown-mode-hook #'typo-mode)
+            (setq-default typo-language "English")
+            ;; (add-hook 'markdown-mode-hook #'typo-mode)
             (add-hook 'org-mode-hook #'typo-mode)
-            (add-hook 'rst-mode-hook #'typo-mode)))
+            ;; (add-hook 'rst-mode-hook #'typo-mode)
+            ))
 #+END_SRC
 
 Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]])
