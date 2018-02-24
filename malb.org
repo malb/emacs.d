@@ -9016,8 +9016,10 @@ Easily change the text size:
 (malb/set-menu-key "P" #'prodigy)
 (malb/set-menu-key "p" #'pandoc-main-hydra/body)
 (malb/set-menu-key "s" #'malb/toggle-sage)
+(malb/set-menu-key "r" #'spray-mode)
 (malb/set-menu-key "x" #'helm-M-x)
 (malb/set-menu-key "z" #'malb/toggle-multi-term)
+(malb/set-menu-key "<f5>" #'emms-pause)
 #+END_SRC
 
 Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
