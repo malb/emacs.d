@@ -8411,7 +8411,7 @@ then enter the text in that file's own buffer.
 ")
 #+END_SRC
 
-** Emacs from Chrome
+** Emacs from Browsers
 
 [[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
 
