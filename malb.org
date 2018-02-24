@@ -6532,9 +6532,9 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%today"  . "date:today..now")
                   ("%week"   . "date:7d..now")
                   ("%month"  . "date:31d..now")
-                  ("%inbox"  . "maildir:\"/royal holloway\" OR maildir:/INBOX")
-                  ("%sent"   . "maildir:\"/[Google Mail]/Sent Mail\" OR maildir:\"/royal holloway/sent\"")
-                  ("%direct" . "%inbox AND NOT flag:list AND NOT %hidden"))))
+                  ("%inbox"  . "(maildir:\"/royal holloway\" OR maildir:/INBOX)")
+                  ("%sent"   . "(maildir:\"/[Google Mail]/Sent Mail\" OR maildir:\"/royal holloway/sent\")")
+                  ("%direct" . "%inbox AND NOT flag:list AND NOT %hidden AND (to:martinralbrecht@* OR to:martin.albrecht@*)"))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -6563,7 +6563,7 @@ Canned queries.
 (add-to-list 'mu4e-bookmarks '("%direct AND %week" "Last 7 days (direct)" ?W) t)
 
 (add-to-list
- 'mu4e-bookmarks '("%inbox AND %week AND NOT (flag:replied OR flag:passed OR flag:trashed OR flag:list)"
+ 'mu4e-bookmarks '("%direct AND %week AND NOT (flag:replied OR flag:passed OR flag:trashed OR flag:list)"
                    "Last 7 days (direct, unanswered)" ?R) t)
 
 (add-to-list 'mu4e-bookmarks '("%sent AND %week" "Last 7 days (sent)" ?s) t)
@@ -6658,8 +6658,10 @@ Canonicalise contacts as they appear from mu4e.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-contact-rewrite-function (contact)
-  (let* ((name (or (plist-get contact :name) ""))
-         (email (downcase (plist-get contact :mail)))
+  (let* ((email (downcase (plist-get contact :mail)))
+         (name (if (equal (plist-get contact :name) email)
+                   nil
+                 (plist-get contact :name)))
          (case-fold-search t))
     (plist-put contact :name (malb/canonicalise-contact-name email name))
     contact))
@@ -6840,23 +6842,23 @@ it is to insert the contact.
          '(("Insert" . (lambda (x)
                          (insert (mapconcat 'identity
                                             (helm-marked-candidates) ","))))
-           ("Find Messages (combine multiple with AND)" .
+           ("Find messages (combine multiple with OR)" .
             (lambda (x)
               (mu4e-headers-search
                (format "contact:%s"
-                       (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
-
+                       (mapconcat 'malb/extract-email (helm-marked-candidates) " OR ")))))
            ("Copy to clipboard" . (lambda (x)
                                     (kill-new (mapconcat 'identity
                                                          (helm-marked-candidates) ","))))
            ("Google search" . (lambda (x) (helm-google (replace-regexp-in-string
                                                         (format "^\\(.*\\) %s" malb/email-regexp) "\\1" x))))
 
-           ("Find Messages (combine multiple with OR)" .
+           ("Find messages (combine multiple with AND)" .
             (lambda (x)
               (mu4e-headers-search
                (format "contact:%s"
-                       (mapconcat 'malb/extract-email (helm-marked-candidates) " OR "))))))))
+                       (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
+           )))
 
     (helm :sources (helm-build-sync-source "E-mail address candidates"
                      :candidates  (append
@@ -6979,8 +6981,8 @@ View e-mails with width restriction, but wider for HTML
       (set-fill-column 80))
      (t
       (set-fill-column 120)))
-    (visual-line-mode)
-    (visual-fill-column-mode)))
+    (visual-line-mode 1)
+    (visual-fill-column-mode 1)))
 
 (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
@@ -7031,7 +7033,7 @@ Action to view e-mails in EWW.
     (helm :sources `(((name . "Filter candidates:")
                       (candidates . addresses)
                       (after-init-hook . (lambda () (with-helm-buffer
-                                                      (run-at-time 0.01 nil #'helm-mark-all))))
+                                                      (run-at-time 0.1 nil #'helm-mark-all))))
                       (action . (("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
                                  ("Use all" . (lambda (x))))))))
     (mu4e-headers-search
