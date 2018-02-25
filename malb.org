@@ -4215,7 +4215,8 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
   ;;           (add-hook 'c-mode-hook #'setup-flycheck-rtags)
   ;;           (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
   ;;           )
-  ))
+  ;;          )
+)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
