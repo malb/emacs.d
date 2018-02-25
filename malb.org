@@ -4768,7 +4768,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
    :ensure t)
 #+END_SRC
 
-*** iPython Notebook
+*** iPython Notebook (EIN)
 
 [[https://github.com/millejoh/emacs-ipython-notebook][EIN]] is a interface to iPython.
 
@@ -4779,6 +4779,7 @@ On our system port 8888 is already taken.
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
+  :after org-babel
   :commands (ein:notebook-open ein:query-ipython-version)
   :config (progn
             (setq ein:use-auto-complete t
@@ -4794,11 +4795,15 @@ On our system port 8888 is already taken.
 
             (add-hook 'ein:notebook-multilang-mode-hook #' malb/ein-hook)
 
+            (add-to-list 'org-babel-load-languages '(ein . t))
+
             (require 'ein-notebook)
 
             (bind-key "S-<return>" #'ein:worksheet-execute-cell-and-goto-next ein:notebook-mode-map)
             (bind-key "C-<return>" #'ein:worksheet-execute-cell ein:notebook-mode-map)))
 #+END_SRC
+
+**Note:** To use EIN [[https://millejoh.github.io/emacs-ipython-notebook/#org-mode-integration][from org-mode]], specify a notebook via the =:session= argument. The format for the session argument is ={url-or-port}/{path-to-notbook}=, e.g. =8889/Untitled.ipynb=
 
 *** Virtual Environments
 
