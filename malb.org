@@ -1478,8 +1478,7 @@ Switch themes with helm.
   :config (progn
             (setq helm-locate-command
                   (let ((databases (concat
-                                    "/var/lib/mlocate/mlocate.db:"
-                                    (expand-file-name ".locate.db" (getenv "HOME")))))
+                                    "/var/lib/mlocate/mlocate.db")))
                     (concat "locate -d " databases  " %s -e --regex %s")))
 
             (helm-add-action-to-source "Attach to E-mail" #'mml-attach-file helm-source-locate)))
