@@ -1481,6 +1481,8 @@ Switch themes with helm.
                                     "/var/lib/mlocate/mlocate.db")))
                     (concat "locate -d " databases  " %s -e --regex %s")))
 
+            (add-to-list 'helm-commands-using-frame 'helm-locate)
+
             (helm-add-action-to-source "Attach to E-mail" #'mml-attach-file helm-source-locate)))
 #+END_SRC
 
