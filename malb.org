@@ -3019,7 +3019,6 @@ The tag =:ignore:= ignores a headline when exporting, section content is exporte
 (use-package ox-extra
   :config (ox-extras-activate '(ignore-headlines)))
 #+END_SRC
-
 ** Capture
 
 If we are in a project we might add a TODO entry to the appropriate entry in =projects.org=.
