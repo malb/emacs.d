@@ -7807,6 +7807,21 @@ Show dired histories you have visited.
              (";" . dired-subtree-remove)))
 #+END_SRC
 
+[[https://github.com/Fuco1/dired-hacks/blob/master/dired-ranger.el][dired-ranger]] for easy copy’n’pasting.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-ranger
+  :ensure t
+  :bind (:map dired-mode-map
+              ("C-w" . (lambda (arg)
+                         (interactive "P")
+                         (dired-ranger-copy arg)
+                         (bind-key "C-y" #'dired-ranger-move dired-mode-map)))
+              ("M-w" . (lambda (arg)
+                         (interactive "P")
+                         (dired-ranger-copy arg)
+                         (bind-key "C-y" #'dired-ranger-paste dired-mode-map)))))
+#+END_SRC
 
 ** Neotree
 
