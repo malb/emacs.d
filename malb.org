@@ -7451,6 +7451,8 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
             (setq pdf-view-resize-factor 1.1
                   pdf-annot-activate-created-annotations t)
 
+            (add-hook 'pdf-annot-list-mode-hook #'pdf-annot-list-follow-minor-mode)
+
             (defun malb/pdf-extract-table (&optional format)
               (let* ((format- (upcase (or format "CSV")))
                      (pdf-filename (buffer-file-name))
@@ -7638,20 +7640,30 @@ Other:     _p_ plain    _c_ csv table  _j_ json table
             (bind-key "x" #'malb/hydra-pdf-extract/body pdf-view-mode-map)
 
             (defun malb/pdf-annot-move (forward)
-              (let ((this nil)
-                    (next nil)
-                    (annotations (sort (pdf-annot-getannots nil nil (cdar pdf-annot-edit-contents--annotation))
-                                       'pdf-annot-compare-annotations)))
-                (dolist (annot (if forward annotations (reverse annotations)))
-                  (when (equal this t)
-                    (setq next annot)
-                    (setq this nil))
-                  (when (equal (pdf-annot-get-id annot) (pdf-annot-get-id pdf-annot-edit-contents--annotation))
-                    (setq this t)))
-                (pdf-annot-edit-contents-finalize t)
-                (when next
-                  (pdf-view-goto-page (pdf-annot-get next 'page))
-                  (pdf-annot-edit-contents next))))
+              (let ((annot-list (with-current-buffer
+                                    (pdf-annot-get-buffer pdf-annot-edit-contents--annotation)
+                                  pdf-annot-list-buffer)))
+                (if annot-list
+                    (progn
+                      (pdf-annot-edit-contents-commit)
+                      (if forward
+                          (call-interactively 'tablist-next-line)
+                        (call-interactively 'tablist-previous-line))
+                      (call-interactively 'tablist-find-entry))
+                  (let ((this nil)
+                        (next nil)
+                        (annotations (sort (pdf-annot-getannots nil nil (cdar pdf-annot-edit-contents--annotation))
+                                           'pdf-annot-compare-annotations)))
+                    (dolist (annot (if forward annotations (reverse annotations)))
+                      (when (equal this t)
+                        (setq next annot)
+                        (setq this nil))
+                      (when (equal (pdf-annot-get-id annot) (pdf-annot-get-id pdf-annot-edit-contents--annotation))
+                        (setq this t)))
+                    (pdf-annot-edit-contents-finalize t)
+                    (when next
+                      (pdf-view-goto-page (pdf-annot-get next 'page))
+                      (pdf-annot-edit-contents next))))))
 
             (defun malb/pdf-annot-next ()
               (interactive)
@@ -7660,25 +7672,6 @@ Other:     _p_ plain    _c_ csv table  _j_ json table
             (defun malb/pdf-annot-prev ()
               (interactive)
               (malb/pdf-annot-move nil))
-
-            (defun malb/pdf-annot-edit-contents-setup-function (a)
-              (let ((mode (if (funcall pdf-annot-latex-string-predicate
-                                       (pdf-annot-get a 'contents))
-                              'latex-mode
-                            'text-mode)))
-                (unless (derived-mode-p mode)
-                  (funcall mode)))
-              (let ((highlighted
-                     (replace-regexp-in-string "\n" " "
-                                               (pdf-info-gettext
-                                                (pdf-annot-get a 'page)
-                                                (pdf-tools-org-edges-to-region (pdf-annot-get a 'markup-edges))
-                                                0
-                                                (pdf-annot-get a 'buffer)))))
-                (when highlighted
-                  (if (< (length highlighted) 32)
-                      (rename-buffer (format "*Annotate: \"%s\"*" highlighted))
-                    (rename-buffer (format "*Annotate: \"%s…\"*" (substring highlighted 0 32)))))))
 
             (defun malb/pdf-annot-yank-highlight ()
               (interactive)
@@ -7690,8 +7683,6 @@ Other:     _p_ plain    _c_ csv table  _j_ json table
                                                       0
                                                       (pdf-annot-get a 'buffer)))))
                 (insert (format "\"%s\"" text))))
-
-            (setq pdf-annot-edit-contents-setup-function 'malb/pdf-annot-edit-contents-setup-function)
 
             (bind-key "C-c C-n" 'malb/pdf-annot-next pdf-annot-edit-contents-minor-mode-map)
             (bind-key "C-c C-p" 'malb/pdf-annot-prev pdf-annot-edit-contents-minor-mode-map)
