@@ -2722,6 +2722,12 @@ UTF-8 everywhere.
 (add-to-list 'org-babel-default-inline-header-args '(:eval . "never-export"))
 #+END_SRC
 
+
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-to-mathml-convert-command "java -jar %j -unicode -force -df %o %I"
+      org-latex-to-mathml-jar-file (expand-file-name "mathtoweb.jar" user-emacs-directory))
+#+END_SRC
+
 *** iCalendar
 
 iCal export is triggered after 600 seconds of inactivity.
