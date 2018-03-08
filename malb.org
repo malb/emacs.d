@@ -2965,18 +2965,18 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 (use-package ox-pandoc
   :ensure t
   :init (progn
-          (setq org-pandoc-menu-entry  '( (103 "to md_github and open." org-pandoc-export-to-markdown_github-and-open)
-                                          (71 "as md_github." org-pandoc-export-as-markdown_github)
-                                          (120 "to docx and open." org-pandoc-export-to-docx-and-open)
-                                          (88 "to docx." org-pandoc-export-to-docx)
-                                          (51 "to epub and open." org-pandoc-export-to-epub-and-open)
-                                          (35 "to epub." org-pandoc-export-to-epub)
-                                          (101 "to epub3 and open." org-pandoc-export-to-epub3-and-open)
-                                          (69 "to epub3." org-pandoc-export-to-epub3)
-                                          (106 "to json and open." org-pandoc-export-to-json-and-open)
-                                          (74 "as json." org-pandoc-export-as-json)
-                                          (58 "to rst and open." org-pandoc-export-to-rst-and-open)
-                                          (42 "as rst." org-pandoc-export-as-rst)))))
+          (setq org-pandoc-menu-entry  '((?g "as md_github." org-pandoc-export-as-markdown_github)
+                                         (?G "to md_github and open." org-pandoc-export-to-markdown_github-and-open)
+                                         (?x "to docx." org-pandoc-export-to-docx)
+                                         (?X "to docx and open." org-pandoc-export-to-docx-and-open)
+                                         (?e "to epub." org-pandoc-export-to-epub)
+                                         (?E "to epub and open." org-pandoc-export-to-epub-and-open)
+                                         (?3 "to epub3." org-pandoc-export-to-epub3)
+                                         (?£ "to epub3 and open." org-pandoc-export-to-epub3-and-open)
+                                         (?j "as json." org-pandoc-export-as-json)
+                                         (?J "to json and open." org-pandoc-export-to-json-and-open)
+                                         (?r "as rst." org-pandoc-export-as-rst)
+                                         (?R "to rst and open." org-pandoc-export-to-rst-and-open)))))
 #+END_SRC
 
 *** Rich Text Clipboard
