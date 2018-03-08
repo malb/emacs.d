@@ -4762,8 +4762,8 @@ On our system port 8888 is already taken.
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
-  :after org-babel
-  :commands (ein:notebook-open ein:query-ipython-version)
+  :after ob
+  :commands (ein:notebooklist-open ein:notebooklist-login ein:query-ipython-version)
   :config (progn
             (setq ein:use-auto-complete t
                   ein:complete-on-dot nil
