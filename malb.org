@@ -3499,7 +3499,7 @@ The function behaves as follows:
                   (malb/make-toggle-shell "multi-term"
                                           '(let ((current-prefix-arg nil)) (multi-term))
                                           '(progn
-                                             (when (boundp 'venv-current-name)
+                                             (when (and (boundp 'venv-current-name) venv-current-name)
                                                (insert (format "workon %s" venv-current-name))
                                                (term-send-input))
                                              (insert "ls")
