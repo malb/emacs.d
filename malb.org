@@ -8460,9 +8460,15 @@ Transparent encryption and decryption.
 #+BEGIN_SRC emacs-lisp
 (use-package abgaben
   :ensure t
-  :config (setq abgaben-org-file malb/abgaben-org-file
-                abgaben-root-folder malb/abgaben-folder
-                abgaben-heading "Assignments"))
+  :after mu4e
+  :config (progn
+            (setq abgaben-org-file malb/abgaben-org-file
+                  abgaben-root-folder malb/abgaben-folder
+                  abgaben-heading "Assignments"
+                  abgaben-points-re "marks: ?\\([0-9.]*\\)/\\([0-9.]*\\)")
+
+            (add-to-list 'mu4e-view-attachment-actions
+                         '("gsave assignment" . abgaben-capture-submission) t)))
 #+END_SRC
 
 * File Types
