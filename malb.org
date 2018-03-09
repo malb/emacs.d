@@ -1275,7 +1275,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-truncate-lines nil
                   helm-ff-auto-update-initial-value nil
                   helm-grep-default-command "ag --vimgrep -z %p %f"
-                  helm-grep-default-recurse-command "ag --vimgrep -z %p %f")
+                  helm-grep-default-recurse-command "ag --vimgrep -z %p %f"
+                  helm-use-frame-when-more-than-two-windows nil)
 
             (setq helm-display-function #'helm-default-display-buffer
                   helm-display-buffer-reuse-frame t
