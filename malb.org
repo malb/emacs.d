@@ -3105,7 +3105,7 @@ DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
 :CREATED: %U
 :END:
 
-%U" :prepend t :empty-lines 1 :immediate-finish t)
+%i" :prepend t :empty-lines 1 :immediate-finish t)
 
                     ("ef" "[f]ile an [e]-mail"
                      entry (file+headline malb/inbox-org "E-Mail")
@@ -3128,6 +3128,7 @@ SCHEDULED: %(org-time-stamp nil)
 :CREATED: %U
 :END:
 
+%i
 
 See %a by %:fromname
 " :immediate-finish nil :prepend t :empty-lines 1)
