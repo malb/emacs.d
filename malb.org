@@ -2496,6 +2496,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
               "REPLY(r)"
               "CALL"
               "LOAD"
+              "PAY"
               "|" "DONE")))
 
 (org-clock-persistence-insinuate)
