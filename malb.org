@@ -4785,6 +4785,12 @@ On our system port 8888 is already taken.
 
             (require 'ein-notebook)
 
+            (defun malb/ein-open-here ()
+              "We have a link projects to our projects top directory, this function goes to anything below that."
+              (interactive)
+              (let ((url (replace-regexp-in-string malb/projects-dir "projects" default-directory)))
+                (ein:notebooklist-open 8890 url)))
+
             (bind-key "S-<return>" #'ein:worksheet-execute-cell-and-goto-next ein:notebook-mode-map)
             (bind-key "C-<return>" #'ein:worksheet-execute-cell ein:notebook-mode-map)))
 #+END_SRC
