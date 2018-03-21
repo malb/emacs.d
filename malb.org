@@ -4802,13 +4802,28 @@ On our system port 8888 is already taken.
             (venv-initialize-interactive-shells)
             (venv-initialize-eshell)
 
+            ;; some modes don't need to have a virtualenv
+            (setq malb/venv-tracking-mode-excluded-modes
+                  '(mu4e-headers-mode mu4e-view-mode mu4e-main-mode))
+
+            ;; handling virtualenvs costs and we use post-command-hook, we use this variable to
+            ;; check for buffer changes
+            (setq malb/venv-tracking-mode--previous-buffer nil)
+
             (defun malb/track-venv ()
               "Enable virtualenv if local variable `project-venv-name' is set.
 
 Otherwise disable virtualenv."
-              ;; (if (buffer-file-name) (hack-local-variables))
-              (if (boundp 'project-venv-name)
-                  (venv-workon project-venv-name)))
+              ;; only trigger on buffer change
+              (when (not (eq (current-buffer)
+                             malb/venv-tracking-mode--previous-buffer))
+                ;; check for excluded modes
+                (if (not (memq major-mode malb/venv-tracking-mode-excluded-modes))
+                    ;; trigger
+                    (if (boundp 'project-venv-name)
+                        (venv-workon project-venv-name))
+                  (venv-deactivate))
+                (setq malb/venv-tracking-mode--previous-buffer (current-buffer))))
 
             (define-minor-mode malb/venv-tracking-mode
               "Global minor mode to track the current virtualenv.
