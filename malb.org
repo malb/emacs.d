@@ -6512,7 +6512,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
       mu4e-headers-signed-mark    '("s" . "✍ ")  ; signed
       mu4e-headers-attach-mark    '("a" . "🗎")  ; attachments
       mu4e-headers-empty-parent-prefix '("-" . "○")
-      mu4e-headers-first-child-prefix '("\\" . "▶")
+      mu4e-headers-first-child-prefix '("\\" . "▸")
       mu4e-headers-has-child-prefix '("+" . "●"))
 #+END_SRC
 
@@ -8637,7 +8637,7 @@ The result looks like this:
                                     :background (solarized-with-color-variables
                                                   'light
                                                   (solarized-color-blend base02 base03 0.8)))
-                (unicode-fonts-setup)
+                ;; (unicode-fonts-setup)
 
                 (when (boundp 'hl-sentence-mode)
                   (set-face-attribute 'hl-sentence nil
