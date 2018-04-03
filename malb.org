@@ -5424,7 +5424,7 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
   :bind ("C-." . ace-flyspell-correct-word)
   :init (progn
           (eval-after-load "flyspell"
-            '(bind-key  "C-." #'ace-flyspell-correct-word flyspell-mode-map))
+            '(bind-key  "C-." #'ace-flyspell-dwim flyspell-mode-map))
           (eval-after-load "flyspell"
             '(unbind-key "C-;" flyspell-mode-map))))
 #+END_SRC
