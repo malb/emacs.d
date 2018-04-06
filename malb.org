@@ -5686,6 +5686,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
             (add-hook 'LaTeX-mode-hook #'visual-fill-column-mode)
+            (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
@@ -5741,6 +5742,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (setq TeX-auto-save t
                   TeX-parse-self t
                   reftex-plug-into-AUCTeX t
+                  LaTeX-math-menu-unicode t
                   TeX-PDF-mode t
                   TeX-source-correlate-mode t
                   TeX-save-query nil
