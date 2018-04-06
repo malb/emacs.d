@@ -8101,6 +8101,50 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
                    "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")))
 #+END_SRC
 
+* EWW
+
+([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#browser-switch][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/switch-default-browser ()
+  "switch between default browser and eww"
+  (interactive)
+  (if (string-equal "browse-url-default-browser" browse-url-browser-function)
+      (setq browse-url-browser-function 'eww-browse-url)
+    (setq browse-url-browser-function 'browse-url-default-browser))
+  (message "%s" browse-url-browser-function))
+#+END_SRC
+
+** Org EWW
+
+Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-eww
+  :after org)
+#+END_SRC
+
+* Weechat
+
+#+BEGIN_SRC emacs-lisp
+(use-package weechat
+  :ensure t
+  :after prodigy
+  :config (progn
+            (prodigy-define-service
+              :name "weechat"
+              :command "weechat-headless"
+              :port 9000
+              :tags '(chat))
+
+            (require 'weechat-notifications)
+
+            (defun malb/weechat ()
+              (interactive)
+              (weechat-connect "localhost" 9000 nil 'plain)
+              (weechat-monitor-all-buffers))))
+#+END_SRC
+
 * X11 Integration
 
 #+BEGIN_SRC emacs-lisp
@@ -8145,7 +8189,6 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (defvar backup-dir (expand-file-name "autosaves" user-emacs-directory))
 (setq backup-directory-alist (list (cons "." backup-dir)))
 #+END_SRC
-
 * UTF-8 Everywhere
 
 #+BEGIN_SRC emacs-lisp
@@ -8158,29 +8201,6 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (setq default-input-method "rfc1345")
 
 (prefer-coding-system 'utf-8)
-#+END_SRC
-
-* EWW
-
-([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#browser-switch][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/switch-default-browser ()
-  "switch between default browser and eww"
-  (interactive)
-  (if (string-equal "browse-url-default-browser" browse-url-browser-function)
-      (setq browse-url-browser-function 'eww-browse-url)
-    (setq browse-url-browser-function 'browse-url-default-browser))
-  (message "%s" browse-url-browser-function))
-#+END_SRC
-
-** Org EWW
-
-Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-eww
-  :after org)
 #+END_SRC
 
 * Large Files
