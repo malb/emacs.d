@@ -7908,6 +7908,21 @@ Show dired histories you have visited.
   :config (setq treemacs-header-function #'treemacs-projectile-create-header))
 #+END_SRC
 
+** Tramp
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-tramp
+  :after helm
+  :ensure t
+  :config (progn
+            (add-to-list 'helm-commands-using-frame 'helm-tramp)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package docker-tramp
+  :ensure t)
+#+END_SRC
+
 * Diff
 
 #+BEGIN_SRC emacs-lisp
