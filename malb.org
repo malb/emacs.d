@@ -3539,7 +3539,8 @@ The function behaves as follows:
             (defun malb/eshell-keys ()
               (bind-key "<home>" #'eshell-bol eshell-mode-map)
               (bind-key "M-r" #'helm-eshell-history eshell-mode-map)
-              (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map))
+              (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map)
+              (bind-key "ESC ." #'malb/eshell-insert-last-word eshell-mode-map))
 
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
             ;; for some reason this needs to be a hook
@@ -3595,6 +3596,30 @@ The function behaves as follows:
               (setq-local company-idle-delay nil)
               ;; (malb/enable-company-pcomplete)
               (define-key eshell-mode-map [remap eshell-pcomplete] #'company-complete))
+
+            ;; https://gist.github.com/kanru/8680931
+            (defun malb/eshell-last-argument (n)
+              (let* ((input (substring-no-properties
+                             (eshell-previous-input-string (1- n))))
+                     (parse (with-temp-buffer
+                              (insert input)
+                              (car (reverse (eshell-parse-arguments
+                                             (point-min) (point-max)))))))
+                (eval parse)))
+
+            ;; https://gist.github.com/kanru/8680931
+            (defun malb/eshell-insert-last-word (n)
+              (interactive "p")
+              (unless (eq last-command this-command)
+                (put 'malb/eshell-insert-last-word 'pre-n n)
+                (put 'malb/eshell-insert-last-word 'pre-p nil))
+              (let ((n (get 'malb/eshell-insert-last-word 'pre-n))
+                    (pre-p (get 'malb/eshell-insert-last-word 'pre-p)))
+                (when pre-p
+                  (delete-region pre-p (point)))
+                (put 'malb/eshell-insert-last-word 'pre-n (1+ n))
+                (put 'malb/eshell-insert-last-word 'pre-p (point))
+                (insert (malb/eshell-last-argument n))))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
