@@ -4829,6 +4829,7 @@ On our system port 8888 is already taken.
   :config (progn
             (setq ein:use-auto-complete t
                   ein:complete-on-dot nil
+                  ein:notebook-create-checkpoint-on-save t
                   ein:completion-backend 'ein:use-company-backend
                   ein:url-or-port '(8890 8889)
                   ein:default-url-or-port 8890
