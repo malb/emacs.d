@@ -4657,11 +4657,11 @@ I often restart Python processes (Cython development), so let’s bind a key for
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/make-ipython-shell (shell-name virtual-env &optional pre-exec post-exec per-project)
+(defun malb/make-ipython-shell (shell-name virtual-env &optional venv-vars post-exec per-project)
   `(lambda (arg)
      (interactive "P")
-     (venv-workon ,virtual-env)
-     ,pre-exec
+     (let ((project-venv-vars ,venv-vars))
+       (venv-workon ,virtual-env))
      (let* ((name   (if (and (not arg) ,per-project)
                         (concat "*" ,shell-name
                                 "[" (if (projectile-project-p)
