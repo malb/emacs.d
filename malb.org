@@ -1431,7 +1431,7 @@ To reset call:
 (use-package helm-ag
   :ensure t
   :config (setq helm-ag-base-command "ag --nocolor --nogroup"
-                helm-ag-command-option "--all-text"
+                helm-ag-command-option nil
                 helm-ag-insert-at-point 'symbol
                 helm-ag-fuzzy-match t
                 helm-ag-use-temp-buffer t
@@ -2222,7 +2222,9 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
             (setq projectile-switch-project-action 'helm-projectile)
 
             (helm-delete-action-from-source "Grep in projects `C-s'" helm-source-projectile-projects)
-            (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-projects 4)))
+            (helm-delete-action-from-source "Grep in projects `C-s'" helm-source-projectile-dirty-projects)
+            (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-projects 4)
+            (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-dirty-projects 4)))
 #+END_SRC
 
 * Git
