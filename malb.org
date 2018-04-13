@@ -1742,7 +1742,6 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
             (sp-with-modes
                 '(tex-mode plain-tex-mode latex-mode)
-
               (sp-local-pair "\\(" "\\)"
                              :unless '(sp-point-before-word-p
                                        sp-point-before-same-p
@@ -1763,6 +1762,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
+            (add-to-list 'sp-ignore-modes-list 'latex-mode)
 
             (sp-with-modes
                 'org-mode
@@ -5811,7 +5811,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-save-query nil
                   TeX-error-overview-open-after-TeX-run t
                   TeX-electric-sub-and-superscript t
-                  ;; TeX-electric-math '("\\(" . "\\)")
+                  TeX-electric-math '("\\(" . "\\)")
                   ;; LaTeX-electric-left-right-brace t
                   TeX-quote-after-quote nil)
 
