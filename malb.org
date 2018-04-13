@@ -4644,6 +4644,29 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (bind-key "C-<tab>" #'outline-cycle python-mode-map)))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun malb/make-ipython-shell (shell-name virtual-env &optional pre-exec post-exec per-project)
+  `(lambda (arg)
+     (interactive "P")
+     (venv-workon ,virtual-env)
+     ,pre-exec
+     (let* ((name   (if (and (not arg) ,per-project)
+                        (concat "*" ,shell-name
+                                "[" (if (projectile-project-p)
+                                        (projectile-project-name)
+                                      (car (last (split-string parent "/" t)))) "]" "*")
+                      ,shell-name))
+            (ip-buffer (python-shell-make-comint (python-shell-calculate-command) name)))
+       (display-buffer ip-buffer '((display-buffer-reuse-window display-buffer-in-side-window) .
+                                   ((reusable-frames . visible)
+                                    (side            . bottom)
+                                    (window-height   . 0.3))))
+       (select-window (get-buffer-window ip-buffer)))
+     (sleep-for 0.1)
+     ,post-exec))
+#+END_SRC
+
+
 *** Highlight indentation
 
 It makes sense to highlight indentation in Python.
