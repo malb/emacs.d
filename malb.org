@@ -1982,6 +1982,10 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 
 ** Embrace
 
+[[https://raw.githubusercontent.com/cute-jumper/embrace.el/master/screencasts/embrace.gif]]
+
+https://github.com/cute-jumper/embrace.el
+
 #+BEGIN_SRC emacs-lisp
 (use-package embrace
   :ensure t
