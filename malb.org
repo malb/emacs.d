@@ -3444,7 +3444,7 @@ We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/m
  Open various shells at point, close with =x= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]] and from ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]).
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/make-toggle-shell (shell-name shell-cmd &optional post-exec per-project)
+(defun malb/make-toggle-shell (shell-name shell-cmd &optional post-exec per-project enter-exec)
   "Create function to toggle a shell-like thing in current project/directory.
 
 The function behaves as follows:
@@ -3454,9 +3454,11 @@ The function behaves as follows:
 - If a buffer of the same name already exists, it is reused.
 - If a buffer with the same name is already shown, its window is closed.
 - `post-exec` is run after the shell is created.
+- `enter-exec` is called before anything else (to set virtualenvs etc)
 "
   `(lambda (arg)
      (interactive "P")
+     ,enter-exec
      (let* ((parent (if (buffer-file-name)
                         (file-name-directory (buffer-file-name))
                       default-directory))
