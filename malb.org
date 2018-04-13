@@ -1966,7 +1966,9 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 (use-package expand-region
   :ensure t
   :bind ("C-\\" . er/expand-region)
+  :init (setq expand-region-fast-keys-enabled nil)
   :config (progn
+
             ;; https://github.com/magnars/expand-region.el
             (defun er/add-text-mode-expansions ()
               (make-variable-buffer-local 'er/try-expand-list)
