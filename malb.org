@@ -4880,6 +4880,19 @@ On our system port 8888 is already taken.
             (venv-initialize-interactive-shells)
             (venv-initialize-eshell)
 
+            (setq malb/venv-preactivate-hook--previous-vars nil)
+
+            (defun malb/venv-preactivate-hook ()
+              (dolist (pair malb/venv-preactivate-hook--previous-vars)
+                (setenv (car pair) nil))
+              (setq malb/venv-preactivate-hook--previous-vars nil)
+              (when (boundp 'project-venv-vars)
+                (dolist (pair project-venv-vars)
+                  (setenv (car pair) (cdr pair)))
+                (setq malb/venv-preactivate-hook--previous-vars project-venv-vars)))
+
+            (add-hook 'venv-preactivate-hook #'malb/venv-preactivate-hook)
+
             ;; some modes don't need to have a virtualenv
             (setq malb/venv-tracking-mode-excluded-modes
                   '(mu4e-headers-mode mu4e-view-mode mu4e-main-mode))
