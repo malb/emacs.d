@@ -1986,8 +1986,16 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 (use-package embrace
   :ensure t
   :config (progn
+
+            (defun malb/embrace-latex-mode-hook ()
+              (embrace-add-pair ?\( "\\(" "\\)")
+              (embrace-add-pair ?\[ "\\[" "\\]")
+              (embrace-add-pair ?\) "(" ")")
+              (embrace-add-pair ?\] "[" "]"))
+
             (bind-key "M-\\" #'embrace-commander)
-            (add-hook 'org-mode-hook #'embrace-org-mode-hook)))
+            (add-hook 'org-mode-hook #'embrace-org-mode-hook)
+            (add-hook 'LaTeX-mode-hook #'malb/embrace-latex-mode-hook)))
 #+END_SRC
 
 ** Wrap Region
