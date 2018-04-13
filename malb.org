@@ -4589,7 +4589,6 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format c
 #+END_SRC
 
 
-
 ** Python
 
 We use the “onetwo” style to fill docstrings in Python, i.e.:
@@ -8622,7 +8621,6 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
   :ensure t
   :mode ("Dockerfile\\." . dockerfile-mode))
 #+END_SRC
-
 
 * Theme & Look
 ** Frame Title
