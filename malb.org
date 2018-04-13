@@ -8186,13 +8186,13 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
   :ensure t
   :after prodigy
   :config (progn
-            (prodigy-define-service
-              :name "weechat"
-              :command "weechat-headless"
-              :port 9000
-              :tags '(chat))
-
             (require 'weechat-notifications)
+            (require 'weechat-latex)
+            (require 'weechat-spelling)
+            (require 'weechat-image)
+
+            (add-hook 'weechat-mode-hook #'visual-line-mode)
+            (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
 
             (defun malb/weechat ()
               (interactive)
