@@ -3819,6 +3819,21 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
 
             (advice-add 'comint-send-eof :around  #'malb/kill-buffer)
 
+            (defun malb/comint-kill-ring-save (arg)
+              ""
+              (interactive "P")
+              (if arg
+                  (call-interactively #'kill-ring-save)
+                (let ((proc (get-buffer-process (current-buffer)))
+                      (replacement nil)
+                      (inhibit-read-only t))
+                  (save-excursion
+                    (let ((pmark (progn (goto-char (process-mark proc))
+                                        (forward-line 0)
+                                        (point-marker))))
+                      (copy-region-as-kill comint-last-input-end pmark))))))
+
+            (bind-key "M-w" #'malb/comint-kill-ring-save comint-mode-map)
             (bind-key "C-S-w" #'malb/kill-buffer-delete-window comint-mode-map)))
 #+END_SRC
 
