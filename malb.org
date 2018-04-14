@@ -8765,118 +8765,14 @@ The result looks like this:
 
               (defun malb/load-main-theme ()
                 (load-theme 'solarized-light t)
-
-                ;; steal org style from Leuven
-                (set-face-attribute 'org-checkbox nil :weight 'bold
-                                    :box '(:line-width 1 :style 'pressed-button)
-                                    :foreground "white" :background "light gray")
-                (set-face-attribute 'org-done nil :weight 'bold :box '(:line-width 1 :color "#BBBBBB")
-                                    :foreground "#8BB300" :background "#F0F0F0")
-                (set-face-attribute 'org-scheduled-previously nil :foreground "#cb4b16")
-                (set-face-attribute 'org-tag nil :weight 'normal
-                                    :box '(:line-width 1 :color "#BBBBBB") :foreground "#9A9FA4")
-                (set-face-attribute 'org-todo nil :weight 'bold
-                                    :box '(:line-width 1 :color "#D8ABA7") :foreground "#cb4b16"
-                                    :background "#FFE6E4")
-                (set-face-attribute 'org-block-begin-line nil :inherit 'org-meta-line
-                                    :background (solarized-with-color-variables 'light base02)
-                                    :foreground "#657b83" :slant 'normal)
-                (set-face-attribute 'org-block-end-line nil :inherit 'org-meta-line
-                                    :background (solarized-with-color-variables 'light base02)
-                                    :foreground "#657b83" :slant 'normal)
-                (set-face-attribute 'org-block nil
-                                    :foreground "#657b83"
-                                    :background (solarized-with-color-variables
-                                                  'light
-                                                  (solarized-color-blend base02 base03 0.3)))
-
-                (set-face-attribute 'auto-dim-other-buffers-face nil
-                                    :background (solarized-with-color-variables
-                                                  'light
-                                                  (solarized-color-blend base02 base03 0.8)))
-                ;; (unicode-fonts-setup)
-
-                (when (boundp 'hl-sentence-mode)
-                  (set-face-attribute 'hl-sentence nil
-                                      :background (solarized-with-color-variables
-                                                    'light
-                                                    (solarized-color-blend base02 base03 0.6))))
-                (when (boundp 'which-func-mode)
-                  (set-face-attribute 'which-func nil :foreground "#DEB542"))
-
-                ;; steal spacemacs flycheck style
-                (when (boundp 'flycheck-mode)
-                  (progn
-                    (set-face-attribute 'flycheck-error   nil :underline "#dc322f")
-                    (set-face-attribute 'flycheck-warning nil :underline "#b58900")
-                    (set-face-attribute 'flycheck-info    nil :underline "#268bd2")
-                    (set-face-attribute 'flycheck-fringe-error   nil
-                                        :background (solarized-with-color-variables 'light base03)
-                                        :foreground "#dc322f" :weight 'bold)
-                    (set-face-attribute 'flycheck-fringe-warning nil
-                                        :background (solarized-with-color-variables 'light base03)
-                                        :foreground "#DEB542" :weight 'bold)
-                    (set-face-attribute 'flycheck-fringe-info    nil
-                                        :background (solarized-with-color-variables 'light base03)
-                                        :foreground "#69B7F0" :weight 'bold)))
-
-                (eval-after-load "eshell-git-prompt"
-                  '(progn
-                     (set-face-attribute 'eshell-git-prompt-powerline-dir-face nil
-                                         :foreground (solarized-with-color-variables 'light base03))
-                     (set-face-attribute 'eshell-git-prompt-powerline-clean-face nil
-                                         :foreground (solarized-with-color-variables 'light base03))
-                     (set-face-attribute 'eshell-git-prompt-powerline-not-clean-face nil
-                                         :foreground (solarized-with-color-variables 'light base03))))
+                (load-theme 'solarized-light-malb t)
 
                 (eval-after-load "pdf-tools"
                   '(progn
                      (setq pdf-view-midnight-colors (cons "#444444"
                                                           (solarized-with-color-variables 'light base03)))
                      nil))
-
-                (eval-after-load "ein-cell"
-                  '(progn
-                     (set-face-attribute 'ein:cell-input-area nil
-                                         :background (solarized-with-color-variables
-                                                       'light
-                                                       (solarized-color-blend base02 base03 0.5)))
-                     (set-face-attribute 'ein:cell-input-prompt nil
-                                         :background nil
-                                         :foreground "#657b83" :weight 'bold)))
-                (eval-after-load "dired-subtree"
-                  '(progn
-                     (set-face-attribute 'dired-subtree-depth-1-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-2-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-3-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-4-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-5-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))
-                     (set-face-attribute 'dired-subtree-depth-6-face nil :background
-                                         (solarized-with-color-variables
-                                           'light
-                                           (solarized-color-blend base02 base03 0.3)))))
-
-                (eval-after-load "rtags"
-                  '(progn
-                     (set-face-attribute 'rtags-fixitline nil :background nil :foreground nil :slant 'normal :underline nil)
-                     (set-face-attribute 'rtags-errline nil   :background nil :foreground nil :slant 'normal :underline nil)
-                     (set-face-attribute 'rtags-warnline nil  :background nil :foreground nil :slant 'normal :underline nil)
-                     (set-face-attribute 'rtags-skippedline nil  :background "#eee8d5")))))))
+                ))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -9081,6 +8977,8 @@ Easily change the text size:
     (add-hook 'after-make-frame-functions #'malb/load-theme)
   (malb/load-theme (selected-frame)))
 #+END_SRC
+
+*** TODO this might not be needed any longer
 
 * KDE Desktop Search with Baloo
 
