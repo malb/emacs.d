@@ -7803,8 +7803,16 @@ Other:     _p_ plain    _c_ csv table  _j_ json table
             (bind-key "C-c C-y" 'malb/pdf-annot-yank-highlight pdf-annot-edit-contents-minor-mode-map)
 
             (defun malb/set-pdf-view-midnight-colors ()
-              (setq pdf-view-midnight-colors (cons (face-attribute 'default :foreground)
-                                                   (face-attribute 'default :background))))
+              (let* ((fg (face-attribute 'default :foreground))
+                     (bg (face-attribute 'default :background))
+                     (fg-norm (reduce '+ (mapcar '(lambda (x) (* x x)) (color-name-to-rgb fg))))
+                     (bg-norm (reduce '+ (mapcar '(lambda (x) (* x x)) (color-name-to-rgb bg))))
+                     (is-light (< fg-norm bg-norm))
+                     (fg (if is-light
+                             (solarized-color-blend fg "black" 0.5)
+                           (solarized-color-blend fg "white" 0.5))))
+                (setq pdf-view-midnight-colors (cons fg bg))))
+
             (add-hook 'pdf-view-midnight-minor-mode-hook #'malb/set-pdf-view-midnight-colors)
             (add-hook 'pdf-view-mode-hook #'malb/set-pdf-view-midnight-colors)))
 #+END_SRC
