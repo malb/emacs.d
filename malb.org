@@ -7732,7 +7732,7 @@ need region."
               "
 Org:       _o_ compact  _O_ normal     _t_ table
 Markdown:  _m_ compact  _M_ normal
-Other:     _p_ plain    _c_ csv table  _j_ json table
+Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 "
               ("o" (lambda () (interactive) (malb/pdf-annot-export-as-org 1)))
               ("O" malb/pdf-annot-export-as-org)
@@ -7742,6 +7742,8 @@ Other:     _p_ plain    _c_ csv table  _j_ json table
               ("j" (lambda () (interactive) (malb/pdf-extract-table "JSON")))
               ("t" (lambda () (interactive) (malb/pdf-extract-table)))
               ("p" (lambda () (interactive) (malb/pdf-extract-text)))
+              ("x" (lambda () (interactive) (start-process (format "ocr %s" buffer-file-name)
+                                                           nil "ocrmypdf" buffer-file-name buffer-file-name)))
               ("q" nil "cancel"))
 
             (bind-key "s h" #'malb/pdf-view-llncs-from-bounding-box pdf-view-mode-map)
