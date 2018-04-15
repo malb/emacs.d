@@ -54,6 +54,95 @@
 
  '(minimap-active-region-background ((t (:background nil))))
  '(minimap-font-face ((t (:height 0.2))))
+
+ '(bm-face ((t (:background "#FFE6E4"))))
+ '(font-latex-slide-title-face ((t (:inherit (variable-pitch font-lock-type-face) :weight bold))))
+ '(helm-locate-finish ((t (:foreground "forest green"))))
  )
+
+(custom-theme-set-variables
+ 'solarized-light-malb
+ '(ansi-color-names-vector ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
+ '(cua-global-mark-cursor-color "#2aa198")
+ '(cua-normal-cursor-color "#657b83")
+ '(cua-overwrite-cursor-color "#b58900")
+ '(cua-read-only-cursor-color "#859900")
+ '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+ '(highlight-symbol-colors
+   (--map
+    (solarized-color-blend
+     it
+     "#fdf6e3"
+     0.25)
+    (quote
+     ("#b58900"
+      "#2aa198"
+      "#dc322f"
+      "#6c71c4"
+      "#859900"
+      "#cb4b16"
+      "#268bd2"))))
+ '(highlight-symbol-foreground-color "#586e75")
+ '(highlight-tail-colors
+   (quote
+    (("#eee8d5" . 0)
+     ("#B4C342" . 20)
+     ("#69CABF" . 30)
+     ("#69B7F0" . 50)
+     ("#DEB542" . 60)
+     ("#F2804F" . 70)
+     ("#F771AC" . 85)
+     ("#eee8d5" . 100))))
+ '(hl-bg-colors (quote ("#DEB542" "#F2804F" "#FF6E64" "#F771AC" "#9EA0E5" "#69B7F0" "#69CABF" "#B4C342")))
+ '(hl-fg-colors (quote ("#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3")))
+ '(hl-paren-colors
+   (quote
+    ("#2aa198"
+     "#b58900"
+     "#268bd2"
+     "#6c71c4"
+     "#859900")))
+ '(nrepl-message-colors (quote ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#eee8d5" 0.2))
+ '(term-default-bg-color "#fdf6e3")
+ '(term-default-fg-color "#657b83")
+ '(vc-annotate-background nil)
+ '(vc-annotate-background-mode nil)
+ '(vc-annotate-color-map
+   '(((20 . "#dc322f")
+      (40 . "#c85d17")
+      (60 . "#be730b")
+      (80 . "#b58900")
+      (100 . "#a58e00")
+      (120 . "#9d9100")
+      (140 . "#959300")
+      (160 . "#8d9600")
+      (180 . "#859900")
+      (200 . "#669b32")
+      (220 . "#579d4c")
+      (240 . "#489e65")
+      (260 . "#399f7e")
+      (280 . "#2aa198")
+      (300 . "#2898af")
+      (320 . "#2793ba")
+      (340 . "#268fc6")
+      (360 . "#268bd2"))))
+ '(vc-annotate-very-old-color nil)
+ '(xterm-color-names ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"])
+ '(xterm-color-names-bright ["#fdf6e3" "#cb4b16" "#93a1a1" "#839496" "#657b83" "#6c71c4" "#586e75" "#002b36"])
+
+ '(company-quickhelp-color-background "#eee8d5")
+ '(company-quickhelp-color-foreground "#657b83")
+ '(pdf-view-midnight-colors '("#323d41" . "#fdf6e3"))
+ '(beacon-color "#EEAD0E")
+ '(org-todo-keyword-faces
+   '(("CANCELLED" :foreground "gray" :weight bold)
+     ("DISABLED"  :foreground "gray" :weight bold)
+     ("ONHOLD"    :foreground "gray" :weight bold)
+     ("STALLED"   :foreground "gray" :weight bold)
+     ("SUBMITTED" :foreground "gray" :weight bold)
+     ("DELEGATED" :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+     ("WAITING"   :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+     ("COAUTHOR"  :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4"))))
 
 (provide-theme 'solarized-light-malb)
