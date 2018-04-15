@@ -5473,12 +5473,8 @@ Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparent
 (bind-key "C-x C-t" #'transpose-sentences)
 #+END_SRC
 
-We [[http://bug-gnu-emacs.gnu.narkive.com/SOVjcGqY/kill-sentence-trailing-whitespace-intentions][also delete trailing whitespaces]] when we delete a sentence.
-
 #+BEGIN_SRC emacs-lisp
-(defadvice kill-sentence (after delete-horizontal-space activate)
-  "Delete trailing spaces and tabs as well."
-  (delete-horizontal-space))
+(advice-add 'kill-sentence :after #'fixup-whitespace)
 #+END_SRC
 
 *** Highlighting Sentences & Paragraphs
