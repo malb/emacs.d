@@ -8721,7 +8721,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
             (add-hook 'org-mode-hook   #'turn-on-stripe-table-mode)))
 #+END_SRC
 
-** Auto Dim other Buffers
+** Automatically dim other buffers
 
 ([[https://github.com/mina86/auto-dim-other-buffers.el][source]])
 
@@ -8805,6 +8805,7 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
       (load-theme 'solarized-light-malb)
       (powerline-reset))))
 #+END_SRC
+
 ** Icons
 
 [[https://raw.githubusercontent.com/domtronn/all-the-icons.el/master/logo.png]]
