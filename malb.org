@@ -7800,7 +7800,13 @@ Other:     _p_ plain    _c_ csv table  _j_ json table
 
             (bind-key "C-c C-n" 'malb/pdf-annot-next pdf-annot-edit-contents-minor-mode-map)
             (bind-key "C-c C-p" 'malb/pdf-annot-prev pdf-annot-edit-contents-minor-mode-map)
-            (bind-key "C-c C-y" 'malb/pdf-annot-yank-highlight pdf-annot-edit-contents-minor-mode-map)))
+            (bind-key "C-c C-y" 'malb/pdf-annot-yank-highlight pdf-annot-edit-contents-minor-mode-map)
+
+            (defun malb/set-pdf-view-midnight-colors ()
+              (setq pdf-view-midnight-colors (cons (face-attribute 'default :foreground)
+                                                   (face-attribute 'default :background))))
+            (add-hook 'pdf-view-midnight-minor-mode-hook #'malb/set-pdf-view-midnight-colors)
+            (add-hook 'pdf-view-mode-hook #'malb/set-pdf-view-midnight-colors)))
 #+END_SRC
 
 ** Org Noter
@@ -8711,9 +8717,8 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 (use-package stripe-buffer
   :ensure t
   :config (progn
-            (add-hook 'dired-mode-hook 'turn-on-stripe-buffer-mode)
-            (add-hook 'org-mode-hook 'turn-on-stripe-table-mode)
-            (set-face-attribute 'stripe-highlight nil :background "#eee8d5")))
+            (add-hook 'dired-mode-hook #'turn-on-stripe-buffer-mode)
+            (add-hook 'org-mode-hook   #'turn-on-stripe-table-mode)))
 #+END_SRC
 
 ** Auto Dim other Buffers
@@ -8756,16 +8761,8 @@ The result looks like this:
                     solarized-scale-org-headlines nil
                     x-underline-at-descent-line t)
 
-              (defun malb/load-main-theme ()
-                (load-theme 'solarized-light t)
-                (load-theme 'solarized-light-malb t)
-
-                (eval-after-load "pdf-tools"
-                  '(progn
-                     (setq pdf-view-midnight-colors (cons "#444444"
-                                                          (solarized-with-color-variables 'light base03)))
-                     nil))
-                ))))
+              (load-theme 'solarized-light t)
+              (load-theme 'solarized-light-malb t))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -8792,6 +8789,22 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
   (set-frame-parameter (selected-frame) 'alpha value))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun malb/toggle-light-dark ()
+  "Switch between light and dark theme"
+  (interactive)
+  (if (custom-theme-enabled-p 'solarized-light)
+      (progn
+        (disable-theme 'solarized-light-malb)
+        (disable-theme 'solarized-light)
+        (load-theme 'zenburn)
+        (powerline-reset))
+    (progn
+      (disable-theme 'zenburn)
+      (load-theme 'solarized-light)
+      (load-theme 'solarized-light-malb)
+      (powerline-reset))))
+#+END_SRC
 ** Icons
 
 [[https://raw.githubusercontent.com/domtronn/all-the-icons.el/master/logo.png]]
@@ -8829,21 +8842,11 @@ enabled."
                         (spaceline--unicode-number str))
                       (propertize str 'face 'bold)))))
 
-            (defun malb/load-mode-line-theme ()
-              (setq spaceline-workspace-numbers-unicode nil)
-
-              (spaceline-spacemacs-theme 'python-venv)
-              (spaceline-helm-mode)
-
-              (spaceline-toggle-hud-off)
-              (spaceline-toggle-buffer-encoding-abbrev-off)
-
-              (set-face-attribute 'powerline-active1 nil :background "grey22" :foreground "white smoke")
-              (set-face-attribute 'powerline-active2 nil :background "grey40" :foreground "gainsboro")
-              (set-face-attribute 'powerline-inactive1 nil :background "grey55" :foreground "white smoke")
-              (set-face-attribute 'powerline-inactive2 nil :background "grey65" :foreground "gainsboro")
-              (set-face-attribute 'mode-line-buffer-id nil :foreground "gray40")
-              (powerline-reset))))
+            (setq spaceline-workspace-numbers-unicode nil)
+            (spaceline-spacemacs-theme 'python-venv)
+            (spaceline-helm-mode)
+            (spaceline-toggle-hud-off)
+            (spaceline-toggle-buffer-encoding-abbrev-off)))
 #+END_SRC
 
 ** Rainbow mode
@@ -8896,10 +8899,7 @@ I don’t often use minimap, but it can be useful sometimes.
                   minimap-minimum-width 15
                   minimap-width-fraction 0.05
                   minimap-highlight-line nil
-                  minimap-window-location 'right)
-
-            (set-face-attribute 'minimap-active-region-background nil :background nil)
-            (set-face-attribute 'minimap-font-face nil :height 0.2)))
+                  minimap-window-location 'right)))
 #+END_SRC
 
 ** Vim-like Empty Line Indicator
@@ -8953,25 +8953,6 @@ Easily change the text size:
                            (malb/invert-mode-line)
                            (run-with-timer 0.05 nil #'malb/invert-mode-line)))
 #+END_SRC
-
-** Load Theme
-
-#+BEGIN_SRC emacs-lisp
-(defvar malb/theme-loaded nil)
-
-(defun malb/load-theme (frame)
-  (when (not malb/theme-loaded)
-    (select-frame frame)
-    (malb/load-main-theme)
-    (malb/load-mode-line-theme)
-    (setq malb/theme-loaded t)))
-
-(if (daemonp)
-    (add-hook 'after-make-frame-functions #'malb/load-theme)
-  (malb/load-theme (selected-frame)))
-#+END_SRC
-
-*** TODO this might not be needed any longer
 
 * KDE Desktop Search with Baloo
 
