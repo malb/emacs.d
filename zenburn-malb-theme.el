@@ -2,7 +2,8 @@
   "my modifications on top of zenburn")
 
 (custom-theme-set-faces
- 'zenburn-malb)
+ 'zenburn-malb
+ '(spaceline-python-venv ((t (:foreground "#69B7F0")))))
 
 (custom-theme-set-variables
  'zenburn-malb
