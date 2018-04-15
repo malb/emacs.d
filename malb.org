@@ -30,7 +30,6 @@ We assume that the following variables are defined:
 - ~malb/sage-executable~ - full path of Sage executable
 - ~malb/sync-dir~ - documents that are synchronised
 - ~malb/deft-directory~ - where deft files live
-- ~malb/theme~ - theme choice
 
 We collect our own customisations in the =malb= group.
 
@@ -8720,75 +8719,6 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
   :ensure t)
 #+END_SRC
 
-** Theme
-
-Sometimes use a solarized patched to be less yellow by changing
-
-| color     | original  | malb      |
-| ~s-base2~ | ~#EEE8D5~ | ~#EEEDEA~ |
-| ~s-base3~ | ~#FDF6E3~ | ~#FDFCF9~ |
-
-The result looks like this:
-
-[[./screenshot.png]]
-
-#+BEGIN_SRC emacs-lisp
-(when (string-equal malb/theme "solarized")
-  (use-package solarized
-    :ensure solarized-theme
-    :config (progn
-              (setq solarized-use-variable-pitch nil
-                    solarized-high-contrast-mode-line nil
-                    solarized-height-minus-1 1.0
-                    solarized-height-plus-1  1.0
-                    solarized-height-plus-2  1.0
-                    solarized-height-plus-3  1.0
-                    solarized-height-plus-4  1.0
-                    solarized-use-less-bold nil
-                    solarized-emphasize-indicators t
-                    solarized-scale-org-headlines nil
-                    x-underline-at-descent-line t)
-
-              (load-theme 'solarized-light t)
-              (load-theme 'solarized-light-malb t))))
-#+END_SRC
-
-Set transparency because reasons ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/transparency (value)
-  "Sets the transparency of the frame window. 0=transparent/100=opaque"
-  (interactive "nTransparency Value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/toggle-light-dark ()
-  "Switch between light and dark theme"
-  (interactive)
-  (if (custom-theme-enabled-p 'solarized-light)
-      (progn
-        (disable-theme 'solarized-light-malb)
-        (disable-theme 'solarized-light)
-        (load-theme 'zenburn t))
-    (progn
-      (disable-theme 'zenburn)
-      (load-theme 'solarized-light t)
-      (load-theme 'solarized-light-malb t)))
-  (powerline-reset))
-#+END_SRC
-
-** Icons
-
-[[https://raw.githubusercontent.com/domtronn/all-the-icons.el/master/logo.png]]
-
-([[https://github.com/domtronn/all-the-icons.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons
-  :ensure t)
-#+END_SRC
-
 ** Powerline
 
 We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which customises [[https://github.com/milkypostman/powerline][Powerline]].
@@ -8820,6 +8750,122 @@ enabled."
             (spaceline-helm-mode)
             (spaceline-toggle-hud-off)
             (spaceline-toggle-buffer-encoding-abbrev-off)))
+#+END_SRC
+
+** Theme
+
+Use both [[https://github.com/bbatsov/solarized-emacs][solarized]] and [[https://github.com/bbatsov/zenburn-emacs][zenburn]].
+
+Sometimes use a solarized patched to be less yellow by changing
+
+| color     | original  | malb      |
+| ~s-base2~ | ~#EEE8D5~ | ~#EEEDEA~ |
+| ~s-base3~ | ~#FDF6E3~ | ~#FDFCF9~ |
+
+The result looks like this:
+
+[[./screenshot.png]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package solarized
+  :ensure solarized-theme
+  :config (progn
+            (setq solarized-use-variable-pitch nil
+                  solarized-high-contrast-mode-line nil
+                  solarized-height-minus-1 1.0
+                  solarized-height-plus-1  1.0
+                  solarized-height-plus-2  1.0
+                  solarized-height-plus-3  1.0
+                  solarized-height-plus-4  1.0
+                  solarized-use-less-bold nil
+                  solarized-emphasize-indicators t
+                  solarized-scale-org-headlines nil
+                  x-underline-at-descent-line t)
+
+            (defun malb/solarized-light-theme (&optional arg)
+              "Load solarized-light and my additions."
+              (interactive "P")
+              (if arg
+                  (progn
+                    (disable-theme 'solarized-light-malb)
+                    (disable-theme 'solarized-light))
+                (progn
+                  (load-theme 'solarized-light t)
+                  (load-theme 'solarized-light-malb t))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package zenburn-theme
+  :ensure t
+  :disabled)
+
+(defun malb/zenburn-theme (&optional arg)
+  "Load zenburn and my additions."
+  (interactive "P")
+  (if arg
+      (progn
+        (disable-theme 'zenburn-malb)
+        (disable-theme 'zenburn))
+    (progn
+      (load-theme 'zenburn t)
+      (load-theme 'zenburn-malb t))))
+#+END_SRC
+
+We patch both solarized and zenburn:
+
+*** Load Theme
+
+#+BEGIN_SRC emacs-lisp
+(defvar malb/theme-loaded nil)
+
+(defun malb/load-theme (frame)
+  (when (not malb/theme-loaded)
+    (select-frame frame)
+    (malb/solarized-light-theme)
+    (powerline-reset)
+    (setq malb/theme-loaded t)))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'malb/load-theme)
+  (malb/load-theme (selected-frame)))
+#+END_SRC
+
+*** Switch between light and dark theme
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/toggle-light-dark ()
+  "Switch between light and dark theme"
+  (interactive)
+  (if (custom-theme-enabled-p 'solarized-light)
+      (progn
+        (malb/solarized-light-theme t)
+        (malb/zenburn-theme))
+    (progn
+      (malb/zenburn-theme t)
+      (malb/solarized-light-theme)))
+  (powerline-reset))
+#+END_SRC
+
+** Transparency
+
+Set transparency because reasons ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/transparency (value)
+  "Sets the transparency of the frame window. 0=transparent/100=opaque"
+  (interactive "nTransparency Value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+#+END_SRC
+
+** Icons
+
+[[https://raw.githubusercontent.com/domtronn/all-the-icons.el/master/logo.png]]
+
+([[https://github.com/domtronn/all-the-icons.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons
+  :ensure t)
 #+END_SRC
 
 ** Rainbow mode
