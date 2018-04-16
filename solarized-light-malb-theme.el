@@ -128,13 +128,33 @@
       (340 . "#268fc6")
       (360 . "#268bd2"))))
  '(vc-annotate-very-old-color nil)
- '(xterm-color-names ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"])
+ '(weechat-color-list
+   (quote
+    (unspecified
+     "#fdf6e3"
+     "#eee8d5"
+     "#990A1B"
+     "#dc322f"
+     "#546E00"
+     "#859900"
+     "#7B6000"
+     "#b58900"
+     "#00629D"
+     "#268bd2"
+     "#93115C"
+     "#d33682"
+     "#00736F"
+     "#2aa198"
+     "#657b83"
+     "#839496")))
+ '(xterm-color-names        ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"])
  '(xterm-color-names-bright ["#fdf6e3" "#cb4b16" "#93a1a1" "#839496" "#657b83" "#6c71c4" "#586e75" "#002b36"])
-
  '(company-quickhelp-color-background "#eee8d5")
  '(company-quickhelp-color-foreground "#657b83")
  '(pdf-view-midnight-colors '("#323d41" . "#fdf6e3"))
  '(beacon-color "#EEAD0E")
+ '(pos-tip-background-color "#eee8d5")
+ '(pos-tip-foreground-color "#586e75")
  '(org-todo-keyword-faces
    '(("CANCELLED" :foreground "gray" :weight bold)
      ("DISABLED"  :foreground "gray" :weight bold)
