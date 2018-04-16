@@ -8620,7 +8620,7 @@ Transparent encryption and decryption.
   :config (setq alert-default-style 'libnotify))
 #+END_SRC
 
-** Assignments
+* Assignments
 
 ([[https://gitlab.com/akoehn/abgaben][source]])
 
