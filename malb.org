@@ -8251,6 +8251,8 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
             (add-hook 'weechat-mode-hook #'visual-line-mode)
             (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
 
+            (add-hook 'weechat-mode-hook #'malb/enable-company-pcomplete)
+
             (defun malb/weechat ()
               (interactive)
               (weechat-connect "localhost" 9000 nil 'plain)
