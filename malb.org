@@ -7602,7 +7602,7 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
               "Set the height from the page's bounding-box."
               (interactive)
               (let* ((bb (pdf-cache-boundingbox (pdf-view-current-page window)))
-                     (h-margin (max 0.25 (or pdf-view-bounding-box-margin 0.0)))
+                     (h-margin (max 0.28 (or pdf-view-bounding-box-margin 0.0)))
                      (w-margin (max 0.05 (or pdf-view-bounding-box-margin 0.0)))
                      (slice (list (- (nth 0 bb)
                                      (/ h-margin 2.0))
