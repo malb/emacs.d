@@ -8595,7 +8595,6 @@ Grab the link in the current browser tab
   :ensure t)
 #+END_SRC
 
-
 ** Encryption
 
 Transparent encryption and decryption.
