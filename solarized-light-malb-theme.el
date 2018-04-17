@@ -19,6 +19,9 @@
  '(which-func  ((t (:foreground "#DEB542"))))
  '(stripe-highlight ((t (:background "#eee8d5"))))
 
+ '(sp-wrap-overlay-opening-pair ((t (:foreground "#859900"))))
+ '(sp-wrap-overlay-closing-pair ((t (:foreground "#cb4b16"))))
+
  ;; steal spacemacs flycheck style
  '(flycheck-error   ((t (:underline (:color "#dc322f" :style line)))))
  '(flycheck-warning ((t (:underline (:color "#b58900" :style line)))))
