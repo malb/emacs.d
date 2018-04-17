@@ -1741,27 +1741,27 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
             (sp-with-modes
                 '(tex-mode plain-tex-mode latex-mode)
-              (sp-local-pair "\\(" "\\)"
-                             :unless '(sp-point-before-word-p
-                                       sp-point-before-same-p
-                                       sp-latex-point-after-backslash)
-                             :trigger-wrap "\$"
-                             :trigger "\$")
+              ;; (sp-local-pair "\\(" "\\)"
+              ;;                :unless '(sp-point-before-word-p
+              ;;                          sp-point-before-same-p
+              ;;                          sp-latex-point-after-backslash)
+              ;;                :trigger-wrap "\$"
+              ;;                :trigger "\$")
 
-              (sp-local-pair  "$" nil
-                              :unless '(sp-point-before-word-p
-                                        sp-point-before-same-p
-                                        sp-latex-point-after-backslash)
-                              :post-handlers '(:add malb/latex-replace-dollar))
+              ;; (sp-local-pair  "$" nil
+              ;;                 :unless '(sp-point-before-word-p
+              ;;                           sp-point-before-same-p
+              ;;                           sp-latex-point-after-backslash)
+              ;;                 :post-handlers '(:add malb/latex-replace-dollar))
 
-              (sp-local-pair "\\[" "\\]"
-                             :unless '(sp-point-before-word-p
-                                       sp-point-before-same-p
-                                       sp-latex-point-after-backslash)))
+              ;; (sp-local-pair "\\[" "\\]"
+              ;;                :unless '(sp-point-before-word-p
+              ;;                          sp-point-before-same-p
+              ;;                          sp-latex-point-after-backslash))
+              (sp-local-pair "$" nil :actions :rem))
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
-            (add-to-list 'sp-ignore-modes-list 'latex-mode)
 
             (sp-with-modes
                 'org-mode
