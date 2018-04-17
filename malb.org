@@ -8363,12 +8363,6 @@ Pressing =y= or =n= is sufficent.
 (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
-Overwrite a selection by typing over it.
-
-#+BEGIN_SRC emacs-lisp
-(pending-delete-mode t)
-#+END_SRC
-
 Kill whole line not just content on =C-k=.
 
 #+BEGIN_SRC emacs-lisp
