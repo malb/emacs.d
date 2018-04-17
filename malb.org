@@ -8474,6 +8474,14 @@ Diminish =abbrev-mode=
 (setq search-default-mode 'char-fold-to-regexp)
 #+END_SRC
 
+*** COMMENT Overwrite a selection by typing over it
+
+#+BEGIN_SRC emacs-lisp
+(pending-delete-mode t)
+#+END_SRC
+
+*Note* Disabled because it ineracts badly with smartparens in latex-mode: select some text and type ~\~ for e.g ~\left~
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
