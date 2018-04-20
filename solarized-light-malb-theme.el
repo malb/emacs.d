@@ -61,6 +61,9 @@
  '(bm-face ((t (:background "#FFE6E4"))))
  '(font-latex-slide-title-face ((t (:inherit (variable-pitch font-lock-type-face) :weight bold))))
  '(helm-locate-finish ((t (:foreground "forest green"))))
+ '(slack-message-output-header ((t (:weight bold))))
+ '(slack-message-output-text ((t (:weight normal))))
+ '(slack-new-message-marker-face ((t (:foreground "#d33682" :weight bold :height 0.75))))
  )
 
 (custom-theme-set-variables
