@@ -3350,6 +3350,7 @@ Working with source code in org-mode.
                (shell . t)
                (latex . t)
                (ditaa . t)
+               (C . t)
                (dot . t)
                (plantuml . t)
                (makefile . t)))
