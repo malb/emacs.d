@@ -850,7 +850,7 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
          ("C-c j b SPC" . bm-toggle)))
 #+END_SRC
 
-* Snippets
+* Snippets (YaSnippet)
 
 #+BEGIN_QUOTE
 [[https://github.com/capitaomorte/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. ([[https://github.com/capitaomorte/yasnippet][source]])
@@ -8238,7 +8238,8 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
   :after org)
 #+END_SRC
 
-* Weechat
+* Chat
+** Weechat
 
 #+BEGIN_SRC emacs-lisp
 (use-package weechat
