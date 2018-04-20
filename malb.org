@@ -8273,7 +8273,22 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
             (defun malb/weechat ()
               (interactive)
               (weechat-connect "localhost" 9000 nil 'plain)
+              (sleep 0.1)
               (weechat-monitor-all-buffers))))
+#+END_SRC
+
+** Slack
+
+#+BEGIN_SRC emacs-lisp
+(use-package slack
+  :commands (slack-start)
+  :init (progn
+          (setq slack-buffer-emojify t
+                slack-prefer-current-team t
+                lui-fill-column 80
+                lui-fill-type ""))
+  :config (progn
+            (add-hook 'slack-mode-hook #'visual-fill-column-mode)))
 #+END_SRC
 
 * X11 Integration
