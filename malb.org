@@ -5509,8 +5509,20 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
   :ensure t
   :bind ("C-." . ace-flyspell-correct-word)
   :init (progn
+          (setq ace-flyspell-new-word-no-query t)
+          (require 'ace-flyspell)
+          (defun malb/ace-flyspell-dwim (arg)
+            "Run `ace-flyspell-dim` unless prefix argument is given. In that case offer a word to insert."
+            (interactive "P")
+            (if arg
+                (progn
+                  (ace-flyspell-jump-word)
+                  (ace-flyspell--insert-word))
+              (ace-flyspell-dwim)))
+
+
           (eval-after-load "flyspell"
-            '(bind-key  "C-." #'ace-flyspell-dwim flyspell-mode-map))
+            '(bind-key  "C-." #'malb/ace-flyspell-dwim flyspell-mode-map))
           (eval-after-load "flyspell"
             '(unbind-key "C-;" flyspell-mode-map))))
 #+END_SRC
