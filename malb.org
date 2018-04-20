@@ -2897,6 +2897,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                '("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
             (use-package ox-koma-letter
+              :ensure org-plus-contrib
               :config (progn
                         (add-to-list 'org-latex-classes
                                      (list "letter"
