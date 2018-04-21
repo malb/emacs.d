@@ -8277,9 +8277,12 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
   :after prodigy
   :config (progn
             (require 'weechat-notifications)
+            (require 'weechat-tracking)
             (require 'weechat-latex)
             (require 'weechat-spelling)
             (require 'weechat-image)
+
+            (setq weechat-tracking-types '(:highlight ("general" . :message)))
 
             (add-hook 'weechat-mode-hook #'visual-line-mode)
             (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
