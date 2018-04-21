@@ -7961,6 +7961,12 @@ Show dired histories you have visited.
 
 ** Tramp
 
+=.ssh/config= already contains the appropriate config for persistent sessions so we ask tramp to respect it.
+
+#+BEGIN_SRC emacs-lisp
+(setq tramp-use-ssh-controlmaster-options nil)
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-tramp
   :after helm
