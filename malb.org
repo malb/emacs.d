@@ -4623,7 +4623,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
                   python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
                   python-shell-completion-setup-code
                   "from IPython.core.completerlib import module_completion"
-                  python-shell-completion-module-string-code
+                  python-shell-completion-string-code
                   "';'.join(module_completion('''%s'''))\n"
                   python-shell-completion-string-code
                   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
@@ -5667,7 +5667,7 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
                 (shr-render-buffer buf-html)
                 (kill-buffer buf-html)))
 
-            (bind-key "M-." #'markdown-jump markdown-mode-map)
+            (bind-key "M-." #'markdown-do markdown-mode-map)
             (bind-key "C-c C-e o" #'malb/markdown-preview-buffer markdown-mode-map) ;; inspired by org-mode-export
             (add-hook 'markdown-mode-hook #'flyspell-mode)
             (add-hook 'markdown-mode-hook #'malb/company-ispell-setup)
@@ -6463,7 +6463,8 @@ Return the first voice matching detected language.
         (voices nil))
     (dolist (entry aws-polly-voices)
       (if (string-prefix-p lang (cadr entry))
-          (add-to-list 'voices (car entry) t)))
+          (push (car entry) voices)))
+    (setq voices (nreverse voices))
     (cond
      ((eq (length voices) 0) (caar aws-polly-voices))
      ((eq (length voices) 1) (car voices))
@@ -6551,8 +6552,7 @@ prefix argument is given ask for voice first."
                      (aws-polly-select-voice text)))
             (output-filename (make-temp-file "emacs-aws-polly" nil ".mp3")))
         (call-process-shell-command (format aws-polly-command voice text output-filename) nil nil nil)
-        (add-to-list 'files output-filename t)
-        (setq files (append files (list silence)))))
+        (setq files (append files (list output-filename silence)))))
     (dolist (file files)
       (emms-add-file file))
     (emms-start)))
@@ -6786,8 +6786,7 @@ Extract a pretty-ish list of contacts from an e-mail.
 #+BEGIN_SRC emacs-lisp
 (defun malb/extract-contacts (fields)
   "Return a list of 'name <email>' entries."
-  (let (address
-        addresses
+  (let (addresses
         point-end-of-line
         (case-fold-search t)
         (search-regexp (mapconcat (lambda (arg) (concat "^" arg ": *"))
@@ -6815,7 +6814,6 @@ The following is useful in e-mail templates
 (defun malb/get-names-from-fields (fields)
   (let (contacts
         ret
-        contact
         point-end-of-line
         (search-regexp (mapconcat (lambda (arg)
                                     (concat "^" arg ": "))
@@ -6831,15 +6829,11 @@ The following is useful in e-mail templates
                                 (buffer-substring-no-properties (point)
                                                                 point-end-of-line)))))
       (dolist (contact contacts)
-        (setq name (malb/canonicalise-contact-name (car contact) (cdr contact) t))
-        ;; extract first name
-        (if (string-match "\\([^ ,]+\\)" name)
-            (progn
-              (setq name (match-string 1 name))
-              (if ret
-                  (setq ret (concat ret ", " name))
-                (setq ret name)))))
-      (if ret ret "there"))))
+        (let ((name (malb/canonicalise-contact-name (car contact) (cdr contact) t)))
+          ;; extract first name
+          (when (string-match "\\([^ ,]+\\)" name)
+            (push (match-string 1 name) ret))))
+      (if ret (string-join (nreverse ret) ", ") ret "there"))))
 #+END_SRC
 
 A shortcut:
