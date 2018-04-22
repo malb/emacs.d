@@ -1,8 +1,7 @@
 #+TITLE: My Emacs Config
 #+STARTUP: overview indent
-#+EXCLUDE_TAGS: DISABLED
 #+TYP_TODO: TRY(y) TEST(t) IMPLEMENT(i) TODO(o) | DONE(d)
-#+TODO: | DISABLED(d)
+#+PROPERTY: header-args :tangle malb.el
 
 * Header
 
@@ -628,13 +627,13 @@ Run =old-function= with an empty =display-buffer-alist=
     (apply old-function arguments)))
 #+END_SRC
 
-** DISABLED Golden Ratio
+** Golden Ratio
 
 [[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows. We also inhibit when modes in =golden-ratio-exclude-modes= are active any window, not only in the target window.
 
 [[https://camo.githubusercontent.com/26b1ac5fec67a2c557cfbe87382a0134d3443fd0/68747470733a2f2f7261772e6769746875622e636f6d2f726f6d616e2f676f6c64656e2d726174696f2e656c2f6173736574732f676f6c64656e5f726174696f5f656c2e676966][screenshot]] ([[https://github.com/roman/golden-ratio.el][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package golden-ratio
   :ensure t
   :after ispell
@@ -892,11 +891,11 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
 (defun malb/auto-insert-snippet (key &optional mode)
   "Auto insert a snippet of yasnippet into new file."
   (interactive)
-  (let ((is-yasnippet-on (not (cond ((functionp yas-dont-activate)
-                                     (funcall yas-dont-activate))
-                                    ((consp yas-dont-activate)
-                                     (some #'funcall yas-dont-activate))
-                                    (yas-dont-activate))))
+  (let ((is-yasnippet-on (not (cond ((functionp yas-dont-activate-functions)
+                                     (funcall yas-dont-activate-functions))
+                                    ((consp yas-dont-activate-functions)
+                                     (some #'funcall yas-dont-activate-functions))
+                                    (yas-dont-activate-functions))))
         (snippet (let ((template (cdar (mapcan #'(lambda (table) (yas--fetch table key))
                                                (yas--get-snippet-tables mode)))))
                    (if template (yas--template-content template) nil))))
@@ -1148,8 +1147,8 @@ Enable/disable company completion from ispell dictionaries ([[https://github.com
    ((and (not (active-minibuffer-window))
          (or (looking-at " ")
              (looking-at "$"))
-         (looking-back "[^[:space:]]")
-         (not (looking-back "^")))
+         (looking-back "[^[:space:]]" nil)
+         (not (looking-back "^" nil)))
 
     (cond (company-mode (company-complete-common))
           (auto-complete-mode (auto-complete))))
@@ -1158,7 +1157,7 @@ Enable/disable company completion from ispell dictionaries ([[https://github.com
    ((and (not (active-minibuffer-window))
          (looking-at "[^[:space:]]")
          (looking-back "[^[:space:]]")
-         (not (looking-back "^")))
+         (not (looking-back "^" nil)))
     (cond
      ((bound-and-true-p hs-minor-mode)
       (save-excursion (end-of-line) (hs-toggle-hiding)))
@@ -5890,8 +5889,8 @@ region (if called interactively, otherwise provide a region."
       (when (member (char-to-string (char-before)) '("." ","))
         (backward-char))
       (cond ((equal (char-before) (string-to-char "$")) (delete-char -1))
-            ((looking-back "\\\\\\]") (delete-char -2))
-            ((looking-back "\\\\)") (delete-char -2))))))
+            ((looking-back "\\\\\\]" nil) (delete-char -2))
+            ((looking-back "\\\\)" nil) (delete-char -2))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -8459,7 +8458,8 @@ Use ~kill -pUSR1~ to kill Emacs. ([[https://github.com/wasamasa/dotemacs/blob/ma
 #+BEGIN_SRC emacs-lisp
 (defun malb/quit-emacs-unconditionally ()
   (interactive)
-  (my-quit-emacs '(4)))
+  (save-some-buffers t t)
+  (kill-emacs))
 
 (define-key special-event-map (kbd "<sigusr1>") #'malb/quit-emacs-unconditionally)
 #+END_SRC
@@ -9011,7 +9011,7 @@ Easily change the text size:
 
 ** Bell
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (setq visible-bell nil)
 
 (defun malb/invert-mode-line ()
