@@ -1,6 +1,6 @@
 #+TITLE: My Emacs Config
 #+STARTUP: overview indent
-
+#+EXCLUDE_TAGS: DISABLED
 #+TYP_TODO: TRY(y) TEST(t) IMPLEMENT(i) TODO(o) | DONE(d)
 #+TODO: | DISABLED(d)
 
@@ -67,10 +67,10 @@ Helm runs with GC disabled:
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'minibuffer-setup-hook #'malb/disable-garbage-collection)
-(add-hook 'minibuffer-exit-hook #'malb/enable-garbage-collection)
+(add-hook 'minibuffer-exit-hook  #'malb/enable-garbage-collection)
 #+END_SRC
 
-We disable GC during startup, we re-enable it below.
+We disable GC during startup, we re-enable it afterwards.
 
 #+BEGIN_SRC emacs-lisp
 (malb/disable-garbage-collection)
@@ -188,15 +188,11 @@ Maximise the window as soon as possible
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
 
-* Startup
-
-#+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-screen t)
-#+END_SRC
-
 * Disable Clutter
 
 #+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-screen t)
+
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -292,7 +288,7 @@ Resize windows to accommodate new ones.
 (setq window-combination-resize t)
 #+END_SRC
 
-** Restoring configurations
+** Restoring Configurations
 
 [[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows to “undo” (and “redo”) changes in the window configuration.
 
@@ -308,7 +304,7 @@ Resize windows to accommodate new ones.
   :bind (("C-x 1" . zygospore-toggle-delete-other-windows)))
 #+END_SRC
 
-** Multiple window configurations
+** Multiple Window Configurations (Eyebrowse)
 
 [[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
 
@@ -348,7 +344,7 @@ Resize windows to accommodate new ones.
                          #'malb/close-latex-preview-pane-before-eyebrowse-switch)))
 #+END_SRC
 
-** Switching
+** Switching (Ace-Window)
 
 [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows, but we only call it as a subroutine from a =hydra= below.
 
@@ -383,12 +379,13 @@ Repeated invocations toggle between the two most recently open buffers."
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 #+END_SRC
 
-** Special windows
+** Special Windows
 
 Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 height.
 
 #+BEGIN_SRC emacs-lisp
-(defvar malb/popup-windows '("\\`\\*helm flycheck\\*\\'"
+(defvar malb/popup-windows '("\\`\\*compilation\\*\\'"
+                             "\\`\\*helm flycheck\\*\\'"
                              "\\`\\*Flycheck errors\\*\\'"
                              "\\`\\*helm projectile\\*\\'"
                              "\\`\\*Helm all the things\\*\\'"
@@ -411,7 +408,22 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\`\\*mscdb\\*\\'"))
 #+END_SRC
 
-*** Closing bottom most pop-up-style windows
+#+BEGIN_SRC emacs-lisp
+; (setq display-buffer-alist nil)
+(dolist (name malb/popup-windows)
+  (add-to-list 'display-buffer-alist
+               `(,name
+                 (malb/frame-dispatch
+                  display-buffer-reuse-window
+                  display-buffer-in-side-window)
+                 (reusable-frames . visible)
+                 (side            . bottom)
+                 (window-height   . 0.3))) t)
+
+(add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
+#+END_SRC
+
+** Closing/Promoting Pop-up-style Windows
 
 In case we just want to kill the bottom window, set a shortcut do to this.
 
@@ -436,19 +448,9 @@ In case we just want to kill the bottom window, set a shortcut do to this.
 (key-chord-define-global "qw" #'malb/promote-disposable-window)
 #+END_SRC
 
-*** Compilation window
+** Compilation Window
 
-If there is no compilation window, open one at the bottom, spanning the complete width of the frame. Otherwise, reuse existing window. In the former case, if there was no error the window closes automatically.
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'display-buffer-alist
-             `(,(rx bos "*compilation*" eos)
-               (display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (reusable-frames . visible)
-               (side            . bottom)
-               (window-height   . 0.3)))
-#+END_SRC
+If there was no error the window closes automatically.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/compilation-exit-autoclose (status code msg)
@@ -473,7 +475,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 (setq compilation-scroll-output 'first-error)
 #+END_SRC
 
-*** Dispatch buffers to specific frames
+** Dispatch Buffers to Frames
 
 Separate mu4e windows from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
 
@@ -521,7 +523,7 @@ Find a frame which isn’t the =mu4e= frame or create a fresh one.
 (defun malb/switch-to-mu4e ()
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
-                         (if (string-match "mu4e" (frame-parameter frame 'name)) ;; emacsclient
+                         (if (string-match "mu4e" (frame-parameter frame 'name))
                              (throw 'other-frame frame)
                            nil)))))
     (if other-frame
@@ -615,6 +617,8 @@ automatically choosing a major mode, use `find-file-literally’."
           (switch-to-buffer value))))))
 #+END_SRC
 
+****** TODO replace =find-file= by advising =find-file=
+
 Run =old-function= with an empty =display-buffer-alist=
 
 #+BEGIN_SRC emacs-lisp
@@ -624,25 +628,7 @@ Run =old-function= with an empty =display-buffer-alist=
     (apply old-function arguments)))
 #+END_SRC
 
-*** Apply special buffer rules
-
-#+BEGIN_SRC emacs-lisp
-; (setq display-buffer-alist nil)
-(dolist (name malb/popup-windows)
-  (add-to-list 'display-buffer-alist
-               `(,name
-                 (malb/frame-dispatch
-                  display-buffer-reuse-window
-                  display-buffer-in-side-window)
-                 (reusable-frames . visible)
-                 (side            . bottom)
-                 ;; height only applies when golden-ratio-mode is off
-                 (window-height   . 0.3))) t)
-
-(add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
-#+END_SRC
-
-** Golden ratio
+** DISABLED Golden Ratio
 
 [[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows. We also inhibit when modes in =golden-ratio-exclude-modes= are active any window, not only in the target window.
 
@@ -691,7 +677,7 @@ Run =old-function= with an empty =display-buffer-alist=
             (setq golden-ratio-inhibit-functions '(malb/golden-ratio-inhibit-functions))))
 #+END_SRC
 
-** Dedicated mode
+** Dedicated Mode
 
 ([[https://github.com/jwiegley/dot-emacs/blob/master/site-lisp/dedicated.el][source]])
 
@@ -712,7 +698,7 @@ Run =old-function= with an empty =display-buffer-alist=
 		  minor-mode-alist))))
 #+END_SRC
 
-** Window management Hydra
+** Window Management Hydra
 
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
