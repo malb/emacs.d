@@ -799,7 +799,7 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
             (setq avy-background t)))
 #+END_SRC
 
-** Jumping to links
+** Jumping to Links
 
 #+BEGIN_QUOTE
 Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or =org-mode= or =eww-mode= or =compilation-mode= buffer, you can tab through the links to select the one you want. This is an O(N) operation, where the N is the amount of links. This package turns this into an O(1) operation, or at least O(log(N)) if you manage to squeeze thousands of links in one screen. It does so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/ace-link][source]])
@@ -811,7 +811,7 @@ Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or
   :config (ace-link-setup-default))
 #+END_SRC
 
-** Jumping through edit points
+** Jumping through Edit Points
 
 Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit points ([[http://pragmaticemacs.com/emacs/move-through-edit-points/][source]])
 
@@ -824,7 +824,7 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 
 *Tip* =C-u 0 C-c j ,​= description of the change at a particular stop on your tour
 
-** Visual bookmarks
+** Visual Bookmarks
 
 ([[http://pragmaticemacs.com/emacs/use-visible-bookmarks-to-quickly-jump-around-a-file/][source]])
 
@@ -918,7 +918,18 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
              `(("/announcements/20.+\\.md$"  "isg-seminar-announce"  markdown-mode)))))
 #+END_SRC
 
-*** TODO split data from implementation
+****** TODO split data from implementation
+
+** Helm YaSnippet
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-c-yasnippet
+  :ensure t
+  :after helm
+  :bind ("C-c h y" .  helm-yas-complete)
+  :config (progn
+            (setq helm-yas-space-match-any-greedy t)))
+#+END_SRC
 
 * Auto Completion
 
@@ -1482,16 +1493,6 @@ Switch themes with helm.
             (add-to-list 'helm-commands-using-frame 'helm-locate)
 
             (helm-add-action-to-source "Attach to E-mail" #'mml-attach-file helm-source-locate)))
-#+END_SRC
-
-** Helm YaSnippet
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-c-yasnippet
-  :ensure t
-  :bind ("C-c h y" .  helm-yas-complete)
-  :config (progn
-            (setq helm-yas-space-match-any-greedy t)))
 #+END_SRC
 
 ** Helm Org Rifle
