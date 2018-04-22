@@ -23,7 +23,6 @@ We assume that the following variables are defined:
 - ~malb/org-files~ - org files
 - ~malb/org-mode-ics~ - icalendar file
 - ~malb/paradox-github-token~ - github login
-- ~malb/private-org~ - this is where I store tasks
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/projects-dir~ - a super-repository of which all of my projects are subprojects
 - ~malb/sage-executable~ - full path of Sage executable
