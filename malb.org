@@ -8287,7 +8287,7 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
             (defun malb/weechat ()
               (interactive)
               (weechat-connect "localhost" 9000 nil 'plain)
-              (sleep 0.1)
+              (sleep-for 1.0)
               (weechat-monitor-all-buffers))))
 #+END_SRC
 
