@@ -931,7 +931,7 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
             (setq helm-yas-space-match-any-greedy t)))
 #+END_SRC
 
-* Auto Completion
+* Auto Completion (Company)
 
 Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-completion.
 
@@ -986,7 +986,7 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
   :config (company-flx-mode t))
 #+END_SRC
 
-Use [[https://github.com/Henry/dot-emacs/blob/master/my-lisp/company-pcomplete.el][company-pcomplete]] because of [[https://github.com/company-mode/company-mode/issues/189][this bug]].
+Use [[https://github.com/Henry/dot-emacs/blob/master/my-lisp/company-pcomplete.el][company-pcomplete]] not always because of [[https://github.com/company-mode/company-mode/issues/189][this bug]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-pcomplete
@@ -1069,7 +1069,7 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
             (add-to-list 'company-backends 'company-shell)))
 #+END_SRC
 
-** YaSnippet
+** Company and YaSnippet Integration
 
 Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
 
@@ -1087,11 +1087,14 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
     (append (if (consp backend) backend (list backend))
             '(:with company-yasnippet))))
 
-(setq company-backends
-      (mapcar #'malb/company-mode/backend-with-yas company-backends))
+(defun malb/activate-yasnippet-completion ()
+  (setq company-backends
+        (mapcar #'malb/company-mode/backend-with-yas company-backends)))
+
+(add-hook 'emacs-startup-hook #'malb/activate-yasnippet-completion)
 #+END_SRC
 
-** All the words
+** All the Words
 
 Enable/disable company completion from ispell dictionaries ([[https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-company.el][source]])
 
@@ -1120,7 +1123,7 @@ Enable/disable company completion from ispell dictionaries ([[https://github.com
         (setq company-ispell-dictionary ispell-alternate-dictionary))))
 #+END_SRC
 
-** Tab DWIM
+* Tab DWIM
 
 1. =yas-expand= is run first and does what it has to, then it calls =malb/indent-fold-or-complete=.
 
@@ -1254,7 +1257,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm
-  :ensure helm
+  :ensure t
   :diminish helm-mode
   :bind (("M-x"     . helm-M-x)
          ("C-x C-b" . malb/helm-omni)
@@ -1547,7 +1550,7 @@ Switch themes with helm.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/helm-in-buffer ()
-  "the right kind™ of buffer menu"
+  "The right kind™ of buffer menu."
   (interactive)
   (if (eq major-mode 'org-mode)
       (call-interactively #'helm-org-in-buffer-headings)
