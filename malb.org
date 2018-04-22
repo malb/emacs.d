@@ -1155,7 +1155,7 @@ Enable/disable company completion from ispell dictionaries ([[https://github.com
    ;; no whitespace anywhere
    ((and (not (active-minibuffer-window))
          (looking-at "[^[:space:]]")
-         (looking-back "[^[:space:]]")
+         (looking-back "[^[:space:]]" nil)
          (not (looking-back "^" nil)))
     (cond
      ((bound-and-true-p hs-minor-mode)
@@ -1306,7 +1306,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-semantic-fuzzy-match             t)
 
             (when (executable-find "curl")
-              (setq helm-google-suggest-use-curl-p t))
+              (setq helm-net-prefer-curl t))
 
             (helm-mode t)
 
@@ -2203,7 +2203,7 @@ This library provides easy project management and navigation. The concept of a p
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
                   projectile-mode-line  '(:eval (format "»{%s}" (projectile-project-name))))
 
-            (projectile-global-mode)))
+            (projectile-mode)))
 #+END_SRC
 
 [[https://tuhdo.github.io/helm-projectile.html][Helm]] integration
@@ -2433,7 +2433,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-agenda-skip-additional-timestamps-same-entry nil
       org-agenda-skip-timestamp-if-deadline-is-shown t
       org-agenda-skip-deadline-prewarning-if-scheduled t
-      org-agenda-ignore-drawer-properties '(effort appt category)
+      org-agenda-ignore-properties '(effort appt category)
       org-agenda-window-setup 'current-window  ; Current window gets agenda
       org-agenda-sticky t                      ; Use sticky agenda's so they persist
       org-agenda-compact-blocks t              ; Compact the block agenda view
@@ -2702,7 +2702,7 @@ UTF-8 everywhere.
 #+BEGIN_SRC emacs-lisp
 (setq org-export-coding-system 'utf-8
       org-export-in-background nil
-      org-export-babel-evaluate t
+      org-export-use-babel t
       org-export-with-toc nil
       org-export-with-timestamps 'active
       org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))
@@ -3016,7 +3016,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
               (newline 1)
               ))))
     (progn
-      (find-file malb/private-org)
+      (find-file malb/inbox-org)
       (goto-char (point-min))
       (re-search-forward "^\* Tasks" nil t)
       (newline 1))
@@ -3283,8 +3283,9 @@ Execute this command while the point is on or after the hyper-linked org link."
             (setq start (match-beginning 0))
             (setq end   (match-end 0))
             (kill-new (match-string-no-properties 1)) ; Save link to kill-ring
-            (replace-regexp "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" "\\2"
-                            nil start end)))))))
+            (goto-char start)
+            (re-search-forward "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" end)
+            (replace-match "\\2")))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -3298,12 +3299,12 @@ Execute this command while the point is on or after the hyper-linked org link."
                 (scheduled (org-entry-get (point) "SCHEDULED" nil)))
             (if (equal "TBD" heading)
                 (progn
-                  (add-to-list 'r scheduled t)))
+                  (push scheduled r)))
             (org-get-next-sibling)))
       (kill-new (mapconcat (lambda (x)
                              (concat "- "
                                      (replace-regexp-in-string "<\\|>" "" x)))
-                           r "\n")))))
+                           (nreverse r) "\n")))))
                                      #+END_SRC
 
 ** Org Babel
