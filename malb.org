@@ -8952,22 +8952,6 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
             (beacon-mode t)))
 #+END_SRC
 
-** Minimap
-
-I don’t often use minimap, but it can be useful sometimes.
-
-#+BEGIN_SRC emacs-lisp
-(use-package minimap
-  :ensure t
-  :config (progn
-            (setq minimap-display-semantic-overlays nil
-                  minimap-major-modes '(prog-mode markdown-mode)
-                  minimap-minimum-width 15
-                  minimap-width-fraction 0.05
-                  minimap-highlight-line nil
-                  minimap-window-location 'right)))
-#+END_SRC
-
 ** Vim-like Empty Line Indicator
 
 ([[https://www.reddit.com/r/emacs/comments/2kdztw/emacs_in_evil_mode_show_tildes_for_blank_lines/][source]])
