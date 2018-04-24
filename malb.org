@@ -9125,7 +9125,7 @@ Easily change the text size:
 (malb/set-menu-key "i" #'malb/helm-in-buffer)
 (malb/set-menu-key "j" #'avy-goto-word-1)
 (malb/set-menu-key "k" #'helm-baloo)
-(malb/set-menu-key "l" #'helm-bibtex)
+(malb/set-menu-key "l" #'helm-bibtex-with-local-bibliography)
 (malb/set-menu-key "m" #'malb/mail)
 (malb/set-menu-key "M" #'malb/helm-mu)
 (malb/set-menu-key "n" #'malb/sage-notebook)
