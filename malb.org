@@ -8297,11 +8297,11 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 * X11 Integration
 
 #+BEGIN_SRC emacs-lisp
-(setq x-select-enable-clipboard t                  ; use clipboard for copy and paste
-      save-interprogram-paste-before-kill t        ; keep a copy of clipboard stuff around
+(setq select-enable-clipboard t                  ; use clipboard for copy and paste
+      save-interprogram-paste-before-kill t      ; keep a copy of clipboard stuff around
       mouse-yank-at-point t
       mouse-drag-copy-region t
-      x-select-enable-primary t
+      select-enable-primary t
       x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 #+END_SRC
 
