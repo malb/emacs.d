@@ -9022,7 +9022,7 @@ Easily change the text size:
 
 * KDE Desktop Search with Baloo
 
-[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below, we implement a tiny helm interface to it.
+[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below, we implement a tiny helm interface for it.
 
 #+BEGIN_SRC emacs-lisp
 (defcustom helm-baloo-file-limit 100
