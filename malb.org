@@ -148,8 +148,10 @@ Get the package manager going, but do not autoload packages.
 Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our configuration readable.
 
 #+BEGIN_SRC emacs-lisp
-(setq use-package-verbose t)
 (require 'use-package)
+
+(setq  use-package-compute-statistics t
+       use-package-verbose t)
 #+END_SRC
 
 [[https://github.com/Bruce-Connor/paradox/][Paradox]] is a better package list
@@ -312,7 +314,6 @@ Resize windows to accommodate new ones.
 (use-package eyebrowse
   :ensure t
   :diminish eyebrowse-mode
-  :after latex-preview-pane
   :init (setq eyebrowse-keymap-prefix (kbd "C-c e"))
   :config (progn
             (setq eyebrowse-wrap-around t)
@@ -329,17 +330,7 @@ Resize windows to accommodate new ones.
                                (not (eyebrowse--window-config-present-p j)))
                       (eyebrowse-switch-to-window-config j)
                       (call-interactively 'eyebrowse-rename-window-config j)
-                      (setq done t))))))
-
-            (defun malb/close-latex-preview-pane-before-eyebrowse-switch ()
-              ;; latex-preview-pane uses window-parameters which are not preserved by eyebrowse, so
-              ;; we close the preview pane before switching, it will be regenerated when we edit the
-              ;; TeX file.
-              (when (lpp/window-containing-preview)
-                (delete-window (lpp/window-containing-preview))))
-
-            (add-to-list 'eyebrowse-pre-window-switch-hook
-                         #'malb/close-latex-preview-pane-before-eyebrowse-switch)))
+                      (setq done t))))))))
 #+END_SRC
 
 ** Switching (Ace-Window)
@@ -351,6 +342,7 @@ Resize windows to accommodate new ones.
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
   :ensure t
+  :commands ace-window
   :config (progn
             (setq aw-keys   '(?a ?s ?d ?f ?j ?k ?l)
                   aw-dispatch-always nil
@@ -636,6 +628,7 @@ Run =old-function= with an empty =display-buffer-alist=
 (use-package golden-ratio
   :ensure t
   :after ispell
+  :commands golden-ratio-mode
   :diminish golden-ratio-mode
   :config (progn
 
@@ -923,8 +916,10 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
 #+BEGIN_SRC emacs-lisp
 (use-package helm-c-yasnippet
   :ensure t
-  :after helm
-  :bind ("C-c h y" .  helm-yas-complete)
+  :after (helm yasnippet)
+  :commands (helm-yas-complete)
+  :bind (:map yas-minor-mode-map
+              ("C-c h y" .  helm-yas-complete))
   :config (progn
             (setq helm-yas-space-match-any-greedy t)))
 #+END_SRC
@@ -939,7 +934,6 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 (use-package company
   :ensure t
   :bind (("M-/" . company-complete))
-
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
                   company-idle-delay 0.6   ; delay for popup
@@ -1033,14 +1027,6 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
 (use-package company-auctex
   :ensure t
   :config (progn
-            (defun company-auctex-labels (command &optional arg &rest ignored)
-              "company-auctex-labels backend"
-              (interactive (list 'interactive))
-              (case command
-                (interactive (company-begin-backend 'company-auctex-labels))
-                (prefix (company-auctex-prefix "\\\\.*ref{\\([^}]*\\)\\="))
-                (candidates (company-auctex-label-candidates arg))))
-
             (add-to-list 'company-backends
                          '(company-auctex-macros
                            company-auctex-environments
@@ -1050,6 +1036,8 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
             ;; (add-to-list 'company-backends #'company-auctex-labels)
             (add-to-list 'company-backends #'company-auctex-bibs)))
 #+END_SRC
+
+[[https://github.com/TheBB/company-reftex][company-refex]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-reftex
@@ -1071,7 +1059,7 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
 
 Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
 
-*Note:* Do this at the end of =company-mode= config.
+*Note:* Do this at the very end.
 
 #+BEGIN_SRC emacs-lisp
 (defvar malb/company-mode/enable-yas t
@@ -1433,34 +1421,34 @@ To reset call:
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
   :ensure t
-  :config (setq helm-ag-base-command "ag --nocolor --nogroup"
-                helm-ag-command-option nil
-                helm-ag-insert-at-point 'symbol
-                helm-ag-fuzzy-match t
-                helm-ag-use-temp-buffer t
-                helm-ag-use-grep-ignore-list t
-                helm-ag-use-agignore t))
-#+END_SRC
+  :commands (helm-ag helm-do-ag malb/helm-ag-projects malb/helm-ag-literature)
+  :config (progn
+            (setq helm-ag-base-command "ag --nocolor --nogroup"
+                  helm-ag-command-option nil
+                  helm-ag-insert-at-point 'symbol
+                  helm-ag-fuzzy-match t
+                  helm-ag-use-temp-buffer t
+                  helm-ag-use-grep-ignore-list t
+                  helm-ag-use-agignore t)
 
-#+BEGIN_SRC emacs-lisp
-(defun malb/helm-ag (dir)
-  "run helm-ag in DIR."
-  (let* ((ignored (mapconcat (lambda (i)
-                               (concat "--ignore " i))
-                             (append grep-find-ignored-files grep-find-ignored-directories)
-                             " "))
-         (helm-ag-base-command (concat helm-ag-base-command " " ignored)))
-    (helm-do-ag (file-name-as-directory dir))))
+            (defun malb/helm-ag (dir)
+              "run helm-ag in DIR."
+              (let* ((ignored (mapconcat (lambda (i)
+                                           (concat "--ignore " i))
+                                         (append grep-find-ignored-files grep-find-ignored-directories)
+                                         " "))
+                     (helm-ag-base-command (concat helm-ag-base-command " " ignored)))
+                (helm-do-ag (file-name-as-directory dir))))
 
-(defun malb/helm-ag-projects ()
-  "run helm-ag in projects directory."
-  (interactive)
-  (malb/helm-ag malb/projects-dir))
+            (defun malb/helm-ag-projects ()
+              "run helm-ag in projects directory."
+              (interactive)
+              (malb/helm-ag malb/projects-dir))
 
-(defun malb/helm-ag-literature ()
-  "run helm-ag in projects directory"
-  (interactive)
-  (malb/helm-ag (file-name-as-directory (car malb/literature-dirs))))
+            (defun malb/helm-ag-literature ()
+              "run helm-ag in projects directory"
+              (interactive)
+              (malb/helm-ag (file-name-as-directory (car malb/literature-dirs))))))
 #+END_SRC
 
 ** Helm Themes
@@ -1469,6 +1457,7 @@ Switch themes with helm.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-themes
+  :commands helm-themes
   :ensure t)
 #+END_SRC
 
@@ -4793,6 +4782,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 #+BEGIN_SRC emacs-lisp
 (use-package elpy
   :ensure t
+  :commands (elpy-shell-send-region-or-buffer elpy-module-yasnippet elpy-module-sane-defaults)
   :config (progn
             (elpy-module-yasnippet 'global-init)
             (defun malb/elpy-sane-defaults ()
@@ -5731,9 +5721,9 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt= or =README= in ReST. Hence, we add =README.txt= as the kind of file which wants ReST and use [[http://docutils.sourceforge.net/docs/user/emacs.html][rst-mode]] to edit it.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package rst-mode
-    :commands rst-mode-hook
-    :mode "README\\.txt")
+(use-package rst
+  :commands rst-mode-hook
+  :mode "README\\.txt")
 #+END_SRC
 
 ** LaTeX
@@ -6247,7 +6237,7 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
                (mapcar #'malb/get-bibtex-keys (reftex-get-bibfile-list)))))
 #+END_SRC
 
-*** Helm BibTeX
+*** Helm BibTeX (BibTeX Completion)
 
 [[https://github.com/tmalsburg/helm-bibtex/][Helm-bibtex]] is a nice interface for BibTeX.
 
@@ -6258,6 +6248,7 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-bibtex
   :ensure t
+  :commands (helm-bibtex helm-bibtex-with-local-bibliography)
   :config (progn
             (setq bibtex-completion-bibliography malb/bibtex-files
                   bibtex-completion-library-path malb/literature-dirs
@@ -7532,6 +7523,7 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
   :ensure t
+  :magic ("%PDF" . pdf-view-mode)
   :config (progn
             (pdf-tools-install)
             (setq-default pdf-view-display-size 'fit-page)
@@ -7808,6 +7800,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired
+  :commands dired
   :config (progn
             (require 'dired-x)
             (setq dired-listing-switches "-laGh1v --group-directories-first")
@@ -7853,14 +7846,11 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (put 'dired-find-alternate-file 'disabled nil)))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(use-package dired-x)
-#+END_SRC
-
 Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-dired-history
+  :after (dired helm)
   :ensure t)
 #+END_SRC
 
@@ -7868,6 +7858,7 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-collapse
+  :after dired
   :ensure t)
 #+END_SRC
 
@@ -7875,6 +7866,7 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-narrow
+  :after dired
   :ensure t
   :bind (:map dired-mode-map ("/" . dired-narrow)))
 #+END_SRC
@@ -7885,9 +7877,9 @@ Show dired histories you have visited.
 (use-package dired-subtree
   :ensure t
   :config
-  (bind-keys :map dired-mode-map
-             ("i" . dired-subtree-insert)
-             (";" . dired-subtree-remove)))
+  :bind (:map dired-mode-map
+              ("i" . dired-subtree-insert)
+              (";" . dired-subtree-remove)))
 #+END_SRC
 
 [[https://github.com/Fuco1/dired-hacks/blob/master/dired-ranger.el][dired-ranger]] for easy copy’n’pasting.
@@ -7895,6 +7887,7 @@ Show dired histories you have visited.
 #+BEGIN_SRC emacs-lisp
 (use-package dired-ranger
   :ensure t
+  :after dired
   :bind (:map dired-mode-map
               ("C-w" . (lambda (arg)
                          (interactive "P")
@@ -7913,7 +7906,7 @@ Show dired histories you have visited.
 #+BEGIN_SRC emacs-lisp
 (use-package neotree
   :ensure t
-
+  :commands neotree
   :config (progn
             (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
                   neo-smart-open t)))
@@ -8060,14 +8053,12 @@ deactivate Client
 #+BEGIN_SRC emacs-lisp
 (use-package calfw
   :ensure t
-  :config (setq calendar-week-start-day 1))
-
-(use-package calfw-cal
-  :ensure t)
-(use-package calfw-ical
-  :ensure t)
-(use-package calfw-org
-  :ensure t)
+  :commands (malb/calendar cfw:open-calendar-buffer)
+  :config (progn
+            (setq calendar-week-start-day 1)
+            (use-package calfw-cal :ensure t)
+            (use-package calfw-ical :ensure t)
+            (use-package calfw-org :ensure t)))
 #+END_SRC
 
 * File Sharing
@@ -8109,6 +8100,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 #+BEGIN_SRC emacs-lisp
 (use-package gist
   :ensure t
+  :commands (gist-list gist-buffer)
   :config (progn
             (setq gist-ask-for-description t)))
 #+END_SRC
@@ -8222,9 +8214,11 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
 
 #+BEGIN_SRC emacs-lisp
 (use-package emms-setup
+  :commands (emms-start emms-add-file)
   :ensure emms)
 
 (use-package emms-player-mplayer
+  :after emms-setup
   :config (progn (emms-standard)
                  (emms-default-players)
                  (define-emms-simple-player mplayer '(file url)
@@ -8263,6 +8257,7 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 #+BEGIN_SRC emacs-lisp
 (use-package weechat
   :ensure t
+  :commands weechat-connect
   :after prodigy
   :config (progn
             (require 'weechat-notifications)
@@ -8686,6 +8681,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 #+BEGIN_SRC emacs-lisp
 (use-package logview
   :ensure t
+  :commands (logview-mode)
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
 #+END_SRC
 
@@ -8774,6 +8770,7 @@ We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which custo
 #+BEGIN_SRC emacs-lisp
 (use-package spaceline-config
   :ensure spaceline
+  :after (eyebrowse helm)
   :config (progn
 
             ;; patch spaceline to always show eyebrowse window
