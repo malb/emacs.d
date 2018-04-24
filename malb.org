@@ -1474,6 +1474,7 @@ Switch themes with helm.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-locate
+  :after helm
   :config (progn
             (setq helm-locate-command
                   (let ((databases (concat
@@ -1844,8 +1845,7 @@ This can be dangerous, so only enable on per project basis, e.g.
 #+BEGIN_SRC emacs-lisp
 (use-package focus-autosave-mode
   :ensure t
-  :config (progn
-            (diminish 'focus-autosave-local-mode " ♻")))
+  :delight (focus-autosave-local-mode " ♻"))
 #+END_SRC
 
 ** Regexp
@@ -2615,11 +2615,8 @@ Allow refile to create parent tasks with confirmation
 ** Diminish Minor Modes
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/diminish-org-indent-mode ()
-  (ignore-errors
-    (diminish 'org-indent-mode)))
-
-(add-hook 'org-mode-hook #'malb/diminish-org-indent-mode)
+(use-package 'org-indent
+  :diminish)
 #+END_SRC
 
 ** Archiving
@@ -5672,12 +5669,11 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 #+BEGIN_SRC emacs-lisp
 (use-package pandoc-mode
   :ensure t
+  :delight '(:eval (concat " p[" (pandoc--get 'write) "]"))
   :config (progn
             (add-hook 'markdown-mode-hook #'pandoc-mode)
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
-            (delight 'pandoc-mode
-                     '(:eval (concat " p[" (pandoc--get 'write) "]")))
 
             (defun malb/copy-as (arg)
               (interactive "P")
@@ -8215,7 +8211,6 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
 
 #+BEGIN_SRC emacs-lisp
 (use-package emms-setup
-  :commands (emms-start emms-add-file)
   :ensure emms)
 
 (use-package emms-player-mplayer
