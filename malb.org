@@ -6361,6 +6361,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref
   :ensure t
+  :after org
   :defer 2
   :config (progn
             (setq org-ref-default-bibliography malb/bibtex-files
@@ -6369,12 +6370,12 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
                   org-ref-bibtex-hydra-key-binding "\C-cj"
                   org-ref-show-broken-links nil)
 
-            ;; move Insert BibTeX key to front, TODO org-ref screws with this order, hence this stuff is here
             (helm-add-action-to-source "Find online" 'helm-malb/bibtex-completion-google-this helm-source-bibtex)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-ref-latex)
+(use-package org-ref-latex
+  :commands org-ref-latex-jump-to-bibtex)
 #+END_SRC
 
 ** Speed Reading
