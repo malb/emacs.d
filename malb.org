@@ -1245,16 +1245,23 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 (use-package helm
   :ensure t
   :diminish helm-mode
-  :bind (("M-x"     . helm-M-x)
-         ("C-x C-b" . malb/helm-omni)
-         ("C-x b" . malb/helm-omni)
-         ("C-x C-f" . helm-find-files)
-         ("C-c <SPC>" . helm-all-mark-rings))
+  :bind (("M-x"       . helm-M-x)
+         ("C-x C-b"   . malb/helm-omni)
+         ("C-x b"     . malb/helm-omni)
+         ("C-x C-f"   . helm-find-files)
+         ("C-c <SPC>" . helm-all-mark-rings)
+         ("C-c h"     . helm-command-prefix)
+
+         :map helm-map
+         ("<tab>" . helm-execute-persistent-action) ;; rebind tab to do persistent action
+         ("C-i"   . helm-execute-persistent-action) ;; make TAB works in terminal
+         ("C-z"   . helm-select-action)             ;; list actions using C-z
+         )
+
   :config (progn
             (require 'helm-config)
             (require 'helm-for-files)
             (require 'helm-bookmark)
-            (bind-key "C-c h" #'helm-command-prefix)
             (unbind-key "C-x c")
 
             (setq helm-adaptive-mode t
@@ -1273,15 +1280,15 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-ff-auto-update-initial-value nil
                   helm-grep-default-command "ag --vimgrep -z %p %f"
                   helm-grep-default-recurse-command "ag --vimgrep -z %p %f"
-                  helm-use-frame-when-more-than-two-windows nil)
+                  helm-use-frame-when-more-than-two-windows nil
 
-            (setq helm-display-function #'helm-default-display-buffer
+                  helm-display-function #'helm-default-display-buffer
                   helm-display-buffer-reuse-frame t
                   helm-display-buffer-width 180
                   helm-display-buffer-height 60
-                  helm-use-undecorated-frame-option t)
+                  helm-use-undecorated-frame-option t
 
-            (setq helm-M-x-fuzzy-match                  t
+                  helm-M-x-fuzzy-match                  t
                   helm-eshell-fuzzy-match               t
                   helm-buffers-fuzzy-matchiqng          t
                   helm-completion-in-region-fuzzy-match t
@@ -1311,12 +1318,15 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (add-to-list 'helm-boring-file-regexp-list "-blx\\.bib" t)
             (add-to-list 'helm-boring-file-regexp-list "texput\\.log" t)
 
-            ;; rebind tab to do persistent action
-            (bind-key "<tab>" #'helm-execute-persistent-action helm-map)
-            ;; make TAB works in terminal
-            (bind-key "C-i"   #'helm-execute-persistent-action helm-map)
-            ;; list actions using C-z
-            (bind-key "C-z"   #'helm-select-action             helm-map)
+            (defun malb/helm-in-buffer ()
+              "The right kind™ of buffer menu."
+              (interactive)
+              (if (eq major-mode 'org-mode)
+                  (call-interactively #'helm-org-in-buffer-headings)
+                (call-interactively #'helm-semantic-or-imenu)))
+
+            (add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
+            (add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)
 
             ;; see https://github.com/emacs-helm/helm/commit/1de1701c73b15a86e99ab1c5c53bd0e8659d8ede
             (assq-delete-all 'find-file helm-completing-read-handlers-alist)))
@@ -1367,19 +1377,6 @@ To reset call:
 *Tip*: You can edit =helm-swoop= buffers by pressing =C-c C-e=.
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/helm-swoop-pre-fill ()
-  (thing-at-point 'symbol)) ;; I’m going back and forth what I prefer
-
-(setq malb/helm-swoop-ignore-major-mode
-      '(dired-mode paradox-menu-mode doc-view-mode pdf-view-mode mu4e-headers-mode org-mode markdown-mode latex-mode ein:notebook-multilang-mode))
-
-(defun malb/swoop-or-search ()
-  (interactive)
-  (if (or (> (buffer-size) 1048576) ;; helm-swoop can be slow on big buffers
-          (memq major-mode malb/helm-swoop-ignore-major-mode))
-      (isearch-forward)
-    (helm-swoop)))
-
 (use-package helm-swoop
   :ensure t
   :bind (("C-c o" . helm-multi-swoop-org)
@@ -1387,11 +1384,32 @@ To reset call:
          ("C-M-s" . helm-multi-swoop-all))
   :config (progn
 
+            (setq malb/helm-swoop-ignore-major-mode
+                  '(dired-mode
+                    paradox-menu-mode
+                    doc-view-mode
+                    pdf-view-mode
+                    mu4e-headers-mode
+                    org-mode
+                    markdown-mode
+                    latex-mode
+                    ein:notebook-multilang-mode)) ;; I’m going back and forth what I prefer
+
             (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
                   helm-swoop-split-with-multiple-windows nil
                   helm-swoop-split-direction #'split-window-horizontally
                   helm-swoop-split-window-function 'helm-default-display-buffer
                   helm-swoop-speed-or-color t)
+
+            (defun malb/helm-swoop-pre-fill ()
+              (thing-at-point 'symbol))
+
+            (defun malb/swoop-or-search ()
+              (interactive)
+              (if (or (> (buffer-size) 1048576) ;; helm-swoop can be slow on big buffers
+                      (memq major-mode malb/helm-swoop-ignore-major-mode))
+                  (isearch-forward)
+                (helm-swoop)))
 
             ;; https://emacs.stackexchange.com/questions/28790/helm-swoop-how-to-make-it-behave-more-like-isearch
             (defun malb/helm-swoop-C-s ()
@@ -1475,6 +1493,7 @@ Switch themes with helm.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-locate
   :after helm
+  :commands helm-locate
   :config (progn
             (setq helm-locate-command
                   (let ((databases (concat
@@ -1493,6 +1512,7 @@ Switch themes with helm.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org-rifle
   :ensure t
+  :commands (helm-org-rifle-agenda-files helm-org-rifle-occur-agenda-files)
   :config (progn
             (defun malb/helm-org-rifle-agenda-files (arg)
               (interactive "p")
@@ -1501,6 +1521,7 @@ Switch themes with helm.
                  ((equal arg 4) (call-interactively #'helm-org-rifle-agenda-files nil))
                  ((equal arg 16) (helm-org-rifle-occur-agenda-files))
                  (t (helm-org-agenda-files-headings)))))
+
             (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)))
 #+END_SRC
 
@@ -1513,6 +1534,7 @@ Switch themes with helm.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-google
   :ensure t
+  :after helm
   :bind ("C-c h g" . helm-google)
   :config
   (progn
@@ -1534,20 +1556,6 @@ Switch themes with helm.
                                           (push (list url title) org-stored-links)))) t)))
 #+END_SRC
 
-** Helm Semantic, Imenu, Org
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/helm-in-buffer ()
-  "The right kind™ of buffer menu."
-  (interactive)
-  (if (eq major-mode 'org-mode)
-      (call-interactively #'helm-org-in-buffer-headings)
-    (call-interactively #'helm-semantic-or-imenu)))
-
-(add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
-(add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)
-#+END_SRC
-
 * History
 ** Recent Files
 
@@ -1555,6 +1563,7 @@ Don’t include boring or remote stuff in list of recently visited files.
 
 #+BEGIN_SRC emacs-lisp
 (use-package recentf
+  :after helm
   :config  (progn
              (setq recentf-max-saved-items 64
                    recentf-exclude (list "COMMIT_EDITMSG"
@@ -2615,7 +2624,7 @@ Allow refile to create parent tasks with confirmation
 ** Diminish Minor Modes
 
 #+BEGIN_SRC emacs-lisp
-(use-package 'org-indent
+(use-package org-indent
   :diminish)
 #+END_SRC
 
@@ -4707,8 +4716,7 @@ Fall back to dumb jump if anaconda fails.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-pydoc
   :ensure t
-  :config (progn
-            (bind-key "C-c C-d" #'helm-pydoc python-mode-map)))
+  :bind (:map python-mode-map ("C-c C-d" . helm-pydoc)))
 #+END_SRC
 
 *** Docstrings
