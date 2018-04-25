@@ -1512,7 +1512,7 @@ Switch themes with helm.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org-rifle
   :ensure t
-  :commands (helm-org-rifle-agenda-files helm-org-rifle-occur-agenda-files)
+  :commands (helm-org-rifle-agenda-files helm-org-rifle-occur-agenda-files malb/helm-org-rifle-agenda-files)
   :config (progn
             (defun malb/helm-org-rifle-agenda-files (arg)
               (interactive "p")
@@ -1883,7 +1883,6 @@ Sometimes visual-regexp bombs out, so we have a function to reset it:
   (require 'visual-regexp)
   (require 'visual-regexp-steroids))
 #+END_SRC
-
 
 ** Multiple cursors
 
@@ -8256,12 +8255,25 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 #+END_SRC
 
 * Chat
+** Tracking
+
+#+BEGIN_SRC emacs-lisp
+(use-package tracking
+  :ensure t
+  :bind (:map tracking-mode-map
+              ("<f2> <right>" . tracking-next-buffer)
+              ("<f2> <left>" . tracking-previous-buffer))
+  :config (progn
+            (unbind-key "C-c C-SPC" tracking-mode-map)
+            (unbind-key "C-c C-@" tracking-mode-map)))
+#+END_SRC
+
 ** Weechat
 
 #+BEGIN_SRC emacs-lisp
 (use-package weechat
   :ensure t
-  :commands weechat-connect
+  :commands (weechat-connect malb/weechat)
   :after prodigy
   :config (progn
             (require 'weechat-notifications)
