@@ -9103,7 +9103,6 @@ Easily change the text size:
 
 (defun helm-baloo ()
   (interactive)
-  (call-process-shell-command "balooctl check" nil 0)
   (helm :sources helm-source-baloo
         :buffer "*helm baloo*"))
 
