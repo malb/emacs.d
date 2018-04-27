@@ -1809,7 +1809,7 @@ Automatically insert closing delimiter
   )
 #+END_SRC
 
-** Reverting buffers
+** Reverting Buffers
 
 Automatically revert buffers.
 
