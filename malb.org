@@ -618,56 +618,6 @@ Run =old-function= with an empty =display-buffer-alist=
     (apply old-function arguments)))
 #+END_SRC
 
-** Golden Ratio
-
-[[https://github.com/roman/golden-ratio.el][Golden Ratio]] for resizing windows. We also inhibit when modes in =golden-ratio-exclude-modes= are active any window, not only in the target window.
-
-[[https://camo.githubusercontent.com/26b1ac5fec67a2c557cfbe87382a0134d3443fd0/68747470733a2f2f7261772e6769746875622e636f6d2f726f6d616e2f676f6c64656e2d726174696f2e656c2f6173736574732f676f6c64656e5f726174696f5f656c2e676966][screenshot]] ([[https://github.com/roman/golden-ratio.el][source]])
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(use-package golden-ratio
-  :ensure t
-  :after ispell
-  :commands golden-ratio-mode
-  :diminish golden-ratio-mode
-  :config (progn
-
-            (require 'ispell)
-            (setq golden-ratio-adjust-factor 1.0
-                  golden-ratio-exclude-modes '(imenu-list-major-mode
-                                               eshell-mode
-                                               pdf-view-mode
-                                               mu4e-view-mode
-                                               mu4e-main-mode
-                                               mu4e-headers-mode
-                                               calendar-mode
-                                               compilation-mode))
-
-            (defun malb/golden-ratio-inhibit-functions ()
-              (cond
-               ;; which function is exempt
-               ((bound-and-true-p which-key--current-page-n))
-               ;; helm is exempt
-               ((bound-and-true-p helm-alive-p))
-               ;; embrace is exempt
-               ((eq this-command 'embrace-commander))
-               ;; if ispell is running let's not golden ratio
-               ((get-buffer ispell-choices-buffer))
-               ;; any olivetti mode buffer disables gr
-               ;; we also block if any buffer has inhibit major-mode not only target
-               (t (catch 'inhibit
-                    (dolist (window (window-list))
-                      (with-current-buffer (window-buffer window)
-                        (if (or (memq major-mode golden-ratio-exclude-modes)
-                                (bound-and-true-p olivetti-mode))
-                            (throw 'inhibit t))))
-                    (throw 'inhibit nil)))))
-
-            (setq golden-ratio-exclude-buffer-regexp malb/popup-windows)
-
-            (setq golden-ratio-inhibit-functions '(malb/golden-ratio-inhibit-functions))))
-#+END_SRC
-
 ** Dedicated Mode
 
 ([[https://github.com/jwiegley/dot-emacs/blob/master/site-lisp/dedicated.el][source]])
