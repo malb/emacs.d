@@ -1809,28 +1809,6 @@ Automatically insert closing delimiter
   )
 #+END_SRC
 
-** Highlight last edits
-
-([[https://sourceub.com/k-talo/volatile-highlights.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-  (use-package volatile-highlights
-    :ensure t
-    :commands volatile-highlights-mode
-    :config (volatile-highlights-mode t)
-    :diminish volatile-highlights-mode)
-#+END_SRC
-
-** Zap up to char
-
-Kill everything up to character, e.g. if we have “Lorem| ipsum” typing ~M-z u~ would leave us with “Lorem|um”.
-
-#+BEGIN_SRC emacs-lisp
-(use-package avy-zap
-  :ensure t
-  :bind ("M-z" . avy-zap-up-to-char-dwim))
-#+END_SRC
-
 ** Reverting buffers
 
 Automatically revert buffers.
