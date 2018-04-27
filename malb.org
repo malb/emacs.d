@@ -4584,6 +4584,15 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
 #+BEGIN_SRC emacs-lisp
 (use-package python
+  :mode (("\\.py\\'" . python-mode))
+  :bind (:map python-mode-map
+              ("C-c C-c" . elpy-shell-send-region-or-buffer)
+              ("C-c C-r" . pyvenv-restart-python)
+              ("<home>"  . malb/beginning-of-line-dwim)
+              ("C-<tab>" . outline-cycle)
+              :map inferior-python-mode-map
+              ("C-c C-r" . pyvenv-restart-python))
+  :hook (python-mode . outline-minor-mode)
   :config (progn
             (setq-default python-indent 4
                           python-fill-docstring-style 'django)
@@ -4600,20 +4609,9 @@ I often restart Python processes (Cython development), so let’s bind a key for
                   python-shell-completion-string-code
                   "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
 
-            (bind-key "C-c C-c" #'elpy-shell-send-region-or-buffer python-mode-map)
-            (bind-key "C-c C-r" #'pyvenv-restart-python python-mode-map)
-            (bind-key "C-c C-r" #'pyvenv-restart-python inferior-python-mode-map)
-            (bind-key "<home>"  #'malb/beginning-of-line-dwim python-mode-map)
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
-            (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
-
-            ;; Fold logical units
-            ;; (add-hook 'python-mode-hook #'origami-mode)
-            ;; (bind-key "C-<tab>" #'origami-toggle-node python-mode-map)
-            ;; (bind-key "C-S-<iso-lefttab>" #'origami-toggle-all-nodes python-mode-map)
-            (add-hook 'python-mode-hook #'outline-minor-mode)
-            (bind-key "C-<tab>" #'outline-cycle python-mode-map)))
+            (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -4637,7 +4635,6 @@ I often restart Python processes (Cython development), so let’s bind a key for
      (sleep-for 0.1)
      ,post-exec))
 #+END_SRC
-
 
 *** Highlight indentation
 
@@ -4710,8 +4707,7 @@ Manually fixed bugs:
 (use-package python-docstring
   :ensure t
   :diminish python-docstring-mode
-  :config (progn
-            (add-hook 'python-mode-hook #'python-docstring-mode)))
+  :hook (python-mode . python-docstring-mode))
 #+END_SRC
 
 **** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx-doc]]
@@ -4722,8 +4718,7 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 (use-package sphinx-doc
   :ensure t
   :diminish sphinx-doc-mode
-  :config (progn
-            (add-hook 'python-mode-hook #'sphinx-doc-mode)))
+  :hook (python-mode . sphinx-doc-mode))
 #+END_SRC
 
 *** Cython
@@ -4741,6 +4736,7 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-cython
+  :after (cython-mode flycheck)
   :ensure t)
 #+END_SRC
 
@@ -5189,6 +5185,12 @@ Code manipulation:
   :ensure t)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(use-package easy-escape
+  :ensure t
+  :hook ((emacs-lisp-mode lisp-mode) . easy-escape-minor-mode))
+#+END_SRC
+
 *** Emacs Lisp
 
 #+BEGIN_SRC emacs-lisp
@@ -5236,14 +5238,13 @@ Code manipulation:
 (add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
 #+END_SRC
 
-
 *** Hy
 
 #+BEGIN_SRC emacs-lisp
 (use-package hy-mode
   :ensure t
-  :config (progn
-            (add-hook 'hy-mode-hook #'lispy-mode)))
+  :mode "\\.hy\\'"
+  :hook (hy-mode . lispy-mode))
 #+END_SRC
 
 ** Web
@@ -5619,15 +5620,17 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
          ("\\.markdown\\'" . markdown-mode)
          ("\\.text\\'" . markdown-mode)
          ("\\.txt\\'" . markdown-mode)
-         ("README\\.md\\'" . gfm-mode)
-         )
+         ("README\\.md\\'" . gfm-mode))
   :config (progn
             (defvar malb/markdown.css
               (expand-file-name "themes/foghorn.css" user-emacs-directory))
 
-            (setq markdown-command (concat "pandoc --smart -s -f markdown -t html -c" malb/markdown.css)
+            (setq markdown-command (concat
+                                    "pandoc --highlight-style pygments --smart -s -f markdown -t html -c"
+                                    malb/markdown.css)
                   markdown-css-paths (list malb/markdown.css)
-                  markdown-enable-math t)
+                  markdown-enable-math t
+                  markdown-fontify-code-blocks-natively t)
 
             (defun malb/markdown-preview-buffer ()
               (interactive)
@@ -5639,11 +5642,12 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
                 (shr-render-buffer buf-html)
                 (kill-buffer buf-html)))
 
-            (bind-key "M-." #'markdown-do markdown-mode-map)
-            (bind-key "C-c C-e o" #'malb/markdown-preview-buffer markdown-mode-map) ;; inspired by org-mode-export
             (add-hook 'markdown-mode-hook #'flyspell-mode)
             (add-hook 'markdown-mode-hook #'malb/company-ispell-setup)
             (add-hook 'markdown-mode-hook #'outline-minor-mode)
+
+            (bind-key "M-." #'markdown-do markdown-mode-map)
+            (bind-key "C-c C-e o" #'malb/markdown-preview-buffer markdown-mode-map) ;; inspired by org-mode-export
             (bind-key "C-<tab>" #'outline-cycle markdown-mode-map)))
 #+END_SRC
 
@@ -8087,6 +8091,18 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
             (setq gist-ask-for-description t)))
 #+END_SRC
 
+** Copy as
+
+#+BEGIN_SRC emacs-lisp
+(use-package copy-as-format
+  :ensure t
+  :commands (copy-as-format-github
+             copy-as-format-jira
+             copy-as-format-markdown
+             copy-as-format-org-mode
+             copy-as-format-slack))
+#+END_SRC
+
 * Manage Local Servers
 
 [[https://github.com/rejeep/prodigy.el][Prodigy]] is a way of managing services from Emacs. Use it for IMAP idle via [[https://www.npmjs.com/package/imapnotify][imapnotify]]. For completeness here’s a matching imapnotify config.
@@ -8746,13 +8762,13 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
             (add-hook 'org-mode-hook   #'turn-on-stripe-table-mode)))
 #+END_SRC
 
-** Dim other buffers
-
-([[https://github.com/mina86/auto-dim-other-buffers.el][source]])
+** Dim other Buffers
 
 #+BEGIN_SRC emacs-lisp
-(use-package auto-dim-other-buffers
-  :ensure t)
+(use-package dimmer
+  :ensure t
+  :commands dimmer-mode
+  :config (setq dimmer-percent 0.3))
 #+END_SRC
 
 ** Powerline
