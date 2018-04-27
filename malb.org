@@ -1030,35 +1030,6 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 (add-hook 'emacs-startup-hook #'malb/activate-yasnippet-completion)
 #+END_SRC
 
-** All the Words
-
-Enable/disable company completion from ispell dictionaries ([[https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-company.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/toggle-company-ispell ()
-  (interactive)
-  (cond
-   ((member '(company-ispell :with company-yasnippet) company-backends)
-    (setq company-backends (delete '(company-ispell :with company-yasnippet) company-backends))
-    (add-to-list 'company-backends '(company-dabbrev :with company-yasnippet) t)
-    (message "company-ispell disabled"))
-   (t
-    (setq company-backends (delete '(company-dabbrev :with company-yasnippet) company-backends))
-    (add-to-list 'company-backends '(company-ispell :with company-yasnippet) t)
-    (message "company-ispell enabled!"))))
-
-(defun malb/company-ispell-setup ()
-  ;; @see https://github.com/company-mode/company-mode/issues/50
-  (when (boundp 'company-backends)
-    (make-local-variable 'company-backends)
-    (setq company-backends (delete '(company-dabbrev :with company-yasnippet) company-backends))
-    (add-to-list 'company-backends '(company-ispell :with company-yasnippet) t)
-    ;; https://github.com/redguardtoo/emacs.d/issues/473
-    (if (and (boundp 'ispell-alternate-dictionary)
-             ispell-alternate-dictionary)
-        (setq company-ispell-dictionary ispell-alternate-dictionary))))
-#+END_SRC
-
 * Tab DWIM
 
 1. =yas-expand= is run first and does what it has to, then it calls =malb/indent-fold-or-complete=.
@@ -2545,7 +2516,6 @@ Allow refile to create parent tasks with confirmation
 
 (add-hook 'org-mode-hook #'malb/org-ispell)
 (add-hook 'org-mode-hook #'flyspell-mode)
-(add-hook 'org-mode-hook #'malb/company-ispell-setup) ;; complete from ispell dict
 #+END_SRC
 
 ** Diminish Minor Modes
@@ -5214,7 +5184,7 @@ Code manipulation:
 
 * Prose
 ** General
-*** Tab completion
+*** Tab Completion
 
 Use less tab completion in prose. ([[http://endlessparentheses.com/tab-completion-for-prose.html][souce]])
 
@@ -5227,7 +5197,7 @@ Use less tab completion in prose. ([[http://endlessparentheses.com/tab-completio
 (add-hook 'text-mode-hook #'malb/config-prose-completion)
 #+END_SRC
 
-*** Line wrapping
+*** Line Wrapping
 
 Put everything back on one line if =M-q= is pressed twice and use ~visual-line-mode~ to do the work of wrapping text for us. ([[http://endlessparentheses.com/fill-and-unfill-paragraphs-with-a-single-key.html?source=rss][source]])
 
@@ -5308,43 +5278,6 @@ Indicate soft wrapped lines.
             ))
 #+END_SRC
 
-Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]])
-
-*Note:* Below, we adapt "en_GB" (our default) instead of =nil= (the global default) because otherwise we [[http://endlessparentheses.com/ispell-and-apostrophes.html#comment-2258586606][can’t change dictionaries]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package ispell
-  :config (progn
-            (setq ispell-dictionary "en_GB")
-
-            ;; Tell ispell.el that ’ can be part of a word. ;
-            (setq ispell-local-dictionary-alist
-                  '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]"
-                     "['\x2019]" nil ("-d" "en_GB") nil utf-8)))
-
-            ;; Don't send ’ to the subprocess.
-            (defun malb/replace-apostrophe (args)
-              (cons (replace-regexp-in-string
-                     "’" "'" (car args))
-                    (cdr args)))
-
-            (advice-add #'ispell-send-string :filter-args #'malb/replace-apostrophe)
-
-            ;; Convert ' back to ’ from the subprocess.
-            (defun malb/replace-quote (args)
-              (if (not (or (derived-mode-p 'org-mode)
-                           (derived-mode-p 'markdown-mode)
-                           (derived-mode-p 'rst-mode)
-                           (derived-mode-p 'message-mode)))
-                  args
-                (cons (replace-regexp-in-string
-                       "'" "’" (car args))
-                      (cdr args))))
-
-            (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)
-            (setq ispell-silently-savep t)))
-#+END_SRC
-
 *** Visual Fill Column Mode
 
 [[https://github.com/joostkremers/visual-fill-column][soft wrap at fill-column]]
@@ -5396,36 +5329,96 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
 *** Spell Checking
 
-Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typos. I find myself pressing =C-.= in other programs these days just to be frustrated that it doesn’t just work™
+- Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]]) *Note:* Below, we adapt "en_GB" (our default) instead of =nil= (the global default) because otherwise we [[http://endlessparentheses.com/ispell-and-apostrophes.html#comment-2258586606][can’t change dictionaries]].
+
+- Enable/disable company completion from ispell dictionaries ([[https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-company.el][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package ace-flyspell
-  :ensure t
-  :bind ("C-." . ace-flyspell-correct-word)
-  :init (progn
-          (setq ace-flyspell-new-word-no-query t)
-          (require 'ace-flyspell)
-          (defun malb/ace-flyspell-dwim (arg)
-            "Run `ace-flyspell-dim` unless prefix argument is given. In that case offer a word to insert."
-            (interactive "P")
-            (if arg
-                (progn
-                  (ace-flyspell-jump-word)
-                  (ace-flyspell--insert-word))
-              (ace-flyspell-dwim)))
+(use-package ispell
+  :hook ((markdown-mode org-mode message-mode) . malb/company-ispell-setup)
+  :config (progn
+            (setq ispell-dictionary "en_GB"
+                  ispell-silently-savep t)
 
+            ;; Tell ispell.el that ’ can be part of a word. ;
+            (setq ispell-local-dictionary-alist
+                  '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]"
+                     "['\x2019]" nil ("-d" "en_GB") nil utf-8)))
 
-          (eval-after-load "flyspell"
-            '(bind-key  "C-." #'malb/ace-flyspell-dwim flyspell-mode-map))
-          (eval-after-load "flyspell"
-            '(unbind-key "C-;" flyspell-mode-map))))
+            ;; Don't send ’ to the subprocess.
+            (defun malb/replace-apostrophe (args)
+              (cons (replace-regexp-in-string
+                     "’" "'" (car args))
+                    (cdr args)))
+
+            (advice-add #'ispell-send-string :filter-args #'malb/replace-apostrophe)
+
+            ;; Convert ' back to ’ from the subprocess.
+            (defun malb/replace-quote (args)
+              (if (not (or (derived-mode-p 'org-mode)
+                           (derived-mode-p 'markdown-mode)
+                           (derived-mode-p 'rst-mode)
+                           (derived-mode-p 'message-mode)))
+                  args
+                (cons (replace-regexp-in-string
+                       "'" "’" (car args))
+                      (cdr args))))
+
+            (defun malb/toggle-company-ispell ()
+              (interactive)
+              (cond
+               ((member '(company-ispell :with company-yasnippet) company-backends)
+                (setq company-backends (delete '(company-ispell :with company-yasnippet) company-backends))
+                (add-to-list 'company-backends '(company-dabbrev :with company-yasnippet) t)
+                (message "company-ispell disabled"))
+               (t
+                (setq company-backends (delete '(company-dabbrev :with company-yasnippet) company-backends))
+                (add-to-list 'company-backends '(company-ispell :with company-yasnippet) t)
+                (message "company-ispell enabled!"))))
+
+            (defun malb/company-ispell-setup ()
+              ;; @see https://github.com/company-mode/company-mode/issues/50
+              (when (boundp 'company-backends)
+                (make-local-variable 'company-backends)
+                (setq company-backends (delete '(company-dabbrev :with company-yasnippet) company-backends))
+                (add-to-list 'company-backends '(company-ispell :with company-yasnippet) t)
+                ;; https://github.com/redguardtoo/emacs.d/issues/473
+                (if (and (boundp 'ispell-alternate-dictionary)
+                         ispell-alternate-dictionary)
+                    (setq company-ispell-dictionary ispell-alternate-dictionary))))
+
+            (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)))
 #+END_SRC
 
 Diminish ~flyspell-mode~ as we always use it.
 
 #+BEGIN_SRC emacs-lisp
-(eval-after-load "flyspell"
-  '(diminish 'flyspell-mode))
+(use-package flyspell
+  :diminish)
+#+END_SRC
+
+Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typos. I find myself pressing =C-.= in other programs these days just to be frustrated that it doesn’t just work™
+
+#+BEGIN_SRC emacs-lisp
+(use-package ace-flyspell
+  :ensure t
+  :bind (("C-." . ace-flyspell-correct-word)
+         :map flyspell-mode-map
+         ("C-." . malb/ace-flyspell-dwim))
+  :after flyspell
+  :config (progn
+            (setq ace-flyspell-new-word-no-query t)
+
+            (defun malb/ace-flyspell-dwim (arg)
+              "Run `ace-flyspell-dim` unless prefix argument is given. In that case offer a word to insert."
+              (interactive "P")
+              (if arg
+                  (progn
+                    (ace-flyspell-jump-word)
+                    (ace-flyspell--insert-word))
+                (ace-flyspell-dwim)))
+
+            (unbind-key "C-;" flyspell-mode-map)))
 #+END_SRC
 
 Automatically pick dictionary.
@@ -5434,9 +5427,7 @@ Automatically pick dictionary.
 (use-package auto-dictionary
   :ensure t
   :config (progn
-            (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")
-            ;; (add-hook 'markdown-mode-hook #'adict-guess-dictionary)
-            ))
+            (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")))
 #+END_SRC
 
 *** Grammar Checking
@@ -5593,7 +5584,6 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
                 (kill-buffer buf-html)))
 
             (add-hook 'markdown-mode-hook #'flyspell-mode)
-            (add-hook 'markdown-mode-hook #'malb/company-ispell-setup)
             (add-hook 'markdown-mode-hook #'outline-minor-mode)
 
             (bind-key "M-." #'markdown-do markdown-mode-map)
@@ -7089,7 +7079,6 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'turn-on-orgtbl)
 (add-hook 'message-mode-hook #'typo-mode)
 (add-hook 'message-mode-hook #'adict-guess-dictionary)
-(add-hook 'message-mode-hook #'malb/company-ispell-setup)
 
 ;; TODO this isn’t as nice as it could be
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
