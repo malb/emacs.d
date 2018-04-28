@@ -5417,6 +5417,17 @@ Automatically pick dictionary.
             (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(use-package guess-language
+  :ensure t
+  :hook (message-mode . guess-language-mode)
+  :config (setq guess-language-langcodes '((en . ("en_GB" "English"))
+                                           (de . ("de_DE" "German")))
+                guess-language-languages '(en de)
+                guess-language-min-paragraph-length 35))
+#+END_SRC
+
+
 *** Grammar Checking
 
 ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
@@ -6363,7 +6374,7 @@ Return the first voice matching detected language.
   "Select voice by picking first voice from aws-polly-voices matching detected language in TEXT."
   (let ((lang (with-temp-buffer
                 (insert text)
-                (adict-guess-buffer-language)))
+                (guess-language-buffer)))
         (voices nil))
     (dolist (entry aws-polly-voices)
       (if (string-prefix-p lang (cadr entry))
@@ -7065,7 +7076,6 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'message-mode-hook #'turn-on-orgstruct++)
 (add-hook 'message-mode-hook #'turn-on-orgtbl)
 (add-hook 'message-mode-hook #'typo-mode)
-(add-hook 'message-mode-hook #'adict-guess-dictionary)
 
 ;; TODO this isn’t as nice as it could be
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
