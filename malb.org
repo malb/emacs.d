@@ -5364,21 +5364,11 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
                        "'" "’" (car args))
                       (cdr args))))
 
-            (defun malb/toggle-company-ispell ()
-              (interactive)
-              (cond
-               ((member '(company-ispell :with company-yasnippet) company-backends)
-                (setq company-backends (delete '(company-ispell :with company-yasnippet) company-backends))
-                (message "company-ispell disabled"))
-               (t
-                (add-to-list 'company-backends '(company-ispell :with company-yasnippet))
-                (message "company-ispell enabled!"))))
-
             (defun malb/company-ispell-setup ()
-              ;; @see https://github.com/company-mode/company-mode/issues/50
               (when (boundp 'company-backends)
                 (make-local-variable 'company-backends)
-                (add-to-list 'company-backends '(company-ispell :with company-yasnippet))
+                (setq company-backends (delete 'company-dabbrev company-backends))
+                (add-to-list 'company-backends '(company-ispell :with company-yasnippet) t)
                 ;; https://github.com/redguardtoo/emacs.d/issues/473
                 (if (and (boundp 'ispell-alternate-dictionary)
                          ispell-alternate-dictionary)
