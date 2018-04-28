@@ -7118,6 +7118,7 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-attachment-dir (expand-file-name "incoming" malb/sync-dir))
+(setq-default mu4e-save-multiple-attachments-without-asking t)
 #+END_SRC
 
 Attachments are mostly handled using the helm baloo interface below, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
