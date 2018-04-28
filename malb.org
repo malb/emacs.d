@@ -4517,17 +4517,16 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (setq-default python-indent 4
                           python-fill-docstring-style 'django)
 
-            (setq python-shell-interpreter "ipython"
-                  ;; add --simple-prompt or install https://github.com/ipython/rlipython
-                  python-shell-interpreter-args "-i --simple-prompt"
-                  python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-                  python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-                  python-shell-completion-setup-code
-                  "from IPython.core.completerlib import module_completion"
-                  python-shell-completion-string-code
-                  "';'.join(module_completion('''%s'''))\n"
-                  python-shell-completion-string-code
-                  "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+            (setq python-shell-interpreter "jupyter"
+                  python-shell-interpreter-args "console --simple-prompt"
+                  python-shell-prompt-detect-failure-warning nil)
+
+            (defun malb/inferior-python-setup ()
+              (make-local-variable 'company-backends)
+              (turn-on-smartparens-strict-mode)
+              (setq company-backends '(company-files company-capf)))
+
+            (add-hook 'inferior-python-mode-hook #'malb/inferior-python-setup)
 
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
@@ -4551,9 +4550,11 @@ I often restart Python processes (Cython development), so let’s bind a key for
                                    ((reusable-frames . visible)
                                     (side            . bottom)
                                     (window-height   . 0.3))))
-       (select-window (get-buffer-window ip-buffer)))
-     (sleep-for 0.1)
-     ,post-exec))
+       (select-window (get-buffer-window ip-buffer))
+       (while (not python-shell--first-prompt-received)
+         (sleep-for 0.1))
+       (dolist (cmd ,post-exec)
+         (python-shell-send-string-no-output cmd)))))
 #+END_SRC
 
 *** Highlight indentation
