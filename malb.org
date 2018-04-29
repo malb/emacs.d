@@ -4681,6 +4681,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 #+BEGIN_SRC emacs-lisp
 (use-package elpy
   :ensure t
+  :bind (:map python-mode-map ("C-c C-c" . elpy-shell-send-region-or-buffer))
   :commands (elpy-shell-send-region-or-buffer elpy-module-yasnippet elpy-module-sane-defaults)
   :config (progn
             (elpy-module-yasnippet 'global-init)
