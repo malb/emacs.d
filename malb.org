@@ -984,7 +984,8 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
                            company-math-symbols-latex))
 
             ;; (add-to-list 'company-backends #'company-auctex-labels)
-            (add-to-list 'company-backends #'company-auctex-bibs)))
+            ;; (add-to-list 'company-backends #'company-auctex-bibs)
+            ))
 #+END_SRC
 
 [[https://github.com/TheBB/company-reftex][company-refex]]
