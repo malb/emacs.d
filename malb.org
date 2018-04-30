@@ -7009,15 +7009,11 @@ Headers to show in header view.
                             (:subject)))
 #+END_SRC
 
-Render HTML e-mails in =eww= aka =shr=
+use imagemagick, if available
 
 #+BEGIN_SRC emacs-lisp
-;; use imagemagick, if available
 (when (fboundp 'imagemagick-register-types)
   (imagemagick-register-types))
-
-(use-package mu4e-contrib
-  :config (setq mu4e-html2text-command #'mu4e-shr2text))
 #+END_SRC
 
 View e-mails with width restriction, but wider for HTML
