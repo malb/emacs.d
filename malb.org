@@ -4549,17 +4549,32 @@ I often restart Python processes (Cython development), so let’s bind a key for
                                 "[" (if (projectile-project-p)
                                         (projectile-project-name)
                                       (car (last (split-string parent "/" t)))) "]" "*")
-                      ,shell-name))
-            (ip-buffer (python-shell-make-comint (python-shell-calculate-command) name)))
-       (display-buffer ip-buffer '((display-buffer-reuse-window display-buffer-in-side-window) .
-                                   ((reusable-frames . visible)
-                                    (side            . bottom)
-                                    (window-height   . 0.3))))
-       (select-window (get-buffer-window ip-buffer))
-       (while (not python-shell--first-prompt-received)
-         (sleep-for 0.1))
-       (dolist (cmd ,post-exec)
-         (python-shell-send-string-no-output cmd)))))
+                      (concat "*" ,shell-name "*")))
+            (height (/ (window-total-height) 3))
+            (window (get-buffer-window name)))
+       (if (and window (<= (window-height window) (/ (frame-height) 3)))
+           (progn
+             (select-window window)
+             (delete-window))
+         (progn
+           (if (get-buffer name)
+               (progn
+                 (split-window-vertically (- height))
+                 (other-window 1)
+                 (switch-to-buffer name)
+                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+             (progn
+               (let* ((buffer (python-shell-make-comint (python-shell-calculate-command)
+                                                        (replace-regexp-in-string "\*" "" name))))
+                 (display-buffer buffer '((display-buffer-reuse-window display-buffer-in-side-window) .
+                                          ((reusable-frames . visible)
+                                           (side            . bottom)
+                                           (window-height   . 0.3))))
+                 (select-window (get-buffer-window buffer))
+                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+                 (dolist (cmd ,post-exec)
+                   (insert (concat cmd "\n")))
+                 ))))))))
 #+END_SRC
 
 *** Highlight indentation
