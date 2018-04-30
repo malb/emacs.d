@@ -2555,6 +2555,10 @@ Archive with tags intact and some order in target file preserved. ([[http://orgm
         (org-set-tags-to tags)))))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(setq org-archive-location "~/Documents/Archive/org-files/%s_archive::")
+#+END_SRC
+
 ** Habit
 
 #+BEGIN_SRC emacs-lisp
