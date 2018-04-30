@@ -6261,6 +6261,42 @@ can be added either from an open buffer or a file."
                       (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key helm-source-bibtex 0)))))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defvar company-bibtex-completion--hashes nil)
+
+(defun company-bibtex-completion--hashes ()
+  (mapcar 'cadr bibtex-completion-cache))
+
+(defvar company-bibtex-completion--candidates nil)
+
+(defun company-bibtex-completion--candidates ()
+  (setq company-bibtex-completion--hashes (company-bibtex-completion--hashes))
+  (setq company-bibtex-completion--candidates
+        (mapcar (lambda (x) (propertize (cdr (assoc "=key=" (cdr x)))
+                                        'bibtex-completion-annotation
+                                        (cdr (assoc "title" (cdr x)))))
+                (bibtex-completion-candidates))))
+
+(defun company-bibtex-completion-candidates ()
+  (when (not (equal (company-bibtex-completion--hashes)
+                    company-bibtex-completion--hashes))
+    (company-bibtex-completion--candidates))
+  company-bibtex-completion--candidates)
+
+(defun company-bibtex-completion (command &optional arg &rest ignored)
+  "bibtex-completion backend"
+  (interactive (list 'interactive))
+  (cl-case command
+    (interactive (company-begin-backend 'company-bibtex-completion))
+    (prefix (company-auctex-prefix "\\\\cite[^[{]*\\(?:\\[[^]]*\\]\\)?{\\([^},]*\\)\\="))
+    (candidates (all-completions arg (company-bibtex-completion-candidates)))
+    (annotation (get-text-property 0 'bibtex-completion-annotation arg))))
+
+(add-to-list 'company-backends #'company-bibtex-completion)
+#+END_SRC
+
+****** TODO turn company-bibtex-completion into library so it can be lazy loaded
+
 *** Adding References
 
 I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] better, [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] covers more bases.
