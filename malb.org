@@ -1929,9 +1929,7 @@ https://github.com/cute-jumper/embrace.el
               "Call old-function with `save-mark-and-excursion'"
               (let ((current (point)))
                 (save-excursion
-                  (call-interactively old-function)
-                  (if (not (= current (point)))
-                      (call-interactively old-function)))))
+                  (call-interactively old-function))))
 
             (advice-add #'outline-cycle :around #'malb/save-excursion)))
 #+END_SRC
