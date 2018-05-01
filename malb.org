@@ -8987,17 +8987,7 @@ Easily change the text size:
 ** Bell
 
 #+BEGIN_SRC emacs-lisp :tangle no
-(setq visible-bell nil)
-
-(defun malb/invert-mode-line ()
-  (invert-face 'mode-line)
-  (invert-face 'powerline-active1)
-  (invert-face 'powerline-active2)
-  (powerline-reset))
-
-(setq ring-bell-function (lambda ()
-                           (malb/invert-mode-line)
-                           (run-with-timer 0.05 nil #'malb/invert-mode-line)))
+(setq visible-bell t)
 #+END_SRC
 
 * KDE Desktop Search with Baloo
