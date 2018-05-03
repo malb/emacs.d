@@ -2078,7 +2078,9 @@ This library provides easy project management and navigation. The concept of a p
 (use-package projectile
   :ensure t
   :bind (("<f5>" . projectile-compile-project)
-         ("<f6>" . next-error))
+         ("<f6>" . next-error)
+         :map projectile-command-map
+         ("I" . #'malb/projectile-ipython))
   :config (progn
             (use-package magit :ensure t)
             (require 'helm-projectile)
