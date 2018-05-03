@@ -6430,7 +6430,7 @@ Return the first voice matching detected language.
   "Select voice by picking first voice from aws-polly-voices matching detected language in TEXT."
   (let ((lang (with-temp-buffer
                 (insert text)
-                (guess-language-buffer)))
+                (cadr (assq (guess-language-buffer) guess-language-langcodes))))
         (voices nil))
     (dolist (entry aws-polly-voices)
       (if (string-prefix-p lang (cadr entry))
