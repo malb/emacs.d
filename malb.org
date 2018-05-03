@@ -8267,6 +8267,7 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
             (require 'weechat-image)
 
             (setq weechat-tracking-types '(:highlight ("general" . :message)))
+            (setq weechat-completing-read-function #'completing-read)
 
             (add-hook 'weechat-mode-hook #'visual-line-mode)
             (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
