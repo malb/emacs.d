@@ -1885,7 +1885,9 @@ https://github.com/cute-jumper/embrace.el
               (embrace-add-pair ?\( "\\(" "\\)")
               (embrace-add-pair ?\[ "\\[" "\\]")
               (embrace-add-pair ?\) "(" ")")
-              (embrace-add-pair ?\] "[" "]"))
+              (embrace-add-pair ?\] "[" "]")
+              (embrace-add-pair ?$  "$" "$")
+              (embrace-add-pair ?£  "$$" "$$"))
 
             (bind-key "M-\\" #'embrace-commander)
             (add-hook 'org-mode-hook #'embrace-org-mode-hook)
