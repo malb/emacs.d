@@ -5444,6 +5444,7 @@ Automatically pick dictionary.
 #+BEGIN_SRC emacs-lisp
 (use-package guess-language
   :ensure t
+  :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
   :config (setq guess-language-langcodes '((en . ("en_GB" "English"))
                                            (de . ("de_DE" "German")))
