@@ -2384,7 +2384,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                   "REVIEWED(V!)") ;; reviews
 
         (type "BLOG(b)"
-              "REPLY(r)"
+              "REPLY(R)"
               "CALL"
               "LOAD"
               "PAY"
