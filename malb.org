@@ -1444,7 +1444,8 @@ Switch themes with helm.
                  ((equal arg 16) (helm-org-rifle-occur-agenda-files))
                  (t (helm-org-agenda-files-headings)))))
 
-            (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)))
+            (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)
+            (add-to-list 'helm-commands-using-frame 'helm-org-rifle-files)))
 #+END_SRC
 
 ** Helm Google
