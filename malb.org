@@ -7139,10 +7139,15 @@ Action to view e-mails in EWW.
 
 ** Writing
 
-Set =format=flowed= ([[https://vxlabs.com/2017/02/07/mu4e-0-9-18-e-mailing-with-emacs-now-even-better/][source]])
+Don’t break long lines manually.
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-compose-format-flowed t)
+
+(defun malb/no-hard-newlines ()
+  (setq use-hard-newlines nil))
+
+(add-hook 'mu4e-compose-mode-hook #'malb/no-hard-newlines)
 #+END_SRC
 
 To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]] and [[http://orgmode.org/manual/Orgstruct-mode.html][orgstruct++-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=. Also set e-mail width to 72 characters.
