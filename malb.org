@@ -3114,6 +3114,27 @@ SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
 (bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
 #+END_SRC
 
+Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]. We patch org-capture-pop-frame to handle "q" appropriately:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(condition-case nil
+    (funcall orig-fun goto keys)
+  ((debug error) (ocpf--delete-frame)))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-capture-pop-frame
+  :after (org-capture)
+  :ensure t
+  :config (setq ocpf-frame-parameters '((name . "*Org Capture*")
+                                        (width . 120)
+                                        (height . 40)
+                                        (fullscreen . nil)
+                                        (tool-bar-lines . 0)
+                                        (menu-bar-lines . 0))))
+#+END_SRC
+
 ** Web Tools
 
 #+BEGIN_SRC emacs-lisp
