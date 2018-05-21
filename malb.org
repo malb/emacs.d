@@ -4752,6 +4752,7 @@ On our system port 8888 is already taken.
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
+  :defer 30
   :after ob
   :commands (ein:notebooklist-open ein:notebooklist-login ein:query-ipython-version)
   :config (progn
