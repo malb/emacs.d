@@ -8317,6 +8317,7 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 
 #+BEGIN_SRC emacs-lisp
 (use-package slack
+  :defer 30
   :commands (slack-start)
   :init (progn
           (setq slack-buffer-emojify t
@@ -8324,7 +8325,9 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
                 lui-fill-column 80
                 lui-fill-type ""))
   :config (progn
-            (add-hook 'slack-mode-hook #'visual-fill-column-mode)))
+            (add-hook 'slack-mode-hook #'visual-line-mode)
+            (add-hook 'slack-mode-hook #'visual-fill-column-mode)
+            (slack-start)))
 #+END_SRC
 
 * X11 Integration
