@@ -5533,6 +5533,14 @@ Prose linting using … [[http://proselint.com][proselint]].
             (add-hook 'latex-mode-hook #'synosaurus-mode)))
 #+END_SRC
 
+[[https://github.com/SavchenkoValeriy/emacs-powerthesaurus][powerthesaurus]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package powerthesaurus
+  :bind ("C-c w p" . powerthesaurus-lookup-word)
+  :ensure t)
+#+END_SRC
+
 *** Dictionary
 
 Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
