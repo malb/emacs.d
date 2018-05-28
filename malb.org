@@ -8854,6 +8854,8 @@ The result looks like this:
 
 [[./screenshot.png]]
 
+*** Default theme
+
 #+BEGIN_SRC emacs-lisp
 (use-package solarized
   :ensure solarized-theme
@@ -8882,6 +8884,8 @@ The result looks like this:
                   (load-theme 'solarized-light-malb t))))))
 #+END_SRC
 
+*** For those Long Nights
+
 #+BEGIN_SRC emacs-lisp
 (use-package zenburn-theme
   :ensure t
@@ -8899,7 +8903,35 @@ The result looks like this:
       (load-theme 'zenburn-malb t))))
 #+END_SRC
 
-We patch both solarized and zenburn:
+*** For those Higher Contrast Needs
+
+#+BEGIN_SRC emacs-lisp
+(use-package paper-theme
+  :ensure t
+  :disabled)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package one-themes
+  :ensure t
+  :disabled)
+#+END_SRC
+
+*** Switch between Light and Dark Theme
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/toggle-light-dark ()
+  "Switch between light and dark theme"
+  (interactive)
+  (if (custom-theme-enabled-p 'solarized-light)
+      (progn
+        (malb/solarized-light-theme t)
+        (malb/zenburn-theme))
+    (progn
+      (malb/zenburn-theme t)
+      (malb/solarized-light-theme)))
+  (powerline-reset))
+#+END_SRC
 
 *** Load Theme
 
@@ -8917,22 +8949,6 @@ We patch both solarized and zenburn:
 (if (daemonp)
     (add-hook 'after-make-frame-functions #'malb/load-theme)
   (malb/load-theme (selected-frame)))
-#+END_SRC
-
-*** Switch between light and dark theme
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/toggle-light-dark ()
-  "Switch between light and dark theme"
-  (interactive)
-  (if (custom-theme-enabled-p 'solarized-light)
-      (progn
-        (malb/solarized-light-theme t)
-        (malb/zenburn-theme))
-    (progn
-      (malb/zenburn-theme t)
-      (malb/solarized-light-theme)))
-  (powerline-reset))
 #+END_SRC
 
 ** Transparency
