@@ -8973,7 +8973,7 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
   :ensure t)
 #+END_SRC
 
-** Rainbow mode
+** Rainbow Mode
 
 Colourise colours or names in buffers ([[http://git.savannah.gnu.org/cgit/emacs/elpa.git/tree/packages/rainbow-mode][source]])
 
