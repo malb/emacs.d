@@ -314,7 +314,7 @@ Resize windows to accommodate new ones.
 (use-package eyebrowse
   :ensure t
   :diminish eyebrowse-mode
-  :init (setq eyebrowse-keymap-prefix (kbd "C-c e"))
+  :init (setq eyebrowse-keymap-prefix (kbd "C-c E"))
   :config (progn
             (setq eyebrowse-wrap-around t)
             (eyebrowse-mode t)
