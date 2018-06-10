@@ -2159,6 +2159,7 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
                   magit-last-seen-setup-instructions "2.1.0")
 
             (setq-default magit-diff-refine-hunk t)
+            (global-magit-file-mode t)
 
             ;; we use magit, not vc for git
             (delete 'Git vc-handled-backends)))
