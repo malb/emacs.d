@@ -8664,7 +8664,9 @@ then enter the text in that file's own buffer.
 (use-package edit-server
   :ensure t
   :config (progn
-            (edit-server-start)))
+            (edit-server-start)
+            (setq edit-server-default-major-mode 'markdown-mode)
+            (add-hook 'edit-server-edit-mode-hook #'toggle-frame-maximized)))
 #+END_SRC
 
 Grab the link in the current browser tab
