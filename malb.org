@@ -4211,7 +4211,6 @@ This packages tries to smartly go to definition leveraging several methods to do
   :config (smart-jump-setup-default-registers))
 #+END_SRC
 
-
 *** Debuggers
 
 [[https://github.com/realgud/realgud][All the debuggers]].
