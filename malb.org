@@ -7058,7 +7058,7 @@ Headers to show in header view.
                             (:subject)))
 #+END_SRC
 
-use imagemagick, if available
+Use imagemagick, if available
 
 #+BEGIN_SRC emacs-lisp
 (when (fboundp 'imagemagick-register-types)
