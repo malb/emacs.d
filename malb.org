@@ -3047,7 +3047,7 @@ SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
 " :immediate-finish t :prepend t :empty-lines 1)
 
                     ("j" "add entry to [j]ournal"
-                     entry (file+datetree (lambda () (expand-file-name "journal.org"
+                     entry (file+olp+datetree (lambda () (expand-file-name "journal.org"
                                                                        malb/org-files-dir)))
                      "** research
 %?
