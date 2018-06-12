@@ -182,12 +182,6 @@ Allow pixel-wise scaling
 (setq frame-resize-pixelwise t)
 #+END_SRC
 
-Maximise the window as soon as possible
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-#+END_SRC
-
 * Disable Clutter
 
 #+BEGIN_SRC emacs-lisp
@@ -2489,6 +2483,7 @@ Targets include this file and any file contributing to the agenda - up to 9 leve
 #+END_SRC
 
 Stop using paths for refile targets - we file directly with helm
+
 #+BEGIN_SRC emacs-lisp
 (setq org-refile-use-outline-path 'file)
 #+END_SRC
@@ -3123,7 +3118,6 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
   ((debug error) (ocpf--delete-frame)))
 #+END_SRC
 
-
 #+BEGIN_SRC emacs-lisp
 (use-package org-capture-pop-frame
   :after (org-capture)
@@ -3135,6 +3129,11 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
                                         (tool-bar-lines . 0)
                                         (menu-bar-lines . 0))))
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'helm-commands-using-frame 'org-refile)
+#+END_SRC
+
 
 ** Web Tools
 
@@ -7268,10 +7267,6 @@ Create a new mu4e session in a new frame.
 (defun malb/mail ()
   (interactive)
   (select-frame (make-frame-command))
-  (sleep-for 0.1) ;; this is a HACK
-  (toggle-frame-maximized)
-  (sleep-for 0.1) ;; this is a HACK
-  (set-frame-size (selected-frame) 220 64)
   (set-frame-name "mu4e") ;; we use this in our window management
   (mu4e))
 #+END_SRC
@@ -7312,7 +7307,6 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-compose-frame ()
-  (toggle-frame-maximized)
   (sleep-for 0.25) ;; this is a HACK
   (set-frame-size (selected-frame) 80 60)
   (sleep-for 0.25) ;; this is a HACK
@@ -8665,8 +8659,7 @@ then enter the text in that file's own buffer.
   :ensure t
   :config (progn
             (edit-server-start)
-            (setq edit-server-default-major-mode 'markdown-mode)
-            (add-hook 'edit-server-edit-mode-hook #'toggle-frame-maximized)))
+            (setq edit-server-default-major-mode 'markdown-mode)))
 #+END_SRC
 
 Grab the link in the current browser tab
