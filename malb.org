@@ -1248,7 +1248,16 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (assq-delete-all 'find-file helm-completing-read-handlers-alist)))
 #+END_SRC
 
-** Helm Flx
+** Helm Fuzzy Matching
+
+[[https://github.com/EphramPerdition/helm-fuzzier][helm-fuzzier]] provides more intuitive fuzzy matching behavior for helm.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-fuzzier
+  :ensure t
+  :disabled
+  :config (helm-fuzzier-mode 1))
+#+END_SRC
 
 [[https://github.com/PythonNut/helm-flx][helm-flx]] implements intelligent helm fuzzy sorting, provided by [[https://github.com/lewang/flx][flx]].
 
