@@ -7079,17 +7079,19 @@ View e-mails with width restriction, but wider for HTML
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
   "View e-mails with width restriction, but wider for HTML."
-  (let* ((txt (mu4e-message-field msg :body-txt))
-         (html (mu4e-message-field msg :body-html)))
-    (cond
-     ((and (> (* mu4e-view-html-plaintext-ratio-heuristic
-                 (length txt)) (length html))
-           (or (not mu4e-view-prefer-html) (not html)))
-      (set-fill-column 80))
-     (t
-      (set-fill-column 120)))
-    (visual-line-mode 1)
-    (visual-fill-column-mode 1)))
+  (if (boundp 'msg)
+      (let* ((txt (mu4e-message-field msg :body-txt))
+             (html (mu4e-message-field msg :body-html)))
+        (cond
+         ((and (> (* mu4e-view-html-plaintext-ratio-heuristic
+                     (length txt)) (length html))
+               (or (not mu4e-view-prefer-html) (not html)))
+          (set-fill-column 80))
+         (t
+          (set-fill-column 120))))
+    (set-fill-column 80))
+  (visual-line-mode 1)
+  (visual-fill-column-mode 1))
 
 (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
@@ -7159,6 +7161,14 @@ Action to view e-mails in EWW.
 (add-to-list 'mu4e-headers-actions
              '("Find messages" . malb/find-correspondence) t)
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-conversation
+  :after mu4e
+  :ensure t
+  :config (add-to-list 'mu4e-view-actions '("Conversation view" . mu4e-conversation) t))
+#+END_SRC
+
 
 ** Writing
 
