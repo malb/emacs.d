@@ -4645,6 +4645,12 @@ Fall back to dumb jump if anaconda fails.
             (add-hook 'python-mode-hook #'anaconda-mode)
             (add-hook 'python-mode-hook #'anaconda-eldoc-mode)
 
+            (defun malb/vanilla-python-shell-interpreter (orig-fun &rest args)
+              (let ((python-shell-interpreter "python")
+                    (python-shell-interpreter-args "-i"))
+                (apply orig-fun args)))
+
+            (advice-add 'anaconda-mode-start :around #'malb/vanilla-python-shell-interpreter)
             ;; (defun malb/python-mode-find-definitions (&optional arg)
             ;;   (interactive "P")
             ;;   (let ((p (point)))
