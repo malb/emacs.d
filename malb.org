@@ -1925,22 +1925,15 @@ https://github.com/cute-jumper/embrace.el
 
 ** Folding
 
-[[https://github.com/alphapapa/outshine][oushine]] provides =outline-cycle=
-
 #+BEGIN_SRC emacs-lisp
-(use-package outshine
+(use-package bicycle
+  :after outline
   :ensure t
-  ;; breaks LaTeX
-  ;; :config (add-hook 'outline-minor-mode-hook 'outshine-hook-function)
-  :config (progn
-            (defun malb/save-excursion (old-function &rest arguments)
-              "Call old-function with `save-mark-and-excursion'"
-              (let ((current (point)))
-                (save-excursion
-                  (call-interactively old-function))))
-
-            (advice-add #'outline-cycle :around #'malb/save-excursion)))
+  :bind (:map outline-minor-mode-map
+              ([C-tab] . bicycle-cycle)
+              ([S-tab] . bicycle-cycle-global)))
 #+END_SRC
+
 
 #+BEGIN_SRC emacs-lisp
 (use-package hideshow
@@ -4549,7 +4542,8 @@ I often restart Python processes (Cython development), so let’s bind a key for
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
               ("C-c C-r" . pyvenv-restart-python)
               ("<home>"  . malb/beginning-of-line-dwim)
-              ("C-<tab>" . outline-cycle)
+              ("C-<tab>" . bicycle-cycle )
+              ("<backtab>" . bicycle-cycle-global)
               :map inferior-python-mode-map
               ("C-c C-r" . pyvenv-restart-python))
   :hook (python-mode . outline-minor-mode)
