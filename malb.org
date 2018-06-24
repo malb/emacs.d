@@ -2393,7 +2393,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
               "REPLY(R)"
               "CALL"
               "LOAD"
-              "PAY"
+              "PAY(P)"
+              "BOOK(B)"
               "|" "DONE")))
 
 (org-clock-persistence-insinuate)
