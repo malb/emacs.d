@@ -2369,10 +2369,11 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
         (sequence "EXPLORE(x)"
                   "WRITE"
-                  "READ(r)"
                   "COAUTHOR(@/!)"
                   "REVISE(!)"
                   "SUBMITTED(@/!)"
+                  "REBUTTAL"
+                  "CAMERAREADY"
                   "|"
                   "PUBLISHED(!)"
                   "ONHOLD(h@/!)"
@@ -2385,6 +2386,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                   "REVIEWED(V!)") ;; reviews
 
         (type "BLOG(b)"
+              "READ(r)"
               "REPLY(R)"
               "CALL"
               "LOAD"
