@@ -5499,9 +5499,9 @@ Automatically pick dictionary.
   :ensure t
   :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
-  :config (setq guess-language-langcodes '((en . ("en_GB" "English"))
-                                           (de . ("de_DE" "German")))
-                guess-language-languages '(en de)
+  :config (setq guess-language-langcodes '((de . ("de_DE" "German"))
+                                           (en . ("en_GB" "English")))
+                guess-language-languages '(de en)
                 guess-language-min-paragraph-length 35))
 #+END_SRC
 
