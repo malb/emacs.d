@@ -7981,23 +7981,21 @@ Show dired histories you have visited.
             (setq treemacs-follow-after-init          t
                   treemacs-width                      35
                   treemacs-indentation                2
-                  treemacs-git-integration            t
                   treemacs-collapse-dirs              3
                   treemacs-silent-refresh             t
-                  treemacs-change-root-without-asking nil
                   treemacs-sorting                    'alphabetic-desc
                   treemacs-show-hidden-files          t
-                  treemacs-never-persist              t
                   treemacs-is-never-other-window      nil
                   treemacs-goto-tag-strategy          'refetch-index)
 
+            (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?)
+            (treemacs-git-mode)
             (treemacs-follow-mode t)
             (treemacs-filewatch-mode t)))
 
 (use-package treemacs-projectile
   :defer t
-  :ensure t
-  :config (setq treemacs-header-function #'treemacs-projectile-create-header))
+  :ensure t)
 #+END_SRC
 
 ** Tramp
