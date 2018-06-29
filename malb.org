@@ -1366,7 +1366,7 @@ To reset call:
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
   :ensure t
-  :commands (helm-ag helm-do-ag malb/helm-ag-projects malb/helm-ag-literature)
+  :commands (helm-ag helm-do-ag malb/helm-ag-projects malb/helm-ag-literature malb/helm-ag)
   :config (progn
             (setq helm-ag-base-command "ag --nocolor --nogroup"
                   helm-ag-command-option nil
