@@ -4678,7 +4678,9 @@ Fall back to dumb jump if anaconda fails.
 
 **** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]]
 
+#+BEGIN_QUOTE
 Python docstring mode provides syntax highlighting for docstrings in both ReStructuredText and Epydoc formats, as well as an override for the fill-paragraph function when editing such a docstring that will wrap things according to Python community convention.
+#+END_QUOTE
 
 Manually fixed bugs:
 
