@@ -3032,7 +3032,7 @@ See %a by %:fromname
 
                     ("eo" "quick create an [o]ffice task linked to an [e]-mail"
                      entry (file+headline malb/work-org "Admin")
-                     "* TODO %a (%:fromname) %^{tag|:office:|:train:}
+                     "* TODO %a (%:fromname) %^{tag|:@office:|:@train:}
 SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
                              (thu (org-read-date nil t \"Thu\")))
                          (if (time-less-p tue thu)
