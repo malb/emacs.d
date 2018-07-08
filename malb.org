@@ -5200,6 +5200,15 @@ Code manipulation:
 *** Emacs Lisp
 
 #+BEGIN_SRC emacs-lisp
+(use-package elisp-mode
+  :ensure nil
+  :bind (:map emacs-lisp-mode-map
+              ("C-c C-z" . ielm)
+              ("C-c C-c" . eval-defun)
+              ("C-c C-b" . eval-buffer)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
 (use-package elisp-slime-nav
   :ensure t
   :diminish elisp-slime-nav-mode
@@ -5221,10 +5230,6 @@ Code manipulation:
 
             (bind-key "M-?" #'elisp-slime-nav-describe-elisp-thing-at-point
                       emacs-lisp-mode-map)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "C-c C-z" #'ielm emacs-lisp-mode-map)
 #+END_SRC
 
 [[http://emacsredux.com/blog/2016/03/02/pimp-my-minibuffer/][Eldoc in minibuffer eval]].
