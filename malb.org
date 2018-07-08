@@ -9238,7 +9238,7 @@ Easily change the text size:
 (malb/set-menu-key "z" #'malb/toggle-multi-term)
 (malb/set-menu-key "<f4>" #'emms-previous)
 (malb/set-menu-key "<f5>" #'emms-pause)
-(malb/set-menu-key "<f6>" #'emms-next-noerror)
+(malb/set-menu-key "<f6>" #'emms-next)
 #+END_SRC
 
 Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
