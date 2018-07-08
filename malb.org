@@ -2837,7 +2837,7 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 (load-file (expand-file-name "local/ox-inline-comments.el" user-emacs-directory))
 #+END_SRC
 
-**** TODO org-odt-style-file doesn’t seem to take
+****** TODO org-odt-style-file doesn’t seem to take
 
 *** Reveal.js
 
@@ -3142,7 +3142,6 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'helm-commands-using-frame 'org-refile)
 #+END_SRC
-
 
 ** Web Tools
 
