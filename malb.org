@@ -8119,11 +8119,21 @@ deactivate Client
 (use-package calfw
   :ensure t
   :commands (malb/calendar cfw:open-calendar-buffer)
+  :bind (:map cfw:calendar-mode-map ("q" . kill-this-buffer))
   :config (progn
             (setq calendar-week-start-day 1)
             (use-package calfw-cal :ensure t)
             (use-package calfw-ical :ensure t)
-            (use-package calfw-org :ensure t)))
+            (use-package calfw-org :ensure t)
+
+            ;; Those "" make everything kaputt
+            (defun malb/cfw:ical-url-to-buffer (orig-fun &rest args)
+              (let ((buf (apply orig-fun args)))
+                (with-current-buffer buf
+                  (while (search-forward "" nil t)
+                    (replace-match "" nil t)))
+                buf))
+            (advice-add 'cfw:ical-url-to-buffer :around #'malb/cfw:ical-url-to-buffer)))
 #+END_SRC
 
 * File Sharing
