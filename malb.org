@@ -5633,6 +5633,8 @@ Prose linting using … [[http://proselint.com][proselint]].
 
 *** Dictionary
 
+[[https://raw.githubusercontent.com/wiki/abo-abo/define-word/images/define-word.png]]
+
 Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
 
 #+BEGIN_SRC emacs-lisp
@@ -5642,6 +5644,8 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 #+END_SRC
 
 *** Translating
+
+[[https://github.com/atykhonov/google-translate][google-translate]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package google-translate
@@ -5656,7 +5660,6 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a listing of blog entries.
 
 [[http://jblevins.org/projects/deft/deft-v0.6.gif]] ([[http://jblevins.org/projects/deft/deft-v0.6.gif][source]])
-
 
 #+BEGIN_SRC emacs-lisp
 (use-package deft
