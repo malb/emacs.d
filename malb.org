@@ -5371,8 +5371,7 @@ Indent correctly in ~visual-line-mode~ (~org-mode~ has its own thing).
   :ensure t
   :config (progn
             (add-hook 'markdown-mode-hook #'adaptive-wrap-prefix-mode)
-            (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)
-            ))
+            (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)))
 #+END_SRC
 
 Allow for a bit more characters per line by default.
@@ -5408,9 +5407,8 @@ Indicate soft wrapped lines.
   :config (progn
             (setq-default typo-language "English")
             ;; (add-hook 'markdown-mode-hook #'typo-mode)
-            (add-hook 'org-mode-hook #'typo-mode)
             ;; (add-hook 'rst-mode-hook #'typo-mode)
-            ))
+            (add-hook 'org-mode-hook #'typo-mode)))
 #+END_SRC
 
 *** Visual Fill Column Mode
