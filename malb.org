@@ -4079,7 +4079,7 @@ mouse-3: go to end")
             (bind-key "M-p" #'highlight-symbol-prev c-mode-base-map)))
 #+END_SRC
 
-*** [#C] Line numbers
+*** Line numbers
 
 #+BEGIN_SRC emacs-lisp
 (use-package nlinum
