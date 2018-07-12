@@ -4675,10 +4675,16 @@ Fall back to dumb jump if anaconda fails.
   :bind (:map anaconda-mode-map ("M-," . anaconda-mode-go-back))
   :config (progn
 
-            (add-hook 'python-mode-hook #'anaconda-mode)
+            (defun malb/local-anaconda-mode ()
+              (when (and (buffer-file-name)
+                         (not (file-remote-p (buffer-file-name))))
+                (anaconda-mode)))
+
+            (add-hook 'python-mode-hook #'malb/local-anaconda-mode)
 
             (defun malb/local-anaconda-eldoc-mode ()
-              (when (not (file-remote-p (buffer-file-name)))
+              (when (and (buffer-file-name)
+                         (not (file-remote-p (buffer-file-name))))
                 (anaconda-eldoc-mode)))
 
             (add-hook 'python-mode-hook #'malb/local-anaconda-eldoc-mode)
