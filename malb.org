@@ -2144,7 +2144,6 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 
 [[https://magit.vc/screenshots/status.png]] ([[http://magit.vc][source]])
 
-We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 #+BEGIN_SRC emacs-lisp
 (use-package magit
@@ -2166,7 +2165,11 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
             ;; we use magit, not vc for git
             (delete 'Git vc-handled-backends)))
+#+END_SRC
 
+We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
+
+#+BEGIN_SRC emacs-lisp
 (use-package magit-svn
   :ensure t
   :after magit
