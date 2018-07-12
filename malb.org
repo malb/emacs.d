@@ -1320,7 +1320,8 @@ To reset call:
                     latex-mode
                     sage-shell-mode
                     inferior-python-mode
-                    ein:notebook-multilang-mode)) ;; I’m going back and forth what I prefer
+                    ein:notebook-multilang-mode
+                    imenu-list-major-mode)) ;; I’m going back and forth what I prefer
 
             (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
                   helm-swoop-split-with-multiple-windows nil
