@@ -5318,6 +5318,7 @@ Code manipulation:
 #+END_SRC
 
 * Prose
+
 ** General
 *** Tab Completion
 
@@ -5561,10 +5562,9 @@ Automatically pick dictionary.
                 guess-language-min-paragraph-length 35))
 #+END_SRC
 
-
 *** Grammar Checking
 
-([[https://github.com/mhayashi1120/Emacs-langtool][source]])
+Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package langtool
@@ -5581,6 +5581,51 @@ Automatically pick dictionary.
             (bind-key "C-x 4 l" #'langtool-switch-default-language)
             (bind-key "C-x 4 4" #'langtool-show-message-at-point)
             (bind-key "C-x 4 c" #'langtool-correct-buffer)))
+#+END_SRC
+
+After the deadline ([[https://github.com/jkitchin/scimax/][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package scimax-email)
+
+(defun malb/words-atd ()
+  "Send paragraph at point to After the deadline for spell and grammar checking."
+  (interactive)
+
+  (let* ((url-request-method "POST")
+         (url-request-data (format
+                            "key=some-random-text-&data=%s"
+                            (url-hexify-string
+                             (thing-at-point 'paragraph))))
+         (xml  (with-current-buffer
+                   (url-retrieve-synchronously
+                    "http://service.afterthedeadline.com/checkDocument")
+                 (xml-parse-region url-http-end-of-headers (point-max))))
+         (results (car xml))
+         (errors (xml-get-children results 'error)))
+
+    (switch-to-buffer-other-window "*ATD*")
+    (erase-buffer)
+    (org-mode)
+    (dolist (err errors)
+      (let* ((children (xml-node-children err))
+             ;; for some reason I could not get the string out, and had to do this.
+             (s (car (last (nth 1 children))))
+             ;; the last/car stuff doesn't seem right. there is probably
+             ;; a more idiomatic way to get this
+             (desc (last (car (xml-get-children children 'description))))
+             (type (last (car (xml-get-children children 'type))))
+             (suggestions (xml-get-children children 'suggestions))
+             (options (xml-get-children (xml-node-name suggestions) 'option))
+             (opt-string  (mapconcat
+                           (lambda (el)
+                             (when (listp el)
+                               (car (last el))))
+                           options
+                           " ")))
+
+        (insert (format "- %s :: %s %s %s
+" s opt-string desc type))))))
 #+END_SRC
 
 *** Style Checking
@@ -6148,54 +6193,6 @@ Run =latexmk -pvc= in async shell
   (interactive "r")
   (align-regexp start end
                 "\\(\\s-*\\):" 1 0 t))
-#+END_SRC
-
-** Scimax
-
-([[https://github.com/jkitchin/scimax/][source]])
-
-
-#+BEGIN_SRC emacs-lisp
-(use-package scimax-email)
-
-(defun malb/words-atd ()
-  "Send paragraph at point to After the deadline for spell and grammar checking."
-  (interactive)
-
-  (let* ((url-request-method "POST")
-         (url-request-data (format
-                            "key=some-random-text-&data=%s"
-                            (url-hexify-string
-                             (thing-at-point 'paragraph))))
-         (xml  (with-current-buffer
-                   (url-retrieve-synchronously
-                    "http://service.afterthedeadline.com/checkDocument")
-                 (xml-parse-region url-http-end-of-headers (point-max))))
-         (results (car xml))
-         (errors (xml-get-children results 'error)))
-
-    (switch-to-buffer-other-window "*ATD*")
-    (erase-buffer)
-    (org-mode)
-    (dolist (err errors)
-      (let* ((children (xml-node-children err))
-             ;; for some reason I could not get the string out, and had to do this.
-             (s (car (last (nth 1 children))))
-             ;; the last/car stuff doesn't seem right. there is probably
-             ;; a more idiomatic way to get this
-             (desc (last (car (xml-get-children children 'description))))
-             (type (last (car (xml-get-children children 'type))))
-             (suggestions (xml-get-children children 'suggestions))
-             (options (xml-get-children (xml-node-name suggestions) 'option))
-             (opt-string  (mapconcat
-                           (lambda (el)
-                             (when (listp el)
-                               (car (last el))))
-                           options
-                           " ")))
-
-        (insert (format "- %s :: %s %s %s
-" s opt-string desc type))))))
 #+END_SRC
 
 ** BibTeX
