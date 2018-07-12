@@ -8053,6 +8053,8 @@ Show dired histories you have visited.
                     tramp-file-name-regexp))
 #+END_SRC
 
+[[https://github.com/masasam/emacs-helm-tramp/blob/master/image/helm-tramp.gif]]
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-tramp
   :after helm
@@ -8830,7 +8832,7 @@ Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
   :ensure t)
 #+END_SRC
 
-We know what scratch is for
+Make scratch buffer an org-mode buffer.
 
 #+BEGIN_SRC emacs-lisp
 (setq initial-major-mode 'org-mode
@@ -9327,7 +9329,6 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
             (which-key-mode 1)))
 #+END_SRC
 
-* ToDos
 * Technical Artefacts
 
 # Local Variables:
