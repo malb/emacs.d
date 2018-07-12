@@ -3738,7 +3738,7 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
             (bind-key "M-r" #'helm-comint-input-ring comint-mode-map)
 
             (setq comint-scroll-to-bottom-on-input t ; always insert at the bottom
-                  comint-scroll-to-bottom-on-output t
+                  comint-scroll-to-bottom-on-output nil
                   comint-input-ignoredups t ; no duplicates in command history
                   comint-prompt-read-only t ; don’t overwrite prompt
                   comint-move-point-for-output t)
