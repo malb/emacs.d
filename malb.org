@@ -5604,6 +5604,8 @@ Prose linting using … [[http://proselint.com][proselint]].
 
 *** Synonyms
 
+[[https://raw.githubusercontent.com/hpdeifel/synosaurus/master/screenshots/cnr.png]]
+
 [[https://github.com/hpdeifel/synosaurus][synosaurus]]
 
 #+BEGIN_SRC emacs-lisp
@@ -5618,6 +5620,8 @@ Prose linting using … [[http://proselint.com][proselint]].
             (add-hook 'org-mode-hook #'synosaurus-mode)
             (add-hook 'latex-mode-hook #'synosaurus-mode)))
 #+END_SRC
+
+[[https://raw.githubusercontent.com/SavchenkoValeriy/emacs-powerthesaurus/master/assets/demo.gif]]
 
 [[https://github.com/SavchenkoValeriy/emacs-powerthesaurus][powerthesaurus]]
 
