@@ -4386,11 +4386,7 @@ The following code parses a complete project with semantic. This is useful for e
                      (semanticdb-file-table-object file))
                    ))
         ;;else if it's a directory
-        (malb/semantic-parse-dir file regex)
-        )
-      )
-    )
-  )
+        (malb/semantic-parse-dir file regex)))))
 
 (defun malb/semantic-parse-current-dir (regex)
   "Parses all files under the current directory matching regex"
