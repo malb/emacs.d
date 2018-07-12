@@ -4859,7 +4859,7 @@ On our system port 8888 is already taken.
             (bind-key "C-<return>" #'ein:worksheet-execute-cell ein:notebook-mode-map)))
 #+END_SRC
 
-**Note:** To use EIN [[https://millejoh.github.io/emacs-ipython-notebook/#org-mode-integration][from org-mode]], specify a notebook via the =:session= argument. The format for the session argument is ={url-or-port}/{path-to-notbook}=, e.g. =8889/Untitled.ipynb=
+*Note:* To use EIN [[https://millejoh.github.io/emacs-ipython-notebook/#org-mode-integration][from org-mode]], specify a notebook via the =:session= argument. The format for the session argument is ={url-or-port}/{path-to-notbook}=, e.g. =8889/Untitled.ipynb=
 
 *** Virtual Environments
 
