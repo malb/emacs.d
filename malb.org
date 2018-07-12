@@ -2291,7 +2291,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-use-speed-commands t
       org-catch-invisible-edits 'show
       org-adapt-indentation nil         ; Non-nil means adapt indentation to outline node level.
-      org-tags-column -110
+      org-tags-column -120
       org-startup-folded 'fold
       org-log-into-drawer t
       org-log-done t
@@ -2305,14 +2305,13 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-reverse-note-order t
       org-footnote-auto-adjust t          ; renumber footnotes automagically
       org-confirm-elisp-link-function nil ;
-      org-startup-with-inline-images t    ; show images when opening a file.
       org-hidden-keywords nil
       org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
       org-list-allow-alphabetical t
       org-goto-interface 'org-outline-path-complete
       org-outline-path-complete-in-steps nil
-      org-M-RET-may-split-line '((default . t))
-      org-blank-before-new-entry (quote ((heading . auto)
+      org-M-RET-may-split-line '((default . t) (headline . nil))
+      org-blank-before-new-entry (quote ((heading . t)
                                          (plain-list-item . nil)))
       org-yank-adjusted-subtrees nil
       org-treat-S-cursor-todo-selection-as-state-change nil
@@ -2333,7 +2332,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Agenda
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-tags-column -117
+(setq org-agenda-tags-column -127
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
       org-agenda-default-appointment-duration 60
@@ -2358,6 +2357,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-ellipsis " ••• "
       org-highlight-latex-and-related '(latex)
       org-src-fontify-natively t        ; fontify code blocks
+      org-startup-with-inline-images t    ; show images when opening a file.
+      org-startup-with-latex-preview nil
+      org-preview-latex-default-process 'imagemagick
+      org-pretty-entities nil
       org-image-actual-width '(1024))
 #+END_SRC
 
