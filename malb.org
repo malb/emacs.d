@@ -4769,13 +4769,14 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 #+BEGIN_SRC emacs-lisp
 (use-package py-autopep8
   :ensure t
-  :config (progn
-            (setq py-autopep8-options '("--max-line-length=100"))))
+  :config (setq py-autopep8-options '("--max-line-length=100")))
 #+END_SRC
 
 *** Importmagic
 
 [[https://github.com/anachronic/importmagic.el][importmagic]]
+
+You need to install =importmagic= and =epc=
 
 #+BEGIN_SRC shell :tangle no
 $ pip install importmagic epc
