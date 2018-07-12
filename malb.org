@@ -1696,12 +1696,12 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                              :post-handlers '(("[d1]" "SPC"))))))
 #+END_SRC
 
-Automatically insert closing delimiter
+Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing delimiter]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package syntactic-close
   :ensure t
-  :bind ("C-c x c" . syntactic-close))
+  :bind ("C-)" . syntactic-close))
 #+END_SRC
 
 * Editing
