@@ -8057,7 +8057,12 @@ Show dired histories you have visited.
 =.ssh/config= already contains the appropriate config for persistent sessions so we ask tramp to respect it.
 
 #+BEGIN_SRC emacs-lisp
-(setq tramp-use-ssh-controlmaster-options nil)
+(setq tramp-use-ssh-controlmaster-options nil
+      tramp-verbose 1)
+(setq vc-ignore-dir-regexp
+      (format "%s\\|%s"
+                    vc-ignore-dir-regexp
+                    tramp-file-name-regexp))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
