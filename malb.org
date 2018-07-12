@@ -3518,6 +3518,32 @@ The function behaves as follows:
               (malb/helm-ag (file-name-as-directory
                              (expand-file-name (or dir ".")))))
 
+            ;; http://fasciism.com/2017/01/27/eshell-kill-previous-output/
+            (defun eshell/kill-previous-output (&optional nth)
+              "Copies the output of the previous command to the kill ring.
+When nth is set, it will copy the nth previous command."
+              (save-excursion
+                ;; Move to the end of the eshell buffer.
+                (goto-char (point-max))
+                ;; Move to the start of the last prompt.
+                (search-backward-regexp eshell-prompt-regexp nil nil nth)
+                ;; Move to the start of the line, before the prompt.
+                (beginning-of-line)
+                ;; Remember this position as the end of the region.
+                (let ((end (point)))
+                  ;; Move to the start of the last prompt.
+                  (search-backward-regexp eshell-prompt-regexp)
+                  ;; Move one line below the prompt, where the output begins.
+                  (next-line)
+                  ;; Find first line that's not blank.
+                  (while (looking-at "^[[:space:]]*$")
+                    (beginning-of-line)
+                    (next-line))
+                  ;; Copy region to kill ring.
+                  (copy-region-as-kill (point) end)
+                  ;; Output stats on what was copied as a sanity check.
+                  (format "Copied %s words to kill ring." (count-words-region (point) end)))))
+
             (defun malb/config-eshell-completion ()
               (setq pcomplete-cycle-completions t
                     pcomplete-ignore-case t)
