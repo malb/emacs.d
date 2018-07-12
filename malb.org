@@ -7949,6 +7949,8 @@ Show dired histories you have visited.
   :ensure t)
 #+END_SRC
 
+[[https://camo.githubusercontent.com/966cf1fc63ee7bdb7631c0debc74957ccefaff37/687474703a2f2f692e696d6775722e636f6d2f6d6d36674662582e706e67]]
+
 [[https://github.com/Fuco1/dired-hacks][dired-collapse]] renders directories with just one file like GitHub does.
 
 #+BEGIN_SRC emacs-lisp
@@ -7996,6 +7998,8 @@ Show dired histories you have visited.
 
 ** Neotree
 
+[[https://raw.githubusercontent.com/wiki/jaypei/emacs-neotree/imgs/neotree-1.png]]
+
 [[https://github.com/jaypei/emacs-neotree][Neotree]]
 
 #+BEGIN_SRC emacs-lisp
@@ -8008,6 +8012,8 @@ Show dired histories you have visited.
 #+END_SRC
 
 ** Treemacs
+
+[[https://raw.githubusercontent.com/Alexander-Miller/treemacs/master/screenshot.png]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package treemacs
