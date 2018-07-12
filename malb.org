@@ -5301,6 +5301,8 @@ Code manipulation:
 
 ** Web
 
+[[http://web-mode.org/web-mode.png?v=5]]
+
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode
   :ensure t
