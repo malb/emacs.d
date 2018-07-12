@@ -3930,19 +3930,19 @@ Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
 
 #+END_SRC
 
+[[https://raw.githubusercontent.com/flycheck/flycheck-pos-tip/master/screenshot.png]]
+
 Use [[https://github.com/flycheck/flycheck-pos-tip][flycheck-pos-tip]] to display hints about potential issues.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-pos-tip
   :ensure t
+  :after flycheck
   :config (progn
             ;; flycheck errors on a tooltip (doesnt work on console)
             (when (display-graphic-p (selected-frame))
-              (eval-after-load 'flycheck
-                '(custom-set-variables
-                  '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
-              )
-            ))
+              (with-eval-after-load 'flycheck
+                (flycheck-pos-tip-mode)))))
 #+END_SRC
 
 *** Comments
