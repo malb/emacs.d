@@ -337,6 +337,7 @@ Resize windows to accommodate new ones.
 (use-package ace-window
   :ensure t
   :commands ace-window
+  :bind ("C-x o" . ace-window)
   :config (progn
             (setq aw-keys   '(?a ?s ?d ?f ?j ?k ?l)
                   aw-dispatch-always nil
@@ -698,7 +699,6 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("`" other-window :color blue))
 
 (key-chord-define-global "\\x" #'malb/hydra-window/body)
-(bind-key "C-x o" #'malb/hydra-window/body)
 (bind-key "¬" #'other-window)
 #+END_SRC
 
