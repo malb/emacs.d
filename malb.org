@@ -5165,6 +5165,9 @@ org babel for Sage can be quite handy for writing talks etc. ([[https://github.c
 #+END_SRC
 
 ** Lisp
+
+[[https://imgs.xkcd.com/comics/lisp_cycles.png]]
+
 *** General
 
 #+BEGIN_QUOTE
