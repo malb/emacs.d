@@ -1553,14 +1553,15 @@ Make sure to auto automatically rescan for imenu change.
                (t (call-interactively #'helm-imenu-anywhere))))))
 #+END_SRC
 
-[[https://github.com/bmag/imenu-list][imenu-list]] can be useful
+[[https://github.com/bmag/imenu-list][imenu-list]] can be useful, =C-x t i=
 
 #+BEGIN_SRC emacs-lisp
 (use-package imenu-list
   :ensure t
   :config (setq imenu-list-position 'left
                 imenu-list-size 0.15
-                imenu-list-auto-resize nil))
+                imenu-list-auto-resize nil
+                imenu-list-after-jump-hook nil))
 #+END_SRC
 
 * Parenthesis
