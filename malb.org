@@ -4809,7 +4809,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (add-hook 'python-mode-hook #'malb/elpy-sane-defaults)))
 #+END_SRC
 
-*** PIP
+*** Pip
 
 #+BEGIN_SRC emacs-lisp
 (use-package pip-requirements
