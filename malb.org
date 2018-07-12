@@ -5230,6 +5230,8 @@ Code manipulation:
   :ensure t)
 #+END_SRC
 
+[[https://raw.githubusercontent.com/cpitclaudel/easy-escape/master/img/easy-escape.png]]
+
 #+BEGIN_SRC emacs-lisp
 (use-package easy-escape
   :ensure t
