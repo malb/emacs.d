@@ -192,6 +192,12 @@ Allow pixel-wise scaling
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 #+END_SRC
 
+* Paths
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'exec-path (expand-file-name ".local/bin" "~"))
+#+END_SRC
+
 * Keyboard Shortcuts
 
 We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
