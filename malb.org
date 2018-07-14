@@ -3846,7 +3846,6 @@ Make flycheck prettier based on what spacemacs does.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
-  :commands global-flycheck-mode
   :diminish flycheck-mode
   :config (progn
             (global-flycheck-mode)
@@ -3900,9 +3899,9 @@ Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-flycheck
+  :after flycheck
   :config (progn
             (bind-key "C-c f h" #'helm-flycheck flycheck-mode-map)))
-
 #+END_SRC
 
 [[https://raw.githubusercontent.com/flycheck/flycheck-pos-tip/master/screenshot.png]]
