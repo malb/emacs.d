@@ -8919,6 +8919,18 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
   :mode ("Dockerfile\\." . dockerfile-mode))
 #+END_SRC
 
+** ePub
+
+[[https://github.com/wasamasa/nov.el][Nov.el]] is surprisingly useful.
+
+#+BEGIN_SRC emacs-lisp
+(use-package nov
+  :mode ("\\.epub$" . nov-mode)
+  :config (progn
+            (add-hook 'nov-mode-hook #'visual-fill-column-mode)))
+#+END_SRC
+
+
 * Theme & Look
 ** Frame Title
 
