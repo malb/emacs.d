@@ -4898,6 +4898,22 @@ On our system port 8888 is already taken.
 
 *Note:* To use EIN [[https://millejoh.github.io/emacs-ipython-notebook/#org-mode-integration][from org-mode]], specify a notebook via the =:session= argument. The format for the session argument is ={url-or-port}/{path-to-notbook}=, e.g. =8889/Untitled.ipynb=
 
+#+BEGIN_SRC emacs-lisp
+(defun malb/fpylll-notebook ()
+  (interactive)
+  (let ((fpylll (prodigy-find-service "fpylll")))
+    (if (not (prodigy-service-started-p fpylll))
+        (progn
+          (venv-deactivate) ;; avoid weird interactions
+          (prodigy-start-service fpylll)
+          (sleep-for 1.5))))
+  (venv-workon "fpylll2")
+  (ein:query-ipython-version 8889 t)
+  (ein:notebooklist-login 8889 malb/sage-notebook-password)
+  (ein:notebooklist-open 8889))
+#+END_SRC
+
+
 *** Virtual Environments
 
 [[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices. I also added some features from [[https://github.com/jorgenschaefer/pyvenv/][pyvenv]]. Okay, so maybe it isn’t that feature complete.
@@ -8325,8 +8341,8 @@ exports.boxes = [ "INBOX"];
 
           (prodigy-define-service
             :name "fpylll"
-            :cwd (expand-file-name "lattices/fpylll" malb/projects-dir)
-            :command "fpylll-jupyter.sh"
+            :cwd malb/projects-dir
+            :command "fpylll2-jupyter.sh"
             :port 8889
             :stop-signal 'sigkill
             :kill-process-buffer-on-stop t
