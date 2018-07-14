@@ -9254,7 +9254,8 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
             (add-hook 'beacon-dont-blink-predicates
                       #'malb/beacon-disable-hl-line-mode)
 
-            (beacon-mode t)))
+            ;; (beacon-mode t)
+            ))
 #+END_SRC
 
 ** Vim-like Empty Line Indicator
