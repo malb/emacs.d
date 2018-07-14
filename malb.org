@@ -9083,7 +9083,9 @@ enabled."
             (spaceline-spacemacs-theme 'python-venv)
             (spaceline-helm-mode)
             (spaceline-toggle-hud-off)
-            (spaceline-toggle-buffer-encoding-abbrev-off)))
+            (spaceline-toggle-buffer-encoding-abbrev-off)
+            (setq powerline-default-separator 'arrow)
+            (spaceline-compile)))
 #+END_SRC
 
 ** Theme
