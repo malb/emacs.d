@@ -4506,6 +4506,66 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format c
 (use-package disaster)
 #+END_SRC
 
+** Golang
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-mode
+  :mode "\\.go$"
+  :interpreter "go"
+  :config (add-hook 'go-mode-hook #'flycheck-mode))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-eldoc
+  :hook (go-mode . go-eldoc-setup))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-guru
+  :commands (go-guru-describe go-guru-freevars go-guru-implements go-guru-peers
+                              go-guru-referrers go-guru-definition go-guru-pointsto
+                              go-guru-callstack go-guru-whicherrs go-guru-callers go-guru-callees
+                              go-guru-expand-region)
+  :config (unless (executable-find "guru")
+            (warn "go-mode: couldn't find guru, refactoring commands won't work")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package gorepl-mode
+  :commands (gorepl-run gorepl-run-load-current-file)
+  :config (unless (executable-find "gore")
+            (warn "go-mode: couldn't find gore, REPL support disabled")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-go
+  :init (setq command-go-gocode-command "gocode"
+              company-go-show-annotation t)
+  :after go-mode
+  :config (if (executable-find command-go-gocode-command)
+              (add-to-list 'company-backends #'company-go)
+            (warn "go-mode: couldn't find gocode, code completion won't work")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package gotest
+  :bind (:map go-mode-map
+              ("C-c a" . go-test-current-project)
+              ("C-c m" . go-test-current-file)
+              ("C-c ." . go-test-current-test)
+              ("C-c b" . go-run)
+              ("C-h f" . godoc-at-point)))
+#+END_SRC
+
+#+BEGIN_QUOTE
+Go Projectile is a set of Go language related add-ons for the Emacs Projectile mode. — https://github.com/dougm/go-projectile
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-projectile
+  :after projectile)
+#+END_SRC
+
 ** Python
 
 We use the “onetwo” style to fill docstrings in Python, i.e.:
@@ -8527,10 +8587,16 @@ Characterise files with the same name by their path.
   :config (setq uniquify-buffer-name-style 'forward))
 #+END_SRC
 
-I hate tabs.
+I hate tabs …
 
 #+BEGIN_SRC emacs-lisp
 (setq-default indent-tabs-mode nil)
+#+END_SRC
+
+but if they happen to be there (I’m looking at you Go)
+
+#+BEGIN_SRC emacs-lisp
+(setq-default tab-width 4)
 #+END_SRC
 
 Pressing =y= or =n= is sufficent.
