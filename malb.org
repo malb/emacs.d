@@ -151,7 +151,8 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 (require 'use-package)
 
 (setq  use-package-compute-statistics t
-       use-package-verbose t)
+       use-package-verbose t
+       use-package-always-ensure t)
 #+END_SRC
 
 [[https://github.com/Bruce-Connor/paradox/][Paradox]] is a better package list
@@ -219,7 +220,6 @@ should be executed or the text inserted) is annoying.
 
 #+BEGIN_SRC emacs-lisp
 (use-package key-chord
-  :ensure t
   :config (progn
             (setq key-chord-one-key-delay 0.2
                   key-chord-two-keys-delay 0.1)
@@ -300,7 +300,6 @@ Resize windows to accommodate new ones.
 
 #+BEGIN_SRC emacs-lisp
 (use-package zygospore
-  :ensure t
   :bind (("C-x 1" . zygospore-toggle-delete-other-windows)))
 #+END_SRC
 
@@ -312,7 +311,6 @@ Resize windows to accommodate new ones.
 
 #+BEGIN_SRC emacs-lisp
 (use-package eyebrowse
-  :ensure t
   :diminish eyebrowse-mode
   :init (setq eyebrowse-keymap-prefix (kbd "C-c E"))
   :config (progn
@@ -341,7 +339,6 @@ Resize windows to accommodate new ones.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
-  :ensure t
   :commands ace-window
   :bind ("C-x o" . ace-window)
   :config (progn
@@ -713,15 +710,13 @@ _SPC_ cancel  _D_lt other     _s_wap
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
 
 #+BEGIN_SRC emacs-lisp
-(use-package diminish
-  :ensure t)
+(use-package diminish)
 #+END_SRC
 
 [[http://www.emacswiki.org/emacs/DelightedModes][delight.el]] allows us to rewrite mode-line statuses of minor modes. Which we use when the diminish keyword is not enough.
 
 #+BEGIN_SRC emacs-lisp
-(use-package delight
-  :ensure t)
+(use-package delight)
 #+END_SRC
 
 * Jumping Around
@@ -732,7 +727,6 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 
 #+BEGIN_SRC emacs-lisp
 (use-package avy
-  :ensure t
   :bind (("C-c C-<SPC>" . avy-goto-word-or-subword-1) ;; avy-goto-char-timer
          ("C-c j j" . avy-goto-word-or-subword-1)
          ("M-g g" . avy-goto-line))
@@ -748,7 +742,6 @@ Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or
 
 #+BEGIN_SRC emacs-lisp
 (use-package ace-link
-  :ensure t
   :config (ace-link-setup-default))
 #+END_SRC
 
@@ -758,7 +751,6 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 
 #+BEGIN_SRC emacs-lisp
 (use-package goto-chg
-  :ensure t
   :bind (("C-c j ," . goto-last-change)
          ("C-c j ." . goto-last-change-reverse)))
 #+END_SRC
@@ -771,7 +763,6 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 
 #+BEGIN_SRC emacs-lisp
 (use-package bm
-  :ensure t
   :bind (("C-c j b ." . bm-next)
          ("C-c j b ," . bm-previous)
          ("C-c j b SPC" . bm-toggle)))
@@ -793,7 +784,6 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
 
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
-  :ensure t
   :diminish yas-minor-mode
   :config (progn
             (yas-global-mode)
@@ -808,8 +798,7 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
 The official yasnippet snippet collection
 
 #+BEGIN_SRC emacs-lisp
-(use-package yasnippet-snippets
-   :ensure t)
+(use-package yasnippet-snippets)
 #+END_SRC
 
 ** Auto YASnippet
@@ -820,7 +809,6 @@ The official yasnippet snippet collection
 
 #+BEGIN_SRC emacs-lisp
 (use-package auto-yasnippet
-  :ensure t
   :bind (("C-c y c" . aya-create)
          ("C-c y e" . aya-expand)))
 #+END_SRC
@@ -865,7 +853,6 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-c-yasnippet
-  :ensure t
   :after (helm yasnippet)
   :commands (helm-yas-complete)
   :bind (:map yas-minor-mode-map
@@ -882,7 +869,6 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
 #+BEGIN_SRC emacs-lisp
 (use-package company
-  :ensure t
   :bind (("M-/" . company-complete))
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
@@ -915,7 +901,6 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-quickhelp
-  :ensure t
   :config (company-quickhelp-mode 1))
 #+END_SRC
 
@@ -924,7 +909,6 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
 #+BEGIN_SRC emacs-lisp
 (use-package company-flx
   :disabled ;; performance
-  :ensure t
   :config (company-flx-mode t))
 #+END_SRC
 
@@ -932,6 +916,7 @@ Use [[https://github.com/Henry/dot-emacs/blob/master/my-lisp/company-pcomplete.e
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-pcomplete
+  :ensure nil
   :config (defun malb/enable-company-pcomplete ()
             (set (make-local-variable 'company-backends)
                  (append (list #'company-pcomplete) company-backends))))
@@ -943,7 +928,6 @@ For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-c-headers
-  :ensure t
   :config (progn
             (defun malb/ede-object-system-include-path ()
               "Return the system include path for the current buffer."
@@ -962,7 +946,6 @@ For Python use [[https://github.com/proofit404/company-anaconda][company-anacond
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-anaconda
-  :ensure t
   :config (add-to-list 'company-backends #'company-anaconda))
 #+END_SRC
 
@@ -971,11 +954,9 @@ For Python use [[https://github.com/proofit404/company-anaconda][company-anacond
 For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We also allow unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
 
 #+BEGIN_SRC emacs-lisp
-(use-package company-math
-  :ensure t)
+(use-package company-math)
 
 (use-package company-auctex
-  :ensure t
   :config (progn
             (add-to-list 'company-backends
                          '(company-auctex-macros
@@ -992,7 +973,6 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-reftex
-   :ensure t
    :config (add-to-list 'company-backends #'company-reftex-labels))
 #+END_SRC
 
@@ -1000,7 +980,6 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-shell
-  :ensure t
   :config (progn
             (setq company-shell-modes '(sh-mode shell-mode))
             (add-to-list 'company-backends 'company-shell)))
@@ -1165,7 +1144,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm
-  :ensure t
   :diminish helm-mode
   :bind (("M-x"       . helm-M-x)
          ("C-x C-b"   . malb/helm-omni)
@@ -1260,7 +1238,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-fuzzier
-  :ensure t
   :disabled
   :config (helm-fuzzier-mode 1))
 #+END_SRC
@@ -1269,7 +1246,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-flx
-  :ensure t
   :disabled ;; performance
   :config (progn
             (setq  helm-flx-for-helm-find-files t
@@ -1296,6 +1272,7 @@ To reset call:
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ring
+  :ensure nil
   :bind (("M-y" . helm-show-kill-ring)))
 #+END_SRC
 
@@ -1309,7 +1286,6 @@ To reset call:
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-swoop
-  :ensure t
   :bind (("C-c o" . helm-multi-swoop-org)
          ("C-s"   . malb/swoop-or-search)
          ("C-M-s" . helm-multi-swoop-all))
@@ -1372,7 +1348,6 @@ To reset call:
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
-  :ensure t
   :commands (helm-ag helm-do-ag malb/helm-ag-projects malb/helm-ag-literature malb/helm-ag)
   :config (progn
             (setq helm-ag-base-command "ag --nocolor --nogroup"
@@ -1409,15 +1384,13 @@ Switch themes with helm.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-themes
-  :commands helm-themes
-  :ensure t)
+  :commands helm-themes)
 #+END_SRC
 
 ** Helm Descbinds
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-descbinds
-  :ensure t
   :bind ("C-h b" . helm-descbinds)
   :init (fset 'describe-bindings 'helm-descbinds))
 #+END_SRC
@@ -1426,6 +1399,7 @@ Switch themes with helm.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-locate
+  :ensure nil
   :after helm
   :commands helm-locate
   :config (progn
@@ -1445,7 +1419,6 @@ Switch themes with helm.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org-rifle
-  :ensure t
   :commands (helm-org-rifle-agenda-files helm-org-rifle-occur-agenda-files malb/helm-org-rifle-agenda-files)
   :config (progn
             (defun malb/helm-org-rifle-agenda-files (arg)
@@ -1468,7 +1441,6 @@ Switch themes with helm.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-google
-  :ensure t
   :after helm
   :bind ("C-c h g" . helm-google)
   :config
@@ -1533,7 +1505,6 @@ Make sure to auto automatically rescan for imenu change.
 
 #+BEGIN_SRC emacs-lisp
 (use-package imenu-anywhere
-  :ensure t
   :config (progn
             (defun malb/imenu-anywhere (arg)
               "Call `helm-imenu-anywhere'
@@ -1563,7 +1534,6 @@ Make sure to auto automatically rescan for imenu change.
 
 #+BEGIN_SRC emacs-lisp
 (use-package imenu-list
-  :ensure t
   :config (setq imenu-list-position 'left
                 imenu-list-size 0.15
                 imenu-list-auto-resize nil
@@ -1578,7 +1548,6 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
-  :ensure t
   :diminish smartparens-mode
   :config (progn
             (require 'smartparens-config)
@@ -1706,7 +1675,6 @@ Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing 
 
 #+BEGIN_SRC emacs-lisp
 (use-package syntactic-close
-  :ensure t
   :bind ("C-)" . syntactic-close))
 #+END_SRC
 
@@ -1717,7 +1685,6 @@ Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing 
 
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
-  :ensure t
   :diminish drag-stuff-mode
   :config (progn
             (defhydra malb/hydra-drag-stuff (:color red)
@@ -1737,7 +1704,6 @@ Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing 
 
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
-  :ensure t
   :diminish undo-tree-mode
   :config (progn
             (global-undo-tree-mode)
@@ -1768,7 +1734,6 @@ This can be dangerous, so only enable on per project basis, e.g.
 
 #+BEGIN_SRC emacs-lisp
 (use-package focus-autosave-mode
-  :ensure t
   :delight (focus-autosave-local-mode " ♻"))
 #+END_SRC
 
@@ -1778,14 +1743,12 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
 
 #+BEGIN_SRC emacs-lisp
 (use-package visual-regexp
-  :ensure t
   :bind (("C-c m" . vr/mc-mark)
          ("M-%" . vr/query-replace)
          ("C-S-s" . vr/isearch-forward)
          ("C-S-r" . vr/isearch-backward)))
 
-(use-package visual-regexp-steroids
-  :ensure t)
+(use-package visual-regexp-steroids)
 #+END_SRC
 
 Sometimes visual-regexp bombs out, so we have a function to reset it:
@@ -1813,7 +1776,6 @@ Commands are bound to =C-x m …=
 
 #+BEGIN_SRC emacs-lisp
 (use-package multiple-cursors
-  :ensure t
   :config (progn
             (defun malb/mc-typo-mode ()
               (add-to-list 'mc/unsupported-minor-modes 'typo-mode))
@@ -1850,7 +1812,6 @@ Commands are bound to =C-x m …=
 
 #+BEGIN_SRC emacs-lisp
 (use-package recursive-narrow
-  :ensure t
   :config (progn
             (defun malb/recursive-narrow-dwim-org ()
               (if (derived-mode-p 'org-mode)
@@ -1869,7 +1830,6 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
-  :ensure t
   :bind ("C-\\" . er/expand-region)
   :init (setq expand-region-fast-keys-enabled nil)
   :config (progn
@@ -1895,7 +1855,6 @@ https://github.com/cute-jumper/embrace.el
 
 #+BEGIN_SRC emacs-lisp
 (use-package embrace
-  :ensure t
   :config (progn
 
             (defun malb/embrace-latex-mode-hook ()
@@ -1919,7 +1878,6 @@ https://github.com/cute-jumper/embrace.el
 
 #+BEGIN_SRC emacs-lisp
 (use-package wrap-region
-  :ensure t
   :diminish wrap-region-mode
   :config (wrap-region-add-wrappers
            '(("*" "*" nil org-mode)
@@ -1939,7 +1897,6 @@ https://github.com/cute-jumper/embrace.el
 #+BEGIN_SRC emacs-lisp
 (use-package bicycle
   :after outline
-  :ensure t
   :bind (:map outline-minor-mode-map
               ([C-tab] . bicycle-cycle)
               ([S-tab] . bicycle-cycle-global)))
@@ -1964,8 +1921,7 @@ https://github.com/cute-jumper/embrace.el
 #+BEGIN_SRC emacs-lisp
 (use-package nv-delete-back
   :bind (("C-<backspace>" . nv-delete-back-all)
-         ("M-<backspace>" . nv-delete-back))
-  :ensure t)
+         ("M-<backspace>" . nv-delete-back)))
 #+END_SRC
 
 ** Beginning of …
@@ -1994,7 +1950,6 @@ Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-mi
 
 #+BEGIN_SRC emacs-lisp
 (use-package beginend
-  :ensure t
   :diminish beginend-global-mode
   :config (progn
             (beginend-global-mode)
@@ -2012,7 +1967,6 @@ Helpful is an alternative to the built-in Emacs help that provides much more con
 
 #+BEGIN_SRC emacs-lisp
 (use-package helpful
-  :ensure t
   :config (progn
             (bind-key "C-h f" #'helpful-callable)
             (bind-key "C-h v" #'helpful-variable)
@@ -2027,8 +1981,7 @@ Refine provides a convenient UI for editing variables. Refine is not for editing
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
-(use-package refine
-  :ensure t)
+(use-package refine)
 #+END_SRC
 
 * Projects (Projectile)
@@ -2088,7 +2041,6 @@ This library provides easy project management and navigation. The concept of a p
 
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
-  :ensure t
   :bind (("<f5>" . projectile-compile-project)
          ("<f6>" . next-error)
          :map projectile-command-map
@@ -2126,7 +2078,6 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-projectile
-  :ensure t
   :config (progn
             (defvar malb/helm-source-file-not-found
               (helm-build-dummy-source
@@ -2153,7 +2104,6 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 
 #+BEGIN_SRC emacs-lisp
 (use-package magit
-  :ensure t
   :commands (magit-status
              magit-diff
              magit-commit
@@ -2182,7 +2132,6 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 #+BEGIN_SRC emacs-lisp
 (use-package magit-svn
-  :ensure t
   :after magit
   :config (progn
             (defun malb/magit-svn ()
@@ -2197,15 +2146,13 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 #+BEGIN_SRC emacs-lisp
 (use-package magit-todos
-  :after magit
-  :ensure t)
+  :after magit)
 #+END_SRC
 
 ** GitHub
 
 #+BEGIN_SRC emacs-lisp
 (use-package magithub
-  :ensure t
   :after magit
   :config (magithub-feature-autoinject t))
 #+END_SRC
@@ -2215,8 +2162,7 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 [[https://github.com/magit/orgit][orgit]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package orgit
-  :ensure t)
+(use-package orgit)
 #+END_SRC
 
 ** Git Timemachine
@@ -2224,8 +2170,7 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][git-timemachine]] but when I do …
 
 #+BEGIN_SRC emacs-lisp
-(use-package git-timemachine
-  :ensure t)
+(use-package git-timemachine)
 #+END_SRC
 
 ** Git Guttter
@@ -2234,7 +2179,6 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
 
 #+BEGIN_SRC emacs-lisp
 (use-package git-gutter-fringe
-  :ensure t
   :config (progn
             (define-fringe-bitmap 'git-gutter-fr:added
               [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
@@ -2249,7 +2193,6 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
               nil nil 'center)))
 
 (use-package git-gutter
-  :ensure t
   :diminish git-gutter-mode
   :config (progn
             (setq git-gutter:disabled-modes '(org-mode))))
@@ -2264,8 +2207,7 @@ functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... 
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
-(use-package git-link
-  :ensure t)
+(use-package git-link)
 #+END_SRC
 
 ** Gitignore
@@ -2274,7 +2216,6 @@ Generate gitignore files
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-gitignore
-  :ensure t
   :defer t)
 #+END_SRC
 
@@ -2557,6 +2498,7 @@ Allow refile to create parent tasks with confirmation
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-indent
+  :ensure nil
   :diminish)
 #+END_SRC
 
@@ -2598,13 +2540,15 @@ Archive with tags intact and some order in target file preserved. ([[http://orgm
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-habit
+  :ensure nil
   :config (add-to-list 'org-modules 'org-habit))
 #+END_SRC
 
 ** Protocol
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-protocol)
+(use-package org-protocol
+  :ensure nil)
 #+END_SRC
 
 ** Bullets
@@ -2615,7 +2559,6 @@ Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-bullets
-  :ensure t
   :commands org-bullets-mode
   :init  (progn
 
@@ -2660,6 +2603,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-icalendar
+  :ensure nil
   :config (progn
             (setq org-icalendar-include-todo t
                   org-icalendar-combined-agenda-file malb/org-mode-ics
@@ -2705,6 +2649,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-latex
+  :ensure nil
   :config (progn
             (setq org-latex-listings 't)
             (add-to-list 'org-latex-packages-alist '("" "listings"))
@@ -2815,6 +2760,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-beamer
+  :ensure nil
   :config (progn
             (add-to-list 'org-beamer-environments-extra
                          '("lemma" "l" "\\begin{lemma}%a" "\\end{lemma}"))
@@ -2852,6 +2798,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-odt
+  :ensure nil
   :init (progn
           (setq org-odt-styles-file
                 (expand-file-name "org-export-template.odt" user-emacs-directory))))
@@ -2871,7 +2818,6 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-reveal
-  :ensure t
   :config
   (progn
     (setq org-reveal-root (expand-file-name "reveal.js/" user-emacs-directory)
@@ -2886,15 +2832,13 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 [[https://github.com/marsmining/ox-twbs][ox-twbs]] - Twitter Bootstrap.
 
 #+BEGIN_SRC emacs-lisp
-(use-package ox-twbs
-  :ensure t)
+(use-package ox-twbs)
 #+END_SRC
 
 *** Pandoc
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-pandoc
-  :ensure t
   :init (progn
           (setq org-pandoc-menu-entry  '((?m "as md." org-pandoc-export-as-markdown)
                                          (?M "to md and open." org-pandoc-export-to-markdown-and-open)
@@ -2915,8 +2859,7 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 Place rich text version of selection in clipboard ([[https://melpa.org/#/ox-clip][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package ox-clip
-  :ensure t)
+(use-package ox-clip)
 #+END_SRC
 
 *** Ignore Some Headlines
@@ -2925,6 +2868,7 @@ The tag =:ignore:= ignores a headline when exporting, section content is exporte
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-extra
+  :ensure nil
   :config (ox-extras-activate '(ignore-headlines)))
 #+END_SRC
 ** Capture
@@ -2986,6 +2930,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-capture
+  :ensure nil
   :bind ("<f9>" . org-capture)
   :config (progn
             (setq org-capture-templates
@@ -3126,6 +3071,7 @@ SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-protocol-capture-html
+  :ensure nil
   :after org-capture
   :config (add-to-list 'org-capture-templates
                        '("w" "capture [w]ebsite" entry
@@ -3156,7 +3102,6 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
 #+BEGIN_SRC emacs-lisp
 (use-package org-capture-pop-frame
   :after (org-capture)
-  :ensure t
   :config (setq ocpf-frame-parameters '((name . "*Org Capture*")
                                         (width . 120)
                                         (height . 40)
@@ -3173,7 +3118,6 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-web-tools
-  :ensure t
   :after org)
 #+END_SRC
 
@@ -3189,6 +3133,7 @@ Activate eldoc and show footnotes in minibuffer.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-eldoc
+  :ensure nil
   :config (progn
             (add-hook 'org-mode-hook #'org-eldoc-load)
             (add-hook 'org-mode-hook #'eldoc-mode)))
@@ -3208,6 +3153,7 @@ Activate eldoc and show footnotes in minibuffer.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-inlinetask
+  :ensure nil
   :config (progn
             (defun malb/org-latex-format-inlinetask-function
                 (todo todo-type priority title tags contents info)
@@ -3268,6 +3214,7 @@ Working with source code in org-mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ob
+  :ensure nil
   :config (progn
             ;; load more languages for org-babel
             (org-babel-do-load-languages
@@ -3293,7 +3240,6 @@ Working with source code in org-mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ob-ipython
-  :ensure t
   :config (progn
             (add-to-list 'org-structure-template-alist
                          '("ip" "#+BEGIN_SRC ipython\n?\n#+END_SRC"
@@ -3315,8 +3261,7 @@ Working with source code in org-mode.
 Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-async-org-babel-execute-src-block~.
 
 #+BEGIN_SRC emacs-lisp
-(use-package ob-async
-  :ensure t)
+(use-package ob-async)
 #+END_SRC
 
 ** Org Download
@@ -3326,8 +3271,7 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 This extension facilitates moving images from point A (e.g. an image inside your browser that you can drag to Emacs) to point B (an Emacs org-mode buffer where the inline link will be inserted).
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-download
-   :ensure t)
+(use-package org-download)
 #+END_SRC
 
 ** Tips
@@ -3434,7 +3378,6 @@ The function behaves as follows:
 
 #+BEGIN_SRC emacs-lisp
 (use-package multi-term
-  :ensure t
   :config (progn
             (setq term-buffer-maximum-size 16384)
 
@@ -3611,7 +3554,6 @@ When nth is set, it will copy the nth previous command."
 
 #+BEGIN_SRC emacs-lisp
 (use-package fish-completion
-  :ensure t
   :config (global-fish-completion-mode))
 #+END_SRC
 
@@ -3619,7 +3561,6 @@ When nth is set, it will copy the nth previous command."
 
 #+BEGIN_SRC emacs-lisp
 (use-package eshell-git-prompt
-  :ensure t
   :config (progn (eshell-git-prompt-use-theme "powerline")))
 #+END_SRC
 
@@ -3692,7 +3633,6 @@ cat mylog.log >> #<buffer *scratch*>
 
 #+BEGIN_SRC emacs-lisp
 (use-package emamux
-  :ensure t
   :config (setq emamux:completing-read-type 'helm))
 #+END_SRC
 
@@ -3746,6 +3686,7 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
 
 #+BEGIN_SRC emacs-lisp
 (use-package comint
+  :ensure nil
   :config (progn
             (dolist (key '("C-<up>" "M-<up>" "M-p"))
               (bind-key key #'comint-previous-matching-input-from-input comint-mode-map))
@@ -3858,7 +3799,6 @@ shx or “shell-extras” extends comint-mode in Emacs — https://github.com/ri
 
 #+BEGIN_SRC emacs-lisp
 (use-package shx
-  :ensure t
   :after comint
   :config (progn
             (with-eval-after-load 'python
@@ -3878,7 +3818,6 @@ shx or “shell-extras” extends comint-mode in Emacs — https://github.com/ri
 
 #+BEGIN_SRC emacs-lisp
 (use-package isend-mode
-  :ensure t
   :config (progn
             ;; If you work with python scripts using iPython
             (add-hook 'isend-mode-hook #'isend-default-ipython-setup)))
@@ -3906,7 +3845,6 @@ Make flycheck prettier based on what spacemacs does.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
-  :ensure t
   :commands global-flycheck-mode
   :diminish flycheck-mode
   :config (progn
@@ -3961,7 +3899,6 @@ Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-flycheck
-  :ensure t
   :config (progn
             (bind-key "C-c f h" #'helm-flycheck flycheck-mode-map)))
 
@@ -3973,7 +3910,6 @@ Use [[https://github.com/flycheck/flycheck-pos-tip][flycheck-pos-tip]] to displa
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-pos-tip
-  :ensure t
   :after flycheck
   :config (progn
             ;; flycheck errors on a tooltip (doesnt work on console)
@@ -3988,7 +3924,6 @@ Comments, as I mean, using [[https://github.com/remyferre/comment-dwim-2][commen
 
 #+BEGIN_SRC emacs-lisp
 (use-package comment-dwim-2
-  :ensure t
   :bind ("M-;" . comment-dwim-2))
 #+END_SRC
 
@@ -4012,7 +3947,6 @@ Make bug references in comments and string clickable
 
 #+BEGIN_SRC emacs-lisp
 (use-package dtrt-indent
-  :ensure t
   :diminish dtrt-indent-mode
   :config (progn (dtrt-indent-global-mode t)))
 #+END_SRC
@@ -4031,7 +3965,6 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 
 #+BEGIN_SRC emacs-lisp
 (use-package aggressive-indent
-  :ensure t
   :config (progn
             (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
             (unbind-key "C-c C-q" aggressive-indent-mode-map))
@@ -4044,7 +3977,6 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 
 #+BEGIN_SRC emacs-lisp
 (use-package ws-butler
-  :ensure t
   :diminish ws-butler-mode
   :config (progn
             ;; adding it to prog-mode-hook causes problems for emacsclient
@@ -4107,7 +4039,6 @@ mouse-3: go to end")
 #+BEGIN_SRC emacs-lisp
 (use-package highlight-symbol
   :diminish highlight-symbol-mode
-  :ensure t
   :after cc-mode
   :config (progn
             (bind-key "M-n" #'highlight-symbol-next prog-mode-map)
@@ -4120,7 +4051,6 @@ mouse-3: go to end")
 
 #+BEGIN_SRC emacs-lisp
 (use-package nlinum
-  :ensure t
   :config (progn
             (add-hook 'c-mode-common-hook 'nlinum-mode)))
 #+END_SRC
@@ -4131,7 +4061,6 @@ mouse-3: go to end")
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-dash
-  :ensure t
   :bind ("C-c h ." . helm-dash-at-point)
   :config (progn
             (setq helm-dash-common-docsets '("Bash"
@@ -4161,7 +4090,6 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
 
 #+BEGIN_SRC emacs-lisp
 (use-package ggtags
-  :ensure t
   :config (progn  (add-hook 'c-mode-common-hook
                             (lambda ()
                               (ggtags-mode t)))
@@ -4179,7 +4107,6 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-gtags
-  :ensure t
   :init (setq helm-gtags-prefix-key "\C-cjg")
   :diminish helm-gtags-mode
   :config (progn  (setq helm-gtags-ignore-case t
@@ -4209,7 +4136,6 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 
 #+BEGIN_SRC emacs-lisp
 (use-package rtags
-  :ensure t
   :config  (progn
              (rtags-enable-standard-keybindings nil "C-c j r")
              (setq rtags-use-helm t
@@ -4228,7 +4154,6 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-rtags
   :after flycheck
-  :ensure t
   ;; :config (progn
   ;;           ;; ensure that we use only rtags checking
   ;;           ;; https://github.com/Andersbakken/rtags#optional-1
@@ -4247,15 +4172,13 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-rtags
-  :after flycheck
-  :ensure t)
+  :after flycheck)
 #+END_SRC
 
 *** CamelCase
 
 #+BEGIN_SRC emacs-lisp
-(use-package string-inflection
-  :ensure t)
+(use-package string-inflection)
 #+END_SRC
 
 *** Dump Jump
@@ -4268,7 +4191,6 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
 
 #+BEGIN_SRC emacs-lisp
 (use-package dumb-jump
-  :ensure t
   :config (progn
             (setq dumb-jump-selector 'helm)
             (unbind-key "C-M-g" dumb-jump-mode-map)
@@ -4288,7 +4210,6 @@ This packages tries to smartly go to definition leveraging several methods to do
 
 #+BEGIN_SRC emacs-lisp
 (use-package smart-jump
-  :ensure t
   :config (smart-jump-setup-default-registers))
 #+END_SRC
 
@@ -4298,7 +4219,6 @@ This packages tries to smartly go to definition leveraging several methods to do
 
 #+BEGIN_SRC emacs-lisp
 (use-package realgud
-  :ensure t
   :commands (realgud:pdb realgud:ipdb realgud:trepan2 realgud:gdb)
   :config (progn
             (setq realgud:pdb-command-name "python -m pdb")))
@@ -4346,8 +4266,8 @@ Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]]
 (use-package semantic
   :defer t
   :init (progn
-          (use-package semantic/ia)
-          (use-package semantic/bovine/gcc)
+          (use-package semantic/ia :ensure nil)
+          (use-package semantic/bovine/gcc :ensure nil)
 
           (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
           (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
@@ -4446,7 +4366,6 @@ The following code parses a complete project with semantic. This is useful for e
 
 #+BEGIN_SRC emacs-lisp
 (use-package srefactor
-  :ensure t
   :defer 10)
 #+END_SRC
 
@@ -4567,7 +4486,6 @@ and move to the source code that caused it."
 
 #+BEGIN_SRC emacs-lisp
 (use-package modern-cpp-font-lock
-  :ensure t
   :diminish modern-c++-font-lock-mode
   :config (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 #+END_SRC
@@ -4578,7 +4496,6 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format c
 
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format
-  :ensure t
   :config (progn
             (setq clang-format-executable "clang-format-3.8")))
 #+END_SRC
@@ -4586,8 +4503,7 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format c
 *** Disassemble
 
 #+BEGIN_SRC emacs-lisp
-(use-package disaster
-  :ensure t)
+(use-package disaster)
 #+END_SRC
 
 ** Python
@@ -4684,7 +4600,6 @@ It makes sense to highlight indentation in Python.
 
 #+BEGIN_SRC emacs-lisp
 (use-package highlight-indentation
-  :ensure t
   :diminish highlight-indentation-mode
   :config (progn (add-hook 'python-mode-hook #'highlight-indentation-mode)))
 #+END_SRC
@@ -4705,7 +4620,6 @@ Fall back to dumb jump if anaconda fails.
 
 #+BEGIN_SRC emacs-lisp
 (use-package anaconda-mode
-  :ensure t
   :after dumb-jump
   :diminish anaconda-mode
   :bind (:map anaconda-mode-map ("M-," . anaconda-mode-go-back))
@@ -4748,7 +4662,6 @@ Fall back to dumb jump if anaconda fails.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-pydoc
-  :ensure t
   :bind (:map python-mode-map ("C-c C-d" . helm-pydoc)))
 #+END_SRC
 
@@ -4766,7 +4679,6 @@ Manually fixed bugs:
 
 #+BEGIN_SRC emacs-lisp
 (use-package python-docstring
-  :ensure t
   :diminish python-docstring-mode
   :hook (python-mode . python-docstring-mode))
 #+END_SRC
@@ -4777,7 +4689,6 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 
 #+BEGIN_SRC emacs-lisp
 (use-package sphinx-doc
-  :ensure t
   :diminish sphinx-doc-mode
   :hook (python-mode . sphinx-doc-mode))
 #+END_SRC
@@ -4786,7 +4697,6 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 
 #+BEGIN_SRC emacs-lisp
 (use-package cython-mode
-  :ensure t
   :mode (("\\.pyx\\'"  . cython-mode)
          ("\\.spyx\\'" . cython-mode)
          ("\\.pxd\\'"  . cython-mode)
@@ -4797,15 +4707,13 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-cython
-  :after (cython-mode flycheck)
-  :ensure t)
+  :after (cython-mode flycheck))
 #+END_SRC
 
 *** AutoPEP8
 
 #+BEGIN_SRC emacs-lisp
 (use-package py-autopep8
-  :ensure t
   :config (setq py-autopep8-options '("--max-line-length=100")))
 #+END_SRC
 
@@ -4822,8 +4730,7 @@ $ pip install importmagic epc
 #+BEGIN_SRC emacs-lisp
 (use-package importmagic
   :diminish importmagic-mode
-  :hook (python-mode-hook . importmagic-mode)
-  :ensure t)
+  :hook (python-mode-hook . importmagic-mode))
 #+END_SRC
 
 *** ElPy
@@ -4836,7 +4743,6 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 #+BEGIN_SRC emacs-lisp
 (use-package elpy
-  :ensure t
   :bind (:map python-mode-map ("C-c C-c" . elpy-shell-send-region-or-buffer))
   :commands (elpy-shell-send-region-or-buffer elpy-module-yasnippet elpy-module-sane-defaults)
   :config (progn
@@ -4849,8 +4755,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 *** Pip
 
 #+BEGIN_SRC emacs-lisp
-(use-package pip-requirements
-   :ensure t)
+(use-package pip-requirements)
 #+END_SRC
 
 *** iPython Notebook (EIN)
@@ -4863,7 +4768,6 @@ On our system port 8888 is already taken.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ein
-  :ensure t
   :defer 30
   :after ob
   :commands (ein:notebooklist-open ein:notebooklist-login ein:query-ipython-version)
@@ -4920,10 +4824,10 @@ On our system port 8888 is already taken.
 
 #+BEGIN_SRC emacs-lisp
 (use-package virtualenvwrapper
-  :ensure t
   :config (progn
             (venv-initialize-interactive-shells)
             (venv-initialize-eshell)
+            (setq eshell-modify-global-environment nil)
 
             (setq malb/venv-preactivate-hook--previous-vars nil)
 
@@ -5012,18 +4916,15 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
 
 #+BEGIN_SRC emacs-lisp
 (use-package auto-complete
-  :ensure t
   :config (progn
             (setq ac-delay 0.3
                   ac-auto-start 2)
             (bind-key "C-/" #'auto-complete ac-mode-map)
             (bind-key "M-/" #'auto-complete ac-mode-map)))
 
-(use-package auto-complete-sage
-  :ensure t)
+(use-package auto-complete-sage)
 
 (use-package sage-shell-mode
-  :ensure t
   :config (progn
             (eval-after-load "auto-complete"
               '(setq ac-modes (append '(sage-shell-mode sage-shell:sage-mode) ac-modes)))
@@ -5203,7 +5104,6 @@ org babel for Sage can be quite handy for writing talks etc. ([[https://github.c
 
 #+BEGIN_SRC emacs-lisp
 (use-package ob-sagemath
-  :ensure t
   :config (progn
             (setq org-babel-default-header-args:sage '((:session . t)
                                                        (:results . "output replace")
@@ -5279,15 +5179,13 @@ Code manipulation:
 | ~M~     | formats the code into multiple lines                                    |
 
 #+BEGIN_SRC emacs-lisp
-(use-package lispy
-  :ensure t)
+(use-package lispy)
 #+END_SRC
 
 [[https://raw.githubusercontent.com/cpitclaudel/easy-escape/master/img/easy-escape.png]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package easy-escape
-  :ensure t
   :hook ((emacs-lisp-mode lisp-mode) . easy-escape-minor-mode))
 #+END_SRC
 
@@ -5304,7 +5202,6 @@ Code manipulation:
 
 #+BEGIN_SRC emacs-lisp
 (use-package elisp-slime-nav
-  :ensure t
   :diminish elisp-slime-nav-mode
   :config (progn
 
@@ -5335,8 +5232,7 @@ Code manipulation:
 [[https://github.com/Wilfred/suggest.el][suggest.el]] is an Emacs package for discovering elisp functions based on examples.
 
 #+BEGIN_SRC emacs-lisp
-(use-package suggest
-  :ensure t)
+(use-package suggest)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -5347,7 +5243,6 @@ Code manipulation:
 
 #+BEGIN_SRC emacs-lisp
 (use-package hy-mode
-  :ensure t
   :mode "\\.hy\\'"
   :hook (hy-mode . lispy-mode))
 #+END_SRC
@@ -5358,7 +5253,6 @@ Code manipulation:
 
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode
-  :ensure t
   :mode "\\\.html?\\\'"
   :config (setq web-mode-enable-engine-detection t))
 #+END_SRC
@@ -5366,8 +5260,7 @@ Code manipulation:
 ** JSON
 
 #+BEGIN_SRC emacs-lisp
-(use-package json-mode
-    :ensure t)
+(use-package json-mode)
 #+END_SRC
 
 * Prose
@@ -5422,7 +5315,6 @@ Indent correctly in ~visual-line-mode~ (~org-mode~ has its own thing).
 
 #+BEGIN_SRC emacs-lisp
 (use-package adaptive-wrap
-  :ensure t
   :config (progn
             (add-hook 'markdown-mode-hook #'adaptive-wrap-prefix-mode)
             (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)))
@@ -5456,7 +5348,6 @@ Indicate soft wrapped lines.
 
 #+BEGIN_SRC emacs-lisp
 (use-package typo
-  :ensure t
   :diminish typo-mode
   :config (progn
             (setq-default typo-language "English")
@@ -5473,7 +5364,6 @@ Indicate soft wrapped lines.
 
 #+BEGIN_SRC emacs-lisp
 (use-package visual-fill-column
-  :ensure t
   :defer t
   :config (progn
             (setq-default visual-fill-column-center-text t
@@ -5500,7 +5390,6 @@ Use [[https://github.com/milkypostman/hl-sentence][hl-sentence-mode]] in ~markdo
 
 #+BEGIN_SRC emacs-lisp
   (use-package hl-sentence
-    :ensure t
     :config (add-hook 'markdown-mode-hook #'hl-sentence-mode))
 #+END_SRC
 
@@ -5510,8 +5399,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
 
 #+BEGIN_SRC emacs-lisp
-(use-package focus
-  :ensure t)
+(use-package focus)
 #+END_SRC
 
 *** Spell Checking
@@ -5575,7 +5463,6 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
 
 #+BEGIN_SRC emacs-lisp
 (use-package ace-flyspell
-  :ensure t
   :bind (("C-." . ace-flyspell-correct-word)
          :map flyspell-mode-map
          ("C-." . malb/ace-flyspell-dwim))
@@ -5599,14 +5486,13 @@ Automatically pick dictionary.
 
 #+BEGIN_SRC emacs-lisp
 (use-package auto-dictionary
-  :ensure t
+  :disabled
   :config (progn
             (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package guess-language
-  :ensure t
   :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
   :config (setq guess-language-langcodes '((de . ("de_DE" "German"))
@@ -5621,7 +5507,6 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package langtool
-  :ensure t
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
                                                                (concat user-emacs-directory "langtool"))
@@ -5639,7 +5524,8 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 After the deadline ([[https://github.com/jkitchin/scimax/][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package scimax-email)
+(use-package scimax-email
+  :ensure nil)
 
 (defun malb/words-atd ()
   "Send paragraph at point to After the deadline for spell and grammar checking."
@@ -5708,7 +5594,6 @@ Prose linting using … [[http://proselint.com][proselint]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package synosaurus
-  :ensure t
   :bind (("C-c w s" . synosaurus-lookup)
          ("C-c w r" . synosaurus-choose-and-replace))
   :config (progn
@@ -5725,8 +5610,7 @@ Prose linting using … [[http://proselint.com][proselint]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package powerthesaurus
-  :bind ("C-c w p" . powerthesaurus-lookup-word)
-  :ensure t)
+  :bind ("C-c w p" . powerthesaurus-lookup-word))
 #+END_SRC
 
 *** Dictionary
@@ -5737,7 +5621,6 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 
 #+BEGIN_SRC emacs-lisp
 (use-package define-word
-  :ensure t
   :bind (("C-c w d" . define-word-at-point)))
 #+END_SRC
 
@@ -5747,7 +5630,6 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 
 #+BEGIN_SRC emacs-lisp
 (use-package google-translate
-  :ensure t
   :bind ("C-c w t" . google-translate-smooth-translate)
   :init (progn (setq google-translate-translation-directions-alist
                      '(("en" . "de") ("de" . "en")))))
@@ -5761,7 +5643,6 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
 #+BEGIN_SRC emacs-lisp
 (use-package deft
-  :ensure t
   :bind ("<f8>" . malb/deft)
   :bind ("S-<f8>" . malb/blog)
   :init (progn
@@ -5801,7 +5682,6 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
 
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
-  :ensure t
   :mode (("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode)
          ("\\.text\\'" . markdown-mode)
@@ -5842,7 +5722,6 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 
 #+BEGIN_SRC emacs-lisp
 (use-package pandoc-mode
-  :ensure t
   :delight '(:eval (concat " p[" (pandoc--get 'write) "]"))
   :config (progn
             (add-hook 'markdown-mode-hook #'pandoc-mode)
@@ -6201,7 +6080,6 @@ string. If it is, it is left there."
 
 #+BEGIN_SRC emacs-lisp
 (use-package auctex-latexmk
-  :ensure t
   :config (progn
             (setq auctex-latexmk-inherit-TeX-PDF-mode t)
             (auctex-latexmk-setup)))
@@ -6346,7 +6224,6 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-bibtex
-  :ensure t
   :commands (helm-bibtex helm-bibtex-with-local-bibliography)
   :config (progn
             (setq bibtex-completion-bibliography malb/bibtex-files
@@ -6474,15 +6351,13 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 [[https://github.com/cpitclaudel/biblio.el][- biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
 
   #+BEGIN_SRC emacs-lisp
-(use-package biblio
-  :ensure t)
+(use-package biblio)
   #+END_SRC
 
 - [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
 
   #+BEGIN_SRC emacs-lisp
 (use-package gscholar-bibtex
-  :ensure t
   :init (progn
             (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))))
   #+END_SRC
@@ -6495,7 +6370,6 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref
-  :ensure t
   :after org
   :defer 2
   :config (progn
@@ -6510,6 +6384,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref-latex
+  :ensure nil
   :commands org-ref-latex-jump-to-bibtex)
 #+END_SRC
 
@@ -6523,7 +6398,6 @@ Spray is a speed reading mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package spray
-  :ensure t
   :config (progn
             (setq spray-wpm 512
                   spray-margin-left 4
@@ -6691,6 +6565,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e
+  :ensure nil
   :config  (setq mu4e-headers-skip-duplicates t
                  mu4e-use-fancy-chars t
                  mu4e-view-show-images t
@@ -6754,7 +6629,6 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-query-fragments
-  :ensure t
   :config (setq mu4e-query-fragments-list
                 '(("%hidden" . "flag:trashed")
                   ("%unread" . "flag:unread AND NOT %hidden")
@@ -6767,8 +6641,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package mu4e-jump-to-list
-  :ensure t)
+(use-package mu4e-jump-to-list)
 #+END_SRC
 
 Canned queries.
@@ -7103,7 +6976,6 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-mu
-  :ensure t
   :config (progn
 
             (defun malb/helm-mu (arg)
@@ -7277,7 +7149,6 @@ Action to view e-mails in EWW.
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-conversation
   :after mu4e
-  :ensure t
   :config (add-to-list 'mu4e-view-actions '("Conversation view" . mu4e-conversation) t))
 #+END_SRC
 
@@ -7356,6 +7227,7 @@ Attachments are mostly handled using the helm baloo interface below, but sometim
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 
 (use-package gnus-dired
+  :ensure nil
   :after mu4e
   :config
   (progn
@@ -7465,6 +7337,7 @@ Link to mu4e messages and threads.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-mu4e
+  :ensure nil
   :config (progn
             (setq org-mu4e-link-query-in-headers-mode t)
             (defun malb/switch-to-mu4e-advice (old-function &rest arguments)
@@ -7481,7 +7354,6 @@ We change the default template to not include the title which is filled in by de
 
 #+BEGIN_SRC emacs-lisp
 (use-package org2blog
-  :ensure t
   :config (progn
             (let (credentials)
               (setq credentials (auth-source-user-and-password "martinralbrecht.wordpress.com"))
@@ -7670,7 +7542,6 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
-  :ensure t
   :magic ("%PDF" . pdf-view-mode)
   :config (progn
             (pdf-tools-install)
@@ -7928,8 +7799,7 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-noter
-  :ensure t)
+(use-package org-noter)
 #+END_SRC
 
 * Directories
@@ -7948,6 +7818,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired
+  :ensure nil
   :commands dired
   :config (progn
             (require 'dired-x)
@@ -7998,8 +7869,7 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-dired-history
-  :after (dired helm)
-  :ensure t)
+  :after (dired helm))
 #+END_SRC
 
 [[https://camo.githubusercontent.com/966cf1fc63ee7bdb7631c0debc74957ccefaff37/687474703a2f2f692e696d6775722e636f6d2f6d6d36674662582e706e67]]
@@ -8008,8 +7878,7 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-collapse
-  :after dired
-  :ensure t)
+  :after dired)
 #+END_SRC
 
 [[https://github.com/Fuco1/dired-hacks#dired-narrow][dired-narrow]] to … narrow down dired buffers
@@ -8017,7 +7886,6 @@ Show dired histories you have visited.
 #+BEGIN_SRC emacs-lisp
 (use-package dired-narrow
   :after dired
-  :ensure t
   :bind (:map dired-mode-map ("/" . dired-narrow)))
 #+END_SRC
 
@@ -8025,7 +7893,6 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-subtree
-  :ensure t
   :config
   :bind (:map dired-mode-map
               ("i" . dired-subtree-insert)
@@ -8036,7 +7903,6 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-ranger
-  :ensure t
   :after dired
   :bind (:map dired-mode-map
               ("C-w" . (lambda (arg)
@@ -8057,7 +7923,6 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package neotree
-  :ensure t
   :commands neotree
   :config (progn
             (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
@@ -8070,7 +7935,6 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package treemacs
-  :ensure t
   :defer t
   :config (progn
             (setq treemacs-follow-after-init          t
@@ -8089,8 +7953,7 @@ Show dired histories you have visited.
             (treemacs-filewatch-mode t)))
 
 (use-package treemacs-projectile
-  :defer t
-  :ensure t)
+  :defer t)
 #+END_SRC
 
 ** Tramp
@@ -8111,14 +7974,12 @@ Show dired histories you have visited.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-tramp
   :after helm
-  :ensure t
   :config (progn
             (add-to-list 'helm-commands-using-frame 'helm-tramp)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package docker-tramp
-  :ensure t)
+(use-package docker-tramp)
 #+END_SRC
 
 * Diff
@@ -8170,7 +8031,6 @@ Uses baloo to find files."
 
 #+BEGIN_SRC emacs-lisp
 (use-package plantuml-mode
-  :ensure t
   :commands (plantuml-mode)
   :init (progn
             (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar")))
@@ -8211,7 +8071,6 @@ deactivate Client
 
 #+BEGIN_SRC emacs-lisp
 (use-package calfw
-  :ensure t
   :commands (malb/calendar cfw:open-calendar-buffer)
   :bind (:map cfw:calendar-mode-map ("q" . kill-this-buffer))
   :config (progn
@@ -8236,8 +8095,7 @@ deactivate Client
 [[https://github.com/Brillow/transfer-sh.el][transfer.sh]] for interfacing with https://transfer.sh.
 
 #+BEGIN_SRC emacs-lisp
-(use-package transfer-sh
-  :ensure t)
+(use-package transfer-sh)
 #+END_SRC
 
 ** Pastebin/ix.io
@@ -8245,8 +8103,7 @@ deactivate Client
 Interfacing with http://ix.io/.
 
 #+BEGIN_SRC emacs-lisp
-(use-package ix
-  :ensure t)
+(use-package ix)
 #+END_SRC
 
 ** Gists
@@ -8268,7 +8125,6 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 
 #+BEGIN_SRC emacs-lisp
 (use-package gist
-  :ensure t
   :commands (gist-list gist-buffer)
   :config (progn
             (setq gist-ask-for-description t)))
@@ -8278,7 +8134,6 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 
 #+BEGIN_SRC emacs-lisp
 (use-package copy-as-format
-  :ensure t
   :commands (copy-as-format-github
              copy-as-format-jira
              copy-as-format-markdown
@@ -8310,7 +8165,6 @@ exports.boxes = [ "INBOX"];
 
 #+BEGIN_SRC emacs-lisp
 (use-package prodigy
-  :ensure t
   :init (progn
           (prodigy-define-tag
             :name 'email
@@ -8373,7 +8227,6 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
 
 #+BEGIN_SRC emacs-lisp
 (use-package page-break-lines
-  :ensure t
   :config (progn
             (global-page-break-lines-mode)
             (add-to-list 'page-break-lines-modes 'c-mode)
@@ -8381,7 +8234,6 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
             (diminish 'page-break-lines-mode)))
 
 (use-package helm-pages
-  :ensure t
   :config (progn
             (defhydra hydra-page-breaks (global-map "C-x")
               "pages"
@@ -8398,6 +8250,7 @@ Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-em
   :ensure emms)
 
 (use-package emms-player-mplayer
+  :ensure nil
   :after emms-setup
   :config (progn (emms-standard)
                  (emms-default-players)
@@ -8428,6 +8281,7 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-eww
+  :ensure nil
   :after org)
 #+END_SRC
 
@@ -8436,7 +8290,6 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 
 #+BEGIN_SRC emacs-lisp
 (use-package tracking
-  :ensure t
   :bind (:map tracking-mode-map
               ("<f2> <right>" . tracking-next-buffer)
               ("<f2> <left>" . tracking-previous-buffer))
@@ -8449,7 +8302,6 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 
 #+BEGIN_SRC emacs-lisp
 (use-package weechat
-  :ensure t
   :commands (weechat-connect malb/weechat)
   :after prodigy
   :config (progn
@@ -8671,6 +8523,7 @@ Characterise files with the same name by their path.
 
 #+BEGIN_SRC emacs-lisp
 (use-package uniquify
+  :ensure nil
   :config (setq uniquify-buffer-name-style 'forward))
 #+END_SRC
 
@@ -8873,7 +8726,6 @@ We don’t want the *scratch* buffer to be killed ever.
 
 #+BEGIN_SRC emacs-lisp
 (use-package unkillable-scratch
-  :ensure t
   :config (progn
             (unkillable-scratch 1)))
 #+END_SRC
@@ -8881,8 +8733,7 @@ We don’t want the *scratch* buffer to be killed ever.
 Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
 
 #+BEGIN_SRC emacs-lisp
-(use-package scratch
-  :ensure t)
+(use-package scratch)
 #+END_SRC
 
 Make scratch buffer an org-mode buffer.
@@ -8907,7 +8758,6 @@ then enter the text in that file's own buffer.
 
 #+BEGIN_SRC emacs-lisp
 (use-package edit-server
-  :ensure t
   :config (progn
             (edit-server-start)
             (setq edit-server-default-major-mode 'markdown-mode)))
@@ -8916,8 +8766,7 @@ then enter the text in that file's own buffer.
 Grab the link in the current browser tab
 
 #+BEGIN_SRC emacs-lisp
-(use-package grab-x-link
-  :ensure t)
+(use-package grab-x-link)
 #+END_SRC
 
 ** Encryption
@@ -8928,21 +8777,20 @@ Transparent encryption and decryption.
 
 #+BEGIN_SRC emacs-lisp
 (use-package epa-file
+  :ensure nil
   :config (epa-file-enable))
 #+END_SRC
 
 ** Memory Usage
 
 #+BEGIN_SRC emacs-lisp
-(use-package memory-usage
-  :ensure t)
+(use-package memory-usage)
 #+END_SRC
 
 ** Alert
 
 #+BEGIN_SRC emacs-lisp
 (use-package alert
-  :ensure t
   :config (setq alert-default-style 'libnotify))
 #+END_SRC
 
@@ -8952,7 +8800,6 @@ Transparent encryption and decryption.
 
 #+BEGIN_SRC emacs-lisp
 (use-package abgaben
-  :ensure t
   :after mu4e
   :config (progn
             (setq abgaben-org-file malb/abgaben-org-file
@@ -8971,7 +8818,6 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package logview
-  :ensure t
   :commands (logview-mode)
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
 #+END_SRC
@@ -8981,8 +8827,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 Wireshark et al. outputs ([[https://github.com/orgcandman/pcap-mode][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package pcap-mode
-  :ensure t)
+(use-package pcap-mode)
 #+END_SRC
 
 ** ELF Files
@@ -8991,7 +8836,6 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 
 #+BEGIN_SRC emacs-lisp
 (use-package elf-mode
-  :ensure t
   :mode (("\\.so\\'"  . elf-mode)
          ("\\.a\\'"   . elf-mode)))
 #+END_SRC
@@ -8999,15 +8843,13 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 ** YaML Files
 
 #+BEGIN_SRC emacs-lisp
-(use-package yaml-mode
-  :ensure t)
+(use-package yaml-mode)
 #+END_SRC
 
 ** Docker Filers
 
 #+BEGIN_SRC emacs-lisp
 (use-package dockerfile-mode
-  :ensure t
   :mode ("Dockerfile\\." . dockerfile-mode))
 #+END_SRC
 
@@ -9025,8 +8867,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 ** Unicode Fonts
 
 #+BEGIN_SRC emacs-lisp
-(use-package unicode-fonts
-   :ensure t)
+(use-package unicode-fonts)
 #+END_SRC
 
 ** Stripe Buffer
@@ -9037,7 +8878,6 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 
 #+BEGIN_SRC emacs-lisp
 (use-package stripe-buffer
-  :ensure t
   :config (progn
             (add-hook 'dired-mode-hook #'turn-on-stripe-buffer-mode)
             (add-hook 'org-mode-hook   #'turn-on-stripe-table-mode)))
@@ -9047,7 +8887,6 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 
 #+BEGIN_SRC emacs-lisp
 (use-package dimmer
-  :ensure t
   :commands dimmer-mode
   :config (setq dimmer-percent 0.3))
 #+END_SRC
@@ -9136,7 +8975,6 @@ The result looks like this:
 
 #+BEGIN_SRC emacs-lisp
 (use-package zenburn-theme
-  :ensure t
   :disabled)
 
 (defun malb/zenburn-theme (&optional arg)
@@ -9155,13 +8993,11 @@ The result looks like this:
 
 #+BEGIN_SRC emacs-lisp
 (use-package paper-theme
-  :ensure t
   :disabled)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package one-themes
-  :ensure t
   :disabled)
 #+END_SRC
 
@@ -9217,8 +9053,7 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
 ([[https://github.com/domtronn/all-the-icons.el][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package all-the-icons
-  :ensure t)
+(use-package all-the-icons)
 #+END_SRC
 
 ** Rainbow Mode
@@ -9227,7 +9062,6 @@ Colourise colours or names in buffers ([[http://git.savannah.gnu.org/cgit/emacs/
 
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-mode
-  :ensure t
   :config (progn
             (add-hook 'emacs-lisp-mode-hook #'rainbow-mode))
   :diminish rainbow-mode)
@@ -9241,7 +9075,6 @@ Send a little [[https://github.com/Malabarba/beacon][beacon]] signal after jumps
 
 #+BEGIN_SRC emacs-lisp
 (use-package beacon
-  :ensure t
   :diminish beacon-mode
   :config (progn
 
@@ -9379,7 +9212,6 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
-  :ensure t
   :diminish which-key-mode
   :config (progn
             (which-key-mode 1)))
