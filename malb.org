@@ -3848,6 +3848,26 @@ Save comint history when emacs is killed
 (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
   #+END_SRC
 
+***** Shx
+
+#+BEGIN_QUOTE
+shx or “shell-extras” extends comint-mode in Emacs — https://github.com/riscy/shx-for-emacs/
+#+END_QUOTE
+
+[[https://github.com/riscy/shx-for-emacs/blob/master/img/screenshot.png]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package shx
+  :ensure t
+  :after comint
+  :config (progn
+            (with-eval-after-load 'python
+              (add-hook 'inferior-python-mode-hook #'shx-mode))
+            ;; (with-eval-after-load 'sage-shell-mode
+            ;;   (add-hook 'sage-shell-mode-hook #'shx-mode))
+            ))
+#+END_SRC
+
 **** [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
 
 1. Open, say, *Sage*.
