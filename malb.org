@@ -6450,7 +6450,7 @@ Decide if text is a quote
 
 #+BEGIN_SRC emacs-lisp
 (defun aws-polly-is-quote (text)
-  (equal (substring text 0 2) "  "))
+  (equal (and (>= (length text) 2) (substring text 0 2)) "  "))
 #+END_SRC
 
 Return the first voice matching detected language.
