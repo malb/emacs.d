@@ -8930,7 +8930,6 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
             (add-hook 'nov-mode-hook #'visual-fill-column-mode)))
 #+END_SRC
 
-
 * Theme & Look
 ** Frame Title
 
