@@ -196,8 +196,9 @@ Allow pixel-wise scaling
 * Paths
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'exec-path (expand-file-name ".local/bin" "~"))
-(add-to-list 'exec-path (expand-file-name "Software/go/bin" "~"))
+(use-package exec-path-from-shell
+  :config (progn (exec-path-from-shell-initialize)
+                 (exec-path-from-shell-copy-env "GOPATH")))
 #+END_SRC
 
 * Keyboard Shortcuts
