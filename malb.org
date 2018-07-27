@@ -2046,6 +2046,7 @@ This library provides easy project management and navigation. The concept of a p
          ("<f6>" . next-error)
          :map projectile-command-map
          ("I" . #'malb/projectile-ipython))
+  :init  (setq projectile-keymap-prefix (kbd "C-c p"))
   :config (progn
             (use-package magit :ensure t)
             (require 'helm-projectile)
