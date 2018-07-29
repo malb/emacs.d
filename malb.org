@@ -887,7 +887,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
                   company-tooltip-align-annotations t
                   company-minimum-prefix-length 1
                   company-global-modes '(not)
-                  company-lighter-base "(C)")
+                  company-lighter-base "")
 
             (global-company-mode 1)
 
@@ -1736,7 +1736,7 @@ This can be dangerous, so only enable on per project basis, e.g.
 
 #+BEGIN_SRC emacs-lisp
 (use-package focus-autosave-mode
-  :delight (focus-autosave-local-mode " ♻"))
+  :delight (focus-autosave-local-mode " "))
 #+END_SRC
 
 ** Regexp
@@ -2065,7 +2065,7 @@ This library provides easy project management and navigation. The concept of a p
             (setq projectile-make-test-cmd "make check"
                   projectile-ignored-projects malb/projectile-ignored-projects
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
-                  projectile-mode-line  '(:eval (format "»{%s}" (projectile-project-name))))
+                  projectile-mode-line  '(:eval (format "{%s}" (projectile-project-name))))
 
             (projectile-mode)))
 #+END_SRC
@@ -5784,7 +5784,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 
 #+BEGIN_SRC emacs-lisp
 (use-package pandoc-mode
-  :delight '(:eval (concat " p[" (pandoc--get 'write) "]"))
+  :delight '(:eval (concat " [" (pandoc--get 'write) "]"))
   :config (progn
             (add-hook 'markdown-mode-hook #'pandoc-mode)
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
@@ -8949,10 +8949,32 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
         " - " invocation-name))
 #+END_SRC
 
-** Unicode Fonts
+** Fonts
+
+Better unicode font support.
 
 #+BEGIN_SRC emacs-lisp
 (use-package unicode-fonts)
+#+END_SRC
+
+[[https://raw.githubusercontent.com/domtronn/all-the-icons.el/master/logo.png]]
+
+([[https://github.com/domtronn/all-the-icons.el][source]])
+
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons)
+#+END_SRC
+
+[[https://fonts.google.com/specimen/Cousine][Cousine]] is wide font which means glyphs rendered in different fonts (when Cousine doesn’t have the matching glyph) are too high. Thus, we scale those other fonts down when Cousine is the default face. Note that =face-font-rescale-alist= is frame specific, thus the hook.
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/scale-fonts (frame)
+  (when (equal (face-attribute 'default :family) "Cousine")
+    (add-to-list 'face-font-rescale-alist (cons (font-spec :family "DejaVu Sans Mono") 0.9) t)
+    (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.9) t)
+    (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Material Icons") 0.9) t)))
+
+(add-hook 'after-make-frame-functions #'malb/scale-fonts)
 #+END_SRC
 
 ** Stripe Buffer
@@ -9115,6 +9137,7 @@ The result looks like this:
     (unicode-fonts-setup)
     (setq malb/theme-loaded t)))
 
+
 (if (daemonp)
     (add-hook 'after-make-frame-functions #'malb/load-theme)
   (malb/load-theme (selected-frame)))
@@ -9129,16 +9152,6 @@ Set transparency because reasons ([[https://github.com/codemac/config/blob/maste
   "Sets the transparency of the frame window. 0=transparent/100=opaque"
   (interactive "nTransparency Value 0 - 100 opaque:")
   (set-frame-parameter (selected-frame) 'alpha value))
-#+END_SRC
-
-** Icons
-
-[[https://raw.githubusercontent.com/domtronn/all-the-icons.el/master/logo.png]]
-
-([[https://github.com/domtronn/all-the-icons.el][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package all-the-icons)
 #+END_SRC
 
 ** Rainbow Mode
