@@ -1171,6 +1171,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-buffer-max-length 48
                   helm-display-header-line t
                   helm-ff-skip-boring-files t
+                  helm-find-files-ignore-thing-at-point t
                   helm-input-idle-delay 0.01
                   helm-bookmark-show-location t
                   helm-window-prefer-horizontal-split t
