@@ -7612,6 +7612,7 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
   :magic ("%PDF" . pdf-view-mode)
+  :after org
   :config (progn
             (pdf-tools-install)
             (setq-default pdf-view-display-size 'fit-page)
@@ -7858,7 +7859,29 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 
             (bind-key "C-c C-n" 'malb/pdf-annot-next pdf-annot-edit-contents-minor-mode-map)
             (bind-key "C-c C-p" 'malb/pdf-annot-prev pdf-annot-edit-contents-minor-mode-map)
-            (bind-key "C-c C-y" 'malb/pdf-annot-yank-highlight pdf-annot-edit-contents-minor-mode-map)))
+            (bind-key "C-c C-y" 'malb/pdf-annot-yank-highlight pdf-annot-edit-contents-minor-mode-map)
+
+            (defun malb/do-to-pdf-view-buffer (fn)
+              (let ((cur-window (get-buffer-window)))
+                (dolist (window (window-list))
+                  (let ((buffer (window-buffer window)))
+                    (with-current-buffer buffer
+                      (when (eq major-mode 'pdf-view-mode)
+                        (select-window window)
+                        (call-interactively fn)
+                        (select-window cur-window)
+                        ))))))
+
+            (defun malb/other-pdf-view-next-page ()
+              (interactive)
+              (malb/do-to-pdf-view-buffer #'pdf-view-next-page))
+
+            (defun malb/other-pdf-view-prev-page ()
+              (interactive)
+              (malb/do-to-pdf-view-buffer #'pdf-view-previous-page))
+
+            (bind-key "C->" #'malb/other-pdf-view-next-page org-mode-map)
+            (bind-key "C-<" #'malb/other-pdf-view-prev-page org-mode-map)))
 #+END_SRC
 
 ** Org Noter
