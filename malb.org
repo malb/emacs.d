@@ -9180,14 +9180,6 @@ Better unicode font support.
 (malb/fonts (selected-frame)) ;; initial frame
 #+END_SRC
 
-** Default Frame Size
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(width . 220))
-(add-to-list 'default-frame-alist '(height . 64))
-#+END_SRC
-
-
 ** Transparency
 
 Set transparency because reasons ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
