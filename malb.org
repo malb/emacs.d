@@ -8740,6 +8740,12 @@ Diminish =abbrev-mode=
 (setq search-default-mode 'char-fold-to-regexp)
 #+END_SRC
 
+Don’t error when killing read-only text.
+
+#+BEGIN_SRC emacs-lisp
+(setq kill-read-only-ok t)
+#+END_SRC
+
 *** COMMENT Overwrite a selection by typing over it
 
 #+BEGIN_SRC emacs-lisp
