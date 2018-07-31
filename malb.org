@@ -3914,11 +3914,11 @@ Use [[https://github.com/flycheck/flycheck-pos-tip][flycheck-pos-tip]] to displa
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-pos-tip
   :after flycheck
-  :config (progn
-            ;; flycheck errors on a tooltip (doesnt work on console)
-            (when (display-graphic-p (selected-frame))
-              (with-eval-after-load 'flycheck
-                (flycheck-pos-tip-mode)))))
+  :init (progn
+      ;; flycheck errors on a tooltip (doesnt work on console)
+      (when (display-graphic-p (selected-frame))
+        (with-eval-after-load 'flycheck
+          (flycheck-pos-tip-mode)))))
 #+END_SRC
 
 *** Comments
