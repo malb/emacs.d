@@ -5413,9 +5413,8 @@ Indicate soft wrapped lines.
 (use-package typo
   :diminish typo-mode
   :config (progn
+            (typo-global-mode)
             (setq-default typo-language "English")
-            ;; (add-hook 'markdown-mode-hook #'typo-mode)
-            ;; (add-hook 'rst-mode-hook #'typo-mode)
             (add-hook 'org-mode-hook #'typo-mode)))
 #+END_SRC
 
