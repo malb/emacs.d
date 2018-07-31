@@ -5934,16 +5934,14 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-quote-after-quote nil)
 
             ;; https://stackoverflow.com/questions/19845598/emacs-regex-replacing-a-string-inside-a-latex-equation
-            (fset 'malb/latex-replace-in-math
-                  `(lambda (regexp to-string &optional delimited start end backward)
-                     "Like `query-replace-regexp' but only replaces in LaTeX-math environments."
-                     ,(interactive-form 'query-replace-regexp)
-                     (let ((replace-re-search-function (lambda (regexp bound noerror)
-                                                         (catch :found
-                                                           (while (let ((ret (re-search-forward regexp bound noerror)))
-                                                                    (when (save-match-data (texmathp)) (throw :found ret))
-                                                                    ret))))))
-                       (query-replace-regexp regexp to-string delimited start end backward))))
+            (defun malb/latex-replace-in-math ()
+              "Call `query-replace-regexp' with `isearch-filter-predicate' set to filter out matches outside LaTeX math environments."
+              (interactive)
+              (let ((isearch-filter-predicate
+                     (lambda (BEG END)
+                       (save-excursion (save-match-data (goto-char BEG) (texmathp)))))
+                    (case-fold-search nil))
+                (call-interactively 'query-replace-regexp)))
 
             (setq-default TeX-master 'dwim)
             (setq-default TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
