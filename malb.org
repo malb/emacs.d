@@ -8771,19 +8771,26 @@ Add a function for renaming the file being edited ([[https://github.com/bodil/oh
                    name (file-name-nondirectory new-name)))))))
 #+END_SRC
 
-Copy filename to clipboard ([[http://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/][source]])
+Copy filename to clipboard
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/copy-file-name-to-clipboard ()
-  "Copy the current buffer file name to the clipboard."
+(defun malb/kill-buffer-file-name ()
+  "Show current buffer's filename in the echo area and add it to the kill ring."
   (interactive)
-  (let ((filename (if (equal major-mode 'dired-mode)
-                      default-directory
-                    (buffer-file-name))))
-    (when filename
-      (kill-new filename)
-      (message "Copied buffer file name '%s' to the clipboard." filename))))
+  (let ((buffer-file-name (buffer-file-name)))
+    (if (null buffer-file-name)
+        (message "Buffer %s is not associated with a file." (buffer-name))
+      (message "%s" (kill-new buffer-file-name)))))
+
+(defun malb/kill-buffer-file-basename ()
+  "Show the buffers base name in the echo area and add it to the kill ring."
+  (interactive)
+  (let ((bufer-file-name (buffer-file-name)))
+    (if (not (null buffer-file-name))
+        (message "%s" (kill-new (file-name-nondirectory buffer-file-name)))
+      (error "Buffer %s is not associated with a file" (buffer-name)))))
 #+END_SRC
+
 
 ([[http://emacsredux.com/blog/2013/04/21/edit-files-as-root/][source]])
 
