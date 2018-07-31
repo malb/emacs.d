@@ -3033,7 +3033,7 @@ SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
                     ("j" "add entry to [j]ournal"
                      entry (file+olp+datetree (lambda () (expand-file-name "journal.org"
                                                                        malb/org-files-dir)))
-                     "** research
+                     "** work
 %?
 ,** critique
 ")
