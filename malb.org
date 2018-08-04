@@ -5786,7 +5786,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 (use-package pandoc-mode
   :delight '(:eval (concat " [" (pandoc--get 'write) "]"))
   :config (progn
-            (add-hook 'markdown-mode-hook #'pandoc-mode)
+            (add-hook 'markdown-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
 
