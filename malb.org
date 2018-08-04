@@ -8004,7 +8004,17 @@ Show dired histories you have visited.
                          (bind-key "C-y" #'dired-ranger-paste dired-mode-map)))))
 #+END_SRC
 
-** Neotree
+[[https://github.com/yqrashawn/fd-dired][fd-dired]] run =fd= to produce dired buffers.
+
+#+BEGIN_SRC emacs-lisp
+(use-package fd-dired)
+#+END_SRC
+
+** Directory Trees
+
+I’m not really sold on either
+
+*** Neotree
 
 [[https://raw.githubusercontent.com/wiki/jaypei/emacs-neotree/imgs/neotree-1.png]]
 
@@ -8018,7 +8028,7 @@ Show dired histories you have visited.
                   neo-smart-open t)))
 #+END_SRC
 
-** Treemacs
+*** Treemacs
 
 [[https://raw.githubusercontent.com/Alexander-Miller/treemacs/master/screenshot.png]]
 
