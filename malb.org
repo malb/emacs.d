@@ -985,7 +985,7 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
 (use-package company-shell
   :config (progn
             (setq company-shell-modes '(sh-mode shell-mode))
-            (add-to-list 'company-backends 'company-shell)))
+            (add-to-list 'company-backends '(company-shell :with company-pcomplete))))
 #+END_SRC
 
 ** Company and YaSnippet Integration
