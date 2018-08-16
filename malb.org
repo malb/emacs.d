@@ -872,6 +872,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :bind (("M-/" . company-complete))
+  :defer nil
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
                   company-idle-delay 0.6   ; delay for popup
