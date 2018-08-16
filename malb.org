@@ -3415,6 +3415,29 @@ The function behaves as follows:
                                           t))))
 #+END_SRC
 
+** Shell
+
+#+BEGIN_SRC emacs-lisp
+(use-package shell
+  :config (progn
+            (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
+
+            ;; https://www.emacswiki.org/emacs/multi-shell.el
+            (defun malb/comint-close-buffer-when-finished ()
+              "This function for close current shell buffer.
+When `exit' from shell buffer."
+              (when (ignore-errors (get-buffer-process (current-buffer)))
+                (set-process-sentinel (get-buffer-process (current-buffer))
+                                      (lambda (proc change)
+                                        (when (string-match "\\(finished\\|exited\\)" change)
+                                          (kill-buffer (process-buffer proc)))))))
+
+            (add-hook 'shell-mode-hook #'toggle-truncate-lines)
+            (add-hook 'shell-mode-hook #'malb/comint-close-buffer-when-finished)
+            (fset 'malb/toggle-shell
+                  (malb/make-toggle-shell "shell" '(shell)  nil t))))
+#+END_SRC
+
 ** EShell
 
 ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
