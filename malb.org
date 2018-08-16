@@ -3705,6 +3705,26 @@ cat mylog.log >> #<buffer *scratch*>
   (helm-other-buffer 'malb/helm-c-source-zsh-history "*helm zsh history*"))
 #+END_SRC
 
+** Yakuake
+
+… still my main shell.
+
+#+BEGIN_SRC sh :tangle no
+#!/usr/bin/env bash
+if [ -z $(wmctrl -xl | grep -iF 'yakuake.yakuake' | head -n1 | cut -d' ' -f1) ]; then
+    qdbus org.kde.yakuake /yakuake/window toggleWindowState;
+fi
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.addSession;
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev/null 2>&1 &
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/ykcd ()
+  (interactive)
+  (let ((fn (or (buffer-file-name) "~")))
+    (shell-command (concat "ykcd " (file-name-directory fn)))))
+#+END_SRC
+
 * Programming (Languages)
 ** General
 *** REPL
