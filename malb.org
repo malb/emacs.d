@@ -5794,7 +5794,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
               (cond
                (arg
                 (malb/-copy-as
-                 (completing-read "Output format to use: " pandoc--output-formats nil t)))
+                 (completing-read "Output format to use: " (mapcar 'car pandoc-output-format-extensions) nil t)))
                ((derived-mode-p 'org-mode)
                 (malb/copy-as-latex-from-org))
                (t
