@@ -5740,7 +5740,7 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 (use-package google-translate
   :bind ("C-c w t" . google-translate-smooth-translate)
   :init (progn (setq google-translate-translation-directions-alist
-                     '(("en" . "de") ("de" . "en")))))
+                     '(("de" . "en") ("en" . "de")))))
 #+END_SRC
 
 ** Taking Notes
