@@ -1410,7 +1410,7 @@ Switch themes with helm.
             (setq helm-locate-command
                   (let ((databases (concat
                                     "/var/lib/mlocate/mlocate.db")))
-                    (concat "locate -d " databases  " %s -e --regex %s")))
+                    (concat "locate -d " databases  " %s -e -A --regex %s")))
 
             (add-to-list 'helm-commands-using-frame 'helm-locate)
 
