@@ -3528,8 +3528,10 @@ When nth is set, it will copy the nth previous command."
               (setq pcomplete-cycle-completions t
                     pcomplete-ignore-case t)
               (setq-local company-idle-delay nil)
-              (malb/enable-company-pcomplete) ;; TODO this might bomb out
-              (define-key eshell-mode-map [remap eshell-pcomplete] #'company-complete))
+              (malb/enable-company-pcomplete)
+              (define-key eshell-mode-map [remap eshell-pcomplete] #'company-pcomplete))
+
+            (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
             ;; https://gist.github.com/kanru/8680931
             (defun malb/eshell-last-argument (n)
@@ -3554,8 +3556,6 @@ When nth is set, it will copy the nth previous command."
                 (put 'malb/eshell-insert-last-word 'pre-n (1+ n))
                 (put 'malb/eshell-insert-last-word 'pre-p (point))
                 (insert (malb/eshell-last-argument n))))
-
-            (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
             (setq eshell-scroll-to-bottom-on-input t
                   eshell-destroy-buffer-when-process-dies t
