@@ -3478,7 +3478,7 @@ When `exit' from shell buffer."
 
             (defalias 'eshell/q     'malb/quit-bottom-disposable-windows)
             (defalias 'eshell/en    'find-file)
-            (defalias 'eshell/vim    'find-file) ;; muscle memory
+            (defalias 'eshell/vim   'find-file) ;; muscle memory
             (defalias 'eshell/d     'dired)
             (defalias 'eshell/emacs 'find-file)
             (defalias 'eshell/less  'view-file)
