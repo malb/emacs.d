@@ -3454,12 +3454,15 @@ When `exit' from shell buffer."
 #+BEGIN_SRC emacs-lisp
 (use-package eshell
   :config (progn
+
+            ;; TOGGLE ESHELL
+
             (fset 'malb/toggle-eshell
                   (malb/make-toggle-shell "eshell"
                                           '(eshell "new")
                                           '(progn (insert "ls") (eshell-send-input)) t))
 
-            (bind-key "C-§" #'malb/toggle-eshell)
+            (bind-key "C-`" #'malb/toggle-eshell)
 
             (defun malb/eshell-keys ()
               (bind-key "<home>" #'eshell-bol eshell-mode-map)
@@ -3467,9 +3470,17 @@ When `exit' from shell buffer."
               (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map)
               (bind-key "ESC ." #'malb/eshell-insert-last-word eshell-mode-map))
 
+            ;; ------------
+            ;; KEY BINDINGS
+            ;; ------------
+
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
             ;; for some reason this needs to be a hook
             (add-hook 'eshell-mode-hook #'malb/eshell-keys)
+
+            ;; ---------------
+            ;; VISUAL COMMANDS
+            ;; ---------------
 
             (setq eshell-visual-subcommands '(("git" "diff" "show")
                                               ("tmux" "attach" "new")))
@@ -3480,6 +3491,24 @@ When `exit' from shell buffer."
               (add-to-list 'eshell-visual-commands "ipython")
               (add-to-list 'eshell-visual-commands "mscdb.sh")
               (add-to-list 'eshell-visual-commands "vim"))
+
+            (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
+
+            (defun malb/visual-command-frame (old-function &rest arguments)
+              (let  ((frame (new-frame '((width . 160) (height . 40)))))
+                (select-frame frame)
+                (apply old-function arguments)
+                ;; (set-process-sentinel (get-buffer-process (current-buffer))
+                ;;                       (lambda (proc change)
+                ;;                         (when (string-match "\\(finished\\|exited\\)" change)
+                ;;                           (delete-frame (window-frame (get-buffer-window (process-buffer proc)))))))
+                (set-window-dedicated-p (get-buffer-window) t)))
+
+            (advice-add #'eshell-exec-visual :around #'malb/visual-command-frame)
+
+            ;; -------
+            ;; ALIASES
+            ;; -------
 
             ;; https://github.com/algernon/emacs.d/blob/master/layers/%2Bapps/algernon-eshell/packages.el#L85-L95
             (defun malb/git-log (&rest args)
@@ -3509,13 +3538,6 @@ When `exit' from shell buffer."
                      (message command)
                      (shell-command-to-string command)))))
 
-            (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
-
-            (defun malb/eshell-minor-modes ()
-              (smartparens-mode t))
-
-            (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
-
             ;; mapped to 'x' in eshell
             (defun eshell/x ()
               (delete-window)
@@ -3535,17 +3557,35 @@ When `exit' from shell buffer."
                 (erase-buffer)
                 (eshell-send-input)))
 
+            ;; TODO This is broken
+            (defun eshell/ag (&optional dir)
+              (malb/helm-ag (file-name-as-directory
+                             (expand-file-name (or dir ".")))))
+
+            ;; -----------
+            ;; MINOR MODES
+            ;; -----------
+
+            (defun malb/eshell-minor-modes ()
+              (smartparens-mode t))
+
+            (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
+
+            ;; ------------------------------------------------
+            ;; DON'T ADD COMMAND STARTING WITH SPACE TO HISTORY
+            ;; ------------------------------------------------
+
             (setq eshell-input-filter
                   (lambda (str)
                     (not (or (string= "" str)
                              (string-prefix-p " " str)))))
 
-            (defun eshell/ag (&optional dir)
-              (malb/helm-ag (file-name-as-directory
-                             (expand-file-name (or dir ".")))))
+            ;; --------------------
+            ;; COPY PREVIOUS OUTPUT
+            ;; --------------------
 
             ;; http://fasciism.com/2017/01/27/eshell-kill-previous-output/
-            (defun eshell/kill-previous-output (&optional nth)
+            (defun eshell/kpo (&optional nth)
               "Copies the output of the previous command to the kill ring.
 When nth is set, it will copy the nth previous command."
               (save-excursion
@@ -3570,6 +3610,10 @@ When nth is set, it will copy the nth previous command."
                   ;; Output stats on what was copied as a sanity check.
                   (format "Copied %s words to kill ring." (count-words-region (point) end)))))
 
+            ;; --------------
+            ;; TAB COMPLETION
+            ;; --------------
+
             (defun malb/config-eshell-completion ()
               (setq pcomplete-cycle-completions t
                     pcomplete-ignore-case t)
@@ -3578,6 +3622,11 @@ When nth is set, it will copy the nth previous command."
               (define-key eshell-mode-map [remap eshell-pcomplete] #'company-pcomplete))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
+
+
+            ;; -----
+            ;; ESC-.
+            ;; -----
 
             ;; https://gist.github.com/kanru/8680931
             (defun malb/eshell-last-argument (n)
@@ -3602,6 +3651,10 @@ When nth is set, it will copy the nth previous command."
                 (put 'malb/eshell-insert-last-word 'pre-n (1+ n))
                 (put 'malb/eshell-insert-last-word 'pre-p (point))
                 (insert (malb/eshell-last-argument n))))
+
+            ;; ------
+            ;; CONFIG
+            ;; ------
 
             (setq eshell-scroll-to-bottom-on-input t
                   eshell-destroy-buffer-when-process-dies t
