@@ -6709,13 +6709,21 @@ We call =pandoc= to convert our buffer to plain text. This kills links etc. whic
         (text))
     (if reader
         (progn
-          (pandoc--set 'read reader)
-          (get-buffer-create pandoc--output-buffer-name)
-          (pandoc--call-external "plain" nil (cons beginning end))
-          (switch-to-buffer (get-buffer-create pandoc--output-buffer-name))
-          (setq text (buffer-string))
-          (bury-buffer)
-          (replace-regexp-in-string "_" "" text))
+          (let ((orig-buffer (current-buffer))
+                (pandoc-buffer (get-buffer-create pandoc--output-buffer-name)))
+            (switch-to-buffer pandoc-buffer)
+            (erase-buffer)
+            (switch-to-buffer orig-buffer)
+            (call-process-region beginning end "pandoc" nil pandoc-buffer t
+                                 "--read"
+                                 reader
+                                 "--write"
+                                 "plain"
+                                 "--quiet")
+            (switch-to-buffer pandoc-buffer)
+            (setq text (buffer-string))
+            (bury-buffer)
+            (replace-regexp-in-string "_" "" text)))
       (buffer-substring beginning end))))
 #+END_SRC
 
