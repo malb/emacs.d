@@ -979,6 +979,23 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
    :config (add-to-list 'company-backends #'company-reftex-labels))
 #+END_SRC
 
+** Shell
+
+Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =pcomplete= which is then used by =company-pcomplete=
+
+#+BEGIN_SRC emacs-lisp
+(use-package fish-completion
+  :config (progn
+            (setq fish-completion-fallback-on-bash-p t)
+            (global-fish-completion-mode)))
+#+END_SRC
+
+Fish completion will fall back to [[https://github.com/szermatt/emacs-bash-completion][bash-completion]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package bash-completion)
+#+END_SRC
+
 ** Company and YaSnippet Integration
 
 Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
@@ -3454,8 +3471,8 @@ When `exit' from shell buffer."
             ;; for some reason this needs to be a hook
             (add-hook 'eshell-mode-hook #'malb/eshell-keys)
 
-            (setq eshell-visual-subcommands '(("git"  ("log" "diff" "show"))
-                                              ("tmux" ("attach" "new"))))
+            (setq eshell-visual-subcommands '(("git" "diff" "show")
+                                              ("tmux" "attach" "new")))
 
             (defun malb/eshell-add-visual-commands ()
               (add-to-list 'eshell-visual-commands "htop")
@@ -3463,6 +3480,34 @@ When `exit' from shell buffer."
               (add-to-list 'eshell-visual-commands "ipython")
               (add-to-list 'eshell-visual-commands "mscdb.sh")
               (add-to-list 'eshell-visual-commands "vim"))
+
+            ;; https://github.com/algernon/emacs.d/blob/master/layers/%2Bapps/algernon-eshell/packages.el#L85-L95
+            (defun malb/git-log (&rest args)
+              (let* ((branch-or-file (car args))
+                     (file-list (if (and branch-or-file (f-file-p branch-or-file))
+                                    args
+                                  (cdr args)))
+                     (branch (if (and branch-or-file (f-file-p branch-or-file))
+                                 "HEAD"
+                               branch-or-file)))
+                (message branch-or-file)
+                (if branch-or-file
+                    (magit-log (list branch) '()
+                               (mapcar (lambda (f) (concat (eshell/pwd) "/" f))
+                                       file-list))
+                  (magit-log-head)))
+              (eshell/echo))
+
+            ;; https://github.com/algernon/emacs.d/blob/master/layers/%2Bapps/algernon-eshell/packages.el#L85-L95
+            (defun eshell/git (command &rest args)
+              (pcase command
+                ("log" (apply #'malb/git-log args))
+                ("status" (progn
+                            (magit-status)
+                            (eshell/echo)))
+                (_ (let ((command (s-join " " (append (list "git" command) args))))
+                     (message command)
+                     (shell-command-to-string command)))))
 
             (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
 
@@ -3478,6 +3523,7 @@ When `exit' from shell buffer."
 
             (defalias 'eshell/q     'malb/quit-bottom-disposable-windows)
             (defalias 'eshell/en    'find-file)
+            (defalias 'eshell/e     'find-file)
             (defalias 'eshell/vim   'find-file) ;; muscle memory
             (defalias 'eshell/d     'dired)
             (defalias 'eshell/emacs 'find-file)
@@ -3568,13 +3614,17 @@ When nth is set, it will copy the nth previous command."
                   eshell-plain-echo-behavior t)))
 #+END_SRC
 
-*** Fish completion
+Plan 9 Smart Shell
 
-([[https://github.com/Ambrevar/emacs-fish-completion][source]])
+([[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][source]])
+
 
 #+BEGIN_SRC emacs-lisp
-(use-package fish-completion
-  :config (global-fish-completion-mode))
+(use-package em-smart
+  :ensure nil
+  :config (setq eshell-where-to-jump 'begin
+                eshell-review-quick-commands nil
+                eshell-smart-space-goes-to-end t))
 #+END_SRC
 
 *** Git prompt
