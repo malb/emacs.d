@@ -8996,6 +8996,26 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
          ("\\.a\\'"   . elf-mode)))
 #+END_SRC
 
+** Sobj Files
+
+([[https://emacs.stackexchange.com/questions/44202/open-a-file-in-read-only-preprocessed-mode][source]])
+
+#+BEGIN_SRC emacs-lisp
+(define-derived-mode sobj-mode python-mode "sobj"
+  "Major mode for viewing sobj files."
+  (delete-region (point-min) (point-max))
+  (call-process "python" nil t t "-c" (format (concat "# -*- coding: utf-8 -*-\n"
+                                                      "import pickle\n"
+                                                      "import pprint\n"
+                                                      "pprint.PrettyPrinter(indent=4).pprint(pickle.load(open('%s', 'rb')))")
+                                              (buffer-file-name)))
+  (set-buffer-modified-p nil)
+  (read-only-mode)
+  (beginning-of-buffer))
+
+(add-to-list 'auto-mode-alist '("\\.sobj\\'" . sobj-mode))
+#+END_SRC
+
 ** YaML Files
 
 #+BEGIN_SRC emacs-lisp
