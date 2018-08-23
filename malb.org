@@ -979,15 +979,6 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
    :config (add-to-list 'company-backends #'company-reftex-labels))
 #+END_SRC
 
-** Shell
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-shell
-  :config (progn
-            (setq company-shell-modes '(sh-mode shell-mode))
-            (add-to-list 'company-backends '(company-shell :with company-pcomplete))))
-#+END_SRC
-
 ** Company and YaSnippet Integration
 
 Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
@@ -3433,6 +3424,7 @@ When `exit' from shell buffer."
                                           (kill-buffer (process-buffer proc)))))))
 
             (add-hook 'shell-mode-hook #'toggle-truncate-lines)
+            (add-hook 'shell-mode-hook #'malb/enable-company-pcomplete)
             (add-hook 'shell-mode-hook #'malb/comint-close-buffer-when-finished)
             (fset 'malb/toggle-shell
                   (malb/make-toggle-shell "shell" '(shell)  nil t))))
@@ -3536,7 +3528,7 @@ When nth is set, it will copy the nth previous command."
               (setq pcomplete-cycle-completions t
                     pcomplete-ignore-case t)
               (setq-local company-idle-delay nil)
-              ;; (malb/enable-company-pcomplete)
+              (malb/enable-company-pcomplete) ;; TODO this might bomb out
               (define-key eshell-mode-map [remap eshell-pcomplete] #'company-complete))
 
             ;; https://gist.github.com/kanru/8680931
