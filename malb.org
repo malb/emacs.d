@@ -1244,6 +1244,34 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (assq-delete-all 'find-file helm-completing-read-handlers-alist)))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(use-package helm-utils
+  :ensure nil
+  :after transfer-sh
+  :config (progn
+            (defun malb/helm-mml-attach-files (_candidate)
+              "Attach all selected files"
+              (let* ((files (helm-marked-candidates)))
+                (mapcar 'mml-attach-file files)))
+
+            (defun malb/helmified-mml-attach-files ()
+              (interactive)
+              (with-helm-alive-p
+                (helm-exit-and-execute-action 'malb/helm-mml-attach-files)))
+
+            (defun malb/helm-transfer-sh-files (_candidate)
+              "Transfer.sh all selected files"
+              (let* ((files (helm-marked-candidates)))
+                (mapcar (lambda (file)
+                          (transfer-sh-upload-file-async file (file-name-nondirectory file)))
+                        files)))
+
+            (defun malb/helmified-transfer-sh-files ()
+              (interactive)
+              (with-helm-alive-p
+                (helm-exit-and-execute-action 'malb/helm-transfer-sh-files)))))
+#+END_SRC
+
 ** Helm Fuzzy Matching
 
 [[https://github.com/EphramPerdition/helm-fuzzier][helm-fuzzier]] provides more intuitive fuzzy matching behavior for helm.
@@ -1412,8 +1440,11 @@ Switch themes with helm.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-locate
   :ensure nil
-  :after helm
+  :after (helm helm-utils)
   :commands helm-locate
+  :bind (:map helm-generic-files-map
+              ("C-c C-a" . malb/helmified-mml-attach-files)
+              ("C-c C-t" . malb/helmified-transfer-sh-files))
   :config (progn
             (setq helm-locate-command
                   (let ((databases (concat
@@ -1422,7 +1453,8 @@ Switch themes with helm.
 
             (add-to-list 'helm-commands-using-frame 'helm-locate)
 
-            (helm-add-action-to-source "Attach to E-mail" #'mml-attach-file helm-source-locate)))
+            (helm-add-action-to-source "Attach to E-mail" #'malb/helm-mml-attach-files helm-source-locate)
+            (helm-add-action-to-source "Transfer.sh"      #'malb/helm-transfer-sh-files helm-source-locate)))
 #+END_SRC
 
 ** Helm Org Rifle
@@ -7368,7 +7400,6 @@ Action to view e-mails in EWW.
   :config (add-to-list 'mu4e-view-actions '("Conversation view" . mu4e-conversation) t))
 #+END_SRC
 
-
 ** Writing
 
 Don’t break long lines manually.
@@ -8694,61 +8725,42 @@ A file is large if it is 32MB in my world.
                 (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
             cs)))
 
-(require 'helm-utils)
-
-(defun malb/helm-mml-attach-files (_candidate)
-  "Attach all selected files"
-  (let* ((files (helm-marked-candidates)))
-    (mapcar 'mml-attach-file files)))
-
-(defun malb/helm-transfer-sh-files (_candidate)
-  "Transfer.sh all selected files"
-  (let* ((files (helm-marked-candidates)))
-    (mapcar 'transfer-sh-upload-file-async files)))
+(defvar helm-baloo-actions
+  '(("Open"                   . (lambda (x) (helm-find-many-files x)))
+    ("Attach to E-mail"        . (lambda (x) (malb/helm-mml-attach-files x)))
+    ("Transfer.sh"            . (lambda (x) (malb/helm-transfer-sh-files x)))
+    ("Find file as root"      . (lambda (x) (helm-find-file-as-root x)))
+    ("Find file other window" . (lambda (x) (helm-find-files-other-window x)))
+    ("Find file other frame"  . (lambda (x) (find-file-other-frame x)))
+    ("Open Dired in file's directory" . (lambda (x) (helm-open-dired x)))
+    ("Grep File(s) `C-u recurse'"     . (lambda (x) (helm-find-files-grep x)))
+    ("Zgrep File(s) `C-u Recurse'"    . (lambda (x) (helm-ff-zgrep x)))
+    ("Pdfgrep File(s)"                . (lambda (x) (helm-ff-pdfgrep x)))
+    ("Insert as org link"             . (lambda (x) (helm-files-insert-as-org-link x)))
+    ("Checksum File"                  . (lambda (x) (helm-ff-checksum x)))
+    ("Ediff File"                     . (lambda (x) (helm-find-files-ediff-files x)))
+    ("Ediff Merge File" . (lambda (x) (helm-find-files-ediff-merge-files x)))
+    ("Etags `M-., C-u reload tag file'" . (lambda (x) (helm-ff-etags-select x)))
+    ("View file" . (lambda (x) (view-file x)))
+    ("Insert file" . (lambda (x) (insert-file x)))
+    ("Add marked files to file-cache" . (lambda (x) (helm-ff-cache-add-file x)))
+    ("Delete file(s)" . (lambda (x) (helm-delete-marked-files x)))
+    ("Copy file(s) `M-C, C-u to follow'" . (lambda (x) (helm-find-files-copy x)))
+    ("Rename file(s) `M-R, C-u to follow'"  . (lambda (x) (helm-find-files-rename x)))
+    ("Symlink files(s) `M-S, C-u to follow'" . (lambda (x) (helm-find-files-symlink x)))
+    ("Relsymlink file(s) `C-u to follow'"   . (lambda (x) (helm-find-files-relsymlink x)))
+    ("Hardlink file(s) `M-H, C-u to follow'" . (lambda (x) (helm-find-files-hardlink x)))
+    ("Open file externally (C-u to choose)"  . (lambda (x) (helm-open-file-externally x)))
+    ("Open file with default tool" . (lambda (x) (helm-open-file-with-default-tool x)))
+    ("Find file in hex dump" . (lambda (x) (hexl-find-file) x))))
 
 (defvar helm-source-baloo
   (helm-build-async-source "Baloo"
     :candidates-process #'helm-baloo-search
     :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
-    :action '(("Open"                   . (lambda (x) (helm-find-many-files x)))
-              ("Attach to E-mail"        . (lambda (x) (malb/helm-mml-attach-files x)))
-              ("Transfer.sh"            . (lambda (x) (malb/helm-transfer-sh-files x)))
-              ("Find file as root"      . (lambda (x) (helm-find-file-as-root x)))
-              ("Find file other window" . (lambda (x) (helm-find-files-other-window x)))
-              ("Find file other frame"  . (lambda (x) (find-file-other-frame x)))
-              ("Open Dired in file's directory" . (lambda (x) (helm-open-dired x)))
-              ("Grep File(s) `C-u recurse'"     . (lambda (x) (helm-find-files-grep x)))
-              ("Zgrep File(s) `C-u Recurse'"    . (lambda (x) (helm-ff-zgrep x)))
-              ("Pdfgrep File(s)"                . (lambda (x) (helm-ff-pdfgrep x)))
-              ("Insert as org link"             . (lambda (x) (helm-files-insert-as-org-link x)))
-              ("Checksum File"                  . (lambda (x) (helm-ff-checksum x)))
-              ("Ediff File"                     . (lambda (x) (helm-find-files-ediff-files x)))
-              ("Ediff Merge File" . (lambda (x) (helm-find-files-ediff-merge-files x)))
-              ("Etags `M-., C-u reload tag file'" . (lambda (x) (helm-ff-etags-select x)))
-              ("View file" . (lambda (x) (view-file x)))
-              ("Insert file" . (lambda (x) (insert-file x)))
-              ("Add marked files to file-cache" . (lambda (x) (helm-ff-cache-add-file x)))
-              ("Delete file(s)" . (lambda (x) (helm-delete-marked-files x)))
-              ("Copy file(s) `M-C, C-u to follow'" . (lambda (x) (helm-find-files-copy x)))
-              ("Rename file(s) `M-R, C-u to follow'"  . (lambda (x) (helm-find-files-rename x)))
-              ("Symlink files(s) `M-S, C-u to follow'" . (lambda (x) (helm-find-files-symlink x)))
-              ("Relsymlink file(s) `C-u to follow'"   . (lambda (x) (helm-find-files-relsymlink x)))
-              ("Hardlink file(s) `M-H, C-u to follow'" . (lambda (x) (helm-find-files-hardlink x)))
-              ("Open file externally (C-u to choose)"  . (lambda (x) (helm-open-file-externally x)))
-              ("Open file with default tool" . (lambda (x) (helm-open-file-with-default-tool x)))
-              ("Find file in hex dump" . (lambda (x) (hexl-find-file) x)))
+    :action helm-baloo-actions
     :keymap helm-generic-files-map
     :help-message #'helm-generic-file-help-message))
-
-(bind-key "C-c C-a" (lambda ()
-                      (interactive)
-                      (with-helm-alive-p
-                        (helm-exit-and-execute-action 'malb/helm-mml-attach-files))) helm-generic-files-map)
-
-(bind-key "C-c C-t" (lambda ()
-                      (interactive)
-                      (with-helm-alive-p
-                        (helm-exit-and-execute-action 'malb/helm-transfer-sh-files))) helm-generic-files-map)
 
 (defun helm-baloo ()
   (interactive)
