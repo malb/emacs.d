@@ -7490,8 +7490,7 @@ Action to view e-mails in EWW.
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-conversation
-  :after mu4e
-  :config (add-to-list 'mu4e-view-actions '("Conversation view" . mu4e-conversation) t))
+  :after mu4e)
 #+END_SRC
 
 ** Writing
