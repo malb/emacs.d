@@ -1520,11 +1520,13 @@ Switch themes with helm.
   :group 'helm-baloo
   :type '(integer :tag "Limit"))
 
-(defun baloo-search (pattern)
-  (start-process "baloosearch" nil "baloosearch" (format "-l %d " helm-baloo-file-limit) pattern))
+(defun baloo-search (pattern &optional directory)
+  (if directory
+      (start-process "baloosearch" nil "baloosearch" "-d" directory "-l" (format "%d" helm-baloo-file-limit) pattern)
+    (start-process "baloosearch" nil "baloosearch" "-l" (format "%d" helm-baloo-file-limit) pattern)))
 
-(defun helm-baloo-search ()
-  (baloo-search helm-pattern))
+(defun helm-baloo-search (&optional directory)
+  (baloo-search helm-pattern directory))
 
 (defun helm-baloo-transform (cs)
   (let '(helm-baloo-clean-up-regexp (rx (or
@@ -1568,20 +1570,35 @@ Switch themes with helm.
     ("Open file with default tool" . (lambda (x) (helm-open-file-with-default-tool x)))
     ("Find file in hex dump" . (lambda (x) (hexl-find-file) x))))
 
-(defvar helm-source-baloo
-  (helm-build-async-source "Baloo"
-    :candidates-process #'helm-baloo-search
-    :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
-    :action helm-baloo-actions
-    :keymap helm-generic-files-map
-    :help-message #'helm-generic-file-help-message))
-
-(defun helm-baloo ()
+(defun helm-baloo-no-directory ()
   (interactive)
-  (helm :sources helm-source-baloo
+  (helm :sources (helm-build-async-source "Baloo"
+                   :candidates-process #'helm-baloo-search
+                   :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
+                   :action helm-baloo-actions
+                   :keymap helm-generic-files-map
+                   :help-message #'helm-generic-file-help-message)
         :buffer "*helm baloo*"))
 
-(add-to-list 'helm-commands-using-frame 'helm-baloo)
+(defun helm-baloo-in-directory (directory)
+  (interactive "D")
+  (helm :sources (helm-build-async-source "Baloo"
+                   :candidates-process (lambda () (helm-baloo-search directory))
+                   :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
+                   :action helm-baloo-actions
+                   :keymap helm-generic-files-map
+                   :help-message #'helm-generic-file-help-message)
+        :buffer "*helm baloo*"))
+
+(defun helm-baloo (&optional arg)
+  (interactive "P")
+  (if arg
+      (progn
+        (call-interactively #'helm-baloo-in-directory))
+    (call-interactively #'helm-baloo-no-directory)))
+
+(add-to-list 'helm-commands-using-frame 'helm-baloo-no-directory)
+(add-to-list 'helm-commands-using-frame 'helm-baloo-in-directory)
 #+END_SRC
 
 * History
