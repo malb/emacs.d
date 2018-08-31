@@ -770,7 +770,9 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
          ("C-c j b SPC" . bm-toggle)))
 #+END_SRC
 
-* Snippets (YaSnippet)
+* Snippets
+
+** YaSnippet
 
 #+BEGIN_QUOTE
 [[https://github.com/capitaomorte/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. ([[https://github.com/capitaomorte/yasnippet][source]])
@@ -803,7 +805,7 @@ The official yasnippet snippet collection
 (use-package yasnippet-snippets)
 #+END_SRC
 
-** Auto YASnippet
+*** Auto YASnippet
 
 #+BEGIN_QUOTE
 [[https://github.com/abo-abo/auto-yasnippet][auto-yasnippet]] is a hybrid of keyboard macros and yasnippet. You create the snippet on the go, usually to be used just in the one place. It's fast, because you're not leaving the current buffer, and all you do is enter the code you'd enter anyway, just placing ~ where you'd like yasnippet fields and mirrors to be.
@@ -815,7 +817,7 @@ The official yasnippet snippet collection
          ("C-c y e" . aya-expand)))
 #+END_SRC
 
-** Auto Insert
+*** Auto Insert
 
 We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/blob/master/core/core-autoinsert.el][source]])
 
@@ -851,7 +853,7 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
 
 ****** TODO split data from implementation
 
-** Helm YaSnippet
+*** Helm YaSnippet
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-c-yasnippet
