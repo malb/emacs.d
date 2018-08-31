@@ -2495,6 +2495,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
               "READ(r)"
               "REPLY(R)"
               "CALL"
+              "MAIL"
               "LOAD"
               "PAY(P)"
               "BOOK(B)"
