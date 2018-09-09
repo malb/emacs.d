@@ -6045,6 +6045,8 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (bind-key "M-W" #'malb/copy-as)))
 #+END_SRC
 
+******* TODO Use =call-process-region= directly instead of =pandoc-mode=
+
 ** ReST
 
 Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt= or =README= in ReST. Hence, we add =README.txt= as the kind of file which wants ReST and use [[http://docutils.sourceforge.net/docs/user/emacs.html][rst-mode]] to edit it.
