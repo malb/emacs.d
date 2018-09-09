@@ -8222,6 +8222,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             ;; https://github.com/wasamasa/dotemacs/blob/master/init.org
 
             (bind-key "RET" #'dired-find-alternate-file dired-mode-map)
+            (bind-key "^"  (lambda () (interactive) (find-alternate-file "..")) dired-mode-map)
 
             (dired-async-mode)
 
