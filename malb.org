@@ -4440,6 +4440,8 @@ This packages tries to smartly go to definition leveraging several methods to do
   :config (smart-jump-setup-default-registers))
 #+END_SRC
 
+****** TODO smart-jump config C/C++ rtags -> semantic -> ggtags -> dumb jump
+
 *** Debuggers
 
 [[https://github.com/realgud/realgud][All the debuggers]].
@@ -4906,7 +4908,7 @@ Fall back to dumb jump if anaconda fails.
 
 #+BEGIN_SRC emacs-lisp
 (use-package anaconda-mode
-  :after dumb-jump
+  :after smart-jump
   :diminish anaconda-mode
   :bind (:map anaconda-mode-map ("M-," . anaconda-mode-go-back))
   :config (progn
@@ -4930,18 +4932,7 @@ Fall back to dumb jump if anaconda fails.
                     (python-shell-interpreter-args "-i"))
                 (apply orig-fun args)))
 
-            (advice-add 'anaconda-mode-start :around #'malb/vanilla-python-shell-interpreter)
-            ;; (defun malb/python-mode-find-definitions (&optional arg)
-            ;;   (interactive "P")
-            ;;   (let ((p (point)))
-            ;;     (if (not (called-interactively-p 'any))
-            ;;         (anaconda-mode-find-definitions arg)
-            ;;       (call-interactively 'anaconda-mode-find-definitions))
-            ;;     (if (equal p (point))
-            ;;         (dumb-jump-go))))
-
-            ;; (bind-key "M-." #'malb/python-mode-find-definitions anaconda-mode-map)
-            ))
+            (advice-add 'anaconda-mode-start :around #'malb/vanilla-python-shell-interpreter)))
 #+END_SRC
 
 *** Pydoc
