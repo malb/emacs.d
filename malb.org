@@ -1038,10 +1038,10 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 
 2. This function then hopefully does what I want:
 
-   a. if a region is active, just indent
-   b. if we’re looking at a space after a non-whitespace character, we try some company-expansion
-   c. If =hs-minor-mode= or =outline-minor-mode= is active, try those next
-   d. otherwise call whatever would have been called otherwise.
+   1. if a region is active, just indent
+   2. if we’re looking at a space after a non-whitespace character, we try some company-expansion
+   3. If =hs-minor-mode= or =outline-minor-mode= is active, try those next
+   4. otherwise call whatever would have been called otherwise.
 
 ([[http://emacs.stackexchange.com/q/21182/8930][source]], [[http://emacs.stackexchange.com/q/7908/8930][source]])
 
@@ -1083,6 +1083,12 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
         (setq this-command fn)
         (call-interactively fn))))))
 
+(bind-key "<tab>" #'malb/indent-fold-or-complete)
+#+END_SRC
+
+Sometimes, you just want to fold.
+
+#+BEGIN_SRC emacs-lisp
 (defun malb/toggle-fold ()
   (interactive)
   (cond ((eq major-mode 'org-mode)
@@ -1096,7 +1102,6 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
          (save-excursion
            (outline-cycle)))))
 
-(bind-key "<tab>" #'malb/indent-fold-or-complete)
 (bind-key "C-<tab>" #'malb/toggle-fold)
 #+END_SRC
 
@@ -1255,6 +1260,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (assq-delete-all 'find-file helm-completing-read-handlers-alist)))
 #+END_SRC
 
+Actions for attaching files to e-mails and for sending them with [[https://transfer.sh/][transfer.sh]].
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-utils
   :ensure nil
@@ -1281,40 +1288,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
               (interactive)
               (with-helm-alive-p
                 (helm-exit-and-execute-action 'malb/helm-transfer-sh-files)))))
-#+END_SRC
-
-** Helm Fuzzy Matching
-
-[[https://github.com/EphramPerdition/helm-fuzzier][helm-fuzzier]] provides more intuitive fuzzy matching behavior for helm.
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-fuzzier
-  :disabled
-  :config (helm-fuzzier-mode 1))
-#+END_SRC
-
-[[https://github.com/PythonNut/helm-flx][helm-flx]] implements intelligent helm fuzzy sorting, provided by [[https://github.com/lewang/flx][flx]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-flx
-  :disabled ;; performance
-  :config (progn
-            (setq  helm-flx-for-helm-find-files t
-                   helm-flx-for-helm-locate     t)
-            (helm-flx-mode +1)))
-#+END_SRC
-
-From the website:
-
-#+BEGIN_QUOTE
-The =flx= algorithm willingly sacrifices memory usage for speed. For 10k file names, about 10 MB of memory will be used to speed up future matching. This memory is never released to keep the match speed fast. So far with modern computers, this feels like a reasonable design decision. It may change in future.
-#+END_QUOTE
-
-To reset call:
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(setq flx-file-cache (flx-make-filename-cache))
-(setq flx-strings-cache (flx-make-string-cache))
 #+END_SRC
 
 ** Helm Ring
@@ -1354,9 +1327,9 @@ To reset call:
                     sage-shell-mode
                     inferior-python-mode
                     ein:notebook-multilang-mode
-                    imenu-list-major-mode)) ;; I’m going back and forth what I prefer
+                    imenu-list-major-mode))
 
-            (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
+            (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill ;; I’m going back and forth what I prefer
                   helm-swoop-split-with-multiple-windows nil
                   helm-swoop-split-direction #'split-window-horizontally
                   helm-swoop-split-window-function 'helm-default-display-buffer
@@ -1492,7 +1465,7 @@ Switch themes with helm.
 
 [[https://github.com/steckerhalter/helm-google][helm-google]] is a simple interface for Google which comes in handy when we want to add a quick link for a term.
 
-[[https://raw.githubusercontent.com/steckerhalter/helm-google/master/screenshot.png]] ([[https://github.com/steckerhalter/helm-google/blob/master/screenshot.png][source]])
+[[https://framagit.org/steckerhalter/helm-google/raw/master/screenshot.png]] ([[https://framagit.org/steckerhalter/helm-google][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-google
@@ -1611,6 +1584,8 @@ Switch themes with helm.
 (add-to-list 'helm-commands-using-frame 'helm-baloo-no-directory)
 (add-to-list 'helm-commands-using-frame 'helm-baloo-in-directory)
 #+END_SRC
+
+****** TODO turn helm-baloo into package so it can be lazy loaded
 
 * History
 ** Recent Files
@@ -2294,7 +2269,8 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 #+BEGIN_SRC emacs-lisp
 (use-package magit-todos
-  :after magit)
+  :after magit
+  :config (magit-todos-mode))
 #+END_SRC
 
 ** GitHub
