@@ -1830,8 +1830,7 @@ Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing 
   :config (progn
             (global-undo-tree-mode)
             (setq undo-tree-visualizer-timestamps t)
-            (setq undo-tree-visualizer-diff t))
-  )
+            (setq undo-tree-visualizer-diff t)))
 #+END_SRC
 
 ** Reverting Buffers
@@ -1941,9 +1940,8 @@ Commands are bound to =C-x m …=
                         (t (org-narrow-to-subtree))))
               )
             (add-hook 'recursive-narrow-dwim-functions 'malb/recursive-narrow-dwim-org))
-  :bind
-  (("C-x n w" . recursive-widen)
-   ("C-x n n" . recursive-narrow-or-widen-dwim)))
+  :bind (("C-x n w" . recursive-widen)
+         ("C-x n n" . recursive-narrow-or-widen-dwim)))
 #+END_SRC
 
 ** Expand region
@@ -1965,8 +1963,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                                           mark-paragraph
                                           mark-page))))
             (add-hook 'markdown-mode-hook 'er/add-text-mode-expansions)
-            (add-hook 'LaTeX-mode-hook 'er/add-text-mode-expansions)
-            ))
+            (add-hook 'LaTeX-mode-hook 'er/add-text-mode-expansions)))
 #+END_SRC
 
 ** Embrace
@@ -2024,18 +2021,15 @@ https://github.com/cute-jumper/embrace.el
               ([S-tab] . bicycle-cycle-global)))
 #+END_SRC
 
-
 #+BEGIN_SRC emacs-lisp
 (use-package hideshow
   :diminish hs-minor-mode
-  :config (setq hs-special-modes-alist
-                (mapcar 'purecopy
-                        '((c-mode "{" "}" "/[*/]" nil nil)
-                          (c++-mode "{" "}" "/[*/]" nil nil)
-                          (java-mode "{" "}" "/[*/]" nil nil)
-                          (js-mode "{" "}" "/[*/]" nil)
-                          (json-mode "{" "}" "/[*/]" nil)
-                          (javascript-mode  "{" "}" "/[*/]" nil)))))
+  :config (setq hs-special-modes-alist '((c-mode "{" "}" "/[*/]" nil nil)
+                                         (c++-mode "{" "}" "/[*/]" nil nil)
+                                         (java-mode "{" "}" "/[*/]" nil nil)
+                                         (js-mode "{" "}" "/[*/]" nil)
+                                         (json-mode "{" "}" "/[*/]" nil)
+                                         (javascript-mode  "{" "}" "/[*/]" nil))))
 #+END_SRC
 
 ** Hungry Delete
@@ -2062,7 +2056,6 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
     ;; If we haven't moved position, go to start of the line.
     (when (= (point) start-position)
       (move-beginning-of-line nil))))
-
 
 (bind-key "C-a" #'malb/beginning-of-line-dwim)
 (bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
@@ -2250,6 +2243,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 
 - try =git config status.showUntrackedFiles all= ([[https://emacs.stackexchange.com/questions/13729/choose-files-to-stage-of-a-new-directory-with-magit][source]])
 
+*** Magit SVN
 
 We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
@@ -2263,6 +2257,8 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
             (add-hook 'magit-mode-hook #'malb/magit-svn)))
 #+END_SRC
 
+*** Magit Todo Notes
+
 [[https://raw.githubusercontent.com/alphapapa/magit-todos/master/screenshots/emacs-grouped-by-path.png]]
 
 ([[https://github.com/alphapapa/magit-todos][source]])
@@ -2273,7 +2269,7 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
   :config (magit-todos-mode))
 #+END_SRC
 
-** GitHub
+*** GitHub
 
 #+BEGIN_SRC emacs-lisp
 (use-package magithub
@@ -2281,7 +2277,7 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
   :config (magithub-feature-autoinject t))
 #+END_SRC
 
-** Org Links for Magit Buffers
+*** Org Links for Magit Buffers
 
 [[https://github.com/magit/orgit][orgit]]
 
@@ -2295,31 +2291,6 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
 
 #+BEGIN_SRC emacs-lisp
 (use-package git-timemachine)
-#+END_SRC
-
-** Git Guttter
-
-[[https://github.com/syohex/emacs-git-gutter-fringe][Highlight changed lines]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package git-gutter-fringe
-  :config (progn
-            (define-fringe-bitmap 'git-gutter-fr:added
-              [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
-              nil nil 'center)
-
-            (define-fringe-bitmap 'git-gutter-fr:modified
-              [224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224 224]
-              nil nil 'center)
-
-            (define-fringe-bitmap 'git-gutter-fr:deleted
-              [0 0 0 0 0 0 0 0 0 0 0 0 0 128 192 224 240 248]
-              nil nil 'center)))
-
-(use-package git-gutter
-  :diminish git-gutter-mode
-  :config (progn
-            (setq git-gutter:disabled-modes '(org-mode))))
 #+END_SRC
 
 ** Git Link
