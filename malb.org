@@ -4887,7 +4887,6 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
             (defun malb/inferior-python-setup ()
               (make-local-variable 'company-backends)
-              (turn-on-smartparens-strict-mode)
               (setq company-backends '(company-files company-capf)))
 
             (add-hook 'inferior-python-mode-hook #'malb/inferior-python-setup)
