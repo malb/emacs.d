@@ -4154,12 +4154,6 @@ Comments, as I mean, using [[https://github.com/remyferre/comment-dwim-2][commen
   :bind ("M-;" . comment-dwim-2))
 #+END_SRC
 
-Make links in comments and string clickable
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook #'goto-address-prog-mode)
-#+END_SRC
-
 Make bug references in comments and string clickable
 
 #+BEGIN_SRC emacs-lisp
@@ -7514,7 +7508,7 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 (setq-default mu4e-save-multiple-attachments-without-asking t)
 #+END_SRC
 
-Attachments are mostly handled using the helm baloo interface below, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
+Attachments are mostly handled using the helm baloo interface, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
@@ -8106,16 +8100,6 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 
             (bind-key "C->" #'malb/other-pdf-view-next-page org-mode-map)
             (bind-key "C-<" #'malb/other-pdf-view-prev-page org-mode-map)))
-#+END_SRC
-
-** Org Noter
-
-#+BEGIN_QUOTE
-“[[https://github.com/weirdNox/org-noter][Org-Noter]]’s purpose is to let you create notes that are kept in sync when you scroll through the document, but that are external to it - the notes themselves live in an Org-mode file. As such, this leverages the power of Org-mode (the notes may have outlines, latex fragments, babel, etc…) while acting like notes that are made inside the document. Also, taking notes is very simple: just press i and annotate away!”
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-noter)
 #+END_SRC
 
 * Directories
@@ -8794,13 +8778,10 @@ In emacs minibuffer prompt, when you press the left arrow key, the cursor will m
 Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-(setq history-length 128)
-(setq history-delete-duplicates t)
-(setq savehist-save-minibuffer-history t)
-(setq savehist-additional-variables
-      '(kill-ring
-        search-ring
-        regexp-search-ring))
+(setq history-length 128
+      history-delete-duplicates t
+      savehist-save-minibuffer-history t
+      savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
 (savehist-mode t)
 #+END_SRC
 
@@ -8880,6 +8861,10 @@ Diminish =abbrev-mode=
 #+BEGIN_SRC emacs-lisp
 (diminish 'abbrev-mode)
 #+END_SRC
+
+#+BEGIN_QUOTE
+In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, or 𝒶) when you search for ASCII characters (a in this example). To enable this feature, set the variable =search-default-mode= to =char-fold-to-regexp=. ([[http://endlessparentheses.com/new-in-emacs-25-1-easily-search-non-ascii-characters.html][source]])
+#+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
 (setq search-default-mode 'char-fold-to-regexp)
@@ -9006,6 +8991,8 @@ then enter the text in that file's own buffer.
 #+END_SRC
 
 ** Clickable URLs
+
+Make links in comments and string clickable
 
 #+BEGIN_SRC emacs-lisp
 (use-package goto-addr
