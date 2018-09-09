@@ -7391,6 +7391,8 @@ Action to view e-mails in EWW.
 (add-to-list 'mu4e-view-actions '("Eww view" . malb/view-in-eww) t)
 #+END_SRC
 
+Action to search messages by/to sender.
+
 #+BEGIN_SRC emacs-lisp
 (defun malb/search-for-sender (msg)
   "Search for messages sent by the sender of the message at point."
@@ -7410,9 +7412,13 @@ Action to view e-mails in EWW.
 
 (add-to-list 'mu4e-view-actions
              '("Xsender search" . malb/search-for-sender-extended) t)
+#+END_SRC
 
+Action to search messages involving all correspondents.
+
+#+BEGIN_SRC emacs-lisp
 (defun malb/find-correspondence (msg)
-  "Find messages involving all recipients."
+  "Find messages involving all correspondents."
   (let ((addresses (append (mapcar (lambda (x) (cdr x))
                                    (mu4e-message-field msg :to))
                            (mapcar (lambda (x) (cdr x))
@@ -7422,7 +7428,7 @@ Action to view e-mails in EWW.
     (helm :sources `(((name . "Filter candidates:")
                       (candidates . addresses)
                       (after-init-hook . (lambda () (with-helm-buffer
-                                                      (run-at-time 0.1 nil #'helm-mark-all))))
+                                                      (run-at-time 0.25 nil #'helm-mark-all))))
                       (action . (("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
                                  ("Use all" . (lambda (x))))))))
     (mu4e-headers-search
@@ -7434,11 +7440,6 @@ Action to view e-mails in EWW.
 
 (add-to-list 'mu4e-headers-actions
              '("Find messages" . malb/find-correspondence) t)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package mu4e-conversation
-  :after mu4e)
 #+END_SRC
 
 ** Writing
