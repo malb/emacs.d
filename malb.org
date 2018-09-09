@@ -1698,17 +1698,16 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (setq sp-autodelete-wrap t)
             (setq sp-cancel-autoskip-on-backward-movement nil)
 
-            (setq-default sp-autoskip-closing-pair t) (setq sp-autoescape-string-quote nil) ;; don't escape quotes in strings
+            (setq-default sp-autoskip-closing-pair t)
 
             (bind-key "C-M-f" #'sp-forward-sexp smartparens-mode-map)
             (bind-key "C-M-b" #'sp-backward-sexp smartparens-mode-map)
+
             (bind-key "C-M-n" #'sp-next-sexp smartparens-mode-map)
             (bind-key "C-M-p" #'sp-previous-sexp smartparens-mode-map)
+
             (bind-key "C-M-d" 'sp-down-sexp smartparens-mode-map)
             (bind-key "C-M-u" 'sp-backward-up-sexp smartparens-mode-map)
-
-            (bind-key "M-<right>" 'sp-next-sexp smartparens-mode-map)
-            (bind-key "M-<left>" 'sp-previous-sexp smartparens-mode-map)
 
             (bind-key "C-M-a" 'sp-beginning-of-sexp smartparens-mode-map)
             (bind-key "C-M-e" 'sp-end-of-sexp smartparens-mode-map)
@@ -1717,12 +1716,11 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (bind-key "C-M-w" #'sp-copy-sexp smartparens-mode-map)
 
             (bind-key "C-M-t" 'sp-transpose-sexp smartparens-mode-map)
-            (bind-key "M-d" 'sp-kill-sexp smartparens-mode-map)
-            (bind-key "M-S-<backspace>" 'sp-backward-unwrap-sexp smartparens-mode-map)
 
             (bind-key "C-<right>" 'sp-forward-slurp-sexp smartparens-mode-map)
             (bind-key "C-<left>" 'sp-forward-barf-sexp smartparens-mode-map)
 
+            (bind-key "M-S-<backspace>" 'sp-backward-unwrap-sexp smartparens-mode-map)
             (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward smartparens-mode-map)
             (bind-key "C-S-<backspace>" 'sp-splice-sexp-killing-around smartparens-mode-map)
 
@@ -1737,8 +1735,8 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                      (looking-at-p "[ 	]*#include[^<]+"))))
 
             (sp-with-modes '(c-mode c++-mode)
-              (sp-local-pair "<" ">" :when '(malb/sp-point-is-template-p malb/sp-point-after-include-p))
-              (sp-local-pair "/*" "*/" :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
+              (sp-local-pair "<" ">"    :when '(malb/sp-point-is-template-p malb/sp-point-after-include-p))
+              (sp-local-pair "/*" "*/"  :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
               (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
               (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
