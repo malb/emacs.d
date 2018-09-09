@@ -2711,12 +2711,12 @@ iCal export is triggered after 600 seconds of inactivity.
 
 #+BEGIN_SRC emacs-lisp
 (defvar malb/org-icalendar-export-timer nil
-  "Timer that `malb/org-icalendar-export-timer' used to reschedule itself, or nil.")
+  "Timer that `malb/org-icalendar-export-timer' uses to reschedule itself, or nil.")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/org-icalendar-export-with-delay (secs)
-  "Export after `secs' seconds unless the file changed in the mean time."
+  "Export after `secs' seconds unless the file changed in the meantime."
   (when malb/org-icalendar-export-timer
     (cancel-timer malb/org-icalendar-export-timer))
   (setq malb/org-icalendar-export-timer
@@ -2984,14 +2984,12 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
             (progn
               (goto-char (point-max))
               (insert (concat "* " malb/projectile-name))
-              (newline 1)
-              ))))
+              (newline 1)))))
     (progn
       (find-file malb/inbox-org)
       (goto-char (point-min))
       (re-search-forward "^\* Tasks" nil t)
-      (newline 1))
-    ))
+      (newline 1))))
 #+END_SRC
 
 *Template Expansions*
@@ -3538,7 +3536,9 @@ When `exit' from shell buffer."
 (use-package eshell
   :config (progn
 
+            ;; -------------
             ;; TOGGLE ESHELL
+            ;; -------------
 
             (fset 'malb/toggle-eshell
                   (malb/make-toggle-shell "eshell"
@@ -3547,15 +3547,16 @@ When `exit' from shell buffer."
 
             (bind-key "C-`" #'malb/toggle-eshell)
 
+            ;; ------------
+            ;; KEY BINDINGS
+            ;; ------------
+
             (defun malb/eshell-keys ()
               (bind-key "<home>" #'eshell-bol eshell-mode-map)
               (bind-key "M-r" #'helm-eshell-history eshell-mode-map)
               (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map)
+              (bind-key "M-w" #'malb/eshell-kill-ring-save eshell-mode-map)
               (bind-key "ESC ." #'malb/eshell-insert-last-word eshell-mode-map))
-
-            ;; ------------
-            ;; KEY BINDINGS
-            ;; ------------
 
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
             ;; for some reason this needs to be a hook
@@ -3692,6 +3693,13 @@ When nth is set, it will copy the nth previous command."
                   (copy-region-as-kill (point) end)
                   ;; Output stats on what was copied as a sanity check.
                   (format "Copied %s words to kill ring." (count-words-region (point) end)))))
+
+            (defun malb/eshell-kill-ring-save (arg)
+              "Copy selection or previous command's output to kill ring."
+              (interactive "P")
+              (if (or arg (region-active-p))
+                  (call-interactively #'kill-ring-save)
+                (eshell/kpo)))
 
             ;; --------------
             ;; TAB COMPLETION
@@ -3835,13 +3843,6 @@ Cat directly into a buffer (select with =C-c M-b=)
 cat mylog.log >> #<buffer *scratch*>
 #+END_SRC
 
-** Tmux
-
-#+BEGIN_SRC emacs-lisp
-(use-package emamux
-  :config (setq emamux:completing-read-type 'helm))
-#+END_SRC
-
 ** Zsh History
 
 #+BEGIN_SRC emacs-lisp
@@ -3885,7 +3886,7 @@ cat mylog.log >> #<buffer *scratch*>
 
 ** Yakuake
 
-… still my main shell.
+… still my main shell, let’s make sure we can get there quickly.
 
 #+BEGIN_SRC sh :tangle no
 #!/usr/bin/env bash
@@ -3940,6 +3941,7 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
             (advice-add 'comint-send-eof :around  #'malb/kill-buffer)
 
             (defun malb/comint-kill-ring-save (arg)
+              "Copy selection or previous command's output to kill ring."
               (interactive "P")
               (if (or arg (region-active-p))
                   (call-interactively #'kill-ring-save)
@@ -4397,7 +4399,7 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-rtags
-  :after flycheck)
+  :after company)
 #+END_SRC
 
 *** CamelCase
