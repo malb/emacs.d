@@ -309,8 +309,6 @@ Resize windows to accommodate new ones.
 
 [[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
 
-[[http://s22.postimg.org/aqd1em8xd/spacemacs_eyebrowse_demo.gif]] ([[https://www.reddit.com/r/emacs/comments/34htzr/eyebrowse_i3_window_manager_inside_emacs/][source]])
-
 #+BEGIN_SRC emacs-lisp
 (use-package eyebrowse
   :diminish eyebrowse-mode
@@ -335,7 +333,7 @@ Resize windows to accommodate new ones.
 
 ** Switching (Ace-Window)
 
-[[https://github.com/abo-abo/ace-window][ace-window]] for switching windows, but we only call it as a subroutine from a =hydra= below.
+[[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
 
 [[http://oremacs.com/download/ace-window.gif]] ([[http://oremacs.com/download/ace-window.gif][source]])
 
@@ -607,7 +605,7 @@ automatically choosing a major mode, use `find-file-literally’."
           (switch-to-buffer value))))))
 #+END_SRC
 
-****** TODO replace =find-file= by advising =find-file=
+****** TODO don’t replace =find-file= but advice =find-file=
 
 Run =old-function= with an empty =display-buffer-alist=
 
@@ -855,6 +853,8 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
 
 *** Helm YaSnippet
 
+[[https://github.com/emacs-jp/helm-c-yasnippet][helm-c-yasnippet]] for selecting snippets with helm. However, long-form snippets are mostly handled by [[https://github.com/Kungsgeten/yankpad][yankpad]].
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-c-yasnippet
   :after (helm yasnippet)
@@ -902,7 +902,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
                   company-dabbrev-code-everywhere t
                   company-tooltip-align-annotations t
                   company-minimum-prefix-length 1
-                  company-global-modes '(not)
+                  company-global-modes '(not) ; company is "always on", except for a few … exceptions
                   company-lighter-base "")
 
             (global-company-mode 1)
@@ -922,14 +922,6 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
   :config (company-quickhelp-mode 1))
 #+END_SRC
 
-[[https://github.com/PythonNut/company-flx/][company-flx]] for flx matching with capf.
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-flx
-  :disabled ;; performance
-  :config (company-flx-mode t))
-#+END_SRC
-
 Use [[https://github.com/Henry/dot-emacs/blob/master/my-lisp/company-pcomplete.el][company-pcomplete]] not always because of [[https://github.com/company-mode/company-mode/issues/189][this bug]].
 
 #+BEGIN_SRC emacs-lisp
@@ -939,6 +931,8 @@ Use [[https://github.com/Henry/dot-emacs/blob/master/my-lisp/company-pcomplete.e
             (set (make-local-variable 'company-backends)
                  (append (list #'company-pcomplete) company-backends))))
 #+END_SRC
+
+****** TODO check if conditional enabling of company-pcomplete is still needed
 
 ** C/C++
 
@@ -958,6 +952,8 @@ For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company
             (add-to-list 'company-backends #'company-c-headers)))
 #+END_SRC
 
+****** TODO lsp?
+
 ** Python
 
 For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]].
@@ -967,9 +963,11 @@ For Python use [[https://github.com/proofit404/company-anaconda][company-anacond
   :config (add-to-list 'company-backends #'company-anaconda))
 #+END_SRC
 
+****** TODO lsp?
+
 ** LaTeX
 
-For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We also allow unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
+For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We also allow unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-math)
@@ -980,19 +978,17 @@ For LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We 
                          '(company-auctex-macros
                            company-auctex-environments
                            company-math-symbols-unicode
-                           company-math-symbols-latex))
-
-            ;; (add-to-list 'company-backends #'company-auctex-labels)
-            ;; (add-to-list 'company-backends #'company-auctex-bibs)
-            ))
+                           company-math-symbols-latex))))
 #+END_SRC
 
-[[https://github.com/TheBB/company-reftex][company-refex]]
+[[https://github.com/TheBB/company-reftex][company-refex]] is used for \LaTeX labels.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-reftex
    :config (add-to-list 'company-backends #'company-reftex-labels))
 #+END_SRC
+
+BibTeX is handled by Helm BibTeX below.
 
 ** Shell
 
@@ -1005,7 +1001,7 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
             (global-fish-completion-mode)))
 #+END_SRC
 
-Fish completion will fall back to [[https://github.com/szermatt/emacs-bash-completion][bash-completion]]
+Fish completion will fall back to [[https://github.com/szermatt/emacs-bash-completion][bash-completion]] if there is no fish shell.
 
 #+BEGIN_SRC emacs-lisp
 (use-package bash-completion)
