@@ -8267,6 +8267,26 @@ I’m not really sold on either
   :defer t)
 #+END_SRC
 
+*** Dired Sidebar
+
+[[https://raw.githubusercontent.com/jojojames/dired-sidebar/master/screenshots/vscode.png]]
+
+[[https://github.com/jojojames/dired-sidebar/][dired-sidebar]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-sidebar
+  :commands (dired-sidebar-toggle-sidebar)
+  :init (progn (add-hook 'dired-sidebar-mode-hook
+                         (defun malb/auto-revert-local ()
+                           (unless (file-remote-p default-directory)
+                             (auto-revert-mode)))))
+  :config (progn (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+                 (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+                 (setq dired-sidebar-theme 'ascii
+                       dired-sidebar-should-follow-file t
+                       dired-sidebar-use-term-integration t)))
+#+END_SRC
+
 ** Tramp
 
 =.ssh/config= already contains the appropriate config for persistent sessions so we ask tramp to respect it.
@@ -9501,13 +9521,14 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 (define-prefix-command 'malb/toggle-map)
 (define-key ctl-x-map "t" 'malb/toggle-map)
 
-(bind-key "e" #'toggle-debug-on-error   malb/toggle-map)
-(bind-key "f" #'malb/toggle-fold        malb/toggle-map)
-(bind-key "l" #'toggle-truncate-lines   malb/toggle-map)
-(bind-key "q" #'toggle-debug-on-quit    malb/toggle-map)
-(bind-key "i" #'imenu-list-smart-toggle malb/toggle-map)
-(bind-key "d" #'dedicated-mode          malb/toggle-map)
-(bind-key "c" #'visual-fill-column-mode malb/toggle-map)
+(bind-key "e" #'toggle-debug-on-error        malb/toggle-map)
+(bind-key "f" #'malb/toggle-fold             malb/toggle-map)
+(bind-key "l" #'toggle-truncate-lines        malb/toggle-map)
+(bind-key "q" #'toggle-debug-on-quit         malb/toggle-map)
+(bind-key "i" #'imenu-list-smart-toggle      malb/toggle-map)
+(bind-key "d" #'dired-sidebar-toggle-sidebar malb/toggle-map)
+(bind-key "D" #'dedicated-mode               malb/toggle-map)
+(bind-key "c" #'visual-fill-column-mode      malb/toggle-map)
 #+END_SRC
 
 ** Learn key bindings
