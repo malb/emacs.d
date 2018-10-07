@@ -6001,6 +6001,27 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
 
+            (defun malb/pandoc-convert (writer &optional buffer beginning end reader)
+              (let* ((buffer (or buffer (current-buffer)))
+                     (pandoc-buffer (get-buffer-create pandoc--output-buffer-name))
+                     (begginning (or beginning (point-min)))
+                     (end (or end (point-max)))
+                     (reader (or reader (cdr (assq major-mode pandoc-major-modes))))
+                     (text))
+                (switch-to-buffer pandoc-buffer)
+                (erase-buffer)
+                (switch-to-buffer buffer)
+                (call-process-region beginning end "pandoc" nil pandoc-buffer t
+                                     "--read"
+                                     reader
+                                     "--write"
+                                     writer
+                                     "--quiet")
+                (switch-to-buffer pandoc-buffer)
+                (setq text (buffer-string))
+                (bury-buffer)
+                text))
+
             (defun malb/copy-as (arg)
               (interactive "P")
               (cond
@@ -6027,20 +6048,14 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
               (malb/-copy-as "org"))
 
             (defun malb/-copy-as (what)
-              (let ((pandoc-use-async nil)
-                    (buffer (get-buffer-create pandoc--output-buffer-name)))
-                (pandoc--set 'read (cdr (assq major-mode pandoc-major-modes)))
-                (pandoc--call-external what  nil
-                                       (if (use-region-p)
-                                           (cons (region-beginning) (region-end))))
-                (switch-to-buffer buffer)
-                (kill-new (buffer-string))
-                (bury-buffer)))
+              (kill-new (malb/pandoc-convert what
+                                             (current-buffer)
+                                             (if (use-region-p) (region-beginning) (point-min))
+                                             (if (use-region-p) (region-end) (point-max))))
+              (deactivate-mark))
 
             (bind-key "M-W" #'malb/copy-as)))
 #+END_SRC
-
-******* TODO Use =call-process-region= directly instead of =pandoc-mode=
 
 ** ReST
 
@@ -6781,22 +6796,8 @@ We call =pandoc= to convert our buffer to plain text. This kills links etc. whic
         (reader (cdr (assq major-mode pandoc-major-modes)))
         (text))
     (if reader
-        (progn
-          (let ((orig-buffer (current-buffer))
-                (pandoc-buffer (get-buffer-create pandoc--output-buffer-name)))
-            (switch-to-buffer pandoc-buffer)
-            (erase-buffer)
-            (switch-to-buffer orig-buffer)
-            (call-process-region beginning end "pandoc" nil pandoc-buffer t
-                                 "--read"
-                                 reader
-                                 "--write"
-                                 "plain"
-                                 "--quiet")
-            (switch-to-buffer pandoc-buffer)
-            (setq text (buffer-string))
-            (bury-buffer)
-            (replace-regexp-in-string "_" "" text)))
+        (replace-regexp-in-string "_" ""
+                                  (malb/pandoc-convert "plain" (current-buffer) beginning end reader))
       (buffer-substring beginning end))))
 #+END_SRC
 
