@@ -9073,6 +9073,14 @@ Transparent encryption and decryption.
   :config (setq alert-default-style 'libnotify))
 #+END_SRC
 
+** Upcase, Downcase, Capitalise
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "M-l" #'downcase-dwim)
+(bind-key "M-c" #'capitalize-dwim)
+(bind-key "M-u" #'upcase-dwim)
+#+END_SRC
+
 * Assignments
 
 ([[https://gitlab.com/akoehn/abgaben][source]])
