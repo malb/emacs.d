@@ -3341,15 +3341,15 @@ Working with source code in org-mode.
                          '("ip" "#+BEGIN_SRC ipython\n?\n#+END_SRC"
                            "<src lang=\"python\">\n?\n</src>"))
 
-            (setq org-babel-default-header-args:ipython
-                  '((:results . "output replace")
-                    (:session . nil)
-                    (:exports . "both")
-                    (:cache .   "no")
-                    (:noweb . "no")
-                    (:eval . "never-export")
-                    (:hlines . "no")
-                    (:tangle . "no")))))
+            ;; we use jupyter as the python shell so we work around that here
+            (defun ob-ipython--get-python () (locate-file "python" exec-path))
+
+            ;; https://zwild.github.io/posts/ob-ipython-enhancement-completion-eldoc-help/
+            (advice-add 'ob-ipython-auto-configure-kernels :around
+                        (lambda (orig-fun &rest args)
+                          "Configure the kernels when found jupyter."
+                          (when (executable-find ob-ipython-command)
+                            (apply orig-fun args))))))
 #+END_SRC
 
 *** Async
