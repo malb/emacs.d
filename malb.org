@@ -4442,6 +4442,11 @@ Auto-format source code in many languages with one command – [[https://github.
   :config (smart-jump-register :modes '(c-mode c++-mode)
                                :async 2000
                                :order 1))
+
+(use-package lsp-ui-sideline
+  :after (lsp-mode)
+  :ensure lsp-ui
+  :config (setq lsp-ui-sideline-ignore-duplicate t))
 #+END_SRC
 
 ** C/C++ development
