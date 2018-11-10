@@ -4312,6 +4312,7 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
 
                   (unbind-key "M-." ggtags-mode-map)
                   (unbind-key "M-," ggtags-mode-map)
+                  (unbind-key "C-M-." ggtags-mode-map)
                   (bind-key "C-c j g s" #'ggtags-find-other-symbol ggtags-mode-map)
                   (bind-key "C-c j g h" #'ggtags-view-tag-history ggtags-mode-map)
                   (bind-key "C-c j g r" #'ggtags-find-reference ggtags-mode-map)
