@@ -1476,6 +1476,15 @@ Switch themes with helm.
                                           (push (list url title) org-stored-links)))) t)))
 #+END_SRC
 
+** Helm XRef
+
+[[https://github.com/brotzeit/helm-xref][Helm interface for xref results]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-xref
+  :config (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
+#+END_SRC
+
 ** KDE Desktop Search with Baloo
 
 [[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below, we implement a tiny helm interface for it.

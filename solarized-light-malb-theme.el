@@ -64,6 +64,7 @@
  '(slack-message-output-header ((t (:weight bold))))
  '(slack-message-output-text ((t (:weight normal))))
  '(slack-new-message-marker-face ((t (:foreground "#d33682" :weight bold :height 0.75))))
+ '(helm-xref-file-name ((t (:foreground "#839496"))))
  )
 
 (custom-theme-set-variables
