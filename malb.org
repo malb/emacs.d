@@ -935,22 +935,10 @@ Use [[https://github.com/Henry/dot-emacs/blob/master/my-lisp/company-pcomplete.e
 
 ****** TODO check if conditional enabling of company-pcomplete is still needed
 
-** C/C++
-
-For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company-semantic.el][company-semantic]] which can be a bit tricky to set up, but works well once that is done. Also use [[https://github.com/randomphrase/company-c-headers][company-c-headers]].
-
 #+BEGIN_SRC emacs-lisp
-(use-package company-c-headers
-  :config (progn
-            (defun malb/ede-object-system-include-path ()
-              "Return the system include path for the current buffer."
-              (when ede-object
-                (ede-system-include-path ede-object)))
-
-            (setq company-c-headers-path-system
-                  #'malb/ede-object-system-include-path)
-
-            (add-to-list 'company-backends #'company-c-headers)))
+(use-package company-lsp
+  :after (company lsp-mode)
+  :config (push 'company-lsp company-backends))
 #+END_SRC
 
 ** Python
@@ -4415,6 +4403,37 @@ Auto-format source code in many languages with one command – [[https://github.
 (use-package format-all)
 #+END_SRC
 
+*** Language Server Protocol
+
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-mode
+  :after (projectile)
+  :config (setq lsp-eldoc-render-all nil))
+
+(use-package lsp-imenu
+  :ensure lsp-mode
+  :after (lsp-mode)
+  :config (add-hook 'lsp-after-open-hook 'lsp-enable-imenu))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-ui
+  :after (lsp-mode))
+
+(use-package lsp-ui-flycheck
+  :after (lsp-mode)
+  :ensure lsp-ui
+  :config (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
+
+(use-package lsp-ui-peek
+  :after (lsp-mode)
+  :ensure lsp-ui
+  ;; register the defaults which will call out to ccls
+  :config (smart-jump-register :modes '(c-mode c++-mode)
+                               :async 2000
+                               :order 1))
+#+END_SRC
+
 ** C/C++ development
 
 #+BEGIN_SRC emacs-lisp
@@ -4426,7 +4445,7 @@ Auto-format source code in many languages with one command – [[https://github.
             (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+END_SRC
 
-*** Semantic
+*** COMMENT Semantic
 
 Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]] for C and C++ (cf. =malb/inhibit-semantic-p=). Also enable some useful minor modes (documentation from =C-h v RET semantic-default-submodes=):
 
@@ -4547,7 +4566,7 @@ The following code parses a complete project with semantic. This is useful for e
   :defer 10)
 #+END_SRC
 
-*** RTags
+*** COMMENT RTags
 
 [[https://github.com/Andersbakken/rtags][RTags]] can come in handy.
 
@@ -4596,6 +4615,27 @@ On the other hand, rtags seems to have trouble dealing with inline functions.
 #+BEGIN_SRC emacs-lisp
 (use-package company-rtags
   :after company)
+#+END_SRC
+
+***
+*** LSP
+
+#+BEGIN_QUOTE
+C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting – https://github.com/MaskRay/ccls
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package ccls
+  :commands lsp-ccls-enable
+  :after (lsp-mode)
+  :init (progn
+          (defun malb/ccls-enable ()
+            (condition-case nil
+                (lsp-ccls-enable)
+              (user-error nil)))
+
+          (add-hook 'c-mode-hook #'malb/ccls-enable)
+          (add-hook 'c++-mode-hook #'malb/ccls-enable)))
 #+END_SRC
 
 *** Font Lock
