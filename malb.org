@@ -953,8 +953,6 @@ For C/C++ use [[https://github.com/company-mode/company-mode/blob/master/company
             (add-to-list 'company-backends #'company-c-headers)))
 #+END_SRC
 
-****** TODO lsp?
-
 ** Python
 
 For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]].
@@ -963,8 +961,6 @@ For Python use [[https://github.com/proofit404/company-anaconda][company-anacond
 (use-package company-anaconda
   :config (add-to-list 'company-backends #'company-anaconda))
 #+END_SRC
-
-****** TODO lsp?
 
 ** LaTeX
 
@@ -4223,7 +4219,7 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 (add-hook 'python-mode-hook #'malb/fixme-highlight)
 #+END_SRC
 
-*** Which function
+*** Which Function
 
 Show function in mode-line ([[https://github.com/howardabrams/dot-files/blob/master/emacs-mode-line.org][source]])
 
@@ -4270,7 +4266,7 @@ mouse-3: go to end")
             (bind-key "M-p" #'highlight-symbol-prev c-mode-base-map)))
 #+END_SRC
 
-*** Line numbers
+*** Line Numbers
 
 #+BEGIN_SRC emacs-lisp
 (use-package nlinum
@@ -4347,12 +4343,6 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
                   (bind-key "C-c j g >"   #'helm-gtags-next-history helm-gtags-mode-map)))
 #+END_SRC
 
-*** CamelCase
-
-#+BEGIN_SRC emacs-lisp
-(use-package string-inflection)
-#+END_SRC
-
 *** Dump Jump
 
 zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for JavaScript, Emacs Lisp, Python, Go, Clojure, …
@@ -4385,8 +4375,6 @@ This packages tries to smartly go to definition leveraging several methods to do
   :config (smart-jump-setup-default-registers))
 #+END_SRC
 
-****** TODO smart-jump config C/C++ rtags -> semantic -> ggtags -> dumb jump
-
 *** Debuggers
 
 [[https://github.com/realgud/realgud][All the debuggers]].
@@ -4410,6 +4398,12 @@ This packages tries to smartly go to definition leveraging several methods to do
 #+BEGIN_QUOTE
 “Now, when invoking =rr replay= from Emacs, you simply take the suggested command (=gdb --fullname= or =gdb -i=mi=), replace gdb with =rr replay=, add the log we're replaying, and things then work as expected.” — http://notes.secretsauce.net/notes/2017/02/24_interfacing-rr-to-gdb-in-gnu-emacs.html
 #+END_QUOTE
+
+*** CamelCase
+
+#+BEGIN_SRC emacs-lisp
+(use-package string-inflection)
+#+END_SRC
 
 *** Code Formatting
 
@@ -5099,7 +5093,6 @@ On our system port 8888 is already taken.
   (ein:notebooklist-login 8889 malb/sage-notebook-password)
   (ein:notebooklist-open 8889))
 #+END_SRC
-
 
 *** Virtual Environments
 
