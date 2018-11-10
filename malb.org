@@ -4347,57 +4347,6 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
                   (bind-key "C-c j g >"   #'helm-gtags-next-history helm-gtags-mode-map)))
 #+END_SRC
 
-*** RTags
-
-[[https://github.com/Andersbakken/rtags][RTags]] can come in handy.
-
-1. create a =compile_commands.json= file using [[https://github.com/rizsotto/Bear][bear]], e.g. =bear make check=
-2. launch =rdm=
-3. tell rtags about the project =cd /project/dir/ && rc -J /path/to/compile_commands.json=
-
-On the other hand, rtags seems to have trouble dealing with inline functions.
-
-#+BEGIN_SRC emacs-lisp
-(use-package rtags
-  :config  (progn
-             (rtags-enable-standard-keybindings nil "C-c j r")
-             (setq rtags-use-helm t
-                   rtags-autostart-diagnostics t
-                   rtags-display-current-error-as-message nil
-                   rtags-display-current-error-as-tooltip nil
-                   rtags-diagnostics-summary-in-mode-line nil)
-             ;; (push 'company-rtags company-backends)
-             ;; (setq rtags-completions-enabled t)
-             (add-hook 'c-mode-hook #'rtags-start-process-unless-running)
-             (add-hook 'c++-mode-hook #'rtags-start-process-unless-running)))
-#+END_SRC
-
-*Note* See [[https://syamajala.github.io/c-ide.html][this post]] for a nice intro to rtags.
-
-#+BEGIN_SRC emacs-lisp
-(use-package flycheck-rtags
-  :after flycheck
-  ;; :config (progn
-  ;;           ;; ensure that we use only rtags checking
-  ;;           ;; https://github.com/Andersbakken/rtags#optional-1
-  ;;           (defun setup-flycheck-rtags ()
-  ;;             (flycheck-select-checker 'rtags)
-  ;;             (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-  ;;             (setq-local flycheck-check-syntax-automatically nil)
-  ;;             (rtags-set-periodic-reparse-timeout 2.0) ;; Run flycheck 2 seconds after being idle.
-  ;;             )
-  ;;           (add-hook 'c-mode-hook #'setup-flycheck-rtags)
-  ;;           (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
-  ;;           )
-  ;;          )
-)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-rtags
-  :after company)
-#+END_SRC
-
 *** CamelCase
 
 #+BEGIN_SRC emacs-lisp
@@ -4592,6 +4541,57 @@ The following code parses a complete project with semantic. This is useful for e
 #+BEGIN_SRC emacs-lisp
 (use-package srefactor
   :defer 10)
+#+END_SRC
+
+*** RTags
+
+[[https://github.com/Andersbakken/rtags][RTags]] can come in handy.
+
+1. create a =compile_commands.json= file using [[https://github.com/rizsotto/Bear][bear]], e.g. =bear make check=
+2. launch =rdm=
+3. tell rtags about the project =cd /project/dir/ && rc -J /path/to/compile_commands.json=
+
+On the other hand, rtags seems to have trouble dealing with inline functions.
+
+#+BEGIN_SRC emacs-lisp
+(use-package rtags
+  :config  (progn
+             (rtags-enable-standard-keybindings nil "C-c j r")
+             (setq rtags-use-helm t
+                   rtags-autostart-diagnostics t
+                   rtags-display-current-error-as-message nil
+                   rtags-display-current-error-as-tooltip nil
+                   rtags-diagnostics-summary-in-mode-line nil)
+             ;; (push 'company-rtags company-backends)
+             ;; (setq rtags-completions-enabled t)
+             (add-hook 'c-mode-hook #'rtags-start-process-unless-running)
+             (add-hook 'c++-mode-hook #'rtags-start-process-unless-running)))
+#+END_SRC
+
+*Note* See [[https://syamajala.github.io/c-ide.html][this post]] for a nice intro to rtags.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-rtags
+  :after flycheck
+  ;; :config (progn
+  ;;           ;; ensure that we use only rtags checking
+  ;;           ;; https://github.com/Andersbakken/rtags#optional-1
+  ;;           (defun setup-flycheck-rtags ()
+  ;;             (flycheck-select-checker 'rtags)
+  ;;             (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+  ;;             (setq-local flycheck-check-syntax-automatically nil)
+  ;;             (rtags-set-periodic-reparse-timeout 2.0) ;; Run flycheck 2 seconds after being idle.
+  ;;             )
+  ;;           (add-hook 'c-mode-hook #'setup-flycheck-rtags)
+  ;;           (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
+  ;;           )
+  ;;          )
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-rtags
+  :after company)
 #+END_SRC
 
 *** Font Lock
