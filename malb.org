@@ -4411,6 +4411,16 @@ This packages tries to smartly go to definition leveraging several methods to do
 “Now, when invoking =rr replay= from Emacs, you simply take the suggested command (=gdb --fullname= or =gdb -i=mi=), replace gdb with =rr replay=, add the log we're replaying, and things then work as expected.” — http://notes.secretsauce.net/notes/2017/02/24_interfacing-rr-to-gdb-in-gnu-emacs.html
 #+END_QUOTE
 
+*** Code Formatting
+
+#+BEGIN_QUOTE
+Auto-format source code in many languages with one command – [[https://github.com/lassik/emacs-format-all-the-code][format-all]]
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package format-all)
+#+END_SRC
+
 ** C/C++ development
 
 #+BEGIN_SRC emacs-lisp
