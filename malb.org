@@ -873,10 +873,9 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
 
 #+BEGIN_SRC emacs-lisp
 (use-package yankpad
-  :after helm-c-yasnippet
-  :bind ("C-c h Y" . yankpad-insert)
-  :commands (yankpad-reload)
-  :init (setq yankpad-file (expand-file-name "yankpad.org" malb/org-files-dir)))
+  :after (helm yasnippet projectile)
+  :init (setq yankpad-file (expand-file-name "yankpad.org" malb/org-files-dir))
+  :config (bind-key "C-c h Y" #'yankpad-insert yas-minor-mode-map))
 #+END_SRC
 
 * Auto Completion (Company)
