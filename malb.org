@@ -6074,7 +6074,8 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
                                      reader
                                      "--write"
                                      writer
-                                     "--quiet")
+                                     "--quiet"
+                                     "--wrap=none")
                 (switch-to-buffer pandoc-buffer)
                 (setq text (buffer-string))
                 (bury-buffer)
