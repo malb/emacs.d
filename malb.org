@@ -2952,6 +2952,29 @@ Place rich text version of selection in clipboard ([[https://melpa.org/#/ox-clip
 (use-package ox-clip)
 #+END_SRC
 
+*** HTML Clipboard
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/org-clip-block-to-html ()
+  "Copy current block as HTML"
+  (interactive)
+  (save-restriction
+    (save-excursion
+      (org-narrow-to-block)
+      (let ((text (buffer-string)))
+        (with-temp-buffer
+          (insert text)
+          (org-mode)
+          (goto-char (point-min))
+          (kill-line)
+          (goto-char (point-max))
+          (beginning-of-line)
+          (kill-line)
+          (mark-whole-buffer)
+          (org-html-convert-region-to-html)
+          (kill-new (buffer-string)))))))
+#+END_SRC
+
 *** Ignore Some Headlines
 
 The tag =:ignore:= ignores a headline when exporting, section content is exported as usual.
