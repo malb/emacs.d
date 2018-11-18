@@ -9273,8 +9273,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 #+BEGIN_SRC emacs-lisp
 (use-package stripe-buffer
   :config (progn
-            (add-hook 'dired-mode-hook #'turn-on-stripe-buffer-mode)
-            (add-hook 'org-mode-hook   #'turn-on-stripe-table-mode)))
+            (add-hook 'dired-mode-hook #'turn-on-stripe-buffer-mode)))
 #+END_SRC
 
 ** Dim other Buffers
