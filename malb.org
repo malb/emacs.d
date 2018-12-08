@@ -4440,8 +4440,11 @@ Auto-format source code in many languages with one command – [[https://github.
 (use-package lsp-mode
   :after (projectile)
   :commands lsp
-  :config (progn (require 'lsp-clients)
-                 (setq lsp-eldoc-render-all nil)))
+  :config (progn (setq lsp-eldoc-render-all nil)))
+
+(use-package lsp-clients
+  :after (lsp-mode)
+  :ensure lsp-mode)
 
 (use-package lsp-imenu
   :ensure lsp-mode
@@ -4451,25 +4454,23 @@ Auto-format source code in many languages with one command – [[https://github.
 
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-ui
-  :after (lsp-mode))
-
-(use-package lsp-ui-flycheck
   :after (lsp-mode)
-  :ensure lsp-ui
-  :config (add-hook 'lsp-after-open-hook (lambda () (lsp-ui-flycheck-enable 1))))
+  :config (progn
+            (setq lsp-ui-sideline-enable nil
+                  lsp-ui-sideline-ignore-duplicate t)
 
-(use-package lsp-ui-peek
-  :after (lsp-mode)
-  :ensure lsp-ui
-  ;; register the defaults which will call out to ccls
-  :config (smart-jump-register :modes '(c-mode c++-mode)
-                               :async 2000
-                               :order 1))
+            (setq lsp-ui-peek-enable t)
+            ;; register the defaults which will call out to ccls
+            (smart-jump-register :modes '(c-mode c++-mode)
+                                 :async 2000
+                                 :order 1)
 
-(use-package lsp-ui-sideline
-  :after (lsp-mode)
-  :ensure lsp-ui
-  :config (setq lsp-ui-sideline-ignore-duplicate t))
+            (setq lsp-ui-imenu-enable t)
+            (setq lsp-ui-doc-enable nil)
+            (setq lsp-ui-flycheck-enable t)))
+
+
+
 #+END_SRC
 
 ** C/C++ development
@@ -4664,17 +4665,16 @@ C/C++/ObjC language server supporting cross references, hierarchies, completion 
 
 #+BEGIN_SRC emacs-lisp
 (use-package ccls
-  :defer t
-  :after (lsp-mode)
   :init (progn
           (defun malb/ccls-enable ()
-            (require 'ccls)
             (condition-case nil
-                (lsp)
+                (if (buffer-file-name)
+                    (lsp))
               (user-error nil)))
 
           (add-hook 'c-mode-hook #'malb/ccls-enable)
-          (add-hook 'c++-mode-hook #'malb/ccls-enable)))
+          (add-hook 'c++-mode-hook #'malb/ccls-enable)
+          ))
 #+END_SRC
 
 *** Font Lock
