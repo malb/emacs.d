@@ -4439,7 +4439,9 @@ Auto-format source code in many languages with one command – [[https://github.
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-mode
   :after (projectile)
-  :config (setq lsp-eldoc-render-all nil))
+  :commands lsp
+  :config (progn (require 'lsp-clients)
+                 (setq lsp-eldoc-render-all nil)))
 
 (use-package lsp-imenu
   :ensure lsp-mode
@@ -4662,12 +4664,13 @@ C/C++/ObjC language server supporting cross references, hierarchies, completion 
 
 #+BEGIN_SRC emacs-lisp
 (use-package ccls
-  :commands lsp-ccls-enable
+  :defer t
   :after (lsp-mode)
   :init (progn
           (defun malb/ccls-enable ()
+            (require 'ccls)
             (condition-case nil
-                (lsp-ccls-enable)
+                (lsp)
               (user-error nil)))
 
           (add-hook 'c-mode-hook #'malb/ccls-enable)
