@@ -787,6 +787,8 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
   :diminish yas-minor-mode
+  :bind (:map yas-minor-mode-map
+              ("C-d" . yas-skip-and-clear-field))
   :config (progn
             (yas-global-mode)
             (setq yas-verbosity 1)
