@@ -5168,9 +5168,10 @@ On our system port 8888 is already taken.
           (prodigy-start-service fpylll)
           (sleep-for 1.5))))
   (venv-workon "fpylll2")
-  (ein:query-ipython-version 8889 t)
-  (ein:notebooklist-login 8889 malb/sage-notebook-password)
-  (ein:notebooklist-open 8889))
+  (ein:query-notebook-version 8889 t)
+  (ein:notebooklist-login "http://localhost:8889"
+                          (lambda (buffer url-or-port) (pop-to-buffer buffer))
+                          malb/sage-notebook-password))
 #+END_SRC
 
 *** Virtual Environments
@@ -5448,9 +5449,10 @@ Shortcut for Sage Jupyter notebook.
           (prodigy-start-service sage)
           (sleep-for 1.5))))
   (venv-workon "sage-devel")
-  (ein:query-ipython-version 8890 t)
-  (ein:notebooklist-login 8890 malb/sage-notebook-password)
-  (ein:notebooklist-open 8890))
+  (ein:query-notebook-version 8890 t)
+  (ein:notebooklist-login "http://localhost:8890"
+                          (lambda (buffer url-or-port) (pop-to-buffer buffer))
+                          malb/sage-notebook-password))
 #+END_SRC
 
 *Note:* If you get =[warn] Null value passed to ein:get-ipython-major-version= try =(ein:query-ipython-version 8890 t)=
