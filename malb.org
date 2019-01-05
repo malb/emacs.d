@@ -787,8 +787,6 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
   :diminish yas-minor-mode
-  :bind (:map yas-minor-mode-map
-              ("C-d" . yas-skip-and-clear-field))
   :config (progn
             (yas-global-mode)
             (setq yas-verbosity 1)
@@ -1200,7 +1198,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-display-buffer-reuse-frame t
                   helm-display-buffer-width 180
                   helm-display-buffer-height 60
-                  helm-use-undecorated-frame-option t
+                  helm-use-undecorated-frame-option nil
 
                   helm-M-x-fuzzy-match                  t
                   helm-eshell-fuzzy-match               t
@@ -1778,6 +1776,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
+            (add-to-list 'sp-ignore-modes-list 'markdown-mode)
 
             (sp-with-modes
                 'org-mode
@@ -3804,7 +3803,7 @@ Plan 9 Smart Shell
   (with-temp-buffer
     (call-process-shell-command "git" nil (current-buffer) nil "help" "--all")
     (goto-char 0)
-    (search-forward "available git commands in")
+    (search-forward "Main Porcelain Commands")
     (let (commands)
       (while (re-search-forward
 	      "^[[:blank:]]+\\([[:word:]-.]+\\)[[:blank:]]*\\([[:word:]-.]+\\)?"
@@ -4091,6 +4090,7 @@ Make flycheck prettier based on what spacemacs does.
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
   :diminish flycheck-mode
+
   :config (progn
             (global-flycheck-mode)
             (add-hook 'org-mode-hook (lambda () (flycheck-mode -1)))
@@ -4440,16 +4440,13 @@ Auto-format source code in many languages with one command – [[https://github.
 (use-package lsp-mode
   :after (projectile)
   :commands lsp
-  :config (progn (setq lsp-eldoc-render-all nil)))
+  :config (progn (setq lsp-eldoc-render-all nil)
+                 (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
 
 (use-package lsp-clients
   :after (lsp-mode)
   :ensure lsp-mode)
 
-(use-package lsp-imenu
-  :ensure lsp-mode
-  :after (lsp-mode)
-  :config (add-hook 'lsp-after-open-hook 'lsp-enable-imenu))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -5128,8 +5125,7 @@ On our system port 8888 is already taken.
   :after ob
   :commands (ein:notebooklist-open ein:notebooklist-login ein:query-ipython-version)
   :config (progn
-            (setq ein:use-auto-complete t
-                  ein:complete-on-dot nil
+            (setq ein:complete-on-dot nil
                   ein:notebook-create-checkpoint-on-save t
                   ein:completion-backend 'ein:use-company-backend
                   ein:url-or-port '(8890 8889)
@@ -5145,6 +5141,7 @@ On our system port 8888 is already taken.
             (add-to-list 'org-babel-load-languages '(ein . t))
 
             (require 'ein-notebook)
+            (add-to-list 'company-backends #'ein:company-backend)
 
             (defun malb/ein-open-here ()
               "We have a link to our projects top directory, this function goes to anything below that."
@@ -6468,12 +6465,12 @@ Run =latexmk -pvc= in async shell
   (interactive "p")
   (let*  ((engine (if arg "-xelatex" ""))
           (filename (file-name-sans-extension (buffer-file-name)))
-          (output-buffer (format "*LaTeXMK %s*" (if (projectile-project-p)
-                                                    (projectile-project-name)
-                                                  (file-name-nondirectory (buffer-file-name))))))
+          (output-buffer (format "*LaTeXMK %s*" (file-name-nondirectory (buffer-file-name)))))
+    (select-frame (make-frame-command))
     (async-shell-command (format "latexmk -pvc -pdf \"%s\" -interaction=nonstopmode \"%s.tex\""
                                  engine filename)
-                         output-buffer)))
+                         output-buffer)
+    (delete-window)))
 #+END_SRC
 
 ** Utility Functions
@@ -7547,8 +7544,6 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
 (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
 (add-hook 'message-mode-hook #'flyspell-mode)
-(add-hook 'message-mode-hook #'turn-on-orgstruct)
-(add-hook 'message-mode-hook #'turn-on-orgstruct++)
 (add-hook 'message-mode-hook #'turn-on-orgtbl)
 (add-hook 'message-mode-hook #'typo-mode)
 
@@ -8409,8 +8404,7 @@ I’m not really sold on either
             (setq ediff-window-setup-function 'ediff-setup-windows-plain
                   ediff-split-window-function 'split-window-horizontally
                   ediff-diff-options "-w")
-            (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
-            ))
+            (add-hook 'ediff-after-quit-hook-internal 'winner-undo)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -9253,6 +9247,12 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
   :mode ("\\.epub$" . nov-mode)
   :config (progn
             (add-hook 'nov-mode-hook #'visual-fill-column-mode)))
+#+END_SRC
+
+** CSV
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'csv-mode-hook #'hl-line-mode)
 #+END_SRC
 
 * Theme & Look
