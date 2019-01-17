@@ -4960,7 +4960,7 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 | ~M-.~   | =anaconda-mode-complete=         |
 | ~M-,​~   | =anaconda-mode-find-assignments= |
 | ~M-r~   | =anaconda-mode-find-references=  |
-| ~M-*~   | =anaconda-mode-go-back=          |
+| ~M-*~   | =xref-pop-marker-stack=                               |
 | ~M-?~   | =anaconda-mode-show-doc=         |
 |---------+----------------------------------|
 
@@ -4970,7 +4970,6 @@ Fall back to dumb jump if anaconda fails.
 (use-package anaconda-mode
   :after smart-jump
   :diminish anaconda-mode
-  :bind (:map anaconda-mode-map ("M-," . anaconda-mode-go-back))
   :config (progn
 
             (defun malb/local-anaconda-mode ()
