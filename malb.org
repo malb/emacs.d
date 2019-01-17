@@ -2503,28 +2503,6 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
  ("C-c {" . org-table-toggle-formula-debugger))
 #+END_SRC
 
-** Templates
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-structure-template-alist '("m" "#+BEGIN_SRC markdown\n?\n#+END_SRC"))
-(add-to-list 'org-structure-template-alist '("more" "#+HTML:<!--more-->\n?"))
-(add-to-list 'org-structure-template-alist '("lc" "#+LATEX_CLASS: " ""))
-(add-to-list 'org-structure-template-alist '("ld" "#+BEGIN_definition\n<<def:?>>\n#+END_definition"))
-(add-to-list 'org-structure-template-alist '("ll" "#+BEGIN_lemma\n<<lem:?>>\n#+END_lemma"))
-(add-to-list 'org-structure-template-alist '("lt" "#+BEGIN_theorem\n<<thm:?>>\n#+END_theorem"))
-(add-to-list 'org-structure-template-alist '("lp" "#+BEGIN_proof\n?\n#+END_proof"))
-(add-to-list 'org-structure-template-alist '("fb" "#+BEAMER: \\framebreak" ""))
-(add-to-list 'org-structure-template-alist '("lh" "#+LATEX_HEADER: " ""))
-(add-to-list 'org-structure-template-alist '("ao" "#+ATTR_ORG: " ""))
-(add-to-list 'org-structure-template-alist '("al" "#+ATTR_LATEX: " ""))
-(add-to-list 'org-structure-template-alist '("ca" "#+CAPTION: " ""))
-(add-to-list 'org-structure-template-alist '("tn" "#+TBLNAME: " ""))
-(add-to-list 'org-structure-template-alist '("b"  "#+BEAMER: " ""))
-(add-to-list 'org-structure-template-alist '("n"  "#+NAME: " ""))
-(add-to-list 'org-structure-template-alist '("bc" "*** \n:PROPERTIES:\n:BEAMER_opt: t\n:BEAMER_env: columns\n:END:\n\n**** \n:PROPERTIES:\n:BEAMER_env: column\n:BEAMER_col: 0.5\n:END:\n\n**** \n:PROPERTIES:\n:BEAMER_env: column\n:BEAMER_col: 0.5\n:END:\n\n"))
-(add-to-list 'org-structure-template-alist '("o"  "#+ATTR_BEAMER: :overlay +-"))
-#+END_SRC
-
 ** Speed Commands
 
 ([[https://raw.githubusercontent.com/jkitchin/scimax/][source]])
@@ -2540,6 +2518,15 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
 (add-to-list 'org-speed-commands-user (cons "J" (lambda () ;; Jump to headline
                                                   (avy-with avy-goto-line
                                                     (avy--generic-jump "^\\*+" nil avy-style)))))
+#+END_SRC
+
+#+BEGIN_QUOTE
+If you prefer using previous patterns, e.g. <s, you can activate them again by requiring Org Tempo library: ~(require 'org-tempo)~
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-tempo
+  :ensure org)
 #+END_SRC
 
 ** Refiling
@@ -3350,10 +3337,6 @@ Working with source code in org-mode.
 #+BEGIN_SRC emacs-lisp
 (use-package ob-ipython
   :config (progn
-            (add-to-list 'org-structure-template-alist
-                         '("ip" "#+BEGIN_SRC ipython\n?\n#+END_SRC"
-                           "<src lang=\"python\">\n?\n</src>"))
-
             ;; we use jupyter as the python shell so we work around that here
             (defun ob-ipython--get-python () (locate-file "python" exec-path))
 
@@ -5466,9 +5449,7 @@ org babel for Sage can be quite handy for writing talks etc. ([[https://github.c
                                                        (:cache .   "no")
                                                        (:noweb . "no")
                                                        (:hlines . "no")
-                                                       (:tangle . "no")))
-            (add-to-list 'org-structure-template-alist
-                         '("sg" "#+BEGIN_SRC sage\n?\n#+END_SRC"))))
+                                                       (:tangle . "no")))))
 #+END_SRC
 
 ** Lisp
