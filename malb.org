@@ -3124,7 +3124,7 @@ SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
                      "* TODO %a (%:fromname)
 SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
                   (if (< hour 16)
-                    (insert (org-time-stamp nil))
+                    (org-insert-time-stamp nil)
                    (org-insert-time-stamp (org-read-date nil t \"+1d\"))))
 :PROPERTIES:
 :CREATED: %U
