@@ -4427,13 +4427,14 @@ Auto-format source code in many languages with one command – [[https://github.
 (use-package format-all)
 #+END_SRC
 
-*** Language Server Protocol
+*** Language Server Protocol (LSP)
 
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-mode
   :after (projectile)
   :commands lsp
-  :config (progn (setq lsp-eldoc-render-all nil)
+  :config (progn (setq lsp-eldoc-render-all nil
+                       lsp-prefer-flymake nil)
                  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
 
 (use-package lsp-clients
