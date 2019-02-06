@@ -2274,9 +2274,8 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 *** GitHub
 
 #+BEGIN_SRC emacs-lisp
-(use-package magithub
-  :after magit
-  :config (magithub-feature-autoinject t))
+(use-package forge
+  :after magit)
 #+END_SRC
 
 *** Org Links for Magit Buffers
