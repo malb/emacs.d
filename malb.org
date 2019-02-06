@@ -4125,7 +4125,11 @@ Make flycheck prettier based on what spacemacs does.
             (flycheck-define-error-level 'info
               :overlay-category 'flycheck-info-overlay
               :fringe-bitmap 'my-flycheck-fringe-indicator
-              :fringe-face 'flycheck-fringe-info)))
+              :fringe-face 'flycheck-fringe-info)
+
+            (flycheck-add-mode 'proselint 'text-mode)
+            (flycheck-add-mode 'proselint 'org-mode)
+            (flycheck-add-next-checker 'markdown-mdl 'proselint)))
 #+END_SRC
 
 Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
@@ -5801,6 +5805,11 @@ Diminish ~flyspell-mode~ as we always use it.
   :diminish)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(use-package flyspell-lazy
+  :diminish)
+#+END_SRC
+
 Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typos. I find myself pressing =C-.= in other programs these days just to be frustrated that it doesn’t just work™
 
 #+BEGIN_SRC emacs-lisp
@@ -5907,25 +5916,6 @@ After the deadline ([[https://github.com/jkitchin/scimax/][source]])
 
         (insert (format "- %s :: %s %s %s
 " s opt-string desc type))))))
-#+END_SRC
-
-*** Style Checking
-
-Prose linting using … [[http://proselint.com][proselint]].
-
-([[http://unconj.ca/blog/linting-prose-in-emacs.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-(flycheck-define-checker proselint
-  "A linter for prose."
-  :command ("proselint" source-inplace)
-  :error-patterns
-  ((warning line-start (file-name) ":" line ":" column ": "
-            (id (one-or-more (not (any " "))))
-            (message) line-end))
-  :modes (text-mode markdown-mode gfm-mode org-mode message-mode))
-
-(add-to-list 'flycheck-checkers 'proselint)
 #+END_SRC
 
 *** Synonyms
