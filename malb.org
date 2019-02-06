@@ -5116,7 +5116,7 @@ On our system port 8888 is already taken.
 (use-package ein
   :defer 30
   :after ob
-  :commands (ein:notebooklist-open ein:notebooklist-login ein:query-ipython-version)
+  :commands (ein:notebooklist-login ein:query-notebook-version)
   :config (progn
             (setq ein:complete-on-dot nil
                   ein:notebook-create-checkpoint-on-save t
