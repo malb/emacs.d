@@ -2661,7 +2661,7 @@ UTF-8 everywhere.
 #+BEGIN_SRC emacs-lisp
 (setq org-export-coding-system 'utf-8
       org-export-in-background nil
-      org-export-use-babel t
+      org-export-use-babel nil
       org-export-with-toc nil
       org-export-with-timestamps 'active
       org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))
