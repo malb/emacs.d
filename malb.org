@@ -5158,9 +5158,8 @@ On our system port 8888 is already taken.
           (sleep-for 1.5))))
   (venv-workon "fpylll2")
   (ein:query-notebook-version 8889 t)
-  (ein:notebooklist-login "http://localhost:8889"
-                          (lambda (buffer url-or-port) (pop-to-buffer buffer))
-                          malb/sage-notebook-password))
+  (ein:notebooklist-login "http://127.0.0.1:8889"
+                          (lambda (buffer url-or-port) (pop-to-buffer buffer))))
 #+END_SRC
 
 *** Virtual Environments
@@ -5439,7 +5438,7 @@ Shortcut for Sage Jupyter notebook.
           (sleep-for 1.5))))
   (venv-workon "sage-devel")
   (ein:query-notebook-version 8890 t)
-  (ein:notebooklist-login "http://localhost:8890"
+  (ein:notebooklist-login "http://127.0.0.1:8890"
                           (lambda (buffer url-or-port) (pop-to-buffer buffer))
                           malb/sage-notebook-password))
 #+END_SRC
