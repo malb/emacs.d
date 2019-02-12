@@ -3328,7 +3328,8 @@ Working with source code in org-mode.
                (C . t)
                (dot . t)
                (plantuml . t)
-               (makefile . t)))
+               (makefile . t)
+               (ein . t)))
 
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path" /usr/share/plantuml/plantuml.jar"
