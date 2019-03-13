@@ -5108,6 +5108,8 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                                           nil))
 
             (advice-add 'sage-shell:send-eof :around  #'malb/kill-buffer)
+            (advice-add 'sage-shell:run-sage :before (lambda (cmd)
+                                                       (venv-deactivate)))
 
             (bind-key "C-<up>" #'comint-previous-matching-input-from-input sage-shell-mode-map)
             (bind-key "C-<down>" #'comint-next-matching-input-from-input sage-shell-mode-map)
