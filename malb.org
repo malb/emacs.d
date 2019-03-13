@@ -3044,7 +3044,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ("tt" "capture a standard [t]ask"
                      entry (file malb/inbox-org)
                      "* TODO %?
-SCHEDULED: %^t
+DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+7d\"))
 :PROPERTIES:
 :CREATED: %U
 :END:
