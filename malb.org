@@ -3492,6 +3492,12 @@ The function behaves as follows:
 
             (setq multi-term-switch-after-close nil)
 
+            (defun malb/toggle-term-mode ()
+              (interactive)
+              (if (term-in-char-mode)
+                  (term-line-mode)
+                (term-char-mode)))
+
             (defun malb/term-send-tab ()
               "Send tab in term mode."
               (interactive)
@@ -9392,6 +9398,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 (bind-key "e" #'toggle-debug-on-error        malb/toggle-map)
 (bind-key "f" #'malb/toggle-fold             malb/toggle-map)
+(bind-key "t" #'malb/toggle-term-mode        malb/toggle-map)
 (bind-key "l" #'toggle-truncate-lines        malb/toggle-map)
 (bind-key "q" #'toggle-debug-on-quit         malb/toggle-map)
 (bind-key "i" #'imenu-list-smart-toggle      malb/toggle-map)
