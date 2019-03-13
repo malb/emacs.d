@@ -4278,14 +4278,6 @@ mouse-3: go to end")
             (bind-key "M-p" #'highlight-symbol-prev c-mode-base-map)))
 #+END_SRC
 
-*** Line Numbers
-
-#+BEGIN_SRC emacs-lisp
-(use-package nlinum
-  :config (progn
-            (add-hook 'c-mode-common-hook 'nlinum-mode)))
-#+END_SRC
-
 *** Looking Stuff Up
 
 [[https://github.com/areina/helm-dash][helm-dash]] package uses Dash docsets inside emacs to browse documentation.
@@ -4472,183 +4464,11 @@ Auto-format source code in many languages with one command – [[https://github.
   :config (progn
             (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
             (add-hook 'c-mode-common-hook #'hs-minor-mode)
+            (add-hook 'c-mode-common-hook 'display-line-numbers-mode)
             (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
             (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+END_SRC
 
-*** COMMENT Semantic
-
-Enable [[http://alexott.net/en/writings/emacs-devenv/EmacsCedet.html][semantic]] for C and C++ (cf. =malb/inhibit-semantic-p=). Also enable some useful minor modes (documentation from =C-h v RET semantic-default-submodes=):
-
-- ~global-semanticdb-minor-mode~  Maintain tag database.
-- ~global-semantic-idle-scheduler-mode~ Reparse buffer when idle.
-- ~global-semantic-idle-summary-mode~ Show summary of tag at point.
-- ~global-semantic-idle-completions-mode~ Show completions when idle.
-- ~global-semantic-decoration-mode~ Additional tag decorations.
-- ~global-semantic-highlight-func-mode~ Highlight the current tag.
-- ~global-semantic-mru-bookmark-mode~ Provide `switch-to-buffer'-like keybinding for tag names.
-- ~global-semantic-idle-local-symbol-highlight-mode~ - Highlight references of the symbol under point.
-- ~global-semantic-stickyfunc-mode~ - show the title of a tag in the header line.
-
-#+BEGIN_SRC emacs-lisp
-(use-package semantic
-  :defer t
-  :init (progn
-          (use-package semantic/ia :ensure nil)
-          (use-package semantic/bovine/gcc :ensure nil)
-
-          (add-to-list 'semantic-default-submodes 'global-semanticdb-minor-mode)
-          (add-to-list 'semantic-default-submodes 'global-semantic-idle-scheduler-mode)
-          (add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode)
-          (add-to-list 'semantic-default-submodes 'global-semantic-decoration-mode)
-          (add-to-list 'semantic-default-submodes 'global-semantic-highlight-func-mode)
-          (add-to-list 'semantic-default-submodes 'global-semantic-mru-bookmark-mode)
-          (add-to-list 'semantic-default-submodes 'global-semantic-idle-local-symbol-highlight-mode)
-          (semanticdb-enable-gnu-global-databases 'c-mode t)
-          (semanticdb-enable-gnu-global-databases 'c++-mode t)
-          (setq semanticdb-default-save-directory (expand-file-name "semantic" user-emacs-directory))
-
-          (semantic-mode 1)
-          (global-ede-mode t)
-          (ede-enable-generic-projects)
-
-          (setq-default semantic-case-fold t)
-
-          (defun malb/inhibit-semantic-p ()
-            (member major-mode '(python-mode cython-mode)))
-
-          (add-to-list 'semantic-inhibit-functions #'malb/inhibit-semantic-p)
-
-          (setq semantic-new-buffer-setup-functions
-                (remove-if (lambda (buffer-setup-function)
-                             (member (car buffer-setup-function)
-                                     '(python-mode js-mode scheme-mode html-mode)))
-                           semantic-new-buffer-setup-functions))
-
-          (remove-hook 'python-mode-hook 'wisent-python-default-setup)
-
-          (bind-key "M-?"   #'semantic-analyze-proto-impl-toggle c-mode-base-map)
-          (bind-key "M-."   #'semantic-ia-fast-jump c-mode-base-map)
-          (bind-key "M-r"   #'semantic-symref-symbol c-mode-base-map)
-
-          (bind-key "C-c j s ?"   #'semantic-analyze-proto-impl-toggle c-mode-base-map)
-          (bind-key "C-c j s ."   #'semantic-ia-fast-jump c-mode-base-map)
-          (bind-key "C-c j s J"   #'semantic-complete-jump c-mode-base-map)
-          (bind-key "C-c j s r"   #'semantic-symref-symbol c-mode-base-map)
-          (bind-key "C-c j s p"   #'senator-previous-tag c-mode-base-map)
-          (bind-key "C-c j s n"   #'senator-next-tag c-mode-base-map)
-          (bind-key "C-c j s C-w" #'senator-kill-tag c-mode-base-map)
-          (bind-key "C-c j s M-w" #'senator-copy-tag c-mode-base-map)))
-#+END_SRC
-
-**** Force semantic parsing
-
-The following code parses a complete project with semantic. This is useful for exploring a new project. ([[https://stackoverflow.com/questions/18230838/semantic-cedet-how-to-force-parsing-of-source-files][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defvar malb/c-files-regex ".*\\.\\(c\\|cpp\\|h\\|hpp\\)"
-  "A regular expression to match any c/c++ related files under a directory")
-
-(defun malb/semantic-parse-dir (root regex)
-  "This function is an attempt of mine to force semantic to
-     parse all source files under a root directory. Arguments:
-     -- root: The full path to the root directory
-     -- regex: A regular expression against which to match all files in the directory"
-  (let (
-        ;;make sure that root has a trailing slash and is a dir
-        (root (file-name-as-directory root))
-        (files (directory-files root t ))
-        )
-    ;; remove current dir and parent dir from list
-    (setq files (delete (format "%s." root) files))
-    (setq files (delete (format "%s.." root) files))
-    (while files
-      (setq file (pop files))
-      (if (not(file-accessible-directory-p file))
-          ;;if it's a file that matches the regex we seek
-          (progn (when (string-match-p regex file)
-                   (save-excursion
-                     (semanticdb-file-table-object file))
-                   ))
-        ;;else if it's a directory
-        (malb/semantic-parse-dir file regex)))))
-
-(defun malb/semantic-parse-current-dir (regex)
-  "Parses all files under the current directory matching regex"
-  (malb/semantic-parse-dir (file-name-directory(buffer-file-name)) regex))
-
-(defun malb/parse-curdir-c ()
-  "Parses all the c/c++ related files under the current directory
-     and inputs their data into semantic"
-  (interactive)
-  (malb/semantic-parse-current-dir malb/c-files-regex))
-
-(defun malb/parse-dir-c (dir)
-  "Prompts the user for a directory and parses all c/c++ related files
-     under the directory"
-  (interactive (list (read-directory-name "Provide the directory to search in:")))
-  (malb/semantic-parse-dir (expand-file-name dir) malb/c-files-regex))
-#+END_SRC
-
-**** SRefactor
-
-#+BEGIN_SRC emacs-lisp
-(use-package srefactor
-  :defer 10)
-#+END_SRC
-
-*** COMMENT RTags
-
-[[https://github.com/Andersbakken/rtags][RTags]] can come in handy.
-
-1. create a =compile_commands.json= file using [[https://github.com/rizsotto/Bear][bear]], e.g. =bear make check=
-2. launch =rdm=
-3. tell rtags about the project =cd /project/dir/ && rc -J /path/to/compile_commands.json=
-
-On the other hand, rtags seems to have trouble dealing with inline functions.
-
-#+BEGIN_SRC emacs-lisp
-(use-package rtags
-  :config  (progn
-             (rtags-enable-standard-keybindings nil "C-c j r")
-             (setq rtags-use-helm t
-                   rtags-autostart-diagnostics t
-                   rtags-display-current-error-as-message nil
-                   rtags-display-current-error-as-tooltip nil
-                   rtags-diagnostics-summary-in-mode-line nil)
-             ;; (push 'company-rtags company-backends)
-             ;; (setq rtags-completions-enabled t)
-             (add-hook 'c-mode-hook #'rtags-start-process-unless-running)
-             (add-hook 'c++-mode-hook #'rtags-start-process-unless-running)))
-#+END_SRC
-
-*Note* See [[https://syamajala.github.io/c-ide.html][this post]] for a nice intro to rtags.
-
-#+BEGIN_SRC emacs-lisp
-(use-package flycheck-rtags
-  :after flycheck
-  ;; :config (progn
-  ;;           ;; ensure that we use only rtags checking
-  ;;           ;; https://github.com/Andersbakken/rtags#optional-1
-  ;;           (defun setup-flycheck-rtags ()
-  ;;             (flycheck-select-checker 'rtags)
-  ;;             (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-  ;;             (setq-local flycheck-check-syntax-automatically nil)
-  ;;             (rtags-set-periodic-reparse-timeout 2.0) ;; Run flycheck 2 seconds after being idle.
-  ;;             )
-  ;;           (add-hook 'c-mode-hook #'setup-flycheck-rtags)
-  ;;           (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
-  ;;           )
-  ;;          )
-)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-rtags
-  :after company)
-#+END_SRC
-
-***
 *** LSP
 
 #+BEGIN_QUOTE
@@ -5261,32 +5081,11 @@ buffer-local `project-venv-name' variable."
 Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top.
 
 #+BEGIN_SRC emacs-lisp
-(use-package auto-complete
-  :config (progn
-            (setq ac-delay 0.3
-                  ac-auto-start 2)
-            (bind-key "C-/" #'auto-complete ac-mode-map)
-            (bind-key "M-/" #'auto-complete ac-mode-map)))
-
-(use-package auto-complete-sage)
-
 (use-package sage-shell-mode
   :config (progn
-            (eval-after-load "auto-complete"
-              '(setq ac-modes (append '(sage-shell-mode sage-shell:sage-mode) ac-modes)))
-            (add-hook 'sage-shell:sage-mode-hook #'ac-sage-setup)
-            (add-hook 'sage-shell:sage-mode-hook #'auto-complete-mode)
             (add-hook 'sage-shell:sage-mode-hook #'eldoc-mode)
-            (add-hook 'sage-shell-mode-hook #'ac-sage-setup)
-            (add-hook 'sage-shell-mode-hook #'auto-complete-mode)
             (add-hook 'sage-shell-mode-hook #'eldoc-mode)
             (setq sage-shell:use-prompt-toolkit t)
-
-            ;; at this point the list starts with not, i.e. is negated
-            (when (boundp 'company-global-modes)
-              (add-to-list 'company-global-modes 'sage-shell:sage-mode t)
-              (add-to-list 'company-global-modes 'sage-shell-mode t))
-
 
             (add-hook 'sage-shell-after-prompt-hook #'sage-shell-view-mode)
             (setq sage-shell-view-default-commands 'plots
