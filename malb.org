@@ -705,6 +705,17 @@ _SPC_ cancel  _D_lt other     _s_wap
 (bind-key "¬" #'other-window)
 #+END_SRC
 
+** Next/Previous Buffer
+
+([[https://www.reddit.com/r/emacs/comments/b058f8/weekly_tipstricketc_thread/][source]])
+
+#+begin_src emacs-lisp
+(use-package skip-buffers-mode
+  :ensure nil
+  :delight (skip-buffers-mode nil)
+  :config (skip-buffers-mode))
+#+end_src
+
 * Clean Mode Line
 
 Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
