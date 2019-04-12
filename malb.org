@@ -7167,10 +7167,11 @@ View e-mails with width restriction, but wider for HTML
 (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
 
-Convert HTML mail to plain text using pandoc.
+Set higher contrast.
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-html2text-command "iconv -c -t utf-8 | pandoc -f html -t plain")
+(setq shr-color-visible-luminance-min 80)
+;; (setq mu4e-html2text-command "iconv -c -t utf-8 | pandoc -f html -t plain")
 #+END_SRC
 
 Action to view e-mails in external browser.
