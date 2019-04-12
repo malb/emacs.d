@@ -5867,7 +5867,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 | Command   | Explanation          |
 |-----------+----------------------|
-| ~C-c C-g~ | forward search       |
+| ~C-c C-v~ | forward search       |
 | ~C-c @~   | outline minor mode   |
 | ~C-c ?~   | symbol documentation |
 
