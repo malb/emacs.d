@@ -922,8 +922,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
             (bind-key "C-p"   #'company-select-previous company-active-map)
             (bind-key "<tab>" #'company-complete company-active-map)
             (bind-key "M-?"   #'company-show-doc-buffer company-active-map)
-            (bind-key "M-."   #'company-show-location company-active-map)
-            (bind-key "M-/"   #'company-complete-common org-mode-map)))
+            (bind-key "M-."   #'company-show-location company-active-map)))
 #+END_SRC
 
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
@@ -2253,7 +2252,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda))
   :mode ("\\.org$" . org-mode)
-  :diminish (orgstruct-mode orgstruct++-mode orgtbl-mode))
+  :diminish (orgstruct-mode orgstruct++-mode orgtbl-mode)
+  :config (progn
+            (unbind-key "C-c [" org-mode-map)
+            (bind-key "M-/"   #'company-complete-common org-mode-map)))
 #+END_SRC
 
 ** Files
