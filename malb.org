@@ -8501,7 +8501,12 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 #+BEGIN_SRC emacs-lisp
 (use-package slack
   :defer 30
-  :commands (slack-start)
+  :commands (slack-start slack-select-rooms)
+  :bind (:map slack-mode-map
+              ("C-c C-d" . slack-message-delete)
+              ("C-c C-e" . slack-message-edit)
+              ("C-n" . slack-buffer-goto-next-message)
+              ("C-p" . slack-buffer-goto-prev-message))
   :init (progn
           (setq slack-buffer-emojify t
                 slack-prefer-current-team t
