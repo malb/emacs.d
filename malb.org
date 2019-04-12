@@ -5892,7 +5892,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             (setq TeX-view-program-selection '(((output-dvi style-pstricks) "dvips and gv")
                                                (output-dvi "Okular")
-                                               (output-pdf "Emacs")
+                                               (output-pdf "PDF Tools")
                                                (output-html "xdg-open")))
 
             (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
