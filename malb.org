@@ -6723,7 +6723,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%month"  . "date:31d..now")
                   ("%inbox"  . "(maildir:\"/royal holloway\" OR maildir:/INBOX)")
                   ("%sent"   . "(maildir:\"/[Google Mail]/Sent Mail\" OR maildir:\"/royal holloway/sent\")")
-                  ("%direct" . "%inbox AND NOT flag:list AND NOT %hidden AND (to:martinralbrecht@* OR to:martin.albrecht@*)"))))
+                  ("%direct" . "%inbox AND NOT flag:list AND NOT %hidden AND (to:martinralbrecht@* OR to:martin.albrecht@*)")
+                  ("%doc"    . "mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M"))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -6758,7 +6759,7 @@ Canned queries.
 
 (add-to-list
  'mu4e-bookmarks
- '("mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M AND %inbox AND %month"
+ '("%doc AND %inbox AND %month"
    "Documents (31 days)" ?d) t)
 #+END_SRC
 
