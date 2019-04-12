@@ -3022,15 +3022,13 @@ DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
                      "* %a"
                      :immediate-finish nil :prepend nil :empty-lines 0)
 
-                    ("et" "create a [t]ask linked to an [e]-mail"
+                    ("et" "create a task linked to an [e]-mail"
                      entry (file+headline malb/work-org "Admin")
-                     "* TODO %?
-SCHEDULED: %^t
+                     "* %^{type|TODO|REPLY|READ} %? %^G
+%^{schedule|DEADLINE: |SCHEDULED: |}%^t
 :PROPERTIES:
 :CREATED: %U
 :END:
-
-%i
 
 See %a by %:fromname
 " :immediate-finish nil :prepend t :empty-lines 1)
@@ -3048,7 +3046,7 @@ SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
 :END:
 " :immediate-finish t :prepend t :empty-lines 1)
 
-                    ("eq" "quick create a  task linked to an [e]-mail"
+                    ("eq" "quick create a task linked to an [e]-mail"
                      entry (file+headline malb/work-org "Admin")
                      "* TODO %a (%:fromname)
 SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
@@ -7174,6 +7172,8 @@ Set higher contrast.
 ;; (setq mu4e-html2text-command "iconv -c -t utf-8 | pandoc -f html -t plain")
 #+END_SRC
 
+** Actions
+
 Action to view e-mails in external browser.
 
 #+BEGIN_SRC emacs-lisp
@@ -7181,13 +7181,10 @@ Action to view e-mails in external browser.
              '("browser" . mu4e-action-view-in-browser) t)
 #+END_SRC
 
-Action to view e-mails in EWW.
-
 #+BEGIN_SRC emacs-lisp
-(defun malb/view-in-eww (msg)
-  (eww-browse-url (concat "file://" (mu4e~write-body-to-html msg))))
-(add-to-list 'mu4e-view-actions '("Eww view" . malb/view-in-eww) t)
+(delete '("show this thread" . mu4e-action-show-thread) mu4e-view-actions)
 #+END_SRC
+
 
 Action to search messages by/to sender.
 
@@ -7204,12 +7201,13 @@ Action to search messages by/to sender.
            "OR to:" (mu4e-headers-search (cdar (mu4e-message-field msg :from)))
            "OR cc:" (mu4e-headers-search (cdar (mu4e-message-field msg :from))))))
 
-;; define 'x' as the shortcut
 (add-to-list 'mu4e-view-actions
-             '("xsender search (from)" . malb/search-for-sender) t)
+             '("from 🔍" . malb/search-for-sender) t)
+(add-to-list 'mu4e-headers-actions
+             '("from 🔍" . malb/search-for-sender) t)
 
-(add-to-list 'mu4e-view-actions
-             '("Xsender search" . malb/search-for-sender-extended) t)
+;; (add-to-list 'mu4e-view-actions
+;;              '("sender search" . malb/search-for-sender-extended) t)
 #+END_SRC
 
 Action to search messages involving all correspondents.
@@ -7223,21 +7221,44 @@ Action to search messages involving all correspondents.
                                    (mu4e-message-field msg :cc))
                            (mapcar (lambda (x) (cdr x))
                                    (mu4e-message-field msg :from)))))
-    (helm :sources `(((name . "Filter candidates:")
-                      (candidates . addresses)
-                      (after-init-hook . (lambda () (with-helm-buffer
-                                                      (run-at-time 0.25 nil #'helm-mark-all))))
-                      (action . (("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
-                                 ("Use all" . (lambda (x))))))))
+    (helm :sources (helm-build-sync-source "Filter candidates:"
+                     :candidates addresses
+                     :after-init-hook (lambda () (with-helm-buffer
+                                                   (run-at-time 0.25 nil #'helm-mark-all)))
+                     :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
+                              ("Use all" . (lambda (x))))))
     (mu4e-headers-search
      (format "contact:%s"
              (mapconcat 'identity addresses " AND ")))))
 
 (add-to-list 'mu4e-view-actions
-             '("Find messages" . malb/find-correspondence) t)
+             '("Contact 🔍" . malb/find-correspondence) t)
 
 (add-to-list 'mu4e-headers-actions
-             '("Find messages" . malb/find-correspondence) t)
+             '("Contact 🔍" . malb/find-correspondence) t)
+#+END_SRC
+
+DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subject regexp" (lambda (msg) …))~ where the lambda is executed whenever both regexps match. Processing does not stop after the first match.
+
+#+BEGIN_SRC emacs-lisp
+(setq malb/mu4e-dwim-actions nil)
+
+(defun malb/mu4e-dwim-action (msg)
+  (let  ((from (cdr (car (mu4e-message-field msg :from))))
+         (subject (mu4e-message-field msg :subject)))
+    (dolist (action malb/mu4e-dwim-actions)
+      (let ((from-regexp (car action))
+            (subject-regexp (cadr action))
+            (f (caddr action)))
+        (when (and
+               (string-match from-regexp from)
+               (string-match subject-regexp subject))
+          (funcall f msg))))))
+
+(add-to-list 'mu4e-view-actions
+             '("dwim" . malb/mu4e-dwim-action) t)
+(add-to-list 'mu4e-headers-actions
+             '("dwim" . malb/mu4e-dwim-action) t)
 #+END_SRC
 
 ** Writing
