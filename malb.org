@@ -6677,7 +6677,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-use-fancy-chars t
-      mu4e-headers-draft-mark     '("D" . "⚒ ") ; draft
+      mu4e-headers-draft-mark     '("D" . "✎ ") ; draft
       mu4e-headers-new-mark       '("N" . "")
       mu4e-headers-seen-mark      '("S" . "")    ; seen
       mu4e-headers-unread-mark    '("u" . "")    ; unseen
