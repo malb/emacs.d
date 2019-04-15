@@ -8130,6 +8130,7 @@ deactivate Client
                   (while (search-forward "" nil t)
                     (replace-match "" nil t)))
                 buf))
+            (setq cfw:org-agenda-schedule-args '(:timestamp :scheduled))
             (advice-add 'cfw:ical-url-to-buffer :around #'malb/cfw:ical-url-to-buffer)))
 #+END_SRC
 
