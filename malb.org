@@ -3107,7 +3107,10 @@ SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
                      (file+headline (lambda () (expand-file-name "inbox.org" malb/org-files-dir)) "Links")
                      "* %?%a
 Captured On: %U
+
+#+BEGIN_QUOTE
 %:initial
+#+END_QUOTE
 
 "
                      :immediate-finish nil
