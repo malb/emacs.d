@@ -4758,16 +4758,8 @@ Fall back to dumb jump if anaconda fails.
             (advice-add 'anaconda-mode-start :around #'malb/vanilla-python-shell-interpreter)))
 #+END_SRC
 
-*** Pydoc
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-pydoc
-  :bind (:map python-mode-map ("C-c C-d" . helm-pydoc)))
-#+END_SRC
-
 *** Docstrings
-
-**** [[https://github.com/glyph/python-docstring-mode][Python docstring mode]]
+**** [[https://github.com/glyph/python-docstring-mode][Python Docstring Mode]]
 
 #+BEGIN_QUOTE
 Python docstring mode provides syntax highlighting for docstrings in both ReStructuredText and Epydoc formats, as well as an override for the fill-paragraph function when editing such a docstring that will wrap things according to Python community convention.
@@ -4810,27 +4802,36 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
   :after (cython-mode flycheck))
 #+END_SRC
 
-*** AutoPEP8
+*** Black
 
 #+BEGIN_SRC emacs-lisp
-(use-package py-autopep8
-  :config (setq py-autopep8-options '("--max-line-length=100")))
+(use-package blacken
+  :config (setq blacken-line-length 120))
 #+END_SRC
 
-*** Importmagic
+*** Managing Imports
 
-[[https://github.com/anachronic/importmagic.el][importmagic]]
-
-You need to install =importmagic= and =epc=
+[[https://github.com/anachronic/importmagic.el][importmagic]] tries to guess how to add missing imports. You need to install =importmagic= and =epc= for it work.
 
 #+BEGIN_SRC shell :tangle no
-$ pip install importmagic epc
+pip install importmagic epc
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package importmagic
   :diminish importmagic-mode
   :hook (python-mode-hook . importmagic-mode))
+#+END_SRC
+
+[[https://github.com/timothycrosley/isort][isort]] sorts Python imports. You need to install =isort= first.
+
+#+begin_src shell :tangle no
+pip install isort
+#+end_src
+
+#+BEGIN_SRC emacs-lisp
+(use-package isort
+  :config (setq py-isort-options '("--lines=120")))
 #+END_SRC
 
 *** ElPy
