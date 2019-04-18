@@ -2972,8 +2972,17 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                   '(("t" "[t]asks")
                     ("tt" "capture a standard [t]ask"
                      entry (file malb/inbox-org)
-                     "* %^{type|TODO|READ} %?
+                     "* TODO %?
 %^{schedule|DEADLINE: |SCHEDULED: |}%^t
+:PROPERTIES:
+:CREATED: %U
+:END:
+
+%i" :prepend t :empty-lines 1)
+                    ("r" "add literature to [r]ead "
+                     entry (file+headline malb/work-org "Reading")
+                     "* READ %c%?
+DEADLINE: %^t
 :PROPERTIES:
 :CREATED: %U
 :END:
