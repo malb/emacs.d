@@ -470,7 +470,7 @@ Separate mu4e windows from others ([[https://stackoverflow.com/questions/1834678
 Mu4e buffers start with =*mu4e-=:
 
 #+BEGIN_SRC emacs-lisp
-(defvar malb/mu4e-buffer-regexps '("mu4e-.*")
+(defvar malb/mu4e-buffer-regexps '("\\`\\*mu4e-.*\\*")
   "Buffer names of mu4e buffers.")
 #+END_SRC
 
