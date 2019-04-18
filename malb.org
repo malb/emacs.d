@@ -2199,6 +2199,9 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 *** GitHub
 
+****** TODO “Works on Emacs 26.2 for me after setting ghub-use-workaround-for-emacs-bug to nil”.
+
+
 #+BEGIN_SRC emacs-lisp
 (use-package forge
   :after magit)
@@ -4784,7 +4787,7 @@ Manually fixed bugs:
   :hook (python-mode . python-docstring-mode))
 #+END_SRC
 
-**** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx-doc]]
+**** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx Doc]]
 
 An emacs minor mode for inserting docstring skeleton for Python functions and methods (=C-c M-d=). The structure of the docstring is as per the requirement of the Sphinx documentation generator.
 
@@ -7501,6 +7504,8 @@ We change the default template to not include the title which is filled in by de
 
             ))
 #+END_SRC
+
+****** TODO https://github.com/org2blog/org2blog/wiki/Debugging-Stories
 
 * PDF Viewer
 
