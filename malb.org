@@ -1894,6 +1894,14 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
             (add-hook 'LaTeX-mode-hook 'er/add-text-mode-expansions)))
 #+END_SRC
 
+Alternatively, consider
+
+1. ~M-@~ marks a word
+2. ~M-h~ marks a paragraph
+3. ~C-M-@~ marks a balanced expression or s-expression
+4. ~C-M-h~ marks a defun (top-level-definition)
+5. ~C-x h~ marks the whole buffer
+
 ** Embrace
 
 [[https://raw.githubusercontent.com/cute-jumper/embrace.el/master/screencasts/embrace.gif]]
