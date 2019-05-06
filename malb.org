@@ -1651,23 +1651,12 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
               (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
               (sp-local-pair "/*!" "*/" :post-handlers '(("||\n[i]" "RET") ("[d-1]< | " "SPC"))))
 
-            ;; Auto-close more conservatively
-            (sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
-            (sp-pair "{"  nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
-                     :unless '(sp-point-before-word-p sp-point-before-same-p) :wrap "C-{")
-            (sp-pair "("  nil :post-handlers '(("||\n[i]" "RET") ("| " " "))
-                     :unless '(sp-point-before-word-p sp-point-before-same-p) :wrap "C-(")
-            (sp-pair "["  nil :post-handlers '(("| " " "))
-                     :unless '(sp-point-before-word-p sp-point-before-same-p))
-
-            (sp-pair "'"  nil :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-before-same-p))
-            (sp-local-pair '(sh-mode
-                             markdown-mode
-                             python-mode
-                             cython-mode)
-                           "`" nil :unless '(sp-point-before-word-p
-                                             sp-point-after-word-p
-                                             sp-point-before-same-p))
+            (sp-pair "\"" nil)
+            (sp-pair "{"  nil :post-handlers '(("||\n[i]" "RET") ("| " " ")) :wrap "C-{")
+            (sp-pair "("  nil :post-handlers '(("||\n[i]" "RET") ("| " " ")) :wrap "C-(")
+            (sp-pair "["  nil :post-handlers '(("| " " ")))
+            (sp-pair "'"  nil)
+            (sp-local-pair '(sh-mode markdown-mode python-mode cython-mode) "`" nil)
 
             ;; https://github.com/Fuco1/smartparens/issues/652#issuecomment-250518705
             (defun malb/latex-replace-dollar (_id action _context)
@@ -1711,14 +1700,11 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
             (add-to-list 'sp-ignore-modes-list 'markdown-mode)
-
-            (sp-with-modes
-                'org-mode
-              (sp-local-pair "=" "=" :unless '(sp-point-before-word-p sp-point-after-word-p))
-              (sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p))
-              (sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p))
-              (sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p)
-                             :post-handlers '(("[d1]" "SPC"))))))
+            (add-to-list 'sp-ignore-modes-list 'org-mode)
+            (eval-after-load "slack"
+              '(add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)
+              )
+            ))
 #+END_SRC
 
 Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing delimiter]]
