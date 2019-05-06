@@ -1586,6 +1586,7 @@ Make sure to auto automatically rescan for imenu change.
   :config (setq imenu-list-position 'left
                 imenu-list-size 0.15
                 imenu-list-auto-resize nil
+                imenu-list-focus-after-activation t
                 imenu-list-after-jump-hook nil))
 #+END_SRC
 
