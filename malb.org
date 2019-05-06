@@ -4846,7 +4846,7 @@ pip install isort
 #+end_src
 
 #+BEGIN_SRC emacs-lisp
-(use-package isort
+(use-package py-isort
   :config (setq py-isort-options '("--lines=120")))
 #+END_SRC
 
