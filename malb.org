@@ -1601,6 +1601,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
   :config (progn
             (require 'smartparens-config)
             (require 'smartparens-latex)
+            (require 'smartparens-html)
             (require 'smartparens-python)
 
             (smartparens-global-mode t)
