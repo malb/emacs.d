@@ -991,7 +991,7 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
 #+BEGIN_SRC emacs-lisp
 (use-package fish-completion
   :config (progn
-            (setq fish-completion-fallback-on-bash-p t)
+            (setq fish-completion-fallback-on-bash-p nil)
             (global-fish-completion-mode)))
 #+END_SRC
 
