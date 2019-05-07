@@ -1736,7 +1736,6 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (sp-pair "{"  nil :post-handlers '(("||\n[i]" "RET") ("| " " ")) :wrap "C-{")
             (sp-pair "("  nil :post-handlers '(("||\n[i]" "RET") ("| " " ")) :wrap "C-(")
             (sp-pair "["  nil :post-handlers '(("| " " ")))
-            (sp-pair "'"  nil)
             (sp-local-pair '(sh-mode markdown-mode python-mode cython-mode) "`" nil)
 
             ;; https://github.com/Fuco1/smartparens/issues/652#issuecomment-250518705
