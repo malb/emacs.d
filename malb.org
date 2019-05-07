@@ -331,7 +331,9 @@ Resize windows to accommodate new ones.
                       (setq done t))))))))
 #+END_SRC
 
-** Switching (Ace-Window)
+** Switching
+
+*** Ace Window
 
 [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
 
@@ -356,6 +358,8 @@ Resize windows to accommodate new ones.
                     (?r winner-redo)))))
 #+END_SRC
 
+*** Back and Forth
+
 Quickly jump back and forth between buffers ([[http://www.emacswiki.org/emacs/SwitchingBuffers#toc4][source]])
 
 #+BEGIN_SRC emacs-lisp
@@ -365,6 +369,49 @@ Quickly jump back and forth between buffers ([[http://www.emacswiki.org/emacs/Sw
 Repeated invocations toggle between the two most recently open buffers."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
+#+END_SRC
+
+*** Window Numbering
+
+#+BEGIN_SRC emacs-lisp
+;; (use-package window-numbering
+;;   :ensure t
+;;   :config (progn
+;;             (defun window-numbering-install-mode-line (&optional position)
+;;               "Do nothing, the display is handled by the powerline.")
+;;             (setq window-numbering-assign-func
+;;                   (lambda () (when (equal (buffer-name) "*Ilist*") 9)))
+;;             (window-numbering-mode 1)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package winum
+  :init (setq winum-keymap
+              (let ((map (make-sparse-keymap)))
+                (define-key map (kbd "M-0") 'winum-select-window-0-or-10)
+                (define-key map (kbd "M-1") 'winum-select-window-1)
+                (define-key map (kbd "M-2") 'winum-select-window-2)
+                (define-key map (kbd "M-3") 'winum-select-window-3)
+                (define-key map (kbd "M-4") 'winum-select-window-4)
+                (define-key map (kbd "M-5") 'winum-select-window-5)
+                (define-key map (kbd "M-6") 'winum-select-window-6)
+                (define-key map (kbd "M-7") 'winum-select-window-7)
+                (define-key map (kbd "M-8") 'winum-select-window-8)
+                map))
+  :config (progn
+
+            (defun winum-assign-9-to-ilist ()
+              (when (string-match-p (buffer-name) ".*\\*Ilist\\*.*") 9))
+            (add-to-list 'winum-assign-functions #'winum-assign-9-to-ilist)
+
+            (setq window-numbering-scope            'global
+                  winum-reverse-frame-list          nil
+                  winum-auto-assign-0-to-minibuffer t
+
+                  winum-auto-setup-mode-line        nil
+                  winum-ignored-buffers             '(" *which-key*"))
+
+            (winum-mode)))
 #+END_SRC
 
 ** Special Windows
@@ -702,7 +749,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("`" other-window :color blue))
 
 (key-chord-define-global "\\x" #'malb/hydra-window/body)
-(bind-key "¬" #'other-window)
+(bind-key "C-`" #'other-window)
 #+END_SRC
 
 ** Next/Previous Buffer
@@ -1817,31 +1864,32 @@ Commands are bound to =C-x m …=
               (add-to-list 'mc/unsupported-minor-modes 'typo-mode))
             (add-hook 'multiple-cursors-mode-hook #'malb/mc-typo-mode)
 
-            (bind-key "M-3" #'mc/mark-previous-like-this)
-            (bind-key "M-4" #'mc/mark-next-like-this)
-            (bind-key "M-£" #'mc/unmark-previous-like-this)
-            (bind-key "M-$" #'mc/unmark-next-like-this)
+            (defhydra malb/hydra-multiple-cursors (:hint nil)
+              "
+ Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
+------------------------------------------------------------------
+ [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
+ [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
+ [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search
+ [Click] Cursor at point       [_q_] Quit"
+              ("l" mc/edit-lines :exit t)
+              ("a" mc/mark-all-like-this :exit t)
+              ("n" mc/mark-next-like-this)
+              ("N" mc/skip-to-next-like-this)
+              ("M-n" mc/unmark-next-like-this)
+              ("p" mc/mark-previous-like-this)
+              ("P" mc/skip-to-previous-like-this)
+              ("M-p" mc/unmark-previous-like-this)
+              ("s" mc/mark-all-in-region-regexp :exit t)
+              ("0" mc/insert-numbers :exit t)
+              ("A" mc/insert-letters :exit t)
+              ("<mouse-1>" mc/add-cursor-on-click)
+              ;; Help with click recognition in this hydra
+              ("<down-mouse-1>" ignore)
+              ("<drag-mouse-1>" ignore)
+              ("q" nil))
 
-            (bind-key "C-;" #'mc/mark-all-dwim)
-
-            (define-prefix-command 'malb/mc-map)
-            (bind-key "m" 'malb/mc-map ctl-x-map)
-
-            (bind-key "a" #'mc/mark-all-like-this malb/mc-map)
-            (bind-key "d" #'mc/mark-all-dwim malb/mc-map)
-            (bind-key "s" #'mc/mark-all-symbols-like-this-in-defun malb/mc-map)
-
-            (bind-key "i" #'mc/insert-numbers malb/mc-map)
-            (bind-key "l" #'mc/insert-letters malb/mc-map)
-
-            (bind-key "h" #'mc-hide-unmatched-lines-mode malb/mc-map)
-
-            (bind-key "R" #'mc/reverse-regions malb/mc-map)
-            (bind-key "S" #'mc/sort-regions malb/mc-map)
-            (bind-key "L" #'mc/edit-lines malb/mc-map)
-
-            (bind-key "C-a" #'mc/edit-beginnings-of-lines malb/mc-map)
-            (bind-key "C-e" #'mc/edit-ends-of-lines malb/mc-map)))
+            (bind-key "C-x m" #'malb/hydra-multiple-cursors/body)))
 #+END_SRC
 
 ** Recursively narrow
@@ -3494,9 +3542,6 @@ When `exit' from shell buffer."
                   (malb/make-toggle-shell "eshell"
                                           '(eshell "new")
                                           '(progn (insert "ls") (eshell-send-input)) t))
-
-            (bind-key "C-`" #'malb/toggle-eshell)
-
             ;; ------------
             ;; KEY BINDINGS
             ;; ------------
