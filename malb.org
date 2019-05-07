@@ -4213,14 +4213,16 @@ mouse-3: go to end")
 *** Highlight Symbols
 
 #+BEGIN_SRC emacs-lisp
-(use-package highlight-symbol
-  :diminish highlight-symbol-mode
-  :after cc-mode
-  :config (progn
-            (bind-key "M-n" #'highlight-symbol-next prog-mode-map)
-            (bind-key "M-p" #'highlight-symbol-prev prog-mode-map)
-            (bind-key "M-n" #'highlight-symbol-next c-mode-base-map)
-            (bind-key "M-p" #'highlight-symbol-prev c-mode-base-map)))
+(use-package symbol-overlay
+  :bind ("M-s h ." . symbol-overlay-put)
+  :config (setq symbol-overlay-faces '((t (:background "#b58900" :foreground "black"))
+                                       (t (:background "#cb4b16" :foreground "white"))
+                                       (t (:background "#dc322f" :foreground "white"))
+                                       (t (:background "#d33682" :foreground "white"))
+                                       (t (:background "#6c71c4" :foreground "white"))
+                                       (t (:background "#268bd2" :foreground "white"))
+                                       (t (:background "#2aa198" :foreground "black"))
+                                       (t (:background "#859900" :foreground "black")))))
 #+END_SRC
 
 *** Looking Stuff Up
