@@ -3554,7 +3554,6 @@ When `exit' from shell buffer."
                                           (kill-buffer (process-buffer proc)))))))
 
             (add-hook 'shell-mode-hook #'toggle-truncate-lines)
-            (add-hook 'shell-mode-hook #'malb/enable-company-pcomplete)
             (add-hook 'shell-mode-hook #'malb/comint-close-buffer-when-finished)
             (fset 'malb/toggle-shell
                   (malb/make-toggle-shell "shell" '(shell)  nil t))))
