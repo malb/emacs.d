@@ -978,18 +978,6 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
   :config (company-quickhelp-mode 1))
 #+END_SRC
 
-Use [[https://github.com/Henry/dot-emacs/blob/master/my-lisp/company-pcomplete.el][company-pcomplete]] not always because of [[https://github.com/company-mode/company-mode/issues/189][this bug]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-pcomplete
-  :ensure nil
-  :config (defun malb/enable-company-pcomplete ()
-            (set (make-local-variable 'company-backends)
-                 (append (list #'company-pcomplete) company-backends))))
-#+END_SRC
-
-****** TODO check if conditional enabling of company-pcomplete is still needed
-
 #+BEGIN_SRC emacs-lisp
 (use-package company-lsp
   :after (company lsp-mode)
@@ -1032,7 +1020,7 @@ BibTeX is handled by Helm BibTeX below.
 
 ** Shell
 
-Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =pcomplete= which is then used by =company-pcomplete=
+Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =pcomplete= which is then used by =company-capf=
 
 #+BEGIN_SRC emacs-lisp
 (use-package fish-completion
