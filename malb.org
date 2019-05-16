@@ -9101,7 +9101,8 @@ The result looks like this:
     (select-frame frame)
     (malb/solarized-light-theme)
     (powerline-reset)
-    (unicode-fonts-setup)
+    (eval-after-load "unicode-fonts"
+      '(unicode-fonts-setup))
     (setq malb/theme-loaded t)))
 
 (if (daemonp)
