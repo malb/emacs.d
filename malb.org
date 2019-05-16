@@ -3727,8 +3727,11 @@ When nth is set, it will copy the nth previous command."
               (setq pcomplete-cycle-completions t
                     pcomplete-ignore-case t)
               (setq-local company-idle-delay nil)
-              (malb/enable-company-pcomplete)
-              (define-key eshell-mode-map [remap eshell-pcomplete] #'company-pcomplete))
+              (define-key eshell-mode-map [remap eshell-pcomplete]
+                (lambda ()
+                  (interactive)
+                  (let ((completion--capf-misbehave-funs nil))
+                    (call-interactively #'company-capf)))))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
@@ -8446,8 +8449,6 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
 
             (add-hook 'weechat-mode-hook #'visual-line-mode)
             (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
-
-            (add-hook 'weechat-mode-hook #'malb/enable-company-pcomplete)
 
             (defun malb/weechat ()
               (interactive)
