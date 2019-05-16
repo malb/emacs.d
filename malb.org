@@ -4943,7 +4943,7 @@ On our system port 8888 is already taken.
   :commands (ein:notebooklist-login ein:query-notebook-version)
   :config (progn
             (setq ein:complete-on-dot nil
-                  ein:notebook-create-checkpoint-on-save t
+                  ein:notebook-create-checkpoint-on-save nil
                   ein:completion-backend 'ein:use-company-backend
                   ein:url-or-port '(8890 8889)
                   ein:default-url-or-port 8890
@@ -4951,14 +4951,29 @@ On our system port 8888 is already taken.
                   ein:console-security-dir "")
 
             (defun malb/ein-hook ()
-              (toggle-truncate-lines t))
+              (toggle-truncate-lines t)
+              (flycheck-mode -1)
+              (flyspell-mode-off))
 
             (add-hook 'ein:notebook-multilang-mode-hook #' malb/ein-hook)
 
             (add-to-list 'org-babel-load-languages '(ein . t))
 
             (require 'ein-notebook)
-            (add-to-list 'company-backends #'ein:company-backend)
+            ;; (add-to-list 'company-backends #'ein:company-backend)
+
+            (defun ein:ml-lang-setup-sage ()
+              "Based on `ein:ml-lang-setup-python'."
+              (setq-local mode-name "EIN[Sage]")
+              (setq-local comment-start "# ")
+              (setq-local comment-start-skip  "#+\\s-*")
+              (setq-local parse-sexp-lookup-properties t)
+              (setq-local indent-line-function
+                          (apply-partially #'ein:ml-indent-line-function #'python-indent-line-function))
+              (setq-local indent-region-function
+                          (apply-partially #'ein:ml-indent-region #'python-indent-region))
+              (set-syntax-table sage-shell:sage-mode-syntax-table)
+              (set-keymap-parent ein:notebook-multilang-mode-map python-mode-map))
 
             (defun malb/ein-open-here ()
               "We have a link to our projects top directory, this function goes to anything below that."
