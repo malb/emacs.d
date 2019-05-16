@@ -9363,5 +9363,6 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 # Local Variables:
 # eval: (ws-butler-mode 1)
+# org-cycle-separator-lines: 0
 # fill-column: 158
 # End:
