@@ -2341,7 +2341,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (setq org-enforce-todo-dependencies t   ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
-      org-catch-invisible-edits 'show
+      org-catch-invisible-edits 'show-and-error
       org-adapt-indentation nil         ; Non-nil means adapt indentation to outline node level.
       org-tags-column -120
       org-startup-folded 'fold
