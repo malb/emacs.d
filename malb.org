@@ -8450,12 +8450,11 @@ Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
               ("C-n" . slack-buffer-goto-next-message)
               ("C-p" . slack-buffer-goto-prev-message))
   :init (progn
-          (setq slack-buffer-emojify t
-                slack-prefer-current-team t
-                ))
+          (setq slack-buffer-emojify t))
   :config (progn
             (add-hook 'slack-mode-hook #'visual-fill-column-mode)
-            (slack-start)))
+            ;; (slack-start)
+          ))
 #+END_SRC
 
 * X11 Integration
