@@ -373,39 +373,37 @@ Repeated invocations toggle between the two most recently open buffers."
 
 *** Window Numbering
 
-#+BEGIN_SRC emacs-lisp
-;; (use-package window-numbering
-;;   :ensure t
-;;   :config (progn
-;;             (defun window-numbering-install-mode-line (&optional position)
-;;               "Do nothing, the display is handled by the powerline.")
-;;             (setq window-numbering-assign-func
-;;                   (lambda () (when (equal (buffer-name) "*Ilist*") 9)))
-;;             (window-numbering-mode 1)))
-#+END_SRC
+Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package winum
   :init (setq winum-keymap
               (let ((map (make-sparse-keymap)))
-                (define-key map (kbd "M-0") 'winum-select-window-0-or-10)
-                (define-key map (kbd "M-1") 'winum-select-window-1)
-                (define-key map (kbd "M-2") 'winum-select-window-2)
-                (define-key map (kbd "M-3") 'winum-select-window-3)
-                (define-key map (kbd "M-4") 'winum-select-window-4)
-                (define-key map (kbd "M-5") 'winum-select-window-5)
-                (define-key map (kbd "M-6") 'winum-select-window-6)
-                (define-key map (kbd "M-7") 'winum-select-window-7)
-                (define-key map (kbd "M-8") 'winum-select-window-8)
-                (define-key map (kbd "M-9") 'winum-select-window-9)
+                (bind-key "M-0" #'winum-select-window-0-or-10 map)
+                (bind-key "M-1" #'winum-select-window-1 map)
+                (bind-key "M-2" #'winum-select-window-2 map)
+                (bind-key "M-3" #'winum-select-window-3 map)
+                (bind-key "M-4" #'winum-select-window-4 map)
+                (bind-key "M-5" #'winum-select-window-5 map)
+                (bind-key "M-6" #'winum-select-window-6 map)
+                (bind-key "M-7" #'winum-select-window-7 map)
+                (bind-key "M-8" #'winum-select-window-8 map)
+                (bind-key "M-9" #'winum-select-window-9 map)
+                (bind-key "C-x w" #'winum-select-window-by-number map)
                 map))
   :config (progn
 
-            (defun winum-assign-9-to-ilist ()
-              (when (string-match-p (buffer-name) ".*\\*Ilist\\*.*") 9))
-            (add-to-list 'winum-assign-functions #'winum-assign-9-to-ilist)
+            (defun malb/winum-assign ()
+              (cond
+               ((string-match-p (buffer-name) "\\*shell\\[.*\\]\\*") 10)
+               ((string-match-p (buffer-name) "\\*eshell\\[.*\\]\\*") 10)
+               ((string-match-p (buffer-name) "\\*Sage\\*") 10)
+               ((string-match-p (buffer-name) "\\*Ilist\\*") 8)
+               (t nil)))
 
-            (setq window-numbering-scope            'global
+            (add-to-list 'winum-assign-functions #'malb/winum-assign)
+
+            (setq winum-scope                       'frame-local
                   winum-reverse-frame-list          nil
                   winum-auto-assign-0-to-minibuffer t
 
@@ -694,9 +692,9 @@ Run =old-function= with an empty =display-buffer-alist=
 ^----^--------^-----^---------^------^---------^------^---------^---------^^-----^------^---^-------^---^--------------^
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ new      _C_enter   _j_ump      _W_ store cfg
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_ine      _J_ load cfg
-_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _F_ treemacs
+_↑_ ↑         _z_ undo        _n_ext buf       _e_ X↑           _'_ \\/ →        _._ C→     ^^          _I_ imenu
 _→_ →         _Z_ reset       _t_oggle buf     _r_ X→           _]_ \\/ close
-^^            _d_lt this      _a_ce 1          _g_olden-ratio   _!_ \\/ rename
+^^            _d_lt this      _a_ce 1          ^ ^              _!_ \\/ rename
 _SPC_ cancel  _D_lt other     _s_wap
 ^^            _o_nly this
 "
@@ -710,7 +708,6 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("w" shrink-window)
   ("e" enlarge-window)
   ("r" enlarge-window-horizontally)
-  ("g" golden-ratio-mode)
   ("H" malb/helm-omni :color blue)
   ("1" previous-buffer)
   ("2" next-buffer)
@@ -726,7 +723,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("o" delete-other-windows :color blue)
   ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
   ("Z" winner-redo)
-  ("F" treemacs-projectile :color blue)
+  ("I" imenu-list-smart-toggle :color blue)
   ("[" malb/eyebrowse-new-window-config :color blue)
   (";" (lambda () (interactive) (eyebrowse-prev-window-config nil)) :color red)
   ("'" (lambda () (interactive) (eyebrowse-next-window-config nil)) :color red)
@@ -747,7 +744,8 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("8" eyebrowse-switch-to-window-config-8 :color blue)
   ("9" eyebrowse-switch-to-window-config-9 :color blue)
   ("SPC" nil)
-  ("`" other-window :color blue))
+  ("`" other-window :color blue)
+  ("C-`" other-window :color blue))
 
 (key-chord-define-global "\\x" #'malb/hydra-window/body)
 (bind-key "C-`" #'other-window)
@@ -1624,7 +1622,8 @@ Make sure to auto automatically rescan for imenu change.
                 (let ((imenu-anywhere-buffer-filter-functions '((lambda (current other) t))))
                   (call-interactively #'helm-imenu-anywhere)))
 
-               (t (call-interactively #'helm-imenu-anywhere))))))
+               (t (call-interactively #'helm-imenu-anywhere))))
+            (add-to-list 'helm-commands-using-frame 'helm-imenu-anywhere)))
 #+END_SRC
 
 [[https://github.com/bmag/imenu-list][imenu-list]] can be useful, =C-x t i=
@@ -1645,6 +1644,8 @@ Make sure to auto automatically rescan for imenu change.
               (setf (alist-get (concat "^" (regexp-quote imenu-list-buffer-name) "$")
                                display-buffer-alist nil nil #'equal)
                     `(display-buffer-in-side-window
+                      (window-parameters  . ((no-other-window . t)
+                                             (no-delete-other-window . t)))
                       (side . ,side)
                       ;; It is not totally clear to me if `imenu-list-size' is
                       ;; supposed to be the window's body height/width or the
@@ -1666,7 +1667,7 @@ Make sure to auto automatically rescan for imenu change.
             (setq imenu-list-position 'left
                   imenu-list-size 0.15
                   imenu-list-auto-resize nil
-                  imenu-list-focus-after-activation t
+                  imenu-list-focus-after-activation nil
                   imenu-list-after-jump-hook nil)
             (malb/imenu-list-install-display-buffer)))
 #+END_SRC
@@ -3246,7 +3247,9 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
 ** Auto Completion
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook #'malb/enable-company-pcomplete)
+(defun malb/org-mode-completion-hook ()
+  (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+(add-hook 'org-mode-hook #'malb/org-mode-completion-hook)
 #+END_SRC
 
 ** Eldoc
@@ -5121,7 +5124,7 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                   ac-sage-show-quick-help t)
 
             (fset 'malb/toggle-sage
-                  (malb/make-toggle-shell "Sage"
+                  (malb/make-toggle-shell "*Sage*"
                                           '(progn (venv-deactivate) (sage-shell:run-sage "sage"))
                                           nil
                                           nil))
