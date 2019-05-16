@@ -3033,6 +3033,15 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 :END:
 
 %i" :prepend t :empty-lines 1)
+                    ("ty" "capture a quick task"
+                     entry (file malb/inbox-org)
+                     "* TODO %?
+SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))
+:PROPERTIES:
+:CREATED: %U
+:END:
+
+%i" :prepend t :empty-lines 1)
 
                     ("tc" "capture a standard task and the current [c]ontext"
                      entry (file malb/inbox-org)
@@ -3160,9 +3169,9 @@ DEADLINE: %^t
                      "* %?%a
 Captured On: %U
 
-#+BEGIN_QUOTE
+,#+BEGIN_QUOTE
 %:initial
-#+END_QUOTE
+,#+END_QUOTE
 
 "
                      :immediate-finish nil
