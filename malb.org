@@ -57,15 +57,9 @@ Define some functions to disable/enable GC ([[https://bling.github.io/blog/2016/
 
 (defun malb/enable-garbage-collection ()
   "Reset garbage collection to small-ish limit."
-  (setq gc-cons-threshold 16777216
-        gc-cons-percentage 0.1))
-#+END_SRC
-
-Helm runs with GC disabled:
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'minibuffer-setup-hook #'malb/disable-garbage-collection)
-(add-hook 'minibuffer-exit-hook  #'malb/enable-garbage-collection)
+  (setq gc-cons-threshold 800000
+        gc-cons-percentage 0.1
+        garbage-collection-messages t))
 #+END_SRC
 
 We disable GC during startup, we re-enable it afterwards.
