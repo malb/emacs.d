@@ -808,7 +808,7 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 
 *Tip* =C-u 0 C-c j ,​= description of the change at a particular stop on your tour
 
-** Visual Bookmarks
+** [#B] Visual Bookmarks
 
 ([[http://pragmaticemacs.com/emacs/use-visible-bookmarks-to-quickly-jump-around-a-file/][source]])
 
@@ -1019,14 +1019,7 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
 #+BEGIN_SRC emacs-lisp
 (use-package fish-completion
   :config (progn
-            (setq fish-completion-fallback-on-bash-p nil)
             (global-fish-completion-mode)))
-#+END_SRC
-
-Fish completion will fall back to [[https://github.com/szermatt/emacs-bash-completion][bash-completion]] if there is no fish shell.
-
-#+BEGIN_SRC emacs-lisp
-(use-package bash-completion)
 #+END_SRC
 
 ** Company and YaSnippet Integration
@@ -1428,15 +1421,6 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
               "run helm-ag in projects directory"
               (interactive)
               (malb/helm-ag (file-name-as-directory (car malb/literature-dirs))))))
-#+END_SRC
-
-** Helm Themes
-
-Switch themes with helm.
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-themes
-  :commands helm-themes)
 #+END_SRC
 
 ** Helm Descbinds
@@ -2008,25 +1992,6 @@ https://github.com/cute-jumper/embrace.el
               ([S-tab] . bicycle-cycle-global)))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(use-package hideshow
-  :diminish hs-minor-mode
-  :config (setq hs-special-modes-alist '((c-mode "{" "}" "/[*/]" nil nil)
-                                         (c++-mode "{" "}" "/[*/]" nil nil)
-                                         (java-mode "{" "}" "/[*/]" nil nil)
-                                         (js-mode "{" "}" "/[*/]" nil)
-                                         (json-mode "{" "}" "/[*/]" nil)
-                                         (javascript-mode  "{" "}" "/[*/]" nil))))
-#+END_SRC
-
-** Hungry Delete
-
-#+BEGIN_SRC emacs-lisp
-(use-package nv-delete-back
-  :bind (("C-<backspace>" . nv-delete-back-all)
-         ("M-<backspace>" . nv-delete-back)))
-#+END_SRC
-
 ** Beginning of …
 
 A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
@@ -2295,7 +2260,7 @@ functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... 
 (use-package git-link)
 #+END_SRC
 
-** Gitignore
+** [#B] Gitignore
 
 Generate gitignore files
 
@@ -4045,7 +4010,7 @@ shx or “shell-extras” extends comint-mode in Emacs — https://github.com/ri
               (add-hook 'shell-mode-hook #'shx-mode))))
 #+END_SRC
 
-**** [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
+**** [#B] [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
 
 1. Open, say, *Sage*.
 
@@ -4060,7 +4025,7 @@ shx or “shell-extras” extends comint-mode in Emacs — https://github.com/ri
             (add-hook 'isend-mode-hook #'isend-default-ipython-setup)))
 #+END_SRC
 
-*** Spell checking
+*** Spell Checking
 
 Enable spell checking in comments and documentation.
 
@@ -4283,7 +4248,7 @@ mouse-3: go to end")
                                        (t (:background "#859900" :foreground "black")))))
 #+END_SRC
 
-*** Looking Stuff Up
+*** [#B] Looking Stuff Up
 
 [[https://github.com/areina/helm-dash][helm-dash]] package uses Dash docsets inside emacs to browse documentation.
 
@@ -4462,7 +4427,7 @@ Auto-format source code in many languages with one command – [[https://github.
 
 #+END_SRC
 
-** C/C++ development
+** C/C++ Development
 
 #+BEGIN_SRC emacs-lisp
 (use-package cc-mode
@@ -5427,12 +5392,6 @@ Code manipulation:
             (add-to-list 'pandoc-major-modes '(web-mode . "html"))))
 #+END_SRC
 
-** JSON
-
-#+BEGIN_SRC emacs-lisp
-(use-package json-mode)
-#+END_SRC
-
 * Prose
 
 ** General
@@ -6272,7 +6231,7 @@ Run =latexmk -pvc= in async shell
     (delete-window)))
 #+END_SRC
 
-** Utility Functions
+** [#B] Utility Functions
 
 ([[https://sriramkswamy.github.io/dotemacs/][source]])
 
@@ -6731,6 +6690,8 @@ prefix argument is given ask for voice first."
     (emms-start)))
 #+END_SRC
 
+****** TODO Factor out
+
 * E-mail (Mu4e)
 
 E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]]. See this [[https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/#more-1336][blog post]] for details.
@@ -6756,7 +6717,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-confirm-quit nil
                  mu4e-index-cleanup t
                  mu4e-view-show-addresses t
-                 mu4e-index-lazy-check nil))
+                 mu4e-index-lazy-check nil
+                 mu4e-headers-auto-update nil))
 #+END_SRC
 
 ** Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
@@ -7985,7 +7947,7 @@ Show dired histories you have visited.
 
 ** Directory Trees
 
-I’m not really sold on either
+I’m not really sold on any
 
 *** Neotree
 
@@ -7995,10 +7957,11 @@ I’m not really sold on either
 
 #+BEGIN_SRC emacs-lisp
 (use-package neotree
-  :commands neotree
+  :commands (neotree neotree-toggle)
   :config (progn
             (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
-                  neo-smart-open t)))
+                  neo-smart-open t
+                  neo-window-width 35)))
 #+END_SRC
 
 *** Dired Sidebar
@@ -8323,34 +8286,6 @@ exports.boxes = [ "INBOX"];
           (prodigy-start-service (prodigy-find-service "imapnotify"))))
 #+END_SRC
 
-* Page Breaks
-
-Inspired by this [[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][post]], make use of page break characters by using [[https://github.com/purcell/page-break-lines][page-break-lines]] and [[https://github.com/david-christiansen/helm-pages][helm-pages]]. ([[http://ericjmritz.name/2015/08/29/using-page-breaks-in-gnu-emacs/][source]])
-
-- Insert a new page break with =C-q C-l=.
-
-- Use =C-x [= and =C-x ]= to move backward and forward through pages, respectively.
-
-([[http://ericjmritz.name/2015/10/14/some-personal-hydras-for-gnu-emacs/][hydra source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package page-break-lines
-  :config (progn
-            (global-page-break-lines-mode)
-            (add-to-list 'page-break-lines-modes 'c-mode)
-            (add-to-list 'page-break-lines-modes 'python-mode)
-            (diminish 'page-break-lines-mode)))
-
-(use-package helm-pages
-  :config (progn
-            (defhydra hydra-page-breaks (global-map "C-x")
-              "pages"
-              ("[" backward-page "backward")
-              ("]" forward-page "forward")
-              ("M-p" helm-pages "helm" :color blue)
-              ("RET" nil "quit"))))
-#+END_SRC
-
 * EMMS
 
 #+BEGIN_SRC emacs-lisp
@@ -8495,6 +8430,7 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (defvar backup-dir (expand-file-name "autosaves" user-emacs-directory))
 (setq backup-directory-alist (list (cons "." backup-dir)))
 #+END_SRC
+
 * UTF-8 Everywhere
 
 #+BEGIN_SRC emacs-lisp
@@ -8673,14 +8609,6 @@ Don’t error when killing read-only text.
 (setq kill-read-only-ok t)
 #+END_SRC
 
-*** COMMENT Overwrite a selection by typing over it
-
-#+BEGIN_SRC emacs-lisp
-(pending-delete-mode t)
-#+END_SRC
-
-*Note* Disabled because it ineracts badly with smartparens in latex-mode: select some text and type ~\~ for e.g ~\left~
-
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
@@ -8857,16 +8785,6 @@ Transparent encryption and decryption.
 #+END_SRC
 
 * File Types
-** Log Files
-
-Using [[https://github.com/doublep/logview][logview]] mode.
-
-#+BEGIN_SRC emacs-lisp
-(use-package logview
-  :commands (logview-mode)
-  :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
-#+END_SRC
-
 ** PCAP Files
 
 Wireshark et al. outputs ([[https://github.com/orgcandman/pcap-mode][source]])
@@ -8905,10 +8823,33 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 (add-to-list 'auto-mode-alist '("\\.sobj\\'" . sobj-mode))
 #+END_SRC
 
+** Log Files
+
+Using [[https://github.com/doublep/logview][logview]] mode.
+
+#+BEGIN_SRC emacs-lisp
+(use-package logview
+  :commands (logview-mode)
+  :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
+#+END_SRC
+
+** JSON
+
+#+BEGIN_SRC emacs-lisp
+(use-package json-mode)
+#+END_SRC
+
 ** YaML Files
 
 #+BEGIN_SRC emacs-lisp
 (use-package yaml-mode)
+#+END_SRC
+
+** CSV
+
+#+BEGIN_SRC emacs-lisp
+(use-package csv-mode
+  :hook (csv-mode . hl-line-mode))
 #+END_SRC
 
 ** Docker Filers
@@ -8927,13 +8868,6 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
   :mode ("\\.epub$" . nov-mode)
   :config (progn
             (add-hook 'nov-mode-hook #'visual-fill-column-mode)))
-#+END_SRC
-
-** CSV
-
-#+BEGIN_SRC emacs-lisp
-(use-package csv-mode
-  :hook (csv-mode . hl-line-mode))
 #+END_SRC
 
 * Theme & Look
@@ -9258,6 +9192,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 (bind-key "f" #'malb/toggle-fold             malb/toggle-map)
 (bind-key "t" #'malb/toggle-term-mode        malb/toggle-map)
 (bind-key "l" #'toggle-truncate-lines        malb/toggle-map)
+(bind-key "n" #'neotree-toggle               malb/toggle-map)
 (bind-key "q" #'toggle-debug-on-quit         malb/toggle-map)
 (bind-key "i" #'imenu-list-smart-toggle      malb/toggle-map)
 (bind-key "d" #'dired-sidebar-toggle-sidebar malb/toggle-map)
