@@ -126,6 +126,10 @@ Get the package manager going, but do not autoload packages.
 Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our configuration readable.
 
 #+BEGIN_SRC emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
 (require 'use-package)
 
 (setq  use-package-compute-statistics t
