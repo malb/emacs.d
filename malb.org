@@ -2152,10 +2152,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
                   magit-last-seen-setup-instructions "2.1.0")
 
             (setq-default magit-diff-refine-hunk t)
-            (global-magit-file-mode t)
-
-            ;; we use magit, not vc for git
-            (delete 'Git vc-handled-backends)))
+            (global-magit-file-mode t)))
 #+END_SRC
 
 *Notes*
@@ -5014,18 +5011,7 @@ buffer-local `project-venv-name' variable."
                                                         venv-current-name)
                                               "Choose a virtualenv: ")))
                        (venv-workon project-venv-name)))))
-
-            ;; virtualenv in spaceline, enabled below
-            (eval-after-load "spaceline"
-              '(progn
-                 (spaceline-define-segment python-venv
-                   "The current python venv.  Works with `venv'."
-                   (when (and active
-                              (bound-and-true-p venv-current-name))
-                     (propertize venv-current-name
-                                 'face 'spaceline-python-venv
-                                 'help-echo (format "Virtual environment (via venv): %s"
-                                                    venv-current-name))))))))
+            ))
 #+END_SRC
 
 ** Sage
@@ -8854,40 +8840,43 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
             (add-hook 'dired-mode-hook #'turn-on-stripe-buffer-mode)))
 #+END_SRC
 
-** Powerline
+** Modeline
 
-We use [[https://github.com/TheBB/spaceline/tree/master][Spaceline]] which customises [[https://github.com/milkypostman/powerline][Powerline]].
+([[https://github.com/seagle0128/doom-modeline][source]])
 
-[[https://github.com/TheBB/spaceline/raw/master/screen.png]] ([[https://github.com/TheBB/spaceline/tree/master][source]])
+[[https://user-images.githubusercontent.com/140797/49694189-6913d480-fbc0-11e8-93ae-9578455dcd2c.png]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package spaceline-config
-  :ensure spaceline
-  :after (eyebrowse helm)
+(use-package doom-modeline-segments
+  :ensure nil
   :config (progn
 
-            ;; patch spaceline to always show eyebrowse window
-            ;; otherwise it screws with our colours: mode-line-buffer-id
-            (spaceline-define-segment workspace-number
-              "The current workspace name or number. Requires `eyebrowse-mode' to be
-enabled."
-              (when (bound-and-true-p eyebrowse-mode)
-                (let* ((num (eyebrowse--get 'current-slot))
-                       (tag (when num (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
-                       (str (if (and tag (< 0 (length tag)))
-                                tag
-                              (when num (int-to-string num)))))
-                  (or (when spaceline-workspace-numbers-unicode
-                        (spaceline--unicode-number str))
-                      (propertize str 'face 'bold)))))
+            (doom-modeline-def-segment python-venv
+              "The current python venv.  Works with `venv'."
+              (when (bound-and-true-p venv-current-name)
+                (propertize (format " %s" venv-current-name)
+                            'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+                            'help-echo (format "Virtual environment (via venv): %s"
+                                               venv-current-name))))
+            (setq doom-modeline-icon t
+                  doom-modeline-major-mode-icon t
+                  doom-modeline-major-mode-color-icon t
+                  doom-modeline-buffer-state-icon t
+                  doom-modeline-github nil
+                  doom-modeline-buffer-encoding nil
+                  doom-modeline-minor-modes nil)))
 
-            (setq spaceline-workspace-numbers-unicode nil)
-            (spaceline-spacemacs-theme 'python-venv)
-            (spaceline-helm-mode)
-            (spaceline-toggle-hud-off)
-            (spaceline-toggle-buffer-encoding-abbrev-off)
-            (setq powerline-default-separator 'arrow)
-            (spaceline-compile)))
+(use-package doom-modeline
+  :after doom-modeline-segements
+  :config (progn
+            (doom-modeline-def-modeline 'main
+              '(bar workspace-name window-number modals
+                    matches buffer-info remote-host
+                    buffer-position parrot selection-info
+                    python-venv) ;; <- new
+              '(objed-state misc-info persp-name fancy-battery irc mu4e
+                            github debug lsp minor-modes input-method
+                            indent-info buffer-encoding major-mode process vcs checker))))
 #+END_SRC
 
 ** Theme
@@ -8976,8 +8965,7 @@ The result looks like this:
         (malb/zenburn-theme))
     (progn
       (malb/zenburn-theme t)
-      (malb/solarized-light-theme)))
-  (powerline-reset))
+      (malb/solarized-light-theme))))
 #+END_SRC
 
 *** Load Theme
@@ -8989,9 +8977,9 @@ The result looks like this:
   (when (not malb/theme-loaded)
     (select-frame frame)
     (malb/solarized-light-theme)
-    (powerline-reset)
     (eval-after-load "unicode-fonts"
       '(unicode-fonts-setup))
+    (doom-modeline-mode t)
     (setq malb/theme-loaded t)))
 
 (if (daemonp)
