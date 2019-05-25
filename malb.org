@@ -50,7 +50,7 @@ We have RAM, lots of it.
 #+BEGIN_SRC emacs-lisp
 (setq gc-cons-threshold (* 32 1024 1024)
       gc-cons-percentage 0.1
-      garbage-collection-messages t)
+      garbage-collection-messages nil)
 #+END_SRC
 
 *Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
