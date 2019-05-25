@@ -5575,11 +5575,6 @@ Diminish ~flyspell-mode~ as we always use it.
   :diminish)
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(use-package flyspell-lazy
-  :diminish)
-#+END_SRC
-
 Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typos. I find myself pressing =C-.= in other programs these days just to be frustrated that it doesn’t just work™
 
 #+BEGIN_SRC emacs-lisp
