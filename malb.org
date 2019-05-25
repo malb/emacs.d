@@ -953,13 +953,6 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
             (bind-key "M-."   #'company-show-location company-active-map)))
 #+END_SRC
 
-Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-quickhelp
-  :config (company-quickhelp-mode 1))
-#+END_SRC
-
 #+BEGIN_SRC emacs-lisp
 (use-package company-lsp
   :after (company lsp-mode)
@@ -1765,21 +1758,6 @@ Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing 
               ("SPC" nil)
               ("q" nil))
             (bind-key "C-c d" #'malb/hydra-drag-stuff/body)))
-#+END_SRC
-
-** Visualise the undo tree
-
-([[http://www.dr-qusourceorg/undo-tree/undo-tree.el][source]])
-
-*Tip:* Did you know that Emacs has undo in a region?
-
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :diminish undo-tree-mode
-  :config (progn
-            (global-undo-tree-mode)
-            (setq undo-tree-visualizer-timestamps t)
-            (setq undo-tree-visualizer-diff t)))
 #+END_SRC
 
 ** Reverting Buffers
