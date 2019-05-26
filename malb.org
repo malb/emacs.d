@@ -8893,7 +8893,7 @@ The result looks like this:
 
 [[./screenshot.png]]
 
-*** Default theme
+*** Default Theme (Solarized)
 
 #+BEGIN_SRC emacs-lisp
 (use-package solarized
@@ -8909,6 +8909,7 @@ The result looks like this:
                   solarized-use-less-bold nil
                   solarized-emphasize-indicators t
                   solarized-scale-org-headlines nil
+                  solarized-scale-outline-headlines nil
                   x-underline-at-descent-line t)
 
             (defun malb/solarized-light-theme (&optional arg)
