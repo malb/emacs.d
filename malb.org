@@ -3045,7 +3045,7 @@ SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
 
                     ("r" "add literature to [r]ead "
                      entry (file+headline malb/work-org "Reading")
-                     "* READ %c%?
+                     "* READ %a%?
 DEADLINE: %^t
 :PROPERTIES:
 :CREATED: %U
