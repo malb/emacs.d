@@ -8897,7 +8897,19 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
                     python-venv) ;; <- new
               '(objed-state misc-info persp-name fancy-battery irc mu4e
                             github debug lsp minor-modes input-method
-                            indent-info buffer-encoding major-mode process vcs checker))))
+                            indent-info buffer-encoding major-mode process vcs checker))
+
+            (if (bound-and-true-p imenu-list-mode-line-format)
+                (setq imenu-list-mode-line-format
+                      '((:eval
+                         (doom-modeline-segment--bar))
+                        (:propertize "%b" face mode-line-buffer-id)
+                        " "
+                        (:eval (buffer-name imenu-list--displayed-buffer))
+                        " "
+                        (:eval
+                         (doom-modeline-segment--matches)))))
+            (add-hook 'mu4e-compose-mode-hook #'doom-modeline-set-minimal-modeline)))
 #+END_SRC
 
 ** Theme
