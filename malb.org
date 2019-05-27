@@ -2309,6 +2309,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+(add-hook 'org-agenda-after-show-hook (lambda () (toggle-truncate-lines 1)))
 
 (bind-key "<home>" #'org-beginning-of-line org-mode-map)
 (bind-key "<end>" #'org-end-of-line org-mode-map)
