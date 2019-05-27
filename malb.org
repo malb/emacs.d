@@ -953,6 +953,19 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
             (bind-key "M-."   #'company-show-location company-active-map)))
 #+END_SRC
 
+#+BEGIN_QUOTE
+Company completion backend for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
+
+It provides features that are not available by using company-capf + lsp-mode:
+
+- Support trigger characters. For example typing . will trigger completion for TypeScript.
+- Use completion item's label as completion labels and replace it with its insertText if available.
+- Fetch completion candidates asynchronously (Thanks @sebastiencs).
+- Apply text edits specified by completion candidates after completion.
+- Do not cache the completion candidates if they are incomplete.
+- Expand snippets on completion (requires yasnippet).
+#+END_QUOTE
+
 #+BEGIN_SRC emacs-lisp
 (use-package company-lsp
   :after (company lsp-mode)
@@ -4356,6 +4369,10 @@ Auto-format source code in many languages with one command – [[https://github.
 #+END_SRC
 
 *** Language Server Protocol (LSP)
+
+#+BEGIN_QUOTE
+The Language Server Protocol (LSP) defines the protocol used between an editor or IDE and a language server that provides language features like auto complete, go to definition, find all references etc. – https://microsoft.github.io/language-server-protocol/
+#+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-mode
