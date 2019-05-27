@@ -1467,34 +1467,15 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
             (add-to-list 'helm-commands-using-frame 'helm-org-rifle-files)))
 #+END_SRC
 
-** Helm Google
+** Helm Googler
 
-[[https://github.com/steckerhalter/helm-google][helm-google]] is a simple interface for Google which comes in handy when we want to add a quick link for a term.
 
-[[https://framagit.org/steckerhalter/helm-google/raw/master/screenshot.png]] ([[https://framagit.org/steckerhalter/helm-google][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-google
+(use-package helm-googler
+  :ensure nil
   :after helm
-  :bind ("C-c h g" . helm-google)
-  :config
-  (progn
-    (add-to-list 'helm-google-actions
-                 '("Copy URL" . (lambda (candidate)
-                                  (let ((url
-                                         (replace-regexp-in-string
-                                          "https://.*q=\\(.*\\)\&sa=.*"
-                                          "\\1" candidate)))
-                                    (kill-new url)))) t)
-
-    (add-to-list 'helm-google-actions
-                 '("Org Store Link" . (lambda (candidate)
-                                        (let ((title (car (split-string candidate "[\n]+")))
-                                              (url
-                                               (replace-regexp-in-string
-                                                "https://.*q=\\(.*\\)\&sa=.*"
-                                                "\\1" candidate)))
-                                          (push (list url title) org-stored-links)))) t)))
+  :bind ("C-c h g" . helm-googler))
 #+END_SRC
 
 ** Helm XRef
