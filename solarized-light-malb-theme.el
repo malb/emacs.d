@@ -8,22 +8,22 @@
    `(org-checkbox ((t (:weight bold :box (:line-width 1 :color nil :style (quote pressed-button))
                                :foreground "white" :background "light gray"))))
    `(org-done     ((t (:weight bold :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#8BB300" :background "#F0F0F0"))))
-   `(org-scheduled-previously ((t (:foreground "#cb4b16"))))
+   `(org-scheduled-previously ((t (:foreground ,orange))))
    `(org-tag ((t (:weight normal :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#9A9FA4"))))
-   `(org-todo ((t (:weight bold :box (:line-width 1 :color "#D8ABA7" :style nil) :foreground "#cb4b16" :background "#FFE6E4"))))
-   `(org-block-begin-line ((t (:slant normal :foreground "#657b83" :background ,s-base2 :inherit (org-meta-line)))))
-   `(org-block-end-line   ((t (:slant normal :foreground "#657b83" :background ,s-base2 :inherit (org-meta-line)))))
-   `(org-block ((t (:foreground "#657b83" :background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+   `(org-todo ((t (:weight bold :box (:line-width 1 :color "#D8ABA7" :style nil) :foreground ,orange :background "#FFE6E4"))))
+   `(org-block-begin-line ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line)))))
+   `(org-block-end-line   ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line)))))
+   `(org-block ((t (:foreground ,s-base00 :background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
 
-   `(auto-dim-other-buffers-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
-   `(hl-sentence ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit (highlight)))))
    `(markdown-code-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit nil ))))
    `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit (highlight)))))
-   `(which-func  ((t (:foreground "#DEB542"))))
+
+   `(hl-sentence ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit (highlight)))))
+   `(which-func  ((t (:foreground ,green :weight bold))))
    `(stripe-highlight ((t (:background ,s-base2))))
 
-   `(sp-wrap-overlay-opening-pair ((t (:foreground "#859900"))))
-   `(sp-wrap-overlay-closing-pair ((t (:foreground "#cb4b16"))))
+   `(sp-wrap-overlay-opening-pair ((t (:foreground ,green))))
+   `(sp-wrap-overlay-closing-pair ((t (:foreground ,orange))))
 
    ;; steal spacemacs flycheck style
    `(flycheck-error   ((t (:underline (:color "#dc322f" :style line)))))
@@ -33,9 +33,9 @@
    `(flycheck-fringe-error   ((t (:weight bold :foreground "#dc322f" :background ,s-base3))))
    `(flycheck-fringe-info    ((t (:weight bold :foreground "#69B7F0" :background ,s-base3))))
 
-   `(eshell-git-prompt-powerline-dir-face ((t (:foreground ,s-base3 :background "steel blue"))))
-   `(eshell-git-prompt-powerline-clean-face ((t (:foreground ,s-base3 :background "forest green"))))
-   `(eshell-git-prompt-powerline-not-clean-face ((t (:foreground ,s-base3 :background "indian red"))))
+   `(eshell-git-prompt-powerline-dir-face ((t (:foreground ,s-base3 :background ,blue))))
+   `(eshell-git-prompt-powerline-clean-face ((t (:foreground ,s-base3 :background ,green))))
+   `(eshell-git-prompt-powerline-not-clean-face ((t (:foreground ,s-base3 :background ,orange))))
 
    `(dired-subtree-depth-1-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
    `(dired-subtree-depth-2-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
@@ -44,40 +44,21 @@
    `(dired-subtree-depth-5-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
    `(dired-subtree-depth-6-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
 
-   `(rtags-fixitline   ((t (:slant normal :underline nil))))
-   `(rtags-errline     ((t (:slant normal :underline nil))))
-   `(rtags-warnline    ((t (:slant normal :underline nil))))
-   `(rtags-skippedline ((t (:background ,s-base2))))
-
-   `(ein:cell-input-area   ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
-   `(ein:cell-input-prompt ((t (:weight bold :foreground "#657b83" :inherit (header-line)))))
-
-   `(powerline-active1    ((t (:background "grey22" :foreground "white smoke"))))
-   `(powerline-active2    ((t (:background "grey40" :foreground "gainsboro"))))
-   `(powerline-inactive1  ((t (:background "grey55" :foreground "white smoke"))))
-   `(powerline-inactive2  ((t (:background "grey65" :foreground "gainsboro"))))
-   `(mode-line-buffer-id  ((t (:foreground "gray40"))))
-
-   `(minimap-active-region-background ((t (:background nil))))
-   `(minimap-font-face ((t (:height 0.2))))
+   `(ein:cell-input-area   ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.15)))))
+   `(ein:cell-input-prompt ((t (:weight bold :foreground ,s-base00 :inherit (header-line)))))
 
    `(bm-face ((t (:background "#FFE6E4"))))
-   `(font-latex-slide-title-face ((t (:inherit (variable-pitch font-lock-type-face) :weight bold))))
-   `(helm-locate-finish ((t (:foreground "forest green"))))
+   `(helm-locate-finish ((t (:foreground ,green :weight bold))))
    `(slack-message-output-header ((t (:weight bold))))
    `(slack-message-output-text ((t (:weight normal))))
    `(slack-new-message-marker-face ((t (:foreground "#d33682" :weight bold :height 0.75))))
-   `(helm-xref-file-name ((t (:foreground "#839496"))))
+   `(helm-xref-file-name ((t (:foreground ,s-base0))))
    ))
 
 (solarized-with-color-variables 'light
   (custom-theme-set-variables
    'solarized-light-malb
-   `(ansi-color-names-vector [,s-base2 "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
-   `(cua-global-mark-cursor-color "#2aa198")
-   `(cua-normal-cursor-color "#657b83")
-   `(cua-overwrite-cursor-color "#b58900")
-   `(cua-read-only-cursor-color "#859900")
+   `(ansi-color-names-vector [,s-base2 ,red ,green ,yellow ,blue ,magenta ,cyan ,s-base0])
    `(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
    `(highlight-symbol-colors
      (--map
@@ -86,13 +67,13 @@
        ,s-base3
        0.25)
       (quote
-       ("#b58900"
-        "#2aa198"
-        "#dc322f"
-        "#6c71c4"
-        "#859900"
-        "#cb4b16"
-        "#268bd2"))))
+       (,yellow
+        ,cyan
+        ,red
+        ,violet
+        ,green
+        ,orange
+        ,blue))))
    `(highlight-symbol-foreground-color "#586e75")
    `(highlight-tail-colors
      (quote
@@ -113,10 +94,10 @@
        "#268bd2"
        "#6c71c4"
        "#859900")))
-   `(nrepl-message-colors (quote ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
+   `(nrepl-message-colors (quote ("#dc322f" ,orange "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
    `(smartrep-mode-line-active-bg (solarized-color-blend "#859900" ,s-base2 0.2))
    `(term-default-bg-color ,s-base3)
-   `(term-default-fg-color "#657b83")
+   `(term-default-fg-color ,s-base00)
    `(vc-annotate-background nil)
    `(vc-annotate-background-mode nil)
    `(vc-annotate-color-map
@@ -156,16 +137,15 @@
        "#d33682"
        "#00736F"
        "#2aa198"
-       "#657b83"
+       ,s-base00
        "#839496")))
    `(xterm-color-names        [,s-base2 "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"])
-   `(xterm-color-names-bright [,s-base3 "#cb4b16" "#93a1a1" "#839496" "#657b83" "#6c71c4" "#586e75" "#002b36"])
+   `(xterm-color-names-bright [,s-base3 ,orange "#93a1a1" "#839496" ,s-base00 "#6c71c4" "#586e75" "#002b36"])
    `(company-quickhelp-color-background ,s-base2)
-   `(company-quickhelp-color-foreground "#657b83")
+   `(company-quickhelp-color-foreground ,s-base00)
    `(pdf-view-midnight-colors '(,s-base03 . ,s-base3))
-   `(beacon-color "#EEAD0E")
    `(pos-tip-background-color ,s-base2)
-   `(pos-tip-foreground-color "#586e75")
+   `(pos-tip-foreground-color ,s-base01)
    `(org-todo-keyword-faces
      '(("CANCELLED" :foreground "gray" :weight bold)
        ("DISABLED"  :foreground "gray" :weight bold)
