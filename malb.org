@@ -2989,7 +2989,8 @@ SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))
 %i
 %a" :prepend t :empty-lines 1)
 
-                    ("tp" "capture a task for current projectile [p]roject" plain (function malb/org-capture-projectile)
+                    ("tp" "capture a task for current projectile [p]roject" plain
+                     (function malb/org-capture-projectile)
                      "** TODO %?
 :PROPERTIES:
 :CREATED: %U
