@@ -1357,7 +1357,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
               (interactive)
               (if (or (> (buffer-size) 1048576) ;; helm-swoop can be slow on big buffers
                       (memq major-mode malb/helm-swoop-ignore-major-mode))
-                  (isearch-forward)
+                  (call-interactively #'isearch-forward)
                 (helm-swoop)))
 
             ;; https://emacs.stackexchange.com/questions/28790/helm-swoop-how-to-make-it-behave-more-like-isearch
@@ -1369,8 +1369,8 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     (helm-next-line))
                 (helm-next-line)))
 
-            (bind-key "C-S-s" #'helm-swoop-from-isearch isearch-mode-map)
-            (bind-key "C-S-s" #'helm-multi-swoop-all-from-helm-swoop helm-swoop-map)
+            (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
+            (bind-key "M-i" #'helm-multi-swoop-all-from-helm-swoop helm-swoop-map)
             (bind-key "C-r"   #'helm-previous-line helm-swoop-map)
             (bind-key "C-s"   #'malb/helm-swoop-C-s helm-swoop-map)
             (bind-key "C-r"   #'helm-previous-line helm-multi-swoop-map)
