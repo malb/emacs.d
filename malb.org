@@ -8907,8 +8907,8 @@ Use both [[https://github.com/bbatsov/solarized-emacs][solarized]] and [[https:/
 Sometimes use a solarized patched to be less yellow by changing
 
 | color     | original  | malb      |
-| ~s-base2~ | ~#EEE8D5~ | ~#EEEDEA~ |
-| ~s-base3~ | ~#FDF6E3~ | ~#FDFCF9~ |
+| ~s-base2~ | ~#eee8d5~ | ~#eeedea~ |
+| ~s-base3~ | ~#fdf6e3~ | ~#fdfcf9~ |
 
 The result looks like this:
 
