@@ -986,6 +986,13 @@ It provides features that are not available by using company-capf + lsp-mode:
   :config (push 'company-lsp company-backends))
 #+END_SRC
 
+Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-quickhelp
+  :config (company-quickhelp-mode 1))
+#+END_SRC
+
 ** Python
 
 For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]].
