@@ -8579,6 +8579,11 @@ Don’t error when killing read-only text.
 (setq kill-read-only-ok t)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(add-hook 'profiler-report-mode-hook #'hl-line-mode)
+#+END_SRC
+
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
