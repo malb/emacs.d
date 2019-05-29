@@ -914,7 +914,21 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
 (use-package yankpad
   :after (helm yasnippet projectile)
   :init (setq yankpad-file (expand-file-name "yankpad.org" malb/org-files-dir))
-  :config (bind-key "C-c h Y" #'yankpad-insert yas-minor-mode-map))
+  :config (progn
+            (bind-key "C-c h Y" #'yankpad-insert yas-minor-mode-map)
+
+            ;; yankpad can slow down helm by insisting on parsing the yankpad file each time, so
+            ;; we disable it for helm
+            (setq malb/disable-yankpad-major-modes
+                  '(helm-major-mode minibuffer-inactive-mode))
+
+            (defun malb/disable-yankpad-maybe (old-function &rest args)
+              (if (member major-mode malb/disable-yankpad-major-modes)
+                  nil
+                (apply old-function args)))
+
+            (advice-add 'yankpad-local-category-to-major-mode :around #'malb/disable-yankpad-maybe)
+            ))
 #+END_SRC
 
 * Auto Completion (Company)
