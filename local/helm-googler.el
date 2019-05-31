@@ -62,7 +62,7 @@
   "Googler binary."
   :type 'string)
 
-(defcustom helm-googler-idle-delay 0.25
+(defcustom helm-googler-idle-delay 0.5
   "Time to wait when idle until query is made."
   :type 'integer
   :group 'helm-googler)
