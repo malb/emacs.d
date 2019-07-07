@@ -1192,7 +1192,6 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
        (action . (("Open" . (lambda (x) (find-file (eval x))))))))
 
     '(helm-source-files-in-current-dir
-      helm-source-locate
       helm-source-bookmarks
       helm-source-buffer-not-found ;; ask to create a buffer otherwise
       ))
