@@ -1366,9 +1366,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     imenu-list-major-mode))
 
             (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill ;; I’m going back and forth what I prefer
-                  helm-swoop-split-with-multiple-windows nil
-                  helm-swoop-split-direction #'split-window-horizontally
-                  helm-swoop-split-window-function 'helm-default-display-buffer
+                  helm-swoop-split-with-multiple-windows t
                   helm-swoop-speed-or-color t)
 
             (defun malb/helm-swoop-pre-fill ()
