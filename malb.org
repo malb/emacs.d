@@ -1420,8 +1420,11 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
             (defun malb/helm-ag (dir)
               "run helm-ag in DIR."
-              (let* ((ignored (mapconcat (lambda (i)
-                                           (concat "--ignore " i))
+              (let* ((helm-ag-base-command "rg -S --no-heading")
+                     (ignored (mapconcat (lambda (i)
+                                           (if (string-prefix-p "ag" helm-ag-base-command)
+                                               (concat "--ignore " i)
+                                             (concat "-g !" i)))
                                          (append grep-find-ignored-files grep-find-ignored-directories)
                                          " "))
                      (helm-ag-base-command (concat helm-ag-base-command " " ignored)))
