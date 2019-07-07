@@ -8593,7 +8593,8 @@ In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, 
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
-(setq search-default-mode 'char-fold-to-regexp)
+(setq search-default-mode 'char-fold-to-regexp
+      replace-char-fold t)
 #+END_SRC
 
 Don’t error when killing read-only text.
