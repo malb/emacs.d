@@ -2102,7 +2102,7 @@ This library provides easy project management and navigation. The concept of a p
             (require 'helm-projectile)
             (helm-projectile-on)
 
-            (setq projectile-indexing-method 'alien)
+            (setq projectile-indexing-method 'hybrid)
             (defun malb/projectile-ignore-projects (project-root)
               (progn
                 (or (file-remote-p project-root)
