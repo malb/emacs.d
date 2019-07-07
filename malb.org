@@ -3123,6 +3123,13 @@ DEADLINE: %^t
                      (file+headline (lambda () (expand-file-name "inbox.org" malb/org-files-dir)) "Links")
                      "* %?%a
 Captured On: %U
+"
+                     :immediate-finish nil
+                     :prepend t)
+                    ("W" "capture [w]ebsite (selected text)" entry
+                     (file+headline (lambda () (expand-file-name "inbox.org" malb/org-files-dir)) "Links")
+                     "* %?%a
+Captured On: %U
 
 ,#+BEGIN_QUOTE
 %:initial
