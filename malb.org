@@ -7935,7 +7935,8 @@ Show dired histories you have visited.
 [[https://github.com/yqrashawn/fd-dired][fd-dired]] run =fd= to produce dired buffers.
 
 #+BEGIN_SRC emacs-lisp
-(use-package fd-dired)
+(use-package fd-dired
+  :config  (setq fd-dired-program "fdfind"))
 #+END_SRC
 
 ** Directory Trees
