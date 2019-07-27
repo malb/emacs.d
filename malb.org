@@ -7826,7 +7826,7 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 - =l=: Is the only mandatory one.
 - =a=: Means to list invisible files.
 - =G=: Don't show group information.
-- =h=: Human readable sizes, such as M for mebibytes.
+- =h=: Human readable sizes, such as M for megabytes.
 - =1v=: Affects the sorting of digits, hopefully in a positive way.
 - =--group-directories-first=: self-explanatory
 
@@ -7863,6 +7863,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                   dired-recursive-deletes 'always
                   dired-dwim-target t
                   dired-auto-revert-buffer t
+                  wdired-allow-to-change-permissions t
                   wdired-use-dired-vertical-movement 'sometimes)
 
             (bind-key "C-s" #'dired-isearch-filenames dired-mode-map)
