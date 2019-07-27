@@ -7945,6 +7945,18 @@ Show dired histories you have visited.
 :config (add-hook 'dired-mode-hook #'all-the-icons-dired-mode))
 #+END_SRC
 
+[[https://github.com/asok/peep-dired][peep-dired]] for previewing files.
+
+#+begin_src emacs-lisp
+(use-package peep-dired
+  :defer t
+  :config (setq peep-dired-cleanup-eagerly nil
+                peep-dired-cleanup-on-disable t
+                peep-dired-enable-on-directories t)
+  :bind (:map dired-mode-map
+              ("P" . peep-dired)))
+#+end_src
+
 ** Directory Trees
 
 I’m not really sold on any
