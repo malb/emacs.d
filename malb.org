@@ -7868,12 +7868,9 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (bind-key "C-s" #'dired-isearch-filenames dired-mode-map)
 
             (add-hook 'dired-mode-hook (defun malb/enable-dired-omit-mode () (dired-omit-mode)))
+            (add-hook 'dired-mode-hook (lambda () (toggle-truncate-lines 1)))
 
-            ;; For the few times I’m using Dired, I prefer it not spawning an endless amount of
-            ;; buffers. In fact, I’d prefer it using one buffer unless another one is explicitly
-            ;; created, but you can’t have everything.
-            ;; https://github.com/wasamasa/dotemacs/blob/master/init.org
-
+            (bind-key "a" #'dired-find-file-other-window dired-mode-map)
             (bind-key "RET" #'dired-find-alternate-file dired-mode-map)
             (bind-key "^"  (lambda () (interactive) (find-alternate-file "..")) dired-mode-map)
 
@@ -7912,8 +7909,8 @@ Show dired histories you have visited.
 (use-package dired-subtree
   :config
   :bind (:map dired-mode-map
-              ("i" . dired-subtree-insert)
-              (";" . dired-subtree-remove)))
+              ("<tab>" . dired-subtree-toggle)
+              ("<backtab>" . dired-subtree-cycle)))
 #+END_SRC
 
 [[https://github.com/Fuco1/dired-hacks/blob/master/dired-ranger.el][dired-ranger]] for easy copy’n’pasting.
@@ -7936,7 +7933,13 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package fd-dired
-  :config  (setq fd-dired-program "fdfind"))
+  :config  (setq fd-dired-program "fdfind"
+                 fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons-dired
+:config (add-hook 'dired-mode-hook #'all-the-icons-dired-mode))
 #+END_SRC
 
 ** Directory Trees

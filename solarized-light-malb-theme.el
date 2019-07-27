@@ -37,12 +37,12 @@
    `(eshell-git-prompt-powerline-clean-face ((t (:foreground ,s-base3 :background ,green))))
    `(eshell-git-prompt-powerline-not-clean-face ((t (:foreground ,s-base3 :background ,orange))))
 
-   `(dired-subtree-depth-1-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
-   `(dired-subtree-depth-2-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
-   `(dired-subtree-depth-3-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
-   `(dired-subtree-depth-4-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
-   `(dired-subtree-depth-5-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
-   `(dired-subtree-depth-6-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.1)))))
+   `(dired-subtree-depth-1-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+   `(dired-subtree-depth-2-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+   `(dired-subtree-depth-3-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+   `(dired-subtree-depth-4-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+   `(dired-subtree-depth-5-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+   `(dired-subtree-depth-6-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
 
    `(ein:cell-input-area   ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.15)))))
    `(ein:cell-input-prompt ((t (:weight bold :foreground ,s-base00 :inherit (header-line)))))
