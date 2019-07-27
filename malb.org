@@ -7938,6 +7938,8 @@ Show dired histories you have visited.
                  fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
 #+END_SRC
 
+[[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]] for eye candy.
+
 #+BEGIN_SRC emacs-lisp
 (use-package all-the-icons-dired
 :config (add-hook 'dired-mode-hook #'all-the-icons-dired-mode))
