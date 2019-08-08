@@ -2238,6 +2238,14 @@ functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... 
 (use-package git-link)
 #+END_SRC
 
+** Git Autocommit
+
+[[https://github.com/ryuslash/git-auto-commit-mode][git-auto-commit-mode]] for committing … automatically.
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-auto-commit-mode)
+#+END_SRC
+
 ** [#B] Gitignore
 
 Generate gitignore files
