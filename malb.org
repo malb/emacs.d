@@ -6779,11 +6779,11 @@ Canned queries.
 
 (add-to-list 'mu4e-bookmarks '("%unread" "Unread" ?u) t)
 
-(add-to-list 'mu4e-bookmarks '("%unread AND %direct" "Unread (direct)" ?i) t)
-
 (add-to-list 'mu4e-bookmarks
              '("%unread AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
                "Unread (bulk)" ?l) t)
+
+(add-to-list 'mu4e-bookmarks '("%direct" "Direct" ?d) t)
 
 (add-to-list 'mu4e-bookmarks '("flag:flagged" "Flagged" ?f) t)
 
@@ -6798,10 +6798,7 @@ Canned queries.
 
 (add-to-list 'mu4e-bookmarks '("%sent AND %week" "Last 7 days (sent)" ?s) t)
 
-(add-to-list
- 'mu4e-bookmarks
- '("%doc AND %inbox AND %month"
-   "Documents (31 days)" ?d) t)
+(add-to-list 'mu4e-bookmarks '("%doc AND %inbox AND %month" "Documents (31 days)" ?D) t)
 #+END_SRC
 
 ** Retrieving
