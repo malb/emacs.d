@@ -1501,9 +1501,9 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
             (add-to-list 'helm-commands-using-frame 'helm-org-rifle-files)))
 #+END_SRC
 
-** Helm Googler
+** Helm & Google
 
-
+[[./local/helm-googler.el][helm-googler]] for doing [[https://github.com/jarun/googler][googler]] based Google searches.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-googler
