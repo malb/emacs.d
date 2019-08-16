@@ -9251,7 +9251,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 (bind-key "c" #'visual-fill-column-mode      malb/toggle-map)
 #+END_SRC
 
-** Learn key bindings
+** Learn Key Bindings
 
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
