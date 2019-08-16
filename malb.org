@@ -7564,7 +7564,7 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
   :magic ("%PDF" . pdf-view-mode)
-  :after org
+  :after (org tex)
   :config (progn
             (pdf-tools-install)
             (setq-default pdf-view-display-size 'fit-page)
@@ -7833,7 +7833,10 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
               (malb/do-to-pdf-view-buffer #'pdf-view-previous-page))
 
             (bind-key "C->" #'malb/other-pdf-view-next-page org-mode-map)
-            (bind-key "C-<" #'malb/other-pdf-view-prev-page org-mode-map)))
+            (bind-key "C-<" #'malb/other-pdf-view-prev-page org-mode-map)
+            (bind-key "C->" #'malb/other-pdf-view-next-page LaTeX-mode-map)
+            (bind-key "C-<" #'malb/other-pdf-view-prev-page LaTeX-mode-map)
+            ))
 #+END_SRC
 
 * Directories
