@@ -9182,6 +9182,7 @@ Easily change the text size:
 (malb/set-menu-key "<f2>" #'malb/hydra-window/body)
 (malb/set-menu-key "A" #'malb/imenu-anywhere)
 (malb/set-menu-key "a" #'aws-polly-region)
+(malb/set-menu-key "b" #'helm-bookmarks)
 (malb/set-menu-key "C" #'helm-calcul-expression)
 (malb/set-menu-key "c" #'mu4e-compose-new)
 (malb/set-menu-key "d" "\C-a\C- \C-n\M-w\C-y\C-p") ; duplicate previous line
@@ -9231,6 +9232,13 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 (bind-key "M-SPC" #'cycle-spacing)
 #+END_SRC
 
+I never use ~list-directory~, I only mistype it.
+
+#+BEGIN_SRC emacs-lisp
+(unbind-key "C-x C-d")
+#+END_SRC
+
+
 ** Toggle Map
 
 ([[http://endlessparentheses.com/the-toggle-map-and-wizardry.html][source]])
@@ -9241,8 +9249,7 @@ Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the 
 
 (bind-key "e" #'toggle-debug-on-error        malb/toggle-map)
 (bind-key "f" #'malb/toggle-fold             malb/toggle-map)
-(bind-key "t" #'malb/toggle-term-mode        malb/toggle-map)
-(bind-key "l" #'toggle-truncate-lines        malb/toggle-map)
+(bind-key "t" #'toggle-truncate-lines        malb/toggle-map)
 (bind-key "n" #'neotree-toggle               malb/toggle-map)
 (bind-key "q" #'toggle-debug-on-quit         malb/toggle-map)
 (bind-key "i" #'imenu-list-smart-toggle      malb/toggle-map)
