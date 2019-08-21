@@ -53,8 +53,7 @@ We have RAM, lots of it.
       garbage-collection-messages nil)
 #+END_SRC
 
-*Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally
-for a long-ish time.
+*Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally for a long-ish time.
 
 * TLS
 
@@ -117,7 +116,7 @@ Configure package repositories
       package-menu-hide-low-priority nil)
 #+END_SRC
 
-Get the package manager going, but do not autoload packages.
+Get the package manager going.
 
 #+BEGIN_SRC emacs-lisp
 (package-initialize)
@@ -132,9 +131,9 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 
 (require 'use-package)
 
-(setq  use-package-compute-statistics t
-       use-package-verbose t
-       use-package-always-ensure t)
+(setq use-package-compute-statistics t
+      use-package-verbose t
+      use-package-always-ensure t)
 #+END_SRC
 
 [[https://github.com/Bruce-Connor/paradox/][Paradox]] is a better package list
@@ -157,14 +156,6 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
                 paradox-automatically-star t))
 #+END_SRC
 
-* Fullscreen
-
-Allow pixel-wise scaling
-
-#+BEGIN_SRC emacs-lisp
-(setq frame-resize-pixelwise t)
-#+END_SRC
-
 * Disable Clutter
 
 #+BEGIN_SRC emacs-lisp
@@ -176,6 +167,8 @@ Allow pixel-wise scaling
 #+END_SRC
 
 * Paths
+
+[[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package exec-path-from-shell
@@ -198,9 +191,7 @@ We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
 
 ** Key Chords
 
-Key chords allow to execute actions by pressing one or two keys really fast. Sometimes we might want
-to use those. However, mostly, we don’t as the slight delay they introduce (to check if a key chord
-should be executed or the text inserted) is annoying.
+Key chords allow to execute actions by pressing one or two keys really fast. Sometimes we might want to use those. However, mostly, we don’t as the slight delay they introduce (to check if a key chord should be executed or the text inserted) is annoying.
 
 #+BEGIN_SRC emacs-lisp
 (use-package key-chord
@@ -374,7 +365,6 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
                 (bind-key "C-x w" #'winum-select-window-by-number map)
                 map))
   :config (progn
-
             (defun malb/winum-assign ()
               (cond
                ((string-match-p (buffer-name) "\\*shell\\[.*\\]\\*") 10)
@@ -435,8 +425,6 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                  (reusable-frames . visible)
                  (side            . bottom)
                  (window-height   . 0.3))) t)
-
-(add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
 #+END_SRC
 
 ** Closing/Promoting Pop-up-style Windows
@@ -591,6 +579,10 @@ Main dispatch function:
    ;; just hand back control to diplay-buffer-alist
    (t nil))
   nil)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
 #+END_SRC
 
 Overwrite =find-file= to avoid =mu4e= frame.
@@ -794,15 +786,9 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
          ("C-c j ." . goto-last-change-reverse)))
 #+END_SRC
 
-*Tip* =C-u 0 C-c j ,​= description of the change at a particular stop on your tour
+*Tip* =C-u 0 C-c j ,= description of the change at a particular stop on your tour
 
-** Bookmarks
-
-#+BEGIN_SRC emacs-lisp
-(setq bookmark-save-flag 1)
-#+END_SRC
-
-*** Visual Bookmarks
+** Visual Bookmarks
 
 ([[http://pragmaticemacs.com/emacs/use-visible-bookmarks-to-quickly-jump-around-a-file/][source]])
 
@@ -886,15 +872,8 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
   :config (progn
             (setq auto-insert-query nil ; Don't prompt before insertion
                   auto-insert-alist '()) ; Tabula rasa
-            (auto-insert-mode 1)
-            (mapc
-             (lambda (rule) (define-auto-insert
-                              (nth 0 rule)
-                              (vector `(lambda () (malb/auto-insert-snippet ,(nth 1 rule) ',(nth 2 rule))))))
-             `(("/announcements/20.+\\.md$"  "isg-seminar-announce"  markdown-mode)))))
+            (auto-insert-mode 1)))
 #+END_SRC
-
-****** TODO split data from implementation
 
 *** Helm YaSnippet
 
@@ -933,8 +912,7 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
                   nil
                 (apply old-function args)))
 
-            (advice-add 'yankpad-local-category-to-major-mode :around #'malb/disable-yankpad-maybe)
-            ))
+            (advice-add 'yankpad-local-category-to-major-mode :around #'malb/disable-yankpad-maybe)))
 #+END_SRC
 
 * Auto Completion (Company)
@@ -8647,6 +8625,15 @@ Don’t error when killing read-only text.
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
 #+END_SRC
 
+Allow pixel-wise scaling
+
+#+BEGIN_SRC emacs-lisp
+(setq frame-resize-pixelwise t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq bookmark-save-flag 1)
+#+END_SRC
 
 ** Functions
 
