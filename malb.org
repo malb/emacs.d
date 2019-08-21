@@ -1541,6 +1541,19 @@ Don’t include boring or remote stuff in list of recently visited files.
                         save-place-file (locate-user-emacs-file "places" ".emacs-places")))
 #+END_SRC
 
+** Commands
+
+Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(setq history-length 128
+      history-delete-duplicates t
+      savehist-save-minibuffer-history t
+      savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+(savehist-mode t)
+#+END_SRC
+
+
 ** Bookmarks
 
 #+BEGIN_SRC emacs-lisp
@@ -1752,6 +1765,13 @@ Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing 
 #+BEGIN_SRC emacs-lisp
 (use-package syntactic-close
   :bind ("C-)" . syntactic-close))
+#+END_SRC
+
+Use the built-in ~show-paren-mode~ to highlight matching parentheses.
+
+#+BEGIN_SRC emacs-lisp
+(setq show-paren-delay 0.2)
+(show-paren-mode 1)
 #+END_SRC
 
 * Editing
@@ -7777,7 +7797,7 @@ Show dired histories you have visited.
 
 ** Directory Trees
 
-I’m not really sold on any
+I’m not really sold on either.
 
 *** Neotree
 
@@ -7835,6 +7855,10 @@ I’m not really sold on any
   :config (progn
             (add-to-list 'helm-commands-using-frame 'helm-tramp)))
 #+END_SRC
+
+#+BEGIN_QUOTE
+[[https://github.com/emacs-pe/docker-tramp.el][docker-tramp.el]] offers a TRAMP method for Docker containers.
+#+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
 (use-package docker-tramp)
@@ -8001,7 +8025,7 @@ deactivate Client
 
 ** Pastebin/ix.io
 
-Interfacing with http://ix.io/.
+Interfacing with http://ix.io/, run =ix=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ix)
@@ -8032,6 +8056,8 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 #+END_SRC
 
 ** Copy as
+
+Copy source code marked up in various ways.
 
 #+BEGIN_SRC emacs-lisp
 (use-package copy-as-format
@@ -8290,15 +8316,48 @@ A file is large if it is 32MB in my world.
   :ensure vlf)
 #+END_SRC
 
-* Misc
-** Settings
+* Scratch
 
-Use the built-in ~show-paren-mode~ to highlight matching parentheses.
+We don’t want the *scratch* buffer to be killed ever.
 
 #+BEGIN_SRC emacs-lisp
-(setq show-paren-delay 0.2)
-(show-paren-mode 1)
+(use-package unkillable-scratch
+  :config (progn
+            (unkillable-scratch 1)))
 #+END_SRC
+
+Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
+
+#+BEGIN_SRC emacs-lisp
+(use-package scratch)
+#+END_SRC
+
+Make scratch buffer an org-mode buffer.
+
+#+BEGIN_SRC emacs-lisp
+(setq initial-major-mode 'org-mode
+      initial-scratch-message "\
+This buffer is for notes you don't want to save, and for Lisp evaluation.
+If you want to create a file, visit that file with C-x C-f,
+then enter the text in that file's own buffer.
+
+,#+BEGIN_SRC emacs-lisp
+
+,#+END_SRC
+
+")
+#+END_SRC
+
+** Upcase, Downcase, Capitalise
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "M-l" #'downcase-dwim)
+(bind-key "M-c" #'capitalize-dwim)
+(bind-key "M-u" #'upcase-dwim)
+#+END_SRC
+
+* Misc
+** Settings
 
 Characterise files with the same name by their path.
 
@@ -8336,16 +8395,6 @@ In emacs minibuffer prompt, when you press the left arrow key, the cursor will m
 
 #+BEGIN_SRC emacs-lisp
 (setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
-#+END_SRC
-
-Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-(setq history-length 128
-      history-delete-duplicates t
-      savehist-save-minibuffer-history t
-      savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-(savehist-mode t)
 #+END_SRC
 
 Always prefer to load newer files, instead of giving precedence to the .elc files.
@@ -8493,7 +8542,6 @@ Copy filename to clipboard
       (error "Buffer %s is not associated with a file" (buffer-name)))))
 #+END_SRC
 
-
 ([[http://emacsredux.com/blog/2013/04/21/edit-files-as-root/][source]])
 
 #+BEGIN_SRC emacs-lisp
@@ -8522,38 +8570,6 @@ Run a command in a named compile buffer ([[https://ivanmalison.github.io/dotfile
         command))))
   (compilation-start command nil (lambda (&rest args)
                                    (format "*compilation %s*" command))))
-#+END_SRC
-
-** Scratch
-
-We don’t want the *scratch* buffer to be killed ever.
-
-#+BEGIN_SRC emacs-lisp
-(use-package unkillable-scratch
-  :config (progn
-            (unkillable-scratch 1)))
-#+END_SRC
-
-Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
-
-#+BEGIN_SRC emacs-lisp
-(use-package scratch)
-#+END_SRC
-
-Make scratch buffer an org-mode buffer.
-
-#+BEGIN_SRC emacs-lisp
-(setq initial-major-mode 'org-mode
-      initial-scratch-message "\
-This buffer is for notes you don't want to save, and for Lisp evaluation.
-If you want to create a file, visit that file with C-x C-f,
-then enter the text in that file's own buffer.
-
-,#+BEGIN_SRC emacs-lisp
-
-,#+END_SRC
-
-")
 #+END_SRC
 
 ** Clickable URLs
@@ -8596,8 +8612,6 @@ Grab the link in the current browser tab
 
 Transparent encryption and decryption.
 
-#+END_QUOTE
-
 #+BEGIN_SRC emacs-lisp
 (use-package epa-file
   :ensure nil
@@ -8615,14 +8629,6 @@ Transparent encryption and decryption.
 #+BEGIN_SRC emacs-lisp
 (use-package alert
   :config (setq alert-default-style 'libnotify))
-#+END_SRC
-
-** Upcase, Downcase, Capitalise
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "M-l" #'downcase-dwim)
-(bind-key "M-c" #'capitalize-dwim)
-(bind-key "M-u" #'upcase-dwim)
 #+END_SRC
 
 * File Types
