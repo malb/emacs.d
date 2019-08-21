@@ -1499,7 +1499,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
   :config (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
 #+END_SRC
 
-** KDE Desktop Search with Baloo
+** Helm KDE Desktop Search with Baloo
 
 [[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below, we implement a tiny helm interface for it.
 
@@ -1539,6 +1539,12 @@ Don’t include boring or remote stuff in list of recently visited files.
 (use-package saveplace
   :config (setq-default save-place t
                         save-place-file (locate-user-emacs-file "places" ".emacs-places")))
+#+END_SRC
+
+** Bookmarks
+
+#+BEGIN_SRC emacs-lisp
+(setq bookmark-save-flag 1)
 #+END_SRC
 
 * IMenu
@@ -1749,7 +1755,7 @@ Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing 
 #+END_SRC
 
 * Editing
-** Dragging lines around
+** Dragging Lines Around
 
 ([[https://github.com/rejeep/drag-stuff.el][source]])
 
@@ -1778,9 +1784,9 @@ Automatically revert buffers.
 (global-auto-revert-mode 1)
 #+END_SRC
 
-** [[https://github.com/Vifon/focus-autosave-mode.el][Save buffer when loosing focus]]
+** Save Buffer when Loosing Focus
 
-This can be dangerous, so only enable on per project basis, e.g.
+[[https://github.com/Vifon/focus-autosave-mode.el][Automatically loosing focus]] can be dangerous, so only enable on per project basis, e.g.
 
 #+BEGIN_SRC emacs-lisp :tangle no
 ((markdown-mode . ((eval . (focus-autosave-local-mode 1)))))
@@ -1817,7 +1823,7 @@ Sometimes visual-regexp bombs out, so we have a function to reset it:
   (require 'visual-regexp-steroids))
 #+END_SRC
 
-** Multiple cursors
+** Multiple Cursors
 
 [[https://github.com/magnars/multiple-cursors.el][Multiple cursors]] are awesome.
 
@@ -1864,7 +1870,7 @@ Commands are bound to =C-x m …=
             (bind-key "C-x m" #'malb/hydra-multiple-cursors/body)))
 #+END_SRC
 
-** Recursively narrow
+** Recursively Narrow
 
 #+BEGIN_SRC emacs-lisp
 (use-package recursive-narrow
@@ -1879,7 +1885,7 @@ Commands are bound to =C-x m …=
          ("C-x n n" . recursive-narrow-or-widen-dwim)))
 #+END_SRC
 
-** Expand region
+** Expand Region
 
 See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https://github.com/magnars/expand-region.el][expand-region]]
 
@@ -1996,8 +2002,7 @@ Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-mi
               (diminish (cdr mode)))))
 #+END_SRC
 
-* Emacs UX
-
+* Help
 ** Helpful
 
 #+BEGIN_QUOTE
@@ -5390,7 +5395,6 @@ Code manipulation:
 #+END_SRC
 
 * Prose
-
 ** General
 *** Tab Completion
 
@@ -5644,52 +5648,6 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
             (bind-key "C-x 4 l" #'langtool-switch-default-language)
             (bind-key "C-x 4 4" #'langtool-show-message-at-point)
             (bind-key "C-x 4 c" #'langtool-correct-buffer)))
-#+END_SRC
-
-After the deadline ([[https://github.com/jkitchin/scimax/][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package scimax-email
-  :ensure nil)
-
-(defun malb/words-atd ()
-  "Send paragraph at point to After the deadline for spell and grammar checking."
-  (interactive)
-
-  (let* ((url-request-method "POST")
-         (url-request-data (format
-                            "key=some-random-text-&data=%s"
-                            (url-hexify-string
-                             (thing-at-point 'paragraph))))
-         (xml  (with-current-buffer
-                   (url-retrieve-synchronously
-                    "http://service.afterthedeadline.com/checkDocument")
-                 (xml-parse-region url-http-end-of-headers (point-max))))
-         (results (car xml))
-         (errors (xml-get-children results 'error)))
-
-    (switch-to-buffer-other-window "*ATD*")
-    (erase-buffer)
-    (org-mode)
-    (dolist (err errors)
-      (let* ((children (xml-node-children err))
-             ;; for some reason I could not get the string out, and had to do this.
-             (s (car (last (nth 1 children))))
-             ;; the last/car stuff doesn't seem right. there is probably
-             ;; a more idiomatic way to get this
-             (desc (last (car (xml-get-children children 'description))))
-             (type (last (car (xml-get-children children 'type))))
-             (suggestions (xml-get-children children 'suggestions))
-             (options (xml-get-children (xml-node-name suggestions) 'option))
-             (opt-string  (mapconcat
-                           (lambda (el)
-                             (when (listp el)
-                               (car (last el))))
-                           options
-                           " ")))
-
-        (insert (format "- %s :: %s %s %s
-" s opt-string desc type))))))
 #+END_SRC
 
 *** Synonyms
@@ -8490,10 +8448,6 @@ Allow pixel-wise scaling
 
 #+BEGIN_SRC emacs-lisp
 (setq frame-resize-pixelwise t)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(setq bookmark-save-flag 1)
 #+END_SRC
 
 ** Functions
