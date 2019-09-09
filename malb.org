@@ -561,8 +561,8 @@ Main dispatch function:
    ((or
      (malb/regexp-match-p malb/mu4e-buffer-regexps (buffer-name buffer))
      (memq (buffer-local-value 'major-mode buffer) '(mu4e-view-mode mu4e-headers-mode)))
-    (if (malb/get-frame "mu4e") (select-frame-set-input-focus (malb/get-frame "mu4e"))
-      (make-frame (list '(name . "mu4e"))))
+    (if (malb/get-frame "*mu4e*") (select-frame-set-input-focus (malb/get-frame "*mu4e*"))
+      (make-frame (list '(name . "*mu4e*"))))
     (unless (get-buffer-window buffer)
       (set-window-buffer (get-largest-window) buffer))
     (select-window (get-buffer-window buffer))
@@ -7260,7 +7260,7 @@ Create a new mu4e session in a new frame.
 (defun malb/mail ()
   (interactive)
   (select-frame (make-frame-command))
-  (set-frame-name "mu4e") ;; we use this in our window management
+  (set-frame-name "*mu4e*") ;; we use this in our window management
   (mu4e))
 #+END_SRC
 
