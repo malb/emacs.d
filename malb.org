@@ -4620,7 +4620,7 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format c
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format
   :config (progn
-            (setq clang-format-executable "clang-format-3.8")))
+            (setq clang-format-executable "clang-format")))
 #+END_SRC
 
 *** Disassemble
@@ -5775,7 +5775,7 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
               (expand-file-name "themes/foghorn.css" user-emacs-directory))
 
             (setq markdown-command (concat
-                                    "pandoc --highlight-style pygments --smart -s -f markdown -t html -c"
+                                    "pandoc --highlight-style pygments -f markdown+smart -t html -c"
                                     malb/markdown.css)
                   markdown-css-paths (list malb/markdown.css)
                   markdown-enable-math t
@@ -8172,6 +8172,12 @@ exports.boxes = [ "INBOX"];
       (setq browse-url-browser-function 'eww-browse-url)
     (setq browse-url-browser-function 'browse-url-default-browser))
   (message "%s" browse-url-browser-function))
+#+END_SRC
+
+Set Firefox directly because using =xdg-open= can lead to weird redirect on load.
+
+#+BEGIN_SRC emacs-lisp
+(setq browse-url-browser-function 'browse-url-firefox)
 #+END_SRC
 
 ** Org EWW
