@@ -8160,7 +8160,7 @@ exports.boxes = [ "INBOX"];
                    "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")))
 #+END_SRC
 
-* EWW
+* Browsing
 
 ([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#browser-switch][source]])
 
