@@ -2514,13 +2514,6 @@ Allow refile to create parent tasks with confirmation
 (setq org-refile-allow-creating-parent-nodes '(confirm))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(defun malb/verify-refile-target () ; Exclude DONE state tasks from refile targets
-  (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-
-(setq org-refile-target-verify-function 'malb/verify-refile-target)
-#+END_SRC
-
 ** Spell Checking
 
 #+BEGIN_SRC emacs-lisp
