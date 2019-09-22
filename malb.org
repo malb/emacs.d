@@ -7381,8 +7381,18 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
 
             (require 'pdf-annot)
 
+            (setq pdf-annot-default-annotation-properties
+                  `((t (label . ,user-full-name))
+                    (text (icon . "Note")
+                          (color . "#dc322f"))
+                    (highlight (color . "#fef3d5"))
+                    (squiggly (color . "#dc322f"))
+                    (strike-out(color . "#dc322f"))
+                    (underline (color . "#268bd2"))))
+
             (setq pdf-view-resize-factor 1.1
-                  pdf-annot-activate-created-annotations t)
+                  pdf-annot-activate-created-annotations t
+                  pdf-misc-print-programm "gtklp")
 
             (add-hook 'pdf-annot-list-mode-hook #'pdf-annot-list-follow-minor-mode)
 
