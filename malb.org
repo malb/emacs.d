@@ -5774,21 +5774,11 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
                   markdown-enable-math t
                   markdown-fontify-code-blocks-natively t)
 
-            (defun malb/markdown-preview-buffer ()
-              (interactive)
-              (require 'shr)
-              (let* ((buf-this (buffer-name (current-buffer)))
-                     (buf-html (get-buffer-create
-                                (format "*md-html (%s)*" buf-this))))
-                (markdown (buffer-name buf-html))
-                (shr-render-buffer buf-html)
-                (kill-buffer buf-html)))
-
             (add-hook 'markdown-mode-hook #'flyspell-mode)
             (add-hook 'markdown-mode-hook #'outline-minor-mode)
 
             (bind-key "M-." #'markdown-do markdown-mode-map)
-            (bind-key "C-c C-e o" #'malb/markdown-preview-buffer markdown-mode-map) ;; inspired by org-mode-export
+
             (bind-key "C-<tab>" #'outline-cycle markdown-mode-map)))
 #+END_SRC
 
