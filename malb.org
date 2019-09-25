@@ -3177,23 +3177,54 @@ Captured On: %U
 (bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
 #+END_SRC
 
-Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]. We patch org-capture-pop-frame to handle "q" appropriately:
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(condition-case nil
-    (funcall orig-fun goto keys)
-  ((debug error) (ocpf--delete-frame)))
-#+END_SRC
+Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-capture-pop-frame
   :after (org-capture)
-  :config (setq ocpf-frame-parameters '((name . "*Org Capture*")
-                                        (width . 120)
-                                        (height . 40)
-                                        (fullscreen . nil)
-                                        (tool-bar-lines . 0)
-                                        (menu-bar-lines . 0))))
+  :config (progn (setq ocpf-frame-parameters '((name . "*Org Capture*")
+                                               (width . 120)
+                                               (height . 40)
+                                               (fullscreen . nil)
+                                               (tool-bar-lines . 0)
+                                               (menu-bar-lines . 0)))
+
+                 (defun ocpf--org-capture (orig-fun &optional goto keys)
+                   "Create a new frame and run org-capture."
+                   (interactive)
+                   (let ((frame-window-system
+                          (cond ((eq system-type 'darwin) 'ns)
+                                ((eq system-type 'gnu/linux) 'x)
+                                ((eq system-type 'windows-nt) 'w32)))
+                         (after-make-frame-functions
+                          #'(lambda (frame)
+                              (progn
+                                (if (fboundp 'persp-init-frame)
+                                    (persp-init-frame frame)) ;; MALB: make perspective work
+                                (select-frame frame)
+                                (setq word-wrap nil)
+                                (setq truncate-lines nil)
+                                (condition-case nil
+                                    (funcall orig-fun goto keys)
+                                  ((debug error) (ocpf--delete-frame))) ;; MALB: handle "q"
+                                (setq header-line-format
+                                      (list "Capture buffer. "
+                                            (propertize (substitute-command-keys "Finish \\[org-capture-finalize], ")
+                                                        'mouse-face 'mode-line-highlight
+                                                        'keymap
+                                                        (let ((map (make-sparse-keymap)))
+                                                          (define-key map [header-line mouse-1] 'org-capture-finalize)
+                                                          map))
+                                            (propertize (substitute-command-keys "abort \\[org-capture-kill]. ")
+                                                        'mouse-face 'mode-line-highlight
+                                                        'keymap
+                                                        (let ((map (make-sparse-keymap)))
+                                                          (define-key map [header-line mouse-1] 'org-capture-kill)
+                                                          map))))))))
+                     (make-frame
+                      `((window-system . ,frame-window-system)
+                        ,@ocpf-frame-parameters))))
+                 ))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
