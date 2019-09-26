@@ -3608,7 +3608,9 @@ When `exit' from shell buffer."
                 ;; (set-process-sentinel (get-buffer-process (current-buffer))
                 ;;                       (lambda (proc change)
                 ;;                         (when (string-match "\\(finished\\|exited\\)" change)
-                ;;                           (delete-frame (window-frame (get-buffer-window (process-buffer proc)))))))
+                ;;                           (delete-frame (window-frame
+                ;;                                          (get-buffer-window
+                ;;                                           (process-buffer proc)))))))
                 (set-window-dedicated-p (get-buffer-window) t)))
 
             (advice-add #'eshell-exec-visual :around #'malb/visual-command-frame)
