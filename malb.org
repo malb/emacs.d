@@ -278,30 +278,14 @@ Resize windows to accommodate new ones.
   :bind (("C-x 1" . zygospore-toggle-delete-other-windows)))
 #+END_SRC
 
-** Multiple Window Configurations (Eyebrowse)
-
-[[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
+** Multiple Window Configurations (Perspective)
 
 #+BEGIN_SRC emacs-lisp
-(use-package eyebrowse
-  :diminish eyebrowse-mode
-  :init (setq eyebrowse-keymap-prefix (kbd "C-c E"))
+(use-package perspective
+  :init (setq persp-mode-prefix-key (kbd "C-x x")
+              persp-sort 'name)
   :config (progn
-            (setq eyebrowse-wrap-around t)
-            (eyebrowse-mode t)
-
-            (defun malb/eyebrowse-new-window-config ()
-              "make new eyebrowse config, re-using indices 1 - (1)0"
-              (interactive)
-              (let ((done nil))
-                (dotimes (i 10)
-                  ;; start at 1 run till 0
-                  (let ((j (mod (+ i 1) 10)))
-                    (when (and (not done)
-                               (not (eyebrowse--window-config-present-p j)))
-                      (eyebrowse-switch-to-window-config j)
-                      (call-interactively 'eyebrowse-rename-window-config j)
-                      (setq done t))))))))
+            (persp-mode)))
 #+END_SRC
 
 ** Switching
@@ -662,7 +646,7 @@ Run =old-function= with an empty =display-buffer-alist=
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
   "
-^Misc^        ^Split^         ^Buffer^         ^Resize^         ^Eyebrowse^^     ^Center^   ^Jumping^   ^Other^
+^Misc^        ^Split^         ^Buffer^         ^Resize^         ^Perspective^^   ^Center^   ^Jumping^   ^Other^
 ^----^--------^-----^---------^------^---------^------^---------^---------^^-----^------^---^-------^---^--------------^
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ new      _C_enter   _j_ump      _W_ store cfg
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_ine      _J_ load cfg
@@ -698,25 +682,25 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
   ("Z" winner-redo)
   ("I" imenu-list-smart-toggle :color blue)
-  ("[" malb/eyebrowse-new-window-config :color blue)
-  (";" (lambda () (interactive) (eyebrowse-prev-window-config nil)) :color red)
-  ("'" (lambda () (interactive) (eyebrowse-next-window-config nil)) :color red)
-  ("]" eyebrowse-close-window-config :color blue)
-  ("!" eyebrowse-rename-window-config :color blue)
+  ("[" persp-switch :color blue)
+  (";" persp-next :color red)
+  ("'" persp-prev :color red)
+  ("]" persp-kill :color blue)
+  ("!" persp-rename :color blue)
+  ("1" (lambda () (interactive) (persp-switch (nth 0 (persp-names)))) :color blue)
+  ("2" (lambda () (interactive) (persp-switch (nth (mod 1 (length (persp-names))) (persp-names)))) :color blue)
+  ("3" (lambda () (interactive) (persp-switch (nth (mod 2 (length (persp-names))) (persp-names)))) :color blue)
+  ("4" (lambda () (interactive) (persp-switch (nth (mod 3 (length (persp-names))) (persp-names)))) :color blue)
+  ("5" (lambda () (interactive) (persp-switch (nth (mod 4 (length (persp-names))) (persp-names)))) :color blue)
+  ("6" (lambda () (interactive) (persp-switch (nth (mod 5 (length (persp-names))) (persp-names)))) :color blue)
+  ("7" (lambda () (interactive) (persp-switch (nth (mod 6 (length (persp-names))) (persp-names)))) :color blue)
+  ("8" (lambda () (interactive) (persp-switch (nth (mod 7 (length (persp-names))) (persp-names)))) :color blue)
+  ("9" (lambda () (interactive) (persp-switch (nth (mod 8 (length (persp-names))) (persp-names)))) :color blue)
   ("C" visual-fill-column-mode)
   ("," (lambda () (interactive) (set-fill-column (+ fill-column 2)) (visual-fill-column-adjust)) :color red)
   ("." (lambda () (interactive) (set-fill-column (- fill-column 2)) (visual-fill-column-adjust)) :color red)
   ("W" window-configuration-to-register)
   ("J" jump-to-register  :color blue)
-  ("1" eyebrowse-switch-to-window-config-1 :color blue)
-  ("2" eyebrowse-switch-to-window-config-2 :color blue)
-  ("3" eyebrowse-switch-to-window-config-3 :color blue)
-  ("4" eyebrowse-switch-to-window-config-4 :color blue)
-  ("5" eyebrowse-switch-to-window-config-5 :color blue)
-  ("6" eyebrowse-switch-to-window-config-6 :color blue)
-  ("7" eyebrowse-switch-to-window-config-7 :color blue)
-  ("8" eyebrowse-switch-to-window-config-8 :color blue)
-  ("9" eyebrowse-switch-to-window-config-9 :color blue)
   ("SPC" nil)
   ("`" other-window :color blue)
   ("C-`" other-window :color blue))
@@ -1160,11 +1144,9 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
       '(helm-source-buffers-list)) ;; list of all open buffers
 
     `(((name . "Virtual Workspace")
-       (candidates . ,(--map (cons (eyebrowse-format-slot it) (car it))
-                             (eyebrowse--get 'window-configs)))
+       (candidates . ,(persp-names))
        (action . (lambda (candidate)
-                   (eyebrowse-switch-to-window-config candidate)))))
-
+                   (persp-switch candidate)))))
     (if (projectile-project-p)
         '(helm-source-projectile-recentf-list
           helm-source-recentf)
