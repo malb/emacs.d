@@ -7420,11 +7420,11 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
                 (insert-file-contents txt-filename)
                 (delete-file txt-filename)))
 
-            (defun malb/pdf-view-llncs-from-bounding-box (&optional window)
+            (defun malb/pdf-view-llncs-from-bounding-box (arg &optional window)
               "Set the height from the page's bounding-box."
-              (interactive)
+              (interactive "P")
               (let* ((bb (pdf-cache-boundingbox (pdf-view-current-page window)))
-                     (h-margin (max 0.28 (or pdf-view-bounding-box-margin 0.0)))
+                     (h-margin (max (if arg 0.35 0.28) (or pdf-view-bounding-box-margin 0.0)))
                      (w-margin (max 0.05 (or pdf-view-bounding-box-margin 0.0)))
                      (slice (list (- (nth 0 bb)
                                      (/ h-margin 2.0))
