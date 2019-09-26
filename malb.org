@@ -3620,26 +3620,8 @@ When `exit' from shell buffer."
             ;; -------
 
             ;; https://github.com/algernon/emacs.d/blob/master/layers/%2Bapps/algernon-eshell/packages.el#L85-L95
-            (defun malb/git-log (&rest args)
-              (let* ((branch-or-file (car args))
-                     (file-list (if (and branch-or-file (f-file-p branch-or-file))
-                                    args
-                                  (cdr args)))
-                     (branch (if (and branch-or-file (f-file-p branch-or-file))
-                                 "HEAD"
-                               branch-or-file)))
-                (message branch-or-file)
-                (if branch-or-file
-                    (magit-log (list branch) '()
-                               (mapcar (lambda (f) (concat (eshell/pwd) "/" f))
-                                       file-list))
-                  (magit-log-head)))
-              (eshell/echo))
-
-            ;; https://github.com/algernon/emacs.d/blob/master/layers/%2Bapps/algernon-eshell/packages.el#L85-L95
             (defun eshell/git (command &rest args)
               (pcase command
-                ("log" (apply #'malb/git-log args))
                 ("status" (progn
                             (magit-status)
                             (eshell/echo)))
