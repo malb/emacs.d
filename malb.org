@@ -7388,7 +7388,8 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
                      (pdf-filename (buffer-file-name))
                      (txt-filename (make-temp-name "/tmp/tabula-"))
                      (buffer (generate-new-buffer
-                              (generate-new-buffer-name (format "*tabular<%s>*" (file-name-base pdf-filename))))))
+                              (generate-new-buffer-name (format "*tabular<%s>*"
+                                                                (file-name-base pdf-filename))))))
                 (shell-command (format "java -jar %s -f %s -p %d -o \"%s\" \"%s\""
                                        malb/tabular-jar
                                        format-
@@ -7411,8 +7412,10 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
               (let* ((pdf-filename (buffer-file-name))
                      (txt-filename (make-temp-name "/tmp/tabula-"))
                      (buffer (generate-new-buffer
-                              (generate-new-buffer-name (format "*pdftotext<%s>*" (file-name-base pdf-filename))))))
-                (shell-command (format "pdftotext -layout -nopgbrk \"%s\" \"%s\"" pdf-filename txt-filename) nil)
+                              (generate-new-buffer-name (format "*pdftotext<%s>*"
+                                                                (file-name-base pdf-filename))))))
+                (shell-command (format "pdftotext -layout -nopgbrk \"%s\" \"%s\""
+                                       pdf-filename txt-filename) nil)
                 (switch-to-buffer buffer)
                 (insert-file-contents txt-filename)
                 (delete-file txt-filename)))
@@ -7584,13 +7587,17 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
                       (call-interactively 'tablist-find-entry))
                   (let ((this nil)
                         (next nil)
-                        (annotations (sort (pdf-annot-getannots nil nil (cdar pdf-annot-edit-contents--annotation))
-                                           'pdf-annot-compare-annotations)))
+                        (annotations
+                         (sort (pdf-annot-getannots
+                                nil nil
+                                (cdar pdf-annot-edit-contents--annotation))
+                               'pdf-annot-compare-annotations)))
                     (dolist (annot (if forward annotations (reverse annotations)))
                       (when (equal this t)
                         (setq next annot)
                         (setq this nil))
-                      (when (equal (pdf-annot-get-id annot) (pdf-annot-get-id pdf-annot-edit-contents--annotation))
+                      (when (equal (pdf-annot-get-id annot)
+                                   (pdf-annot-get-id pdf-annot-edit-contents--annotation))
                         (setq this t)))
                     (pdf-annot-edit-contents-finalize t)
                     (when next
@@ -7608,12 +7615,14 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
             (defun malb/pdf-annot-yank-highlight ()
               (interactive)
               (let* ((a pdf-annot-edit-contents--annotation)
-                     (text (replace-regexp-in-string "\n" " "
-                                                     (pdf-info-gettext
-                                                      (pdf-annot-get a 'page)
-                                                      (pdf-tools-org-edges-to-region (pdf-annot-get a 'markup-edges))
-                                                      0
-                                                      (pdf-annot-get a 'buffer)))))
+                     (text
+                      (replace-regexp-in-string
+                       "\n" " "
+                       (pdf-info-gettext
+                        (pdf-annot-get a 'page)
+                        (pdf-tools-org-edges-to-region (pdf-annot-get a 'markup-edges))
+                        0
+                        (pdf-annot-get a 'buffer)))))
                 (insert (format "\"%s\"" text))))
 
             (bind-key "C-c C-n" 'malb/pdf-annot-next pdf-annot-edit-contents-minor-mode-map)
@@ -7642,8 +7651,7 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
             (bind-key "C->" #'malb/other-pdf-view-next-page org-mode-map)
             (bind-key "C-<" #'malb/other-pdf-view-prev-page org-mode-map)
             (bind-key "C->" #'malb/other-pdf-view-next-page LaTeX-mode-map)
-            (bind-key "C-<" #'malb/other-pdf-view-prev-page LaTeX-mode-map)
-            ))
+            (bind-key "C-<" #'malb/other-pdf-view-prev-page LaTeX-mode-map)))
 #+END_SRC
 
 * Directories
