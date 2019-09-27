@@ -7711,6 +7711,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                   dired-recursive-copies 'always
                   dired-recursive-deletes 'always
                   dired-dwim-target t
+                  dired-omit-verbose nil
                   dired-auto-revert-buffer t
                   wdired-allow-to-change-permissions t
                   wdired-use-dired-vertical-movement 'sometimes)
