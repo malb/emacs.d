@@ -8528,6 +8528,13 @@ Allow pixel-wise scaling
 (setq frame-resize-pixelwise t)
 #+END_SRC
 
+
+Increase resolution for Excel files etc.
+
+#+BEGIN_SRC emacs-lisp
+(setq doc-view-resolution 300)
+#+END_SRC
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
