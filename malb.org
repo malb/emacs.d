@@ -355,6 +355,7 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
                ((string-match-p (buffer-name) "\\*eshell\\[.*\\]\\*") 10)
                ((string-match-p (buffer-name) "\\*Sage\\*") 10)
                ((string-match-p (buffer-name) "\\*Ilist\\*") 8)
+               ((string-match-p (buffer-name) "Dired-sidebar") 8)
                (t nil)))
 
             (add-to-list 'winum-assign-functions #'malb/winum-assign)
@@ -889,7 +890,7 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
             ;; yankpad can slow down helm by insisting on parsing the yankpad file each time, so
             ;; we disable it for helm
             (setq malb/disable-yankpad-major-modes
-                  '(helm-major-mode minibuffer-inactive-mode))
+                  '(helm-major-mode minibuffer-inactive-mode dired-mode dired-sidebar-mode))
 
             (defun malb/disable-yankpad-maybe (old-function &rest args)
               (if (member major-mode malb/disable-yankpad-major-modes)
@@ -7792,7 +7793,8 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package all-the-icons-dired
-:config (add-hook 'dired-mode-hook #'all-the-icons-dired-mode))
+  :defer t
+  :init (add-hook 'dired-mode-hook  #'all-the-icons-dired-mode))
 #+END_SRC
 
 [[https://github.com/asok/peep-dired][peep-dired]] for previewing files.
@@ -7841,9 +7843,18 @@ I’m not really sold on either.
                              (auto-revert-mode)))))
   :config (progn (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
                  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-                 (setq dired-sidebar-theme 'ascii
+                 (setq dired-sidebar-theme 'icons
                        dired-sidebar-should-follow-file t
-                       dired-sidebar-use-term-integration t)))
+                       dired-sidebar-use-term-integration t)
+                 (defun malb/dired-sidebar-drop-icons (orig-fun &rest args)
+                   (if (member 'all-the-icons-dired-mode dired-mode-hook)
+                       (progn
+                         (remove-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+                         (let ((r (apply orig-fun args)))
+                           (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+                           r))
+                     (apply orig-fun args)))
+                 (advice-add #'dired-sidebar-get-or-create-buffer :around #'malb/dired-sidebar-drop-icons)))
 #+END_SRC
 
 ** Tramp
