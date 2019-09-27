@@ -6505,6 +6505,19 @@ A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s
 
 * E-mail (Mu4e)
 
+we use Mu4e:
+
+#+BEGIN_SRC emacs-lisp
+(setq mail-user-agent 'mu4e-user-agent)
+#+END_SRC
+
+We can then use the following =emacsmail= script as =mailto= handler
+
+#+begin_src sh :tangle no
+#!/bin/bash
+emacsclient -c --eval "(browse-url-mail \"$@\")"
+#+end_src
+
 E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]]. See this [[https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/#more-1336][blog post]] for details.
 
 #+BEGIN_SRC emacs-lisp
