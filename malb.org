@@ -8840,6 +8840,14 @@ Sometimes use a solarized patched to be less yellow by changing
 | ~s-base2~ | ~#eee8d5~ | ~#eeedea~ |
 | ~s-base3~ | ~#fdf6e3~ | ~#fdfcf9~ |
 
+#+begin_src bash :tangle no
+cd $HOME/.emacs.d/elpa/solarized-theme-*
+sed -i s/#eee8d5/#eeedea/g solarized.el
+sed -i s/#fdf6e3/#fdfcf9/g solarized.el
+#+end_src
+
+#+RESULTS:
+
 The result looks like this:
 
 [[./screenshot.png]]
