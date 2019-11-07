@@ -235,8 +235,10 @@ Don’t split horizontally.
   (let ((window (or window (selected-window))))
     ;; DIFF: prefer horizontal split
     (or (and (window-splittable-p window t)
-             ;; DIFF: restrict to two windows side-by-side
-             (= (length (window-list)) 1)
+             ;; DIFF: restrict to two windows or two windows + side-window
+             (or  (= (length (window-list)) 1)
+                  (and (= (length (window-list)) 2)
+                       (seq-filter (lambda (x) (< (window-width x) 40)) (window-list))))
              ;; Split window horizontally.
              (with-selected-window window
                (split-window-right)))
