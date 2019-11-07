@@ -1897,6 +1897,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
+  :after (org)
   :bind ("C-\\" . er/expand-region)
   :init (setq expand-region-fast-keys-enabled nil)
   :config (progn
