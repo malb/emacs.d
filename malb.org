@@ -8551,6 +8551,12 @@ Allow pixel-wise scaling
 (setq frame-resize-pixelwise t)
 #+END_SRC
 
+Don’t yank syntax highlighting etc.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'yank-excluded-properties 'font)
+(add-to-list 'yank-excluded-properties 'font-lock-face)
+#+END_SRC
 
 Increase resolution for Excel files etc.
 
