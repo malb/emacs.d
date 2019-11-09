@@ -2309,7 +2309,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-hidden-keywords nil
       org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
       org-list-allow-alphabetical t
-      org-goto-interface 'org-outline-path-complete
       org-outline-path-complete-in-steps nil
       org-M-RET-may-split-line '((default . t) (headline . nil))
       org-blank-before-new-entry (quote ((heading . t)
