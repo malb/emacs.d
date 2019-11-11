@@ -1221,17 +1221,12 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-display-buffer-height 60
                   helm-use-undecorated-frame-option nil
 
-                  helm-M-x-fuzzy-match                  t
-                  helm-eshell-fuzzy-match               t
-                  helm-buffers-fuzzy-matchiqng          t
-                  helm-completion-in-region-fuzzy-match t
-                  helm-mode-fuzzy-match                 t
+                  helm-completion-style 'helm
+
                   helm-file-cache-fuzzy-match           t
-                  helm-imenu-fuzzy-match                t
                   helm-locate-fuzzy-match               nil
-                  helm-lisp-fuzzy-completion            t
-                  helm-recentf-fuzzy-match              nil
-                  helm-semantic-fuzzy-match             t)
+                  helm-imenu-fuzzy-match                t
+                  helm-recentf-fuzzy-match              nil)
 
             (when (executable-find "curl")
               (setq helm-net-prefer-curl t))
