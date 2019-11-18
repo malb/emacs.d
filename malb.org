@@ -8860,12 +8860,6 @@ Sometimes use a solarized patched to be less yellow by changing
 | ~s-base2~ | ~#eee8d5~ | ~#eeedea~ |
 | ~s-base3~ | ~#fdf6e3~ | ~#fdfcf9~ |
 
-#+begin_src bash :tangle no
-cd $HOME/.emacs.d/elpa/solarized-theme-*
-sed -i s/#eee8d5/#eeedea/g solarized.el
-sed -i s/#fdf6e3/#fdfcf9/g solarized.el
-#+end_src
-
 #+RESULTS:
 
 The result looks like this:
@@ -8878,6 +8872,7 @@ The result looks like this:
 (use-package solarized
   :ensure solarized-theme
   :config (progn
+
             (setq solarized-use-variable-pitch nil
                   solarized-high-contrast-mode-line nil
                   solarized-height-minus-1 1.0
@@ -8891,15 +8886,15 @@ The result looks like this:
                   solarized-scale-outline-headlines nil
                   x-underline-at-descent-line t)
 
+            (require 'solarized-light-malb-theme)
+
             (defun malb/solarized-light-theme (&optional arg)
               "Load solarized-light and my additions."
               (interactive "P")
               (if arg
                   (progn
-                    (disable-theme 'solarized-light-malb)
-                    (disable-theme 'solarized-light))
+                    (disable-theme 'solarized-light-malb))
                 (progn
-                  (load-theme 'solarized-light t)
                   (load-theme 'solarized-light-malb t))))))
 #+END_SRC
 
