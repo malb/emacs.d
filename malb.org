@@ -1221,7 +1221,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-display-buffer-height 60
                   helm-use-undecorated-frame-option nil
 
-                  helm-completion-style 'helm
+                  helm-completion-style 'emacs
 
                   helm-file-cache-fuzzy-match           t
                   helm-locate-fuzzy-match               nil
