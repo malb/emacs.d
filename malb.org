@@ -2351,7 +2351,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-mphasis-markers nil ; don’t hide markers for like *foo*
       org-ellipsis " ••• "
-      org-highlight-latex-and-related '(latex)
+      org-highlight-latex-and-related '(native)
       org-src-fontify-natively t        ; fontify code blocks
       org-startup-with-inline-images t    ; show images when opening a file.
       org-startup-with-latex-preview nil
