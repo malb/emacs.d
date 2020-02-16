@@ -8399,19 +8399,15 @@ This buffer is for notes you don't want to save, and for Lisp evaluation.
 If you want to create a file, visit that file with C-x C-f,
 then enter the text in that file's own buffer.
 
-,#+BEGIN_SRC emacs-lisp
+,#+begin_src emacs-lisp
 
-,#+END_SRC
+,#+end_src
+
+,#+begin_src sage
+
+,#+end_src
 
 ")
-#+END_SRC
-
-** Upcase, Downcase, Capitalise
-
-#+BEGIN_SRC emacs-lisp
-(bind-key "M-l" #'downcase-dwim)
-(bind-key "M-c" #'capitalize-dwim)
-(bind-key "M-u" #'upcase-dwim)
 #+END_SRC
 
 * Misc
