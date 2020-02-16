@@ -9080,6 +9080,7 @@ Easily change the text size:
 (malb/set-menu-key "j" #'avy-goto-word-1)
 (malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex-with-local-bibliography)
+(malb/set-menu-key "L" #'mathpix-screenshot)
 (malb/set-menu-key "m" (lambda () (interactive) (malb/switch-to-mu4e)))
 (malb/set-menu-key "M" #'malb/helm-mu)
 (malb/set-menu-key "n" #'malb/sage-notebook)
