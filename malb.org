@@ -6952,6 +6952,9 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
                  ((equal arg 4) (malb/helm-mu-contacts 4))
                  (t (helm-mu)))))
 
+            (add-to-list 'helm-commands-using-frame 'helm-mu)
+            (add-to-list 'helm-commands-using-frame 'malb/helm-mu-contacts)
+
             (dolist (mode-map '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map))
               (unbind-key "s" mode-map)
               (bind-key "ss" #'mu4e-query-fragments-search mode-map)
