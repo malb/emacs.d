@@ -6327,7 +6327,7 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
                 (let* ((key (if (stringp key-or-entry)
                                 key-or-entry
                               (bibtex-completion-get-value "=key=" key-or-entry))))
-                  (helm-google (replace-regexp-in-string
+                  (helm-googler (replace-regexp-in-string
                                 "{\\|}" ""  (bibtex-completion-get-value "title"
                                                                          (bibtex-completion-get-entry key)))))))
 
@@ -6904,8 +6904,8 @@ it is to insert the contact.
            ("Copy to clipboard" . (lambda (x)
                                     (kill-new (mapconcat 'identity
                                                          (helm-marked-candidates) ","))))
-           ("Google search" . (lambda (x) (helm-google (replace-regexp-in-string
-                                                        (format "^\\(.*\\) %s" malb/email-regexp) "\\1" x))))
+           ("Google search" . (lambda (x) (helm-googler (replace-regexp-in-string
+                                                         (format "^\\(.*\\) %s" malb/email-regexp) "\\1" x))))
 
            ("Find messages (combine multiple with AND)" .
             (lambda (x)
