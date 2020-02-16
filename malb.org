@@ -1957,9 +1957,11 @@ https://github.com/cute-jumper/embrace.el
              ("=" "=" nil org-mode)
              ("_" "_" nil org-mode)
              ("$" "$" nil org-mode)
-             ("#+BEGIN_QUOTE\n" "#+END_QUOTE\n" "q" org-mode)
-             ("#+BEGIN_SRC \n" "\n#+END_SRC" "s" org-mode)
-             ("#+BEGIN_CENTER \n" "\n#+END_CENTER" "c" org-mode)))
+             ("#+begin_quote\n" "#+end_quote\n" "q" org-mode)
+             ("#+begin_src \n" "\n#+end_src" "s" org-mode)
+             ("#+begin_src \n" "\n#+end_src" "s" org-mode)
+             ("#+begin_center \n" "\n#+end_center" "c" org-mode)
+             ))
   (add-hook 'org-mode-hook 'wrap-region-mode))
 #+END_SRC
 
