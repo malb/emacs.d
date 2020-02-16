@@ -8953,7 +8953,7 @@ The result looks like this:
 (defun malb/toggle-light-dark ()
   "Switch between light and dark theme"
   (interactive)
-  (if (custom-theme-enabled-p 'solarized-light)
+  (if (custom-theme-enabled-p 'solarized-light-malb)
       (progn
         (malb/solarized-light-theme t)
         (malb/zenburn-theme))
