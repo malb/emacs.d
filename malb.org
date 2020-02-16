@@ -5527,13 +5527,6 @@ Indicate soft wrapped lines.
 
 *** Highlighting Sentences & Paragraphs
 
-Use [[https://github.com/milkypostman/hl-sentence][hl-sentence-mode]] in ~markdown-mode~.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package hl-sentence
-    :config (add-hook 'markdown-mode-hook #'hl-sentence-mode))
-#+END_SRC
-
 Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
 [[https://raw.githubusercontent.com/larstvei/Focus/master/demo-light.gif]] ([[https://github.com/larstvei/Focus][source]])
