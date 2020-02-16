@@ -4868,7 +4868,7 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 
 #+BEGIN_SRC emacs-lisp
 (use-package blacken
-  :config (setq blacken-line-length 120))
+  :config (setq blacken-line-length 'fill))
 #+END_SRC
 
 *** Managing Imports
