@@ -1825,6 +1825,15 @@ Sometimes visual-regexp bombs out, so we have a function to reset it:
   (require 'visual-regexp-steroids))
 #+END_SRC
 
+** Undo
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-fu
+  :bind (("C-_" . undo-fu-only-undo)
+         ("M-_" . undo-fu-only-redo)))
+#+END_SRC
+
+
 ** Multiple Cursors
 
 [[https://github.com/magnars/multiple-cursors.el][Multiple cursors]] are awesome.
