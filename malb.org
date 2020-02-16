@@ -1493,6 +1493,13 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
             (add-to-list 'helm-commands-using-frame 'helm-baloo-in-directory)))
 #+END_SRC
 
+** Tips
+
+| Key Binding   | Action                         |
+|---------------+--------------------------------|
+| ~C-c C-i~     | =helm-copy-to-buffer=          |
+| ~C-u C-c C-k~ | =helm-kill-selection-and-quit= |
+
 * History
 ** Recent Files
 
