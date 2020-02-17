@@ -62,6 +62,7 @@
       (shell-command-to-string
        (format mathpix-screenshot-method mathpix-screenshot-file)))
     (when (file-exists-p mathpix-screenshot-file)
+      (kill-new (mathpix-get-result mathpix-screenshot-file))
       (insert (mathpix-get-result mathpix-screenshot-file))
       (delete-file mathpix-screenshot-file))))
 
