@@ -8914,7 +8914,7 @@ The result looks like this:
                   (progn
                     (disable-theme 'solarized-light-malb))
                 (progn
-                  (load-theme 'solarized-light-malb t))))))
+                  (enable-theme 'solarized-light-malb))))))
 #+END_SRC
 
 *** For those Long Nights
