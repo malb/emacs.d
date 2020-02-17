@@ -2180,6 +2180,17 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
              magit-unstage-file)
   :bind ("<f7>" . magit-status)
   :config (progn
+
+            ;; source: https://www.reddit.com/r/emacs/comments/ayjgpu/magit_orgmode_unfold_containing_headlines_when/
+            (defun malb/expand-org-mode-entry ()
+              "When opening an org-mode file, show the current entry and all headings that it is contained in."
+              ;; invoke org-reveal with a single prefix arg, as that expands ;; the entry containing
+              ;; (point), all sibling entries and all ;; parent entries and their siblings.
+              (when (derived-mode-p 'org-mode)
+                (org-reveal '(4))))
+
+            (add-hook 'magit-diff-visit-file-hook #'malb/expand-org-mode-entry)
+
             (setq magit-push-always-verify nil
                   magit-last-seen-setup-instructions "2.1.0")
 
