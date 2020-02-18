@@ -7927,7 +7927,9 @@ I’m not really sold on either.
             (setq ediff-window-setup-function 'ediff-setup-windows-plain
                   ediff-split-window-function 'split-window-horizontally
                   ediff-diff-options "-w")
-            (setq-default ediff-auto-refine 'on)
+            (setq-default ediff-auto-refine 'on
+                          ediff-highlighting-style 'face
+                          ediff-highlight-all-diffs t)
             (add-hook 'ediff-after-quit-hook-internal 'winner-undo)))
 #+END_SRC
 
