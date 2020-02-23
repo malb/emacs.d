@@ -127,9 +127,11 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
-  (package-install 'use-package))
+  (package-install 'use-package)
+  (package-install 'use-package-ensure-system-package))
 
 (require 'use-package)
+(require 'use-package-ensure-system-package)
 
 (setq use-package-compute-statistics t
       use-package-verbose t
@@ -1361,6 +1363,8 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
   :commands (helm-ag helm-do-ag malb/helm-ag-projects malb/helm-ag-literature malb/helm-ag)
+  :ensure-system-package ((ag . silversearcher-ag:)
+                          (rg . ripgrep))
   :config (progn
             (setq helm-ag-base-command "ag --nocolor --nogroup"
                   helm-ag-command-option nil
@@ -1488,6 +1492,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 #+BEGIN_SRC emacs-lisp
 (use-package helm-baloo
   :ensure nil
+  :ensure-system-package ((baloosearch . baloo-kf5))
   :config (progn
             (add-to-list 'helm-commands-using-frame 'helm-baloo-no-directory)
             (add-to-list 'helm-commands-using-frame 'helm-baloo-in-directory)))
@@ -7817,6 +7822,7 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package fd-dired
+  :ensure-system-package fdfind
   :config  (setq fd-dired-program "fdfind"
                  fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
 #+END_SRC
