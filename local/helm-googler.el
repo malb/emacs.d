@@ -73,7 +73,8 @@
 (defun helm-googler--search (text)
   "Fetch the response buffer for input TEXT and parse it as a plist."
   (with-temp-buffer
-    (call-process-shell-command (format "%s --json %s" helm-googler-binary text) nil t)
+    (call-process-shell-command (format "%s --json %s" helm-googler-binary
+                                        (shell-quote-argument text)) nil t)
     (goto-char (point-min))
     (let ((json-object-type 'plist))
       (json-read))))
