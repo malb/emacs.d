@@ -151,7 +151,6 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 
 #+BEGIN_SRC emacs-lisp
 (use-package paradox
-  :ensure paradox
   :commands (paradox-upgrade-packages paradox-list-packages)
   :config (setq paradox-execute-asynchronously t
                 paradox-github-token malb/paradox-github-token
