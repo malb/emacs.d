@@ -3208,7 +3208,8 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
                          (after-make-frame-functions
                           #'(lambda (frame)
                               (progn
-                                (if (fboundp 'persp-init-frame)
+                                (if (and (fboundp 'persp-init-frame)
+                                         persp-mode)
                                     (persp-init-frame frame)) ;; MALB: make perspective work
                                 (select-frame frame)
                                 (setq word-wrap nil)
