@@ -1123,12 +1123,6 @@ See [[https://tuhdo.github.io/helm-intro.html][A Package in a league of its own:
 | =C-w=   | yanks word at point   |
 | =M-n=   | yanks symbol at point |
 
-****** TODO Workaround for Emacs 26.1 ([[https://github.com/emacs-helm/helm/issues/1976][source]])
-
-#+BEGIN_SRC emacs-lisp
-(setq x-wait-for-event-timeout 0.05)
-#+END_SRC
-
 ** General, Buffers, Files
 
 Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many sources to create =malb/helm-omni.= ([[http://stackoverflow.com/a/19284509][source]])
