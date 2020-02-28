@@ -7216,6 +7216,75 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 (advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
 #+END_SRC
 
+** Context Switching
+
+Update “From:” and signature on context switch.
+
+https://github.com/djcb/mu/issues/776
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-compose-context-switch (&rest _ignore)
+  "When switching context in a compose buffer, switch “from” and signature."
+  (when (eq major-mode 'mu4e-compose-mode)
+    (message-replace-header "From" (mu4e~draft-from-construct))
+    (setq-local message-signature mu4e-compose-signature)
+    (setq malb/message-sig-cycle 0)
+    (malb/message-remove-signature)
+    (save-excursion (message-insert-signature))))
+
+(advice-add 'mu4e-context-switch :after #'malb/mu4e-compose-context-switch)
+
+(defun malb/message-remove-signature ()
+  "Find and remove signature."
+  (save-excursion
+    (when (message-goto-signature)
+      (forward-line -1)
+      (delete-region (1- (point)) (point-max)))))
+
+(defun malb/message-send-check-context ()
+  "Check that from address and context matches, and ask to change if required.
+
+This is to avoid making mistakes in trying to send the current
+message from the wrong account"
+  ;; this may be a too strict check
+  (when (not (string= (message-fetch-field "from")
+                      (mu4e~draft-from-construct)))
+    (let ((context (mu4e-context-determine nil nil)))
+      (cond ((and context
+                  (y-or-n-p
+                   (format
+                    "Attempt to send via mismatching context. Switch to [%s] and send? "
+                    (mu4e-context-name context))))
+             (mu4e-context-switch t (mu4e-context-name context)))
+            ((not context)
+             (mu4e-context-switch
+              t
+              (mu4e-context-name  ; throws an error if no context found:
+               (mu4e~context-ask-user
+                "Attempt to send via mismatching context! Send after switching to: "))))
+            (t (signal 'quit nil))))))
+
+(add-hook 'message-send-hook #'malb/message-send-check-context)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/mu4e-cycle-contexts ()
+  "Cycle through `mu4e-contexts'."
+  (interactive)
+  (when mu4e-contexts
+    (let* ((names (mapcar #'mu4e-context-name mu4e-contexts))
+           (currentname (ignore-errors (mu4e-context-name mu4e~context-current))))
+      (mu4e-context-switch t
+                           (nth
+                            (mod (if currentname
+                                     (1+ (cl-position currentname names :test #'equal))
+                                   0)
+                                 (length names))
+                            names)))))
+
+(bind-key "C-c C-i" #'malb/mu4e-cycle-contexts mu4e-compose-mode-map)
+#+END_SRC
+
 ** Attachments
 
 #+BEGIN_SRC emacs-lisp
