@@ -8768,7 +8768,9 @@ Transparent encryption and decryption.
 #+BEGIN_SRC emacs-lisp
 (use-package epa-file
   :ensure nil
-  :config (epa-file-enable))
+  :config (progn
+            (setq epa-armor t)
+            (epa-file-enable)))
 #+END_SRC
 
 ** Memory Usage
