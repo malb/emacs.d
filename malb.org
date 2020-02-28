@@ -6544,6 +6544,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e
   :ensure nil
+  :ensure-system-package mu
   :config  (setq mu4e-headers-skip-duplicates t
                  mu4e-use-fancy-chars t
                  mu4e-view-show-images t
