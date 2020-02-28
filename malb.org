@@ -6603,7 +6603,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
         ("/royal holloway/msc projects" . ?m)))
 #+END_SRC
 
-** Queries
+** Search
 
 ([[https://melpa.org/#/mu4e-query-fragments][source]])
 
