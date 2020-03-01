@@ -9227,6 +9227,7 @@ I never use ~list-directory~, I only mistype it.
 
 (bind-key "e" #'toggle-debug-on-error        malb/toggle-map)
 (bind-key "f" #'malb/toggle-fold             malb/toggle-map)
+(bind-key "l" #'malb/toggle-light-dark       malb/toggle-map)
 (bind-key "t" #'toggle-truncate-lines        malb/toggle-map)
 (bind-key "n" #'neotree-toggle               malb/toggle-map)
 (bind-key "q" #'toggle-debug-on-quit         malb/toggle-map)
