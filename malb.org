@@ -6339,7 +6339,13 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
                   bibtex-completion-notes-path malb/literature-notes-file
                   helm-bibtex-full-frame t
                   bibtex-completion-notes-template-one-file
-                  "** ${title} cite:${=key=}\n:PROPERTIES:\n:CUSTOM_ID: ${=key=}\n:END:\n\nfullcite:${=key=}\n\n")
+                  (concat "** ${title} cite:${=key=}\n"
+                          ":PROPERTIES:\n"
+                          ":CUSTOM_ID: ${=key=}\n"
+                          ":END:\n"
+                          "\n"
+                          "fullcite:${=key=}\n"
+                          "\n"))
 
             (add-to-list 'helm-commands-using-frame 'helm-bibtex)
 
@@ -6349,8 +6355,10 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
                                 key-or-entry
                               (bibtex-completion-get-value "=key=" key-or-entry))))
                   (helm-googler (replace-regexp-in-string
-                                "{\\|}" ""  (bibtex-completion-get-value "title"
-                                                                         (bibtex-completion-get-entry key)))))))
+                                 "{\\|}" ""
+                                 (bibtex-completion-get-value
+                                  "title"
+                                  (bibtex-completion-get-entry key)))))))
 
             (helm-bibtex-helmify-action malb/bibtex-completion-google-this
                                         helm-malb/bibtex-completion-google-this)
@@ -6369,10 +6377,13 @@ starts with the BibTeX key and ends with
                               key-or-entry
                             (bibtex-completion-get-value "=key=" key-or-entry)))
                      (main-pdf (cl-loop
-                                for dir in (-flatten bibtex-completion-library-path)
+                                for dir in
+                                (-flatten bibtex-completion-library-path)
                                 append (cl-loop
-                                        for ext in (-flatten bibtex-completion-pdf-extension)
-                                        collect (f-join dir (s-concat (s-replace ":" "_" key) ext))))))
+                                        for ext in
+                                        (-flatten bibtex-completion-pdf-extension)
+                                        collect (f-join dir (s-concat
+                                                             (s-replace ":" "_" key) ext))))))
                 (if find-additional
                     (sort               ; move main pdf on top of the list if needed
                      (cl-loop
@@ -6380,9 +6391,10 @@ starts with the BibTeX key and ends with
                       append (directory-files dir t
                                               (s-concat "^" (regexp-quote (s-replace ":" "_" key))
                                                         ".*\\("
-                                                        (mapconcat 'regexp-quote
-                                                                   (-flatten bibtex-completion-pdf-extension)
-                                                                   "\\|")
+                                                        (mapconcat
+                                                         'regexp-quote
+                                                         (-flatten bibtex-completion-pdf-extension)
+                                                         "\\|")
                                                         "\\)$")))
                      (lambda (x y)
                        (and (member x main-pdf)
@@ -6412,8 +6424,12 @@ can be added either from an open buffer or a file."
                   (copy-file file pdf)))))
 
             (eval-after-load "org-ref-helm-bibtex"
-              '(progn (helm-delete-action-from-source "Insert BibTeX key" helm-source-bibtex)
-                      (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key helm-source-bibtex 0)))))
+              '(progn (helm-delete-action-from-source
+                       "Insert BibTeX key"
+                       helm-source-bibtex)
+                      (helm-add-action-to-source
+                       "Insert BibTeX key"
+                       'helm-bibtex-insert-key helm-source-bibtex 0)))))
 #+END_SRC
 
 Company interface to helm-bibtex.
