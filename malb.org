@@ -7118,11 +7118,12 @@ Action to search messages involving all correspondents.
                            (mapcar (lambda (x) (cdr x))
                                    (mu4e-message-field msg :from)))))
     (helm :sources (helm-build-sync-source "Filter candidates:"
-                     :candidates addresses
+                     :candidates (cl-remove-if (lambda (x)
+                                                 (member x mu4e-user-mail-address-list)) addresses)
                      :after-init-hook (lambda () (with-helm-buffer
                                                    (run-at-time 0.25 nil #'helm-mark-all)))
                      :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
-                              ("Use all" . (lambda (x))))))
+                               ("Use all" . (lambda (x))))))
     (mu4e-headers-search
      (format "contact:%s"
              (mapconcat 'identity addresses " AND ")))))
