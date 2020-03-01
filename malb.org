@@ -6621,6 +6621,10 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%doc"    . "mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M"))))
 #+END_SRC
 
+#+begin_quote
+Just press ~l~ in the headers view and any mailing list you've subscribed to will be automatically discovered and presented in recency order. No setup or refiling necessary.
+#+end_quote
+
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-jump-to-list)
 #+END_SRC
