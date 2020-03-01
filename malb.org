@@ -6599,8 +6599,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
       '(("/Inbox"                       . ?i)
         ("/[Google Mail]/Drafts"        . ?d)
         ("/[Google Mail]/Sent Mail"     . ?s)
-        ("/[Google Mail]/Bin"           . ?t)
-        ("/royal holloway/msc projects" . ?m)))
+        ("/[Google Mail]/Bin"           . ?t)))
 #+END_SRC
 
 ** Search
