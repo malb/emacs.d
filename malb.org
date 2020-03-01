@@ -7362,7 +7362,7 @@ Kill mu4e frame.
 (bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map)
 #+END_SRC
 
-I patched mu4e to be way less clever about window management after sending an e-mail,  my =mu4e-message-kill-buffer= looks like this:
+We patch mu4e to be way less clever about window management after sending an e-mail,  my =mu4e-message-kill-buffer= looks like this:
 
 #+BEGIN_SRC emacs-lisp :tangle no
 (defun mu4e-sent-handler (docid path)
