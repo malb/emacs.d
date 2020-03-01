@@ -7219,9 +7219,9 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 
 ** Context Switching
 
-Update “From:” and signature on context switch.
+Update "From:" and signature on context switch.
 
-https://github.com/djcb/mu/issues/776
+([[https://github.com/djcb/mu/issues/776][source]])
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-compose-context-switch (&rest _ignore)
