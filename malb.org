@@ -4475,10 +4475,9 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (setq lsp-ui-imenu-enable t)
             (setq lsp-ui-doc-enable nil)
             (setq lsp-ui-flycheck-enable t)))
-
-
-
 #+END_SRC
+
+
 
 ** C/C++ Development
 
