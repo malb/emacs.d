@@ -8393,7 +8393,11 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
 #+end_quote
 
 #+BEGIN_SRC emacs-lisp
-(use-package pocket-reader)
+(use-package pocket-reader
+  :config (progn
+            (setq pocket-reader-archive-on-open nil
+                  pocket-reader-color-title nil
+                  pocket-reader-color-site t)))
 #+END_SRC
 
 * Chat
