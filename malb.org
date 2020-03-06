@@ -1315,7 +1315,8 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     ein:notebook-multilang-mode
                     imenu-list-major-mode))
 
-            (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill ;; I’m going back and forth what I prefer
+            ;; I’m going back and forth what I prefer
+            (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
                   helm-swoop-split-with-multiple-windows t
                   helm-swoop-speed-or-color t)
 
