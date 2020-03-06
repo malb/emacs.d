@@ -7099,10 +7099,27 @@ Action to view e-mails in external browser.
              '("browser" . mu4e-action-view-in-browser) t)
 #+END_SRC
 
+Action to save e-mail to PDF.
+
+#+begin_src emacs-lisp
+(defun malb/mu4e-action-save-to-pdf (msg)
+  (let* ((date (mu4e-message-field msg :date))
+         (infile (mu4e~write-body-to-html msg))
+         (outfile (format-time-string "%Y-%m-%d%H%M%S.pdf" date)))
+    (with-temp-buffer
+      (shell-command
+       (format "wkhtmltopdf %s ~/Downloads/%s" infile outfile) t))))
+
+(add-to-list 'mu4e-view-actions '("save to pdf" . malb/mu4e-action-save-to-pdf) t)
+#+end_src
+
 #+BEGIN_SRC emacs-lisp
 (delete '("show this thread" . mu4e-action-show-thread) mu4e-view-actions)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(delete '("view as pdf" . mu4e-action-view-as-pdf) mu4e-view-actions)
+#+END_SRC
 
 Action to search messages by/to sender.
 
