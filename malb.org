@@ -1307,6 +1307,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     pdf-view-mode
                     mu4e-headers-mode
                     org-mode
+                    Man-mode
                     markdown-mode
                     latex-mode
                     sage-shell-mode
@@ -8672,6 +8673,12 @@ Increase resolution for Excel files etc.
 
 #+BEGIN_SRC emacs-lisp
 (setq doc-view-resolution 300)
+#+END_SRC
+
+Open man pages with focus set
+
+#+BEGIN_SRC emacs-lisp
+(setq Man-notify-method 'aggressive)
 #+END_SRC
 
 ** Functions
