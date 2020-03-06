@@ -3000,173 +3000,201 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 - =%?= After completing the template, position cursor here.
 
 #+BEGIN_SRC emacs-lisp
+(use-package doct)
 (use-package org-capture
   :ensure nil
   :bind ("<f9>" . org-capture)
   :config (progn
             (setq org-capture-templates
-                  '(("t" "[t]asks")
-                    ("tt" "capture a standard [t]ask"
-                     entry (file malb/inbox-org)
-                     "* TODO %?
-%^{schedule|DEADLINE: |SCHEDULED: |}%^t
-:PROPERTIES:
-:CREATED: %U
-:END:
+                  (doct
+                   '(("[t]asks" :keys "t"
+                      :prepend t
+                      :empty-lines 1
+                      :children (("capture a standard [t]ask" :keys "t"
+                                  :template ("* TODO %?"
+                                             "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
+                                             ":PROPERTIES:"
+                                             ":CREATED: %U"
+                                             ":END:"
+                                             ""
+                                             "%i")
+                                  :file malb/inbox-org)
+                                 ("capture a quick task" :keys "y"
+                                  :template ("* TODO %?"
+                                             "SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))"
+                                             ":PROPERTIES:"
+                                             ":CREATED: %U"
+                                             ":END:"
+                                             ""
+                                             "%i")
+                                  :file malb/inbox-org)
 
-%i" :prepend t :empty-lines 1)
-                    ("ty" "capture a quick task"
-                     entry (file malb/inbox-org)
-                     "* TODO %?
-SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))
-:PROPERTIES:
-:CREATED: %U
-:END:
+                                 ("capture a standard task for the current [c]ontext" :keys "c"
+                                  :template ("* TODO %?"
+                                             ":PROPERTIES:"
+                                             ":CREATED: %U"
+                                             ":END:"
+                                             ""
+                                             "%i"
+                                             "%a")
+                                  :file malb/inbox-org)
 
-%i" :prepend t :empty-lines 1)
+                                 ("capture a task for the current projectile [p]roject" :keys "p"
+                                  :template ("** TODO %?"
+                                             ":PROPERTIES:"
+                                             ":CREATED: %U"
+                                             ":END:"
+                                             ""
+                                             "%i"
+                                             "%a")
+                                  :type plain
+                                  :function malb/org-capture-projectile)
+                                 )
+                      )
+                     ("[e]-mail" :keys "e"
+                      :file malb/inbox-org
+                      :headline "E-Mail"
+                      :empty-lines 1
+                      :children  (("create a task for [r]esponding to an [e]-mail" :keys "r"
+                                   :template  ("* REPLY to %:fromname on %a"
+                                               "DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))"
+                                               ":PROPERTIES:"
+                                               ":CREATED: %U"
+                                               ":END:"
+                                               ""
+                                               "%i")
+                                   :prepend t
+                                   :immediate-finish t)
 
-                    ("tc" "capture a standard task and the current [c]ontext"
-                     entry (file malb/inbox-org)
-                     "* TODO %?
-:PROPERTIES:
-:CREATED: %U
-:END:
+                                  ("[f]ile an [e]-mail" :keys "f"
+                                   :template  ("* %a"
+                                               ":PROPERTIES:"
+                                               ":CREATED: %U"
+                                               ":END:")
+                                   :prepend nil
+                                   :immediate-finish nil)
 
-%i
-%a" :prepend t :empty-lines 1)
+                                  ("keep an [e]-mail [s]earch" :keys "s"
+                                   :template ("* %a")
+                                   :immediate-finish nil
+                                   :prepend nil
+                                   :empty-lines 0)
 
-                    ("tp" "capture a task for current projectile [p]roject" plain
-                     (function malb/org-capture-projectile)
-                     "** TODO %?
-:PROPERTIES:
-:CREATED: %U
-:END:
-%i
-%a" :prepend t :empty-lines 1)
+                                  ("create a [t]ask linked to an [e]-mail" :keys "t"
+                                   :file malb/work-org
+                                   :headline "Admin"
+                                   :template ("* %^{type|TODO|REPLY|READ} %? %^G"
+                                              "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
+                                              ":PROPERTIES:"
+                                              ":CREATED: %U"
+                                              ":END:"
+                                              ""
+                                              "See %a by %:fromname")
+                                   :immediate-finish nil
+                                   :prepend t)
 
-                    ("e" "[e]-mail")
+                                  ("quick create an [o]ffice task linked to an [e]-mail" :keys "o"
+                                   :file malb/work-org
+                                   :headline "Admin"
+                                   :template ("* TODO %a (%:fromname) %^{tag|:@office:|:@train:}"
+                                              "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
+                                              "                             (thu (org-read-date nil t \"Thu\")))"
+                                              "                         (if (time-less-p tue thu)"
+                                              "                             tue"
+                                              "                           thu)))"
+                                              ":PROPERTIES:"
+                                              ":CREATED: %U"
+                                              ":END:")
+                                   :immediate-finish t
+                                   :prepend t)
 
-                    ("er" "quick create a task for [r]esponding to an [e]-mail"
-                     entry (file+headline malb/inbox-org "E-Mail")
-                     "* REPLY to %:fromname on %a
-DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))
-:PROPERTIES:
-:CREATED: %U
-:END:
-
-%i" :prepend t :empty-lines 1 :immediate-finish t)
-
-                    ("ef" "[f]ile an [e]-mail"
-                     entry (file+headline malb/inbox-org "E-Mail")
-                     "* %a by %:fromname
-:PROPERTIES:
-:CREATED: %U
-:END:" :immediate-finish nil :prepend nil :empty-lines 1)
-
-                    ("es" "keep an [e]-mail [s]earch"
-                     entry (file+headline malb/inbox-org "E-Mail")
-                     "* %a"
-                     :immediate-finish nil :prepend nil :empty-lines 0)
-
-                    ("et" "create a task linked to an [e]-mail"
-                     entry (file+headline malb/work-org "Admin")
-                     "* %^{type|TODO|REPLY|READ} %? %^G
-%^{schedule|DEADLINE: |SCHEDULED: |}%^t
-:PROPERTIES:
-:CREATED: %U
-:END:
-
-See %a by %:fromname
-" :immediate-finish nil :prepend t :empty-lines 1)
-
-                    ("eo" "quick create an [o]ffice task linked to an [e]-mail"
-                     entry (file+headline malb/work-org "Admin")
-                     "* TODO %a (%:fromname) %^{tag|:@office:|:@train:}
-SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))
-                             (thu (org-read-date nil t \"Thu\")))
-                         (if (time-less-p tue thu)
-                             tue
-                           thu)))
-:PROPERTIES:
-:CREATED: %U
-:END:
-" :immediate-finish t :prepend t :empty-lines 1)
-
-                    ("eq" "quick create a task linked to an [e]-mail"
-                     entry (file+headline malb/work-org "Admin")
-                     "* TODO %a (%:fromname)
-SCHEDULED: %(let ((hour (third (decode-time (current-time)))))
-                  (if (< hour 16)
-                    (org-insert-time-stamp nil)
-                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))
-:PROPERTIES:
-:CREATED: %U
-:END:
-" :immediate-finish t :prepend t :empty-lines 1)
-
-                    ("r" "add literature to [r]ead "
-                     entry (file+headline malb/work-org "Reading")
-                     "* READ %a%?
-DEADLINE: %^t
-:PROPERTIES:
-:CREATED: %U
-:END:
-
-%i" :prepend t :empty-lines 1)
-
-                    ("j" "add entry to [j]ournal"
-                     entry (file+olp+datetree (lambda () (expand-file-name "journal.org"
-                                                                           malb/org-files-dir)))
-                     "** work
-%?
-,** critique
-")
-
-                    ("m" "record notes on a [m]eeting" entry (file+headline malb/inbox-org "Meetings")
-                     "* Meeting with %^{who}
-%U
-
-%i%?
-" :clock-in t :clock-resume t :empty-lines 1)
-
-                    ("n" "create a [n]ote"
-                     entry (file malb/inbox-org)
-                     "* %?
-:PROPERTIES:
-:CREATED: %U
-:END:
-
-%i" :empty-lines 1)
-
-                    ("s" "create note/tip on a piece of [s]oftware" entry
-                     (file+headline (lambda () (expand-file-name "software.org" deft-directory)) "Incoming")
-                     "* %?
-:PROPERTIES:
-:CREATED: %U
-:END:
-
-%i
-%a" :prepend t :empty-lines 1)
-                    ("w" "capture [w]ebsite" entry
-                     (file+headline (lambda () (expand-file-name "inbox.org" malb/org-files-dir)) "Links")
-                     "* %?%a
-Captured On: %U
-"
-                     :immediate-finish nil
-                     :prepend t)
-                    ("W" "capture [w]ebsite (selected text)" entry
-                     (file+headline (lambda () (expand-file-name "inbox.org" malb/org-files-dir)) "Links")
-                     "* %?%a
-Captured On: %U
-
-,#+BEGIN_QUOTE
-%:initial
-,#+END_QUOTE
-
-"
-                     :immediate-finish nil
-                     :prepend t)))
-
+                                  ("[q]uick create a task linked to an [e]-mail" :keys "q"
+                                   :file malb/work-org
+                                   :headline "Admin"
+                                   :template ("* TODO %a (%:fromname)"
+                                              "SCHEDULED: %(let ((hour (third (decode-time (current-time)))))"
+                                              "                  (if (< hour 16)"
+                                              "                    (org-insert-time-stamp nil)"
+                                              "                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))"
+                                              ":PROPERTIES:"
+                                              ":CREATED: %U"
+                                              ":END:")
+                                   :immediate-finish t
+                                   :prepend t)))
+                     ("add literature to [r]ead " :keys "r"
+                      :file malb/work-org
+                      :headline "Reading"
+                      :template ("* READ %a%?"
+                                 "DEADLINE: %^t"
+                                 ":PROPERTIES:"
+                                 ":CREATED: %U"
+                                 ":END:"
+                                 ""
+                                 "%i")
+                      :prepend t
+                      :empty-lines 1)
+                     ("add entry to [j]ournal" :keys "j"
+                      :file (lambda () (expand-file-name "journal.org"
+                                                         malb/org-files-dir))
+                      :datetree t
+                      :template ("** work"
+                                 "%?"
+                                 "** critique"
+                                 ""))
+                     ("record notes on a [m]eeting" :keys "m"
+                      :file malb/inbox-org
+                      :headline "Meetings"
+                      :template ("* Meeting with %^{who}"
+                                 "%U"
+                                 ""
+                                 "%i%?")
+                      :clock-in t
+                      :clock-resume t
+                      :empty-lines 1)
+                     ("create a [n]ote" :keys "n"
+                      :file malb/inbox-org
+                      :template ("* %?"
+                                 ":PROPERTIES:"
+                                 ":CREATED: %U"
+                                 ":END:"
+                                 ""
+                                 "%i")
+                      :empty-lines 1)
+                     ("create note/tip on a piece of [s]oftware" :keys "s"
+                      :file (lambda () (expand-file-name "software.org" deft-directory))
+                      :headline"Incoming"
+                      :template ("* %?"
+                                 ":PROPERTIES:"
+                                 ":CREATED: %U"
+                                 ":END:"
+                                 ""
+                                 "%i"
+                                 "%a")
+                      :prepend t
+                      :empty-lines 1)
+                     ("capture [w]ebsite" :keys "w"
+                      :file malb/inbox-org
+                      :headline "Links"
+                      :template ("* %?%a"
+                                 ":PROPERTIES:"
+                                 ":CREATED: %U"
+                                 ":END:")
+                      :immediate-finish nil
+                      :prepend t)
+                     ("capture [w]ebsite (selected text)" :keys "W"
+                      :file malb/inbox-org
+                      :headline "Links"
+                      :template  ("* %?%a"
+                                  ":PROPERTIES:"
+                                  ":CREATED: %U"
+                                  ":END:"
+                                  ""
+                                  "#+begin_quote"
+                                  "%:initial"
+                                  "#+end_quote"
+                                  )
+                      :immediate-finish nil
+                      :prepend t))))
             (setq org-capture-templates-contexts
                   '(("er" ((in-mode . "mu4e-view-mode")))
                     ("et" ((in-mode . "mu4e-view-mode")))
