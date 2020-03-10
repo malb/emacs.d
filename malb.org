@@ -1296,8 +1296,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 #+BEGIN_SRC emacs-lisp
 (use-package helm-swoop
   :bind (("C-c o" . helm-multi-swoop-org)
-         ("C-s"   . malb/swoop-or-search)
-         ("C-M-s" . helm-multi-swoop-all))
+         ("C-s"   . malb/swoop-or-search))
   :config (progn
 
             (setq malb/helm-swoop-ignore-major-mode
@@ -1669,10 +1668,13 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (bind-key "C-M-k" #'sp-kill-sexp smartparens-mode-map)
             (bind-key "C-M-w" #'sp-copy-sexp smartparens-mode-map)
 
-            (bind-key "C-M-t" 'sp-transpose-sexp smartparens-mode-map)
+            (bind-key "C-M-t" #'sp-transpose-sexp smartparens-mode-map)
 
-            (bind-key "C-<right>" 'sp-forward-slurp-sexp smartparens-mode-map)
-            (bind-key "C-<left>" 'sp-forward-barf-sexp smartparens-mode-map)
+            (bind-key "C-M-s" #'sp-split-sexp smartparens-mode-map)
+            (bind-key "C-M-j" #'sp-join-sexp smartparens-mode-map)
+
+            (bind-key "C-<right>" #'sp-forward-slurp-sexp smartparens-mode-map)
+            (bind-key "C-<left>" #'sp-forward-barf-sexp smartparens-mode-map)
 
             (bind-key "M-S-<backspace>" 'sp-backward-unwrap-sexp smartparens-mode-map)
             (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward smartparens-mode-map)
@@ -1743,10 +1745,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
             (add-to-list 'sp-ignore-modes-list 'markdown-mode)
             (add-to-list 'sp-ignore-modes-list 'org-mode)
-            (eval-after-load "slack"
-              '(add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)
-              )
-            ))
+            (add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)))
 #+END_SRC
 
 Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing delimiter]]
