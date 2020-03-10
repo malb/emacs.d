@@ -8319,7 +8319,7 @@ exports.boxes = [ "INBOX"];
           (prodigy-define-service
             :name "fpylll"
             :cwd malb/projects-dir
-            :command "fpylll2-jupyter.sh"
+            :command "fpylll-jupyter.sh"
             :port 8889
             :stop-signal 'sigkill
             :kill-process-buffer-on-stop t
