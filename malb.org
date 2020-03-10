@@ -4760,7 +4760,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
               ("C-c C-r" . pyvenv-restart-python)
               ("<home>"  . malb/beginning-of-line-dwim)
-              ("C-<tab>" . bicycle-cycle )
+              ("C-<tab>" . bicycle-cycle)
               ("<backtab>" . bicycle-cycle-global)
               :map inferior-python-mode-map
               ("C-c C-r" . pyvenv-restart-python))
