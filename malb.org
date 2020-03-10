@@ -4985,7 +4985,6 @@ On our system port 8888 is already taken.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ein
-  :defer 30
   :after ob
   :commands (ein:notebooklist-login ein:query-notebook-version)
   :config (progn
@@ -5559,7 +5558,7 @@ Indicate soft wrapped lines.
 
 #+BEGIN_SRC emacs-lisp
 (use-package visual-fill-column
-  :defer t
+  :commands (visual-fill-column-mode turn-on-visual-fill-column-mode)
   :config (progn
             (setq-default visual-fill-column-center-text t
                           visual-fill-column-fringes-outside-margins nil)
