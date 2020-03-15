@@ -2378,7 +2378,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-mphasis-markers nil ; don’t hide markers for like *foo*
       org-ellipsis " ••• "
-      org-highlight-latex-and-related '(native)
+      org-highlight-latex-and-related nil
       org-src-fontify-natively t        ; fontify code blocks
       org-startup-with-inline-images t    ; show images when opening a file.
       org-startup-with-latex-preview nil
@@ -5642,7 +5642,8 @@ Diminish ~flyspell-mode~ as we always use it.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell
-  :diminish)
+  :diminish
+  :config (setq flyspell-issue-message-flag nil))
 #+END_SRC
 
 Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typos. I find myself pressing =C-.= in other programs these days just to be frustrated that it doesn’t just work™
