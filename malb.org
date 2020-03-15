@@ -290,8 +290,7 @@ Resize windows to accommodate new ones.
   :config (progn
             (defun malb/persp-names-reverse (orig-fun &rest args)
               (reverse (apply orig-fun args)))
-            (advice-add 'persp-names :around #'malb/persp-names-reverse)
-            (persp-mode)))
+            (advice-add 'persp-names :around #'malb/persp-names-reverse)))
 #+END_SRC
 
 ** Switching
