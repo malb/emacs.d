@@ -2228,12 +2228,11 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 *** GitHub
 
-****** TODO “Works on Emacs 26.2 for me after setting ghub-use-workaround-for-emacs-bug to nil”.
-
 
 #+BEGIN_SRC emacs-lisp
 (use-package forge
-  :after magit)
+  :after magit
+  :config (setq ghub-use-workaround-for-emacs-bug 'force))
 #+END_SRC
 
 *** Org Links for Magit Buffers
