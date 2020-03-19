@@ -7283,17 +7283,12 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 Don’t ask me to remove the backup file, I do want to remove the backup file, too.
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/yes-please-remove-the-backup-file (orig-fn &rest args)
-  ;; https://endlessparentheses.com/understanding-letf-and-how-it-replaces-flet.html
-  (cl-letf* (((symbol-function 'yes-or-no-p-orig) #'yes-or-no-p)
-             ((symbol-function 'yes-or-no-p)
-              (lambda (prompt)
-                (if (string-prefix-p "Remove the backup file" prompt)
-                    t
-                  (yes-or-no-p-orig prompt)))))
+(defun malb/yes-no-skip-remove-backup (orig-fn &rest args)
+  (if (string-prefix-p "Remove the backup file" (car args))
+      t
     (apply orig-fn args)))
 
-(advice-add #'message-kill-buffer :around #'malb/yes-please-remove-the-backup-file)
+(advice-add #'yes-or-no-p :around #'malb/yes-no-skip-remove-backup)
 #+END_SRC
 
 ** Context Switching
