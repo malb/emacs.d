@@ -3568,6 +3568,29 @@ The function behaves as follows:
                                           t))))
 #+END_SRC
 
+** Vterm
+
+[[https://github.com/akermu/emacs-libvterm][Vterm]] is an Emacs terminal using libvterm
+
+=C-c C-t= enters copy mode, =<enter>= adds selection to kill ring and leaves copy mode.
+
+#+begin_src emacs-lisp
+(use-package vterm
+  :config (progn
+            (setq vterm-kill-buffer-on-exit t)
+            (fset 'malb/toggle-vterm
+                  (malb/make-toggle-shell
+                   "vterm"
+                   '(let ((current-prefix-arg nil)) (vterm))
+                   '(progn
+                      (when (and (boundp 'venv-current-name) venv-current-name)
+                        (vterm-send-string (format "workon %s" venv-current-name))
+                        (vterm-send-return))
+                      (vterm-send-string "ls")
+                      (vterm-send-return))
+                   t))))
+#+end_src
+
 ** Shell
 
 #+BEGIN_SRC emacs-lisp
@@ -9264,7 +9287,7 @@ Easily change the text size:
 (malb/set-menu-key "S" #'slack-select-rooms)
 (malb/set-menu-key "t" #'helm-tramp)
 (malb/set-menu-key "r" #'spray-mode)
-(malb/set-menu-key "z" #'malb/toggle-shell)
+(malb/set-menu-key "z" #'malb/toggle-vterm)
 (malb/set-menu-key "Z" #'malb/ykcd)
 (malb/set-menu-key "<f4>" #'emms-previous)
 (malb/set-menu-key "<f5>" #'emms-pause)
