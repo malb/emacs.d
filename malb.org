@@ -8458,8 +8458,11 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
             (require 'weechat-spelling)
             (require 'weechat-image)
 
-            (setq weechat-tracking-types '(:highlight ("general" . :message)))
-            (setq weechat-completing-read-function #'completing-read)
+            (setq weechat-tracking-types '(:highlight ("general" . :message))
+                  weechat-completing-read-function #'completing-read
+                  weechat-auto-monitor-buffers t
+                  weechat-auto-close-buffers t
+                  weechat-buffer-kill-buffers-on-disconnect t)
 
             (add-hook 'weechat-mode-hook #'visual-line-mode)
             (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
