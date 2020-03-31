@@ -723,22 +723,16 @@ _SPC_ cancel  _D_lt other     _s_wap
 #+begin_src emacs-lisp
 (use-package skip-buffers-mode
   :ensure nil
-  :delight (skip-buffers-mode nil)
+  :blackout skip-buffers-mode
   :config (skip-buffers-mode))
 #+end_src
 
 * Clean Mode Line
 
-Use [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:diminish~ parameter to =use-package=.
+Use [[https://github.com/raxod502/blackout][blackout]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:blackout~ parameter to =use-package=.
 
 #+BEGIN_SRC emacs-lisp
-(use-package diminish)
-#+END_SRC
-
-[[http://www.emacswiki.org/emacs/DelightedModes][delight.el]] allows us to rewrite mode-line statuses of minor modes. Which we use when the diminish keyword is not enough.
-
-#+BEGIN_SRC emacs-lisp
-(use-package delight)
+(use-package blackout)
 #+END_SRC
 
 * Jumping Around
@@ -808,7 +802,7 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
 
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
-  :diminish yas-minor-mode
+  :blackout yas-minor-mode
   :config (progn
             (yas-global-mode)
             (setq yas-verbosity 1)
@@ -1173,7 +1167,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm
-  :diminish helm-mode
+  :blackout helm-mode
   :bind (("M-x"       . helm-M-x)
          ("C-x C-b"   . malb/helm-omni)
          ("C-x b"     . malb/helm-omni)
@@ -1640,7 +1634,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
 #+BEGIN_SRC emacs-lisp
 (use-package smartparens
-  :diminish smartparens-mode
+  :blackout smartparens-mode
   :config (progn
             (require 'smartparens-config)
             (require 'smartparens-latex)
@@ -1769,7 +1763,7 @@ Use the built-in ~show-paren-mode~ to highlight matching parentheses.
 
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
-  :diminish drag-stuff-mode
+  :blackout drag-stuff-mode
   :config (progn
             (defhydra malb/hydra-drag-stuff (:color red)
               "drag stuff"
@@ -1802,7 +1796,7 @@ Automatically revert buffers.
 
 #+BEGIN_SRC emacs-lisp
 (use-package focus-autosave-mode
-  :delight (focus-autosave-local-mode " "))
+  :blackout (focus-autosave-local-mode . " "))
 #+END_SRC
 
 ** Regexp
@@ -1964,7 +1958,7 @@ https://github.com/cute-jumper/embrace.el
 
 #+BEGIN_SRC emacs-lisp
 (use-package wrap-region
-  :diminish wrap-region-mode
+  :blackout wrap-region-mode
   :config (wrap-region-add-wrappers
            '(("*" "*" nil org-mode)
              ("~" "~" nil org-mode)
@@ -2015,11 +2009,11 @@ Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-mi
 
 #+BEGIN_SRC emacs-lisp
 (use-package beginend
-  :diminish beginend-global-mode
+  :blackout beginend-global-mode
   :config (progn
             (beginend-global-mode)
             (dolist (mode beginend-modes)
-              (diminish (cdr mode)))))
+              (blackout (cdr mode)))))
 #+END_SRC
 
 * Help
@@ -2292,7 +2286,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda))
   :mode ("\\.org$" . org-mode)
-  :diminish (orgstruct-mode orgstruct++-mode orgtbl-mode)
+  :blackout (orgstruct-mode orgtbl-mode)
   :config (progn
             (unbind-key "C-c [" org-mode-map)
             (bind-key "M-/"   #'company-complete-common org-mode-map)))
@@ -2546,7 +2540,7 @@ Allow refile to create parent tasks with confirmation
 #+BEGIN_SRC emacs-lisp
 (use-package org-indent
   :ensure nil
-  :diminish)
+  :blackout)
 #+END_SRC
 
 ** Archiving
@@ -4147,7 +4141,7 @@ Make flycheck prettier based on what spacemacs does.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
-  :diminish flycheck-mode
+  :blackout flycheck-mode
 
   :config (progn
             (global-flycheck-mode)
@@ -4246,7 +4240,7 @@ Make bug references in comments and string clickable
 
 #+BEGIN_SRC emacs-lisp
 (use-package dtrt-indent
-  :diminish dtrt-indent-mode
+  :blackout dtrt-indent-mode
   :config (progn (dtrt-indent-global-mode t)))
 #+END_SRC
 
@@ -4267,7 +4261,7 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
   :config (progn
             (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
             (unbind-key "C-c C-q" aggressive-indent-mode-map))
-  :diminish aggressive-indent-mode)
+  :blackout aggressive-indent-mode)
 #+END_SRC
 
 *** Trailing whitespace
@@ -4276,7 +4270,7 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 
 #+BEGIN_SRC emacs-lisp
 (use-package ws-butler
-  :diminish ws-butler-mode
+  :blackout ws-butler-mode
   :config (progn
             ;; adding it to prog-mode-hook causes problems for emacsclient
             (add-hook 'c-mode-common-hook   #'ws-butler-mode)
@@ -4402,7 +4396,7 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
 #+BEGIN_SRC emacs-lisp
 (use-package helm-gtags
   :init (setq helm-gtags-prefix-key "\C-cjg")
-  :diminish helm-gtags-mode
+  :blackout helm-gtags-mode
   :config (progn  (setq helm-gtags-ignore-case t
                         helm-gtags-auto-update t
                         helm-gtags-use-input-at-cursor t
@@ -4616,7 +4610,7 @@ Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/2
 #+BEGIN_SRC emacs-lisp
 (use-package doxymacs
   :disabled t
-  :diminish doxymacs-mode
+  :blackout doxymacs-mode
   :config (progn
             (defun malb/doxymacs ()
               (doxymacs-mode t)
@@ -4679,7 +4673,7 @@ and move to the source code that caused it."
 
 #+BEGIN_SRC emacs-lisp
 (use-package modern-cpp-font-lock
-  :diminish modern-c++-font-lock-mode
+  :blackout modern-c++-font-lock-mode
   :config (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 #+END_SRC
 
@@ -4852,7 +4846,7 @@ It makes sense to highlight indentation in Python.
 
 #+BEGIN_SRC emacs-lisp
 (use-package highlight-indentation
-  :diminish highlight-indentation-mode
+  :blackout highlight-indentation-mode
   :config (progn (add-hook 'python-mode-hook #'highlight-indentation-mode)))
 #+END_SRC
 
@@ -4873,7 +4867,7 @@ Fall back to dumb jump if anaconda fails.
 #+BEGIN_SRC emacs-lisp
 (use-package anaconda-mode
   :after smart-jump
-  :diminish anaconda-mode
+  :blackout anaconda-mode
   :config (progn
 
             (defun malb/local-anaconda-mode ()
@@ -4911,7 +4905,7 @@ Manually fixed bugs:
 
 #+BEGIN_SRC emacs-lisp
 (use-package python-docstring
-  :diminish python-docstring-mode
+  :blackout python-docstring-mode
   :hook (python-mode . python-docstring-mode))
 #+END_SRC
 
@@ -4921,7 +4915,7 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 
 #+BEGIN_SRC emacs-lisp
 (use-package sphinx-doc
-  :diminish sphinx-doc-mode
+  :blackout sphinx-doc-mode
   :hook (python-mode . sphinx-doc-mode))
 #+END_SRC
 
@@ -4959,7 +4953,7 @@ pip install importmagic epc
 
 #+BEGIN_SRC emacs-lisp
 (use-package importmagic
-  :diminish importmagic-mode
+  :blackout importmagic-mode
   :hook (python-mode-hook . importmagic-mode))
 #+END_SRC
 
@@ -5425,7 +5419,7 @@ Code manipulation:
 
 #+BEGIN_SRC emacs-lisp
 (use-package elisp-slime-nav
-  :diminish elisp-slime-nav-mode
+  :blackout elisp-slime-nav-mode
   :config (progn
 
             (defun malb/elisp-hook ()
@@ -5504,7 +5498,7 @@ Put everything back on one line if =M-q= is pressed twice and use ~visual-line-m
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'text-mode-hook #'turn-on-visual-line-mode)
-(diminish 'visual-line-mode)
+(blackout 'visual-line-mode)
 
 (defun malb/fill-or-unfill ()
   "Like `fill-paragraph', but unfill if used twice."
@@ -5567,7 +5561,7 @@ Indicate soft wrapped lines.
 
 #+BEGIN_SRC emacs-lisp
 (use-package typo
-  :diminish typo-mode
+  :blackout typo-mode
   :config (progn
             (typo-global-mode)
             (setq-default typo-language "English")
@@ -5667,7 +5661,7 @@ Diminish ~flyspell-mode~ as we always use it.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell
-  :diminish
+  :blackout
   :config (setq flyspell-issue-message-flag nil))
 #+END_SRC
 
@@ -5857,7 +5851,6 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 
 #+BEGIN_SRC emacs-lisp
 (use-package pandoc-mode
-  :delight '(:eval (concat " [" (pandoc--get 'write) "]"))
   :config (progn
             (add-hook 'markdown-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
@@ -8686,7 +8679,7 @@ Show key combos
 Diminish ~eldoc-mode~
 
 #+BEGIN_SRC emacs-lisp
-(diminish 'eldoc-mode)
+(blackout 'eldoc-mode)
 #+END_SRC
 
 When saving a file that starts with =#!=, make it executable.
@@ -8719,7 +8712,7 @@ Try the repeated popping up to 10 times. ARGS is passed through."
 Diminish =abbrev-mode=
 
 #+BEGIN_SRC emacs-lisp
-(diminish 'abbrev-mode)
+(blackout 'abbrev-mode)
 #+END_SRC
 
 #+BEGIN_QUOTE
@@ -9222,7 +9215,7 @@ Colourise colours or names in buffers ([[http://git.savannah.gnu.org/cgit/emacs/
 (use-package rainbow-mode
   :config (progn
             (add-hook 'emacs-lisp-mode-hook #'rainbow-mode))
-  :diminish rainbow-mode)
+  :blackout rainbow-mode)
 #+END_SRC
 
 ** Vim-like Empty Line Indicator
@@ -9355,7 +9348,7 @@ I never use ~list-directory~, I only mistype it.
 
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
-  :diminish which-key-mode
+  :blackout which-key-mode
   :config (progn
             (which-key-mode 1)))
 #+END_SRC
