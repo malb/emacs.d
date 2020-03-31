@@ -531,7 +531,8 @@ Find a frame not named =mu4e= if there is any, make one otherwise.
 (defun malb/switch-away-from-mu4e ()
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
-                         (if (and (not (string-match "mu4e" (frame-parameter frame 'name)))
+                         (if (and (not (string-match "*Minibuf-1*" (frame-parameter frame 'name))) ;; helm frame
+                                  (not (string-match "mu4e" (frame-parameter frame 'name)))
                                   (not (string-match "F1" (frame-parameter frame 'name)))) ;; emacsclient
                              (throw 'other-frame frame)
                            nil)))))
