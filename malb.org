@@ -8358,6 +8358,24 @@ exports.boxes = [ "INBOX"];
             :kill-process-buffer-on-stop t
             :tags '(development))
 
+          (prodigy-define-service
+            :name "weechat"
+            :command "weechat-headless"
+            :port 9000
+            :stop-signal 'sigterm
+            :kill-process-buffer-on-stop t
+            :tags '(chat))
+
+          (prodigy-define-service
+            :name "bitlbee"
+            :cwd (expand-file-name "~/Software/docker-bitlbee")
+            :command "docker-compose"
+            :args '("up")
+            :port 16667
+            :stop-signal 'sigterm
+            :kill-process-buffer-on-stop t
+            :tags '(chat))
+
           ;; start imapnotify
           (prodigy-start-service (prodigy-find-service "imapnotify"))))
 #+END_SRC
