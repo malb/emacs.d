@@ -1310,7 +1310,8 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                   helm-swoop-speed-or-color t)
 
             (defun malb/helm-swoop-pre-fill ()
-              (thing-at-point 'symbol))
+              ;; (thing-at-point 'symbol)
+              )
 
             (defun malb/swoop-or-search ()
               (interactive)
