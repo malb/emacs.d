@@ -8428,9 +8428,9 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
 
 #+BEGIN_SRC emacs-lisp
 (use-package tracking
-  :bind (:map tracking-mode-map
-              ("<f2> <right>" . tracking-next-buffer)
-              ("<f2> <left>" . tracking-previous-buffer))
+  :bind (
+         ("<f2> <right>" . tracking-next-buffer)
+         ("<f2> <left>" . tracking-previous-buffer))
   :config (progn
             (unbind-key "C-c C-SPC" tracking-mode-map)
             (unbind-key "C-c C-@" tracking-mode-map)))
@@ -8463,6 +8463,46 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
               (weechat-connect "localhost" 9000 nil 'plain)
               (sleep-for 1.0)
               (weechat-monitor-all-buffers))))
+#+END_SRC
+
+** ERC
+
+#+BEGIN_SRC emacs-lisp
+(use-package erc
+  :ensure nil
+  :commands (erc erc-tls malb/bitlbee)
+  :bind (:map erc-mode-map
+              ("C-<up>" . erc-previous-command)
+              ("C-<down>" . erc-next-command))
+  :config (progn
+            (setq erc-timestamp-format "[%R-%m/%d]"
+                  erc-hide-timestamps nil
+                  erc-server-coding-system '(utf-8 . utf-8)
+                  erc-track-enable-keybindings nil)
+
+            ;; (defun malb/erc-hook ()
+            ;;   (erc-fill-disable)
+            ;;   (turn-on-visual-line-mode))
+            ;; (add-hook 'erc-mode-hook #'malb/erc-hook)
+
+            (erc-timestamp-mode t)
+
+            (add-to-list 'erc-modules 'notifications)
+            (add-to-list 'erc-modules 'spelling)
+
+            (erc-track-mode)
+
+            (defun malb/bitlbee ()
+              (interactive)
+              (if (get-buffer "&bitlbee")
+                  (switch-to-buffer (get-buffer "&bitlbee"))
+                (erc :server "localhost" :port 16667 :nick "malb")))))
+
+(use-package erc-image
+  :after erc
+  :config (progn
+            (add-to-list 'erc-modules 'image)
+            (erc-update-modules)))
 #+END_SRC
 
 ** Slack
