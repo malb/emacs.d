@@ -1112,10 +1112,6 @@ Sometimes, you just want to fold.
 
 See [[https://tuhdo.github.io/helm-intro.html][A Package in a league of its own: Helm]] for a nice introduction.
 
-| *Combo* | *Command*             |
-|---------+-----------------------|
-| =C-w=   | yanks word at point   |
-| =M-n=   | yanks symbol at point |
 
 ** General, Buffers, Files
 
@@ -1488,10 +1484,11 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
 ** Tips
 
-| Key Binding   | Action                         |
-|---------------+--------------------------------|
-| ~C-c C-i~     | =helm-copy-to-buffer=          |
-| ~C-u C-c C-k~ | =helm-kill-selection-and-quit= |
+| *Key Binding* | *Action*                                 |
+|---------------+------------------------------------------|
+| ~C-c <tab>~   | =helm-copy-to-buffer=                    |
+| ~C-u C-c C-k~ | =helm-kill-selection-and-quit=           |
+| ~C-w~         | yank thing-at-point/word into minibuffer |
 
 * History
 ** Recent Files
