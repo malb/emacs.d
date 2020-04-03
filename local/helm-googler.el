@@ -42,18 +42,8 @@
   '(("Browse URL" . browse-url)
     ("Browse URL with EWW" . (lambda (candidate)
                                (eww-browse-url candidate)))
-    ("Copy URL to clipboard" . (lambda (candidate)
-                                 (kill-new  candidate)))
-    ("Browse URL with webkit xwidget" . (lambda (candidate)
-                                          (xwidget-webkit-browse-url candidate)))
-    ("Copy URL" . (lambda (candidate) (let ((url
-                                             (replace-regexp-in-string "https://.*q=\\(.*\\)\&sa=.*" "\\1" candidate)))
-                                        (kill-new url))))
     ("Org Store Link" . (lambda (candidate)
-                          (let ((title (car (split-string candidate "[\n]+")))
-                                (url
-                                 (replace-regexp-in-string "https://.*q=\\(.*\\)\&sa=.*" "\\1" candidate)))
-                            (push (list url title) org-stored-links)))))
+                          (push (list candidate candidate) org-stored-links))))
   "List of actions for helm-googler sources."
   :group 'helm-googler
   :type '(alist :key-type string :value-type function))
