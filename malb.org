@@ -2206,18 +2206,6 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
             (add-hook 'magit-mode-hook #'malb/magit-svn)))
 #+END_SRC
 
-*** Magit Todo Notes
-
-[[https://raw.githubusercontent.com/alphapapa/magit-todos/master/screenshots/emacs-grouped-by-path.png]]
-
-([[https://github.com/alphapapa/magit-todos][source]])
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit-todos
-  :after magit
-  :config (magit-todos-mode))
-#+END_SRC
-
 *** GitHub
 
 
