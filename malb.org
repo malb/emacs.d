@@ -7917,7 +7917,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (bind-key "C-s" #'dired-isearch-filenames dired-mode-map)
 
             (add-hook 'dired-mode-hook (defun malb/enable-dired-omit-mode () (dired-omit-mode)))
-            (add-hook 'dired-mode-hook (defun malb/dired-layoyt ()
+            (add-hook 'dired-mode-hook (defun malb/dired-layout ()
                                          (setq-local tab-width 2)
                                          (toggle-truncate-lines 1)))
 
