@@ -3008,10 +3008,10 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
   :config (progn
             (setq org-capture-templates
                   (doct
-                   '(("[t]asks" :keys "t"
+                   `((,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
                       :prepend t
                       :empty-lines 1
-                      :children (("capture a standard [t]ask" :keys "t"
+                      :children ((,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
                                   :template ("* TODO %?"
                                              "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
                                              ":PROPERTIES:"
@@ -3020,7 +3020,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                              ""
                                              "%i")
                                   :file malb/inbox-org)
-                                 ("capture a quick task" :keys "y"
+                                 (,(format "%s\tQuick Task " (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
                                   :template ("* TODO %?"
                                              "SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))"
                                              ":PROPERTIES:"
@@ -3029,8 +3029,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                              ""
                                              "%i")
                                   :file malb/inbox-org)
-
-                                 ("capture a standard task for the current [c]ontext" :keys "c"
+                                 (,(format "%s\tTask in Context" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "c"
                                   :template ("* TODO %?"
                                              ":PROPERTIES:"
                                              ":CREATED: %U"
@@ -3039,8 +3038,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                              "%i"
                                              "%a")
                                   :file malb/inbox-org)
-
-                                 ("capture a task for the current projectile [p]roject" :keys "p"
+                                 (,(format "%s\tTask for Project" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "p"
                                   :template ("** TODO %?"
                                              ":PROPERTIES:"
                                              ":CREATED: %U"
@@ -3052,11 +3050,11 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                   :function malb/org-capture-projectile)
                                  )
                       )
-                     ("[e]-mail" :keys "e"
+                     (,(format "%s\tEmail" (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)) :keys "e"
                       :file malb/inbox-org
                       :headline "E-Mail"
                       :empty-lines 1
-                      :children  (("create a task for [r]esponding to an [e]-mail" :keys "r"
+                      :children  ((,(format "%s\tRespond to Email" (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)) :keys "r"
                                    :template  ("* REPLY to %:fromname on %a"
                                                "DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))"
                                                ":PROPERTIES:"
@@ -3066,22 +3064,19 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                                "%i")
                                    :prepend t
                                    :immediate-finish t)
-
-                                  ("[f]ile an [e]-mail" :keys "f"
+                                  (,(format "%s\tFile an Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01)) :keys "f"
                                    :template  ("* %a"
                                                ":PROPERTIES:"
                                                ":CREATED: %U"
                                                ":END:")
                                    :prepend nil
                                    :immediate-finish nil)
-
-                                  ("keep an [e]-mail [s]earch" :keys "s"
+                                  (,(format "%s\tStore Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01)) :keys "s"
                                    :template ("* %a")
                                    :immediate-finish nil
                                    :prepend nil
                                    :empty-lines 0)
-
-                                  ("create a [t]ask linked to an [e]-mail" :keys "t"
+                                  (,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
                                    :file malb/work-org
                                    :headline "Admin"
                                    :template ("* %^{type|TODO|REPLY|READ} %? %^G"
@@ -3093,8 +3088,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                               "See %a by %:fromname")
                                    :immediate-finish nil
                                    :prepend t)
-
-                                  ("quick create an [o]ffice task linked to an [e]-mail" :keys "o"
+                                  (,(format "%s\tOffice Task" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "o"
                                    :file malb/work-org
                                    :headline "Admin"
                                    :template ("* TODO %a (%:fromname) %^{tag|:@office:|:@train:}"
@@ -3108,8 +3102,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                               ":END:")
                                    :immediate-finish t
                                    :prepend t)
-
-                                  ("[q]uick create a task linked to an [e]-mail" :keys "q"
+                                  (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
                                    :file malb/work-org
                                    :headline "Admin"
                                    :template ("* TODO %a (%:fromname)"
@@ -3122,7 +3115,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                               ":END:")
                                    :immediate-finish t
                                    :prepend t)))
-                     ("add literature to [r]ead " :keys "r"
+                     (,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01)) :keys "r"
                       :file malb/work-org
                       :headline "Reading"
                       :template ("* READ %a%?"
@@ -3134,7 +3127,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                  "%i")
                       :prepend t
                       :empty-lines 1)
-                     ("add entry to [j]ournal" :keys "j"
+                     (,(format "%s\tJournal" (all-the-icons-faicon "clipboard" :face 'all-the-icons :v-adjust 0.01)) :keys "j"
                       :file (lambda () (expand-file-name "journal.org"
                                                          malb/org-files-dir))
                       :datetree t
@@ -3142,7 +3135,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                  "%?"
                                  "* critique"
                                  ""))
-                     ("record notes on a [m]eeting" :keys "m"
+                     (,(format "%s\tMeeting" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "m"
                       :file malb/inbox-org
                       :headline "Meetings"
                       :template ("* Meeting with %^{who}"
@@ -3152,7 +3145,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                       :clock-in t
                       :clock-resume t
                       :empty-lines 1)
-                     ("create a [n]ote" :keys "n"
+                     (,(format "%s\tNote" (all-the-icons-faicon "sticky-note" :face 'all-the-icons :v-adjust 0.01)) :keys "n"
                       :file malb/inbox-org
                       :template ("* %?"
                                  ":PROPERTIES:"
@@ -3161,7 +3154,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                  ""
                                  "%i")
                       :empty-lines 1)
-                     ("create note/tip on a piece of [s]oftware" :keys "s"
+                     (,(format "%s\tSoftware" (all-the-icons-faicon "code" :face 'all-the-icons :v-adjust 0.01)) :keys "s"
                       :file (lambda () (expand-file-name "software.org" deft-directory))
                       :headline"Incoming"
                       :template ("* %?"
@@ -3173,7 +3166,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                  "%a")
                       :prepend t
                       :empty-lines 1)
-                     ("capture [w]ebsite" :keys "w"
+                     (,(format "%s\tWebsite" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01)) :keys "w"
                       :file malb/inbox-org
                       :headline "Links"
                       :template ("* %?%a"
@@ -3182,7 +3175,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                                  ":END:")
                       :immediate-finish nil
                       :prepend t)
-                     ("capture [w]ebsite (selected text)" :keys "W"
+                     (,(format "%s\tWebsite (selected text)" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01)) :keys "W"
                       :file malb/inbox-org
                       :headline "Links"
                       :template  ("* %?%a"
@@ -3198,10 +3191,10 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                       :prepend t))))
             (setq org-capture-templates-contexts
                   '(("er" ((in-mode . "mu4e-view-mode")))
+                    ("ef" ((in-mode . "mu4e-view-mode")))
                     ("et" ((in-mode . "mu4e-view-mode")))
                     ("eo" ((in-mode . "mu4e-view-mode")))
-                    ("en" ((in-mode . "mu4e-view-mode")))
-                    ("ef" ((in-mode . "mu4e-view-mode")))
+                    ("ey" ((in-mode . "mu4e-view-mode")))
                     ("es" ((in-mode . "mu4e-headers-mode")))))))
 #+END_SRC
 
