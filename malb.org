@@ -157,6 +157,13 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
                 paradox-automatically-star t))
 #+END_SRC
 
+[[https://github.com/quelpa/quelpa][Quelpa]] to install packages directly from source.
+
+#+BEGIN_SRC emacs-lisp
+(use-package quelpa)
+(use-package quelpa-use-package)
+#+END_SRC
+
 * Disable Clutter
 
 #+BEGIN_SRC emacs-lisp
