@@ -9281,6 +9281,66 @@ Better unicode font support.
 (malb/fonts (selected-frame)) ;; initial frame
 #+END_SRC
 
+** EWW et al
+
+#+begin_quote
+[[https://github.com/chenyanming/shrface/][shrface]] is a shr faces package that helps you apply your favourite org faces to shr, dash-docs, eww, nov.el, mu4e, and more!
+#+end_quote
+
+#+BEGIN_SRC emacs-lisp
+(use-package shrface
+  :after shr
+  :quelpa (shrface :repo "chenyanming/shrface" :fetcher github)
+  :config (progn
+            (setq shrface-paragraph-indentation 2
+                  shrface-paragraph-fill-column fill-column)
+            (add-hook 'eww-mode-hook #'visual-fill-column-mode)
+            (with-eval-after-load 'nov
+              (setq nov-shr-rendering-functions
+                    (append nov-shr-rendering-functions shr-external-rendering-functions))))) '
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package shr-tag-pre-highlight
+  :ensure t
+  :after shr
+  :config (progn
+            (add-to-list 'shr-external-rendering-functions '(pre . shr-tag-pre-highlight))
+
+            (defun shrface-shr-tag-pre-highlight (pre)
+              "Highlighting code in PRE."
+              (let* ((shr-folding-mode 'none)
+                     (shr-current-font 'default)
+                     (code (with-temp-buffer
+                             (shr-generic pre)
+                             (setq-local fill-column 120)
+                             (indent-rigidly (point-min) (point-max) 2)
+                             (if (eq "" (dom-texts pre))
+                                 nil
+                               (progn
+                                 (setq-local fill-column shrface-paragraph-fill-column)
+                                 (indent-rigidly (point-min) (point-max) shrface-paragraph-indentation)))
+                             (buffer-string)))
+                     (lang (or (shr-tag-pre-highlight-guess-language-attr pre)
+                               (let ((sym (language-detection-string code)))
+                                 (and sym (symbol-name sym)))))
+                     (mode (and lang
+                                (shr-tag-pre-highlight--get-lang-mode lang))))
+                (shr-ensure-newline)
+                (insert (make-string shrface-paragraph-indentation ?\ )) ; make indent string
+                (insert (propertize (concat "#+BEGIN_SRC " lang) 'face 'org-block-begin-line))
+                (shr-ensure-newline)
+                (insert
+                 (or (and (fboundp mode)
+                          (with-demoted-errors "Error while fontifying: %S"
+                            (shr-tag-pre-highlight-fontify code mode)))
+                     code))
+                (shr-ensure-newline)
+                (insert (make-string shrface-paragraph-indentation ?\ )) ; make indent string
+                (insert (propertize "#+END_SRC" 'face 'org-block-end-line ) )
+                (shr-ensure-newline)))))
+#+END_SRC
+
 ** Rainbow Mode
 
 Colourise colours or names in buffers ([[http://git.savannah.gnu.org/cgit/emacs/elpa.git/tree/packages/rainbow-mode][source]])
