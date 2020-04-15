@@ -4361,21 +4361,23 @@ mouse-3: go to end")
 (use-package helm-dash
   :bind ("C-c h ." . helm-dash-at-point)
   :config (progn
-            (setq helm-dash-common-docsets '("Bash"
-                                             "Bootstrap 4"
-                                             "C"
+            (setq helm-dash-common-docsets '("Python_3"
                                              "C++"
-                                             "Emacs Lisp"
-                                             "Flask"
-                                             "HTML"
+                                             "C"
+                                             "Emacs_Lisp"
+                                             "Bash"
+                                             "Docker"
+                                             "Go"
+                                             "Java_SE12"
                                              "LaTeX"
+                                             "HTML"
                                              "Markdown"
                                              "NumPy"
-                                             "Python 2"
-                                             "Python 3"
+                                             "Flask"
                                              "SQLAlchemy"
                                              "SQLite"
-                                             "Vagrant"
+                                             "Bootstrap_4"
+                                             "Font_Awesome"
                                              )
                   helm-dash-browser-func 'eww)))
 #+END_SRC
