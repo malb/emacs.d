@@ -4204,9 +4204,10 @@ Make flycheck prettier based on what spacemacs does.
               :fringe-bitmap 'my-flycheck-fringe-indicator
               :fringe-face 'flycheck-fringe-info)
 
-            (flycheck-add-mode 'proselint 'text-mode)
-            (flycheck-add-mode 'proselint 'org-mode)
-            (flycheck-add-next-checker 'markdown-mdl 'proselint)))
+            ;; (flycheck-add-mode 'proselint 'text-mode)
+            ;; (flycheck-add-mode 'proselint 'org-mode)
+            ;; (flycheck-add-next-checker 'markdown-mdl 'proselint)
+            ))
 #+END_SRC
 
 Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
