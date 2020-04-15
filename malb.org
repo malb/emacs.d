@@ -2900,8 +2900,8 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 #+BEGIN_SRC emacs-lisp
 (use-package ox-pandoc
   :init (progn
-          (setq org-pandoc-menu-entry  '((?m "as md." org-pandoc-export-as-markdown)
-                                         (?M "to md and open." org-pandoc-export-to-markdown-and-open)
+          (setq org-pandoc-menu-entry  '((?m "as md." org-pandoc-export-as-commonmark)
+                                         (?M "to md and open." org-pandoc-export-to-commonmark-and-open)
                                          (?x "to docx." org-pandoc-export-to-docx)
                                          (?X "to docx and open." org-pandoc-export-to-docx-and-open)
                                          (?e "to epub." org-pandoc-export-to-epub)
@@ -2911,7 +2911,10 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
                                          (?j "as json." org-pandoc-export-as-json)
                                          (?J "to json and open." org-pandoc-export-to-json-and-open)
                                          (?r "as rst." org-pandoc-export-as-rst)
-                                         (?R "to rst and open." org-pandoc-export-to-rst-and-open)))))
+                                         (?R "to rst and open." org-pandoc-export-to-rst-and-open))
+                org-pandoc-options '((standalone . t)
+                                     (mathjax . t)
+                                     (wrap . "preserve")))))
 #+END_SRC
 
 *** Rich Text Clipboard
