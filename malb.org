@@ -3394,7 +3394,7 @@ Working with source code in org-mode.
                (ein . t)))
 
             (setq org-confirm-babel-evaluate nil
-                  org-plantuml-jar-path" /usr/share/plantuml/plantuml.jar"
+                  org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
             (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
 #+END_SRC
@@ -8200,7 +8200,7 @@ Uses baloo to find files."
 
 *Example*
 
-#+BEGIN_QUOTE plantuml :file foo.svg :tangle no
+#+BEGIN_SRC plantuml :file plantuml-example.svg :tangle no
 skinparam monochrome true
 skinparam dpi 150
 skinparam backgroundColor transparent
@@ -8222,10 +8222,12 @@ note left: Session established
 deactivate Server
 Client -> Client: Saves token
 deactivate Client
-#+END_QUOTE
+#+END_SRC
 
-- [[http://plantuml.com/latex.html][TikZ export]]
-- See also https://github.com/josteink/wsd-mode for https://www.websequencediagrams.com/
+#+RESULTS:
+[[file:plantuml-example.svg]]
+
+Note that PlantUML supports [[http://plantuml.com/latex.html][TikZ export]].
 
 * Calendar
 
