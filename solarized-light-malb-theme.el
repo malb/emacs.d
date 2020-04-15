@@ -85,7 +85,7 @@
                             `(markdown-code-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit nil ))))
                             `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit (highlight)))))
 
-                            `(hl-sentence ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit (highlight)))))
+                            `(hl-sentence ((t (:background ,yellow-1bg :inherit (highlight)))))
                             `(which-func  ((t (:foreground ,green :weight bold))))
                             `(stripe-highlight ((t (:background ,s-base2))))
 
