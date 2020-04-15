@@ -1205,8 +1205,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
          ("<tab>" . helm-execute-persistent-action) ;; rebind tab to do persistent action
          ("C-i"   . helm-execute-persistent-action) ;; make TAB works in terminal
          ("C-z"   . helm-select-action)             ;; list actions using C-z
-         ("C-M-n" . helm-next-source)
-         ("C-M-p" . helm-previous-source)
+         ("C-<right>" . helm-next-source)
+         ("C-<left>" . helm-previous-source)
          )
 
   :config (progn
