@@ -3016,6 +3016,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
 (use-package doct)
 (use-package org-capture
   :ensure nil
+  :after all-the-icons
   :bind ("<f9>" . org-capture)
   :config (progn
             (setq org-capture-templates
