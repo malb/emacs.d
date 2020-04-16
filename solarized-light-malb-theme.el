@@ -169,11 +169,10 @@
                                 `(pos-tip-foreground-color ,s-base01)
                                 `(org-todo-keyword-faces
                                   '(("CANCELLED" :foreground "gray" :weight bold)
-                                    ("DISABLED"  :foreground "gray" :weight bold)
                                     ("ONHOLD"    :foreground "gray" :weight bold)
                                     ("STALLED"   :foreground "gray" :weight bold)
                                     ("SUBMITTED" :foreground "gray" :weight bold)
                                     ("DELEGATED" :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
-                                    ("WAITING"   :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
+                                    ("WAIT"   :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4")
                                     ("COAUTHOR"  :foreground "dark orange" :weight bold :box (:line-width 1 :color "#D8ABA7") :background "#FFE6E4"))))
     t))

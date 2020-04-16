@@ -2405,7 +2405,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
       '((sequence "TODO(t)"
-                  "WAITING(w@)"
+                  "WAIT(w@)"
                   "PING(p)"
                   "DELEGATED(e@/!)"
                   "|"
@@ -2417,8 +2417,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                   "COAUTHOR(@/!)"
                   "REVISE(!)"
                   "SUBMITTED(@/!)"
-                  "REBUTTAL"
-                  "CAMERAREADY"
+                  "REBUT"
+                  "FINAL"
                   "|"
                   "PUBLISHED(!)"
                   "ONHOLD(h@/!)"
@@ -2426,9 +2426,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
         (sequence "REVIEW(v)"
                   "INFO(i@/!)"
-                  "DISCUSS(D@/!)"
                   "|"
-                  "REVIEWED(V!)") ;; reviews
+                  "DONE(!)") ;; reviews
 
         (type "BLOG(b)"
               "READ(r)"
@@ -2443,12 +2442,12 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (org-clock-persistence-insinuate)
 #+END_SRC
 
-delete SCHEDULED if new state is WAITING
+delete SCHEDULED if new state is a WAITing state
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/org-after-todo-state-change ()
   (when (or
-         (string-equal org-state "WAITING")
+         (string-equal org-state "WAIT")
          (string-equal org-state "COAUTHOR")
          (string-equal org-state "DELEGATED")
          (string-equal org-state "SUBMITTED"))
