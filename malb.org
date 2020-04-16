@@ -2201,7 +2201,8 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
              magit-push
              magit-stage-file
              magit-unstage-file)
-  :bind ("<f7>" . magit-status)
+  :bind (("S-<f7>" . magit-status)
+         ("<f7>" . magit-dispatch))
   :config (progn
 
             ;; source: https://www.reddit.com/r/emacs/comments/ayjgpu/magit_orgmode_unfold_containing_headlines_when/
