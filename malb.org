@@ -7114,27 +7114,18 @@ Use imagemagick, if available
   (imagemagick-register-types))
 #+END_SRC
 
-View e-mails with width restriction, but wider for HTML
-
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
   "View e-mails with width restriction, but wider for HTML."
-  (if (boundp 'msg)
-      (let* ((txt (mu4e-message-field msg :body-txt))
-             (html (mu4e-message-field msg :body-html)))
-        (cond
-         ((and (> (* mu4e-view-html-plaintext-ratio-heuristic
-                     (length txt)) (length html))
-               (or (not mu4e-view-prefer-html) (not html)))
-          (set-fill-column 80))
-         (t
-          (set-fill-column 120))))
-    (set-fill-column 80))
+  (set-fill-column 84)
   (visual-line-mode 1)
   (visual-fill-column-mode 1))
 
 (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
+
+#+RESULTS:
+| malb/mu4e-view-mode-hook | beginend-message-mode |
 
 ** Actions
 
