@@ -1538,8 +1538,7 @@ Don’t include boring or remote stuff in list of recently visited files.
                                          "/tmp/"
                                          "/ssh:"
                                          "/sudo:"
-                                         "/scp:"
-                                         (expand-file-name malb/mu4e-maildir)))
+                                         "/scp:"))
              (loop for ext in helm-boring-file-regexp-list
                    do (add-to-list 'recentf-exclude ext t))
              ))
@@ -6670,16 +6669,15 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 ** Folders
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-maildir malb/mu4e-maildir
-      mu4e-drafts-folder "/[Google Mail]/Drafts"
+(setq mu4e-drafts-folder "/[Google Mail]/Drafts"
       mu4e-sent-folder   "/[Google Mail]/Sent Mail"
       mu4e-trash-folder  "/[Google Mail]/Bin")
 
 (setq mu4e-maildir-shortcuts
-      '(("/Inbox"                       . ?i)
-        ("/[Google Mail]/Drafts"        . ?d)
-        ("/[Google Mail]/Sent Mail"     . ?s)
-        ("/[Google Mail]/Bin"           . ?t)))
+      '((:maildir "/Inbox"                   :key ?i)
+        (:maildir "/[Google Mail]/Drafts"    :key ?d)
+        (:maildir "/[Google Mail]/Sent Mail" :key ?s)
+        (:maildir "/[Google Mail]/Bin"       :key ?t)))
 #+END_SRC
 
 ** Search
@@ -6697,7 +6695,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%inbox"  . "(maildir:\"/royal holloway\" OR maildir:/INBOX)")
                   ("%sent"   . "(maildir:\"/[Google Mail]/Sent Mail\" OR maildir:\"/royal holloway/sent\")")
                   ("%direct" . "%inbox AND NOT flag:list AND NOT %hidden AND (to:martinralbrecht@* OR to:martin.albrecht@*)")
-                  ("%doc"    . "mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M"))))
+                  ("%doc"    . "mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M")
+                  ("%bulk"   . "(flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"))))
 #+END_SRC
 
 #+begin_quote
@@ -6713,28 +6712,22 @@ Canned queries.
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-bookmarks nil)               ; clear out
 
-(add-to-list 'mu4e-bookmarks '("%unread" "Unread" ?u) t)
-
-(add-to-list 'mu4e-bookmarks
-             '("%unread AND (flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists)"
-               "Unread (bulk)" ?l) t)
-
-(add-to-list 'mu4e-bookmarks '("%direct" "Direct" ?d) t)
-
-(add-to-list 'mu4e-bookmarks '("flag:flagged" "Flagged" ?f) t)
-
-(add-to-list 'mu4e-bookmarks '("%today" "Today's" ?t) t)
-(add-to-list 'mu4e-bookmarks '("%week"  "Last 7 days" ?w) t)
-
-(add-to-list 'mu4e-bookmarks '("%direct AND %week" "Last 7 days (direct)" ?W) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%unread") :name "Unread messages" :key ?u) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%unread AND %bulk") :name "Unread (bulk)" :key ?l) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%direct") :name "Direct" :key ?d) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "flag:flagged") :name "Flagged" :key ?f) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%today") :name "Today's" :key ?t) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%week")  :name "Last 7 days" :key ?w) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%direct AND %week") :name "Last 7 days (direct)" :key ?W) t)
 
 (add-to-list
- 'mu4e-bookmarks '("%direct AND %week AND NOT (flag:replied OR flag:passed OR flag:trashed OR flag:list)"
-                   "Last 7 days (direct, unanswered)" ?R) t)
+ 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand
+                            "%direct AND %week AND NOT (flag:replied OR flag:passed OR flag:trashed OR flag:list)")
+                          :name "Last 7 days (direct, unanswered)"
+                          :key ?R) t)
 
-(add-to-list 'mu4e-bookmarks '("%sent AND %week" "Last 7 days (sent)" ?s) t)
-
-(add-to-list 'mu4e-bookmarks '("%doc AND %inbox AND %month" "Documents (31 days)" ?D) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%sent AND %week") :name "Last 7 days (sent)" :key ?s) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
 #+END_SRC
 
 ** Retrieving
@@ -6821,25 +6814,24 @@ Canonicalise contacts as they appear from mu4e.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-contact-rewrite-function (contact)
-  (let* ((email (downcase (plist-get contact :mail)))
-         (name (if (equal (plist-get contact :name) email)
-                   nil
-                 (plist-get contact :name)))
-         (case-fold-search t))
-    (plist-put contact :name (malb/canonicalise-contact-name email name))
-    contact))
+  (let ((full-email-regex "\"?\\(.*?\\)\"? <\\(.*?\\)>"))
+    (cond
+     ((string-match-p (rx  (or (seq "no" (zero-or-one "-") "reply")
+                               (seq "replyto-" (one-or-more char) "@plus.google.com")
+                               (seq "@" (one-or-more char) ".twitter.com")
+                               (seq "do-not-reply" (zero-or-more char) "@")
+                               (seq "bounce-" (one-or-more char) "@"))) contact)
+      nil)
+     ((string-match-p full-email-regex contact)
+      (let* ((email (downcase (replace-regexp-in-string full-email-regex "\\2" contact)))
+             (name  (replace-regexp-in-string full-email-regex "\\1" contact))
+             (case-fold-search t))
+        (if (equal (downcase name) email)
+            email
+          (format "%s <%s>" (malb/canonicalise-contact-name email name) email))))
+     (t contact))))
 
-(setq mu4e-contact-rewrite-function #'malb/mu4e-contact-rewrite-function)
-#+END_SRC
-
-Ignore some e-mail addresses when auto completing:
-
-#+BEGIN_SRC emacs-lisp
-(setq mu4e-compose-complete-ignore-address-regexp (rx  (or (seq "no" (zero-or-one "-") "reply")
-                                                           (seq "replyto-" (one-or-more char) "@plus.google.com")
-                                                           (seq "@" (one-or-more char) ".twitter.com")
-                                                           (seq "do-not-reply" (zero-or-more char) "@")
-                                                           (seq "bounce-" (one-or-more char) "@"))))
+(setq mu4e-contact-process-function #'malb/mu4e-contact-rewrite-function)
 #+END_SRC
 
 Extract a pretty-ish list of contacts from an e-mail.
@@ -6988,7 +6980,7 @@ it is to insert the contact.
   (if (not mu4e~contacts)
       (progn
         ;; request contacts
-        (mu4e~request-contacts)
+        (mu4e~request-contacts-maybe)
         (let ((i 0))
           ;; sleep for at most 2 seconds to wait for contacts to be filed
           (while (and (not mu4e~contacts) (> 2 i))
@@ -6999,22 +6991,20 @@ it is to insert the contact.
          '(("Insert" . (lambda (x)
                          (insert (mapconcat 'identity
                                             (helm-marked-candidates) ","))))
-           ("Find messages (combine multiple with OR)" .
+           ("Find messages" .
             (lambda (x)
-              (mu4e-headers-search
-               (format "contact:%s"
-                       (mapconcat 'malb/extract-email (helm-marked-candidates) " OR ")))))
-           ("Copy to clipboard" . (lambda (x)
-                                    (kill-new (mapconcat 'identity
-                                                         (helm-marked-candidates) ","))))
+              (let ((combiner (completing-read "Combine multiple with:" '("OR" "AND")))
+                    (from-to-contact (completing-read "Restrict to:" '("from:" "to:" "contact:"))))
+                (mu4e-headers-search
+                 (mapconcat (lambda (x) (format (concat from-to-contact "%s")
+                                                (malb/extract-email x)))
+                            (helm-marked-candidates)
+                            (format " %s " combiner))))))
+           ;; ("Copy to clipboard" . (lambda (x)
+           ;;                          (kill-new (mapconcat 'identity
+           ;;                                               (helm-marked-candidates) ","))))
            ("Google search" . (lambda (x) (helm-googler (replace-regexp-in-string
                                                          (format "^\\(.*\\) %s" malb/email-regexp) "\\1" x))))
-
-           ("Find messages (combine multiple with AND)" .
-            (lambda (x)
-              (mu4e-headers-search
-               (format "contact:%s"
-                       (mapconcat 'malb/extract-email (helm-marked-candidates) " AND ")))))
            )))
 
     (helm :sources (helm-build-sync-source "E-mail address candidates"
@@ -7048,6 +7038,8 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
             (add-to-list 'helm-commands-using-frame 'helm-mu)
             (add-to-list 'helm-commands-using-frame 'malb/helm-mu-contacts)
+
+            (fset 'mu4e-main-mode-map mu4e-main-mode-map) ;; this seems to have been forgotten in mu4e
 
             (dolist (mode-map '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map))
               (unbind-key "s" mode-map)
@@ -7212,7 +7204,7 @@ Action to search messages involving all correspondents.
                                    (mu4e-message-field msg :from)))))
     (helm :sources (helm-build-sync-source "Filter candidates:"
                      :candidates (cl-remove-if (lambda (x)
-                                                 (member x mu4e-user-mail-address-list)) addresses)
+                                                 (member x (mu4e-personal-addresses))) addresses)
                      :after-init-hook (lambda () (with-helm-buffer
                                                    (run-at-time 0.25 nil #'helm-mark-all)))
                      :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
