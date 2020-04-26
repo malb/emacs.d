@@ -2412,9 +2412,9 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                   "CANCELLED(c@/!)") ;;generic
 
         (sequence "EXPLORE(x)"
-                  "WRITE"
+                  "DRAFT"
                   "COAUTHOR(@/!)"
-                  "REVISE(!)"
+                  "EDIT(!)"
                   "SUBMITTED(@/!)"
                   "REBUT"
                   "FINAL"
