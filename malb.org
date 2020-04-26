@@ -6991,6 +6991,15 @@ it is to insert the contact.
          '(("Insert" . (lambda (x)
                          (insert (mapconcat 'identity
                                             (helm-marked-candidates) ","))))
+           ("Find messages (simple)" .
+            (lambda (x)
+              (let ((combiner "OR")
+                    (from-to-contact "contact:"))
+                (mu4e-headers-search
+                 (mapconcat (lambda (x) (format (concat from-to-contact "%s")
+                                                (malb/extract-email x)))
+                            (helm-marked-candidates)
+                            (format " %s " combiner))))))
            ("Find messages" .
             (lambda (x)
               (let ((combiner (completing-read "Combine multiple with:" '("OR" "AND")))
