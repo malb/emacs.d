@@ -9283,25 +9283,41 @@ Better unicode font support.
 #+end_quote
 
 #+BEGIN_SRC emacs-lisp
+(use-package shr
+  :ensure nil)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
 (use-package shrface
   :after shr
   :quelpa (shrface :repo "chenyanming/shrface" :fetcher github)
-  :bind (
-         :map eww-mode-map
-         ("<tab>" .  org-cycle)
-         ("<backtab>" . org-shifttab))
   :config (progn
+            (shrface-basic)
             (setq shrface-paragraph-indentation 2
+                  shrface-href-versatile t
                   shrface-paragraph-fill-column fill-column)
-            (add-hook 'eww-mode-hook #'visual-fill-column-mode)
             (with-eval-after-load 'nov
-              (setq nov-shr-rendering-functions
-                    (append nov-shr-rendering-functions shr-external-rendering-functions)))))
+              ;; reset nov-shr-rendering-functions, in case of the list get bigger and bigger
+              (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
+              (setq nov-shr-rendering-functions (append nov-shr-rendering-functions
+                                                        shr-external-rendering-functions))
+              (add-hook 'nov-mode-hook #'shrface-mode))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package eww
+  :ensure nil
+  :after shrface
+  :bind (:map eww-mode-map
+              ("<tab>" .  org-cycle)
+              ("<backtab>" . org-shifttab))
+  :config (progn
+            (add-hook 'eww-mode-hook #'visual-fill-column-mode)
+            (add-hook 'eww-after-render-hook 'shrface-mode)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package shr-tag-pre-highlight
-  :ensure t
   :after shr
   :config (progn
             (add-to-list 'shr-external-rendering-functions '(pre . shr-tag-pre-highlight))
