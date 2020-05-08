@@ -7002,12 +7002,15 @@ it is to insert the contact.
                             (format " %s " combiner))))))
            ("Find messages" .
             (lambda (x)
-              (let ((combiner (completing-read "Combine multiple with:" '("OR" "AND")))
-                    (from-to-contact (completing-read "Restrict to:" '("from:" "to:" "contact:"))))
+              (let* ((candidates (helm-marked-candidates))
+                     (combiner  (if (> (length candidates ) 1)
+                                    (completing-read "Combine multiple with:" '("OR" "AND"))
+                                  ""))
+                     (from-to-contact (completing-read "Restrict to:" '("from:" "to:" "contact:"))))
                 (mu4e-headers-search
                  (mapconcat (lambda (x) (format (concat from-to-contact "%s")
                                                 (malb/extract-email x)))
-                            (helm-marked-candidates)
+                            candidates
                             (format " %s " combiner))))))
            ;; ("Copy to clipboard" . (lambda (x)
            ;;                          (kill-new (mapconcat 'identity
