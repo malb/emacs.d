@@ -9135,9 +9135,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 
 ** Theme
 
-Use both [[https://github.com/bbatsov/solarized-emacs][solarized]] and [[https://github.com/bbatsov/zenburn-emacs][zenburn]].
-
-Sometimes use a solarized patched to be less yellow by changing
+Use both [[https://github.com/bbatsov/solarized-emacs][solarized]] and [[https://github.com/bbatsov/zenburn-emacs][zenburn]]. But use a solarized patched to be less yellow by changing
 
 | color     | original  | malb      |
 | ~s-base2~ | ~#eee8d5~ | ~#eeedea~ |
@@ -9184,8 +9182,8 @@ The result looks like this:
 *** For those Long Nights
 
 #+BEGIN_SRC emacs-lisp
-(use-package zenburn-theme
-  :disabled)
+;; (use-package zenburn-theme
+;;   :disabled)
 
 (defun malb/zenburn-theme (&optional arg)
   "Load zenburn and my additions."
@@ -9193,9 +9191,9 @@ The result looks like this:
   (if arg
       (progn
         (disable-theme 'zenburn-malb)
-        (disable-theme 'zenburn))
+        (disable-theme 'solarized-zenburn))
     (progn
-      (load-theme 'zenburn t)
+      (load-theme 'solarized-zenburn t)
       (load-theme 'zenburn-malb t))))
 #+END_SRC
 

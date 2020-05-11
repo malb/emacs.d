@@ -13,8 +13,8 @@
      ("ONHOLD"    :foreground "gray" :weight bold)
      ("STALLED"   :foreground "gray" :weight bold)
      ("SUBMITTED" :foreground "gray" :weight bold)
-     ("DELEGATED" :foreground "dark orange" :weight bold :box (:line-width 0))
-     ("WAIT"   :foreground "dark orange" :weight bold :box (:line-width 0))
-     ("COAUTHOR"  :foreground "dark orange" :weight bold :box (:line-width 0)))))
+     ("DELEGATED" :foreground "dark orange" :weight bold)
+     ("WAIT"   :foreground "dark orange" :weight bold)
+     ("COAUTHOR"  :foreground "dark orange" :weight bold))))
 
 (provide-theme 'zenburn-malb)
