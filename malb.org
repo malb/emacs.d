@@ -4673,7 +4673,7 @@ You might also use mode hooks to specify it in certain modes, like this:
 Runs COMMAND, a shell command, in a separate process asynchronously
 with output going to the buffer `*valgrind*'.
 
-You can then use the command \\[next-error] to find the next error message
+You can then use the command [next-error] to find the next error message
 and move to the source code that caused it."
   (interactive
    (if (or compilation-read-command current-prefix-arg)
@@ -5792,7 +5792,7 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
                      '(("de" . "en") ("en" . "de")))))
 #+END_SRC
 
-** Taking Notes
+** Taking Notes (Deft)
 
 Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a listing of blog entries.
 
@@ -6403,6 +6403,10 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
                   (concat "** ${title} cite:${=key=}\n"
                           ":PROPERTIES:\n"
                           ":CUSTOM_ID: ${=key=}\n"
+                          ":AUTHOR: ${author-or-editor}\n"
+                          ":YEAR: ${year}\n"
+                          ":DOI: ${doi}\n"
+                          ":URL: ${url}\n"
                           ":END:\n"
                           "\n"
                           "fullcite:${=key=}\n"
@@ -6563,8 +6567,9 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
             (setq org-ref-default-bibliography malb/bibtex-files
                   org-ref-bibliography-notes malb/literature-notes-file
                   org-ref-pdf-directory malb/literature-dirs
-                  org-ref-bibtex-hydra-key-binding "\C-cj"
-                  org-ref-show-broken-links nil)
+                  org-ref-show-broken-links nil
+                  org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
+            (bind-key "<f2> ;" #'org-ref-bibtex-hydra/body bibtex-mode-map)
 
             (helm-add-action-to-source "Find online" 'helm-malb/bibtex-completion-google-this helm-source-bibtex)))
 #+END_SRC
