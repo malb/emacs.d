@@ -4521,7 +4521,6 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 (use-package lsp-clients
   :after (lsp-mode)
   :ensure lsp-mode)
-
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
