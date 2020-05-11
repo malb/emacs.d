@@ -1456,9 +1456,12 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
             (defun malb/helm-in-buffer ()
               "The right kind™ of buffer menu."
               (interactive)
-              (if (eq major-mode 'org-mode)
-                  (call-interactively #'helm-org-in-buffer-headings)
-                (call-interactively #'helm-semantic-or-imenu)))
+              (cond ((eq major-mode 'org-mode)
+                     (call-interactively #'helm-org-in-buffer-headings))
+                    ((bound-and-true-p lsp-mode)
+                     (call-interactively #'helm-lsp-workspace-symbol))
+                    (t
+                     (call-interactively #'helm-semantic-or-imenu))))
 
             (add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
             (add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)))
@@ -4539,6 +4542,13 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (setq lsp-ui-flycheck-enable t)))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(use-package helm-lsp
+  :config (progn
+            (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+            (add-to-list 'helm-commands-using-frame #'helm-lsp-workspace-symbol)
+            (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbo)))
+#+END_SRC
 
 
 ** C/C++ Development
