@@ -8067,19 +8067,21 @@ I’m not really sold on either.
 =.ssh/config= already contains the appropriate config for persistent sessions so we ask tramp to respect it.
 
 #+BEGIN_SRC emacs-lisp
-(setq tramp-use-ssh-controlmaster-options nil
-      tramp-verbose 1)
-(setq vc-ignore-dir-regexp
-      (format "%s\\|%s"
-                    vc-ignore-dir-regexp
-                    tramp-file-name-regexp))
+(use-package tramp
+  :ensure nil
+  :config (progn
+            (setq tramp-use-ssh-controlmaster-options nil
+                  tramp-verbose 1
+                  vc-ignore-dir-regexp (format "%s\\|%s"
+                                               vc-ignore-dir-regexp
+                                               tramp-file-name-regexp))))
 #+END_SRC
 
 [[https://github.com/masasam/emacs-helm-tramp/blob/master/image/helm-tramp.gif]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-tramp
-  :after helm
+  :after (helm tramp)
   :config (progn
             (add-to-list 'helm-commands-using-frame 'helm-tramp)))
 #+END_SRC
@@ -8089,7 +8091,8 @@ I’m not really sold on either.
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
-(use-package docker-tramp)
+(use-package docker-tramp
+  :after tramp)
 #+END_SRC
 
 * Diff
