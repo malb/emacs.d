@@ -5086,7 +5086,7 @@ On our system port 8888 is already taken.
           (venv-deactivate) ;; avoid weird interactions
           (prodigy-start-service fpylll)
           (sleep-for 1.5))))
-  (venv-workon "fpylll2")
+  (venv-workon "fpylll3")
   (ein:query-notebook-version 8889 t)
   (ein:notebooklist-login "http://127.0.0.1:8889"
                           (lambda (buffer url-or-port) (pop-to-buffer buffer))))
