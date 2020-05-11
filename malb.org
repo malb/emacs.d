@@ -8019,26 +8019,7 @@ Show dired histories you have visited.
               ("P" . peep-dired)))
 #+end_src
 
-** Directory Trees
-
-I’m not really sold on either.
-
-*** Neotree
-
-[[https://raw.githubusercontent.com/wiki/jaypei/emacs-neotree/imgs/neotree-1.png]]
-
-[[https://github.com/jaypei/emacs-neotree][Neotree]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package neotree
-  :commands (neotree neotree-toggle)
-  :config (progn
-            (setq neo-theme (if (display-graphic-p) 'icons 'arrow)
-                  neo-smart-open t
-                  neo-window-width 35)))
-#+END_SRC
-
-*** Dired Sidebar
+** Directory Trees (Dired Sidebar)
 
 [[https://raw.githubusercontent.com/jojojames/dired-sidebar/master/screenshots/vscode.png]]
 
@@ -9497,7 +9478,6 @@ I never use ~list-directory~, I only mistype it.
 (bind-key "f" #'malb/toggle-fold             malb/toggle-map)
 (bind-key "l" #'malb/toggle-light-dark       malb/toggle-map)
 (bind-key "t" #'toggle-truncate-lines        malb/toggle-map)
-(bind-key "n" #'neotree-toggle               malb/toggle-map)
 (bind-key "q" #'toggle-debug-on-quit         malb/toggle-map)
 (bind-key "i" #'imenu-list-smart-toggle      malb/toggle-map)
 (bind-key "d" #'dired-sidebar-toggle-sidebar malb/toggle-map)
