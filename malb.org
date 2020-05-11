@@ -9084,14 +9084,13 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 [[https://user-images.githubusercontent.com/140797/49694189-6913d480-fbc0-11e8-93ae-9578455dcd2c.png]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package doom-modeline-segments
-  :ensure nil
+(use-package doom-modeline
   :config (progn
-
+            (require 'doom-modeline-segments)
             (doom-modeline-def-segment python-venv
               "The current python venv.  Works with `venv'."
               (when (bound-and-true-p venv-current-name)
-                (propertize (format " %s" venv-current-name)
+                (propertize (format " |%s|" venv-current-name)
                             'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
                             'help-echo (format "Virtual environment (via venv): %s"
                                                venv-current-name))))
@@ -9101,20 +9100,16 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
                   doom-modeline-buffer-state-icon t
                   doom-modeline-github nil
                   doom-modeline-buffer-encoding nil
-                  doom-modeline-minor-modes nil)))
+                  doom-modeline-minor-modes nil)
 
-(use-package doom-modeline
-  :after doom-modeline-segements
-  :config (progn
             (doom-modeline-def-modeline 'main
               '(bar workspace-name window-number modals
                     matches buffer-info remote-host
-                    buffer-position parrot selection-info
-                    python-venv) ;; <- new
-              '(objed-state misc-info persp-name fancy-battery irc mu4e
-                            github debug lsp minor-modes input-method
+                    buffer-position word-count parrot selection-info
+                    python-venv)
+              '(objed-state misc-info persp-name battery grip irc mu4e
+                            gnus github debug lsp minor-modes input-method
                             indent-info buffer-encoding major-mode process vcs checker))
-
             (if (bound-and-true-p imenu-list-mode-line-format)
                 (setq imenu-list-mode-line-format
                       '((:eval
