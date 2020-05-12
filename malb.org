@@ -4121,21 +4121,6 @@ shx or “shell-extras” extends comint-mode in Emacs — https://github.com/ri
               (add-hook 'shell-mode-hook #'shx-mode))))
 #+END_SRC
 
-**** [#B] [[https://github.com/ffevotte/isend-mode.el][isend]] (poor person’s REPL)
-
-1. Open, say, *Sage*.
-
-2. =M-x= ~isend-associate~ RET *Sage* RET
-
-3. Hitting =C-RET= will send the current line to the interpreter. If a region is active, all lines spanned by the region will be sent (i.e. no line will be only partially sent).
-
-#+BEGIN_SRC emacs-lisp
-(use-package isend-mode
-  :config (progn
-            ;; If you work with python scripts using iPython
-            (add-hook 'isend-mode-hook #'isend-default-ipython-setup)))
-#+END_SRC
-
 *** Spell Checking
 
 Enable spell checking in comments and documentation.
@@ -4360,7 +4345,7 @@ mouse-3: go to end")
                                        (t (:background "#859900" :foreground "black")))))
 #+END_SRC
 
-*** [#B] Looking Stuff Up
+*** Looking Stuff Up (Dash)
 
 [[https://github.com/areina/helm-dash][helm-dash]] package uses Dash docsets inside emacs to browse documentation.
 
@@ -4549,7 +4534,6 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbo)))
 #+END_SRC
 
-
 ** C/C++ Development
 
 #+BEGIN_SRC emacs-lisp
@@ -4562,7 +4546,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+END_SRC
 
-*** LSP
+*** Language Server Protocol (LSP)
 
 #+BEGIN_QUOTE
 C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting – https://github.com/MaskRay/ccls
@@ -4631,18 +4615,12 @@ Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/2
                              1 'font-lock-function-name-face t))))
 #+END_SRC
 
-*** Doxygen
+Modern C++
 
 #+BEGIN_SRC emacs-lisp
-(use-package doxymacs
-  :disabled t
-  :blackout doxymacs-mode
-  :config (progn
-            (defun malb/doxymacs ()
-              (doxymacs-mode t)
-              (doxymacs-font-lock))
-
-            (add-hook 'c-mode-common-hook #'malb/doxymacs)))
+(use-package modern-cpp-font-lock
+  :blackout modern-c++-font-lock-mode
+  :config (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 #+END_SRC
 
 *** Valgrind
@@ -4695,22 +4673,17 @@ and move to the source code that caused it."
   (compilation-start command t))
 #+END_SRC
 
-*** Modern C++
-
-#+BEGIN_SRC emacs-lisp
-(use-package modern-cpp-font-lock
-  :blackout modern-c++-font-lock-mode
-  :config (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
-#+END_SRC
-
 *** Clang Format
 
-Use [[http://clang.llvm.org/docs/ClangFormat.html][ClangFormat]] to … format code.
+Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format code, [[https://github.com/SavchenkoValeriy/emacs-clang-format-plus][clang-format+]] automatically runs =clang-format= when a =.clang-format= is present.
 
 #+BEGIN_SRC emacs-lisp
 (use-package clang-format
   :config (progn
             (setq clang-format-executable "clang-format")))
+
+(use-package clang-format+
+  :config (add-hook 'c-mode-common-hook #'clang-format+-mode))
 #+END_SRC
 
 *** Disassemble
