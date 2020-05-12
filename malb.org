@@ -102,7 +102,7 @@ Check if any regexp matches string, because OR is hard …
 
 * Package Management
 
-Configure package repositories
+Configure package repositories.
 
 #+BEGIN_SRC emacs-lisp
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
@@ -1501,8 +1501,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 [[https://github.com/brotzeit/helm-xref][Helm interface for xref results]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-xref
-  :config (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
+(use-package helm-xref)
 #+END_SRC
 
 ** Helm KDE Desktop Search with Baloo
@@ -1543,16 +1542,13 @@ Don’t include boring or remote stuff in list of recently visited files.
                                          "/sudo:"
                                          "/scp:"))
              (loop for ext in helm-boring-file-regexp-list
-                   do (add-to-list 'recentf-exclude ext t))
-             ))
+                   do (add-to-list 'recentf-exclude ext t))))
 #+END_SRC
 
 ** Saveplace
 
 #+BEGIN_SRC emacs-lisp
-(use-package saveplace
-  :config (setq-default save-place t
-                        save-place-file (locate-user-emacs-file "places" ".emacs-places")))
+(save-place-mode 1)
 #+END_SRC
 
 ** Commands
@@ -4499,6 +4495,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 (use-package lsp-mode
   :after (projectile)
   :commands lsp
+  :bind (:map lsp-mode-map
+         ("M-r" . lsp-find-references))
   :config (progn (setq lsp-eldoc-render-all nil
                        lsp-prefer-flymake nil)
                  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
@@ -7018,7 +7016,6 @@ it is to insert the contact.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(key-chord-define mu4e-compose-mode-map ",," #'malb/helm-mu-contacts)
 (bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map)
 #+END_SRC
 
