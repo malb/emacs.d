@@ -385,11 +385,11 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
   :config (progn
             (defun malb/winum-assign ()
               (cond
-               ((string-match-p (buffer-name) "\\*shell\\[.*\\]\\*") 10)
-               ((string-match-p (buffer-name) "\\*eshell\\[.*\\]\\*") 10)
-               ((string-match-p (buffer-name) "\\*Sage\\*") 10)
-               ((string-match-p (buffer-name) "\\*Ilist\\*") 8)
-               ((string-match-p (buffer-name) "Dired-sidebar") 8)
+               ((string-match-p (regexp-quote (buffer-name)) "\\*shell\\[.*\\]\\*") 10)
+               ((string-match-p (regexp-quote (buffer-name)) "\\*eshell\\[.*\\]\\*") 10)
+               ((string-match-p (regexp-quote (buffer-name)) "\\*Sage\\*") 10)
+               ((string-match-p (regexp-quote (buffer-name)) "\\*Ilist\\*") 8)
+               ((string-match-p (regexp-quote (buffer-name)) "Dired-sidebar") 8)
                (t nil)))
 
             (add-to-list 'winum-assign-functions #'malb/winum-assign)
