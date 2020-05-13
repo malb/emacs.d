@@ -8896,7 +8896,15 @@ Make links in comments and string clickable
 (use-package edit-server
   :config (progn
             (edit-server-start)
-            (setq edit-server-default-major-mode 'markdown-mode)))
+            (setq edit-server-new-frame-alist '((name . "Edit Firefox with Emacs")
+                                                (width . 80)
+                                                (height . 60)
+                                                (minibuffer . t)
+                                                (internal-border-width . 10)
+                                                (skip-taskbar . t)
+                                                (unsplittable . t)
+                                                (menu-bar-lines . nil))
+                  edit-server-default-major-mode 'markdown-mode)))
 #+END_SRC
 
 Grab the link in the current browser tab
