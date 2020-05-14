@@ -4459,18 +4459,10 @@ This packages tries to smartly go to definition leveraging several methods to do
             (setq realgud:pdb-command-name "python -m pdb")))
 #+END_SRC
 
-**** GDB
-
 #+BEGIN_SRC emacs-lisp
 (setq gdb-find-source-frame t
       gdb-many-windows t)
 #+END_SRC
-
-**** Notes
-
-#+BEGIN_QUOTE
-“Now, when invoking =rr replay= from Emacs, you simply take the suggested command (=gdb --fullname= or =gdb -i=mi=), replace gdb with =rr replay=, add the log we're replaying, and things then work as expected.” — http://notes.secretsauce.net/notes/2017/02/24_interfacing-rr-to-gdb-in-gnu-emacs.html
-#+END_QUOTE
 
 *** CamelCase
 
