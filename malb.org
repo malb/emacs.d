@@ -9348,6 +9348,14 @@ Easily change the text size:
 (setq visible-bell t)
 #+END_SRC
 
+** Dim other Buffers
+
+#+BEGIN_SRC emacs-lisp
+(use-package dimmer
+  :commands dimmer-mode
+  :config (setq dimmer-percent 0.4))
+#+END_SRC
+
 * Key Bindings
 
 #+BEGIN_SRC emacs-lisp
