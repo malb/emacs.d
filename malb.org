@@ -3542,6 +3542,7 @@ The function behaves as follows:
 
 #+BEGIN_SRC emacs-lisp
 (use-package multi-term
+  :commands (malb/toggle-multi-term multi-term)
   :config (progn
             (setq term-buffer-maximum-size 16384)
 
