@@ -9115,13 +9115,11 @@ The result looks like this:
 
 [[./screenshot.png]]
 
-*** Default Theme (Solarized)
 
 #+BEGIN_SRC emacs-lisp
 (use-package solarized
   :ensure solarized-theme
   :config (progn
-
             (setq solarized-use-variable-pitch nil
                   solarized-high-contrast-mode-line nil
                   solarized-height-minus-1 1.0
@@ -9133,36 +9131,7 @@ The result looks like this:
                   solarized-emphasize-indicators t
                   solarized-scale-org-headlines nil
                   solarized-scale-outline-headlines nil
-                  x-underline-at-descent-line t)
-
-            (require 'solarized-light-malb-theme)
-
-            (defun malb/solarized-light-theme (&optional arg)
-              "Load solarized-light and my additions."
-              (interactive "P")
-              (if arg
-                  (progn
-                    (disable-theme 'solarized-light-malb))
-                (progn
-                  (enable-theme 'solarized-light-malb))))))
-#+END_SRC
-
-*** For those Long Nights
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package zenburn-theme
-;;   :disabled)
-
-(defun malb/zenburn-theme (&optional arg)
-  "Load zenburn and my additions."
-  (interactive "P")
-  (if arg
-      (progn
-        (disable-theme 'zenburn-malb)
-        (disable-theme 'solarized-zenburn))
-    (progn
-      (load-theme 'solarized-zenburn t)
-      (load-theme 'zenburn-malb t))))
+                  x-underline-at-descent-line t)))
 #+END_SRC
 
 *** For those Higher Contrast Needs
@@ -9185,11 +9154,11 @@ The result looks like this:
   (interactive)
   (if (custom-theme-enabled-p 'solarized-light-malb)
       (progn
-        (malb/solarized-light-theme t)
-        (malb/zenburn-theme))
+        (disable-theme 'solarized-light-malb)
+        (load-theme 'solarized-zenburn-malb))
     (progn
-      (malb/zenburn-theme t)
-      (malb/solarized-light-theme))))
+      (disable-theme 'solarized-zenburn-malb)
+      (load-theme 'solarized-light-malb))))
 #+END_SRC
 
 *** Load Theme
@@ -9200,7 +9169,7 @@ The result looks like this:
 (defun malb/load-theme (frame)
   (when (not malb/theme-loaded)
     (select-frame frame)
-    (malb/solarized-light-theme)
+    (load-theme 'solarized-light-malb)
     (eval-after-load "unicode-fonts"
       '(unicode-fonts-setup))
     (doom-modeline-mode t)
