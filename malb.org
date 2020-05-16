@@ -3411,7 +3411,8 @@ Working with source code in org-mode.
                (dot . t)
                (plantuml . t)
                (makefile . t)
-               (ein . t)))
+               (jupyter . t)
+               ))
 
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
@@ -3419,30 +3420,13 @@ Working with source code in org-mode.
             (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
 #+END_SRC
 
-*** Org iPython
-
-[[https://github.com/gregsexton/ob-ipython][source]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package ob-ipython
-  :config (progn
-            ;; we use jupyter as the python shell so we work around that here
-            (defun ob-ipython--get-python () (locate-file "python" exec-path))
-
-            ;; https://zwild.github.io/posts/ob-ipython-enhancement-completion-eldoc-help/
-            (advice-add 'ob-ipython-auto-configure-kernels :around
-                        (lambda (orig-fun &rest args)
-                          "Configure the kernels when found jupyter."
-                          (when (executable-find ob-ipython-command)
-                            (apply orig-fun args))))))
-#+END_SRC
-
 *** Async
 
 Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-async-org-babel-execute-src-block~.
 
 #+BEGIN_SRC emacs-lisp
-(use-package ob-async)
+(use-package ob-async
+  :config (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia")))
 #+END_SRC
 
 ** Org Download
@@ -4498,6 +4482,16 @@ Auto-format source code in many languages with one command – [[https://github.
 
 #+BEGIN_SRC emacs-lisp
 (use-package format-all)
+#+END_SRC
+
+*** Jupyter
+
+#+BEGIN_SRC emacs-lisp
+(use-package jupyter
+  :config (progn
+            (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
+                                                                 (:session . "py")
+                                                                 (:kernel . "python3")))))
 #+END_SRC
 
 *** Language Server Protocol (LSP)

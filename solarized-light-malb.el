@@ -106,6 +106,10 @@
      `(eshell-git-prompt-powerline-clean-face ((t (:foreground ,s-base3 :background ,green))))
      `(eshell-git-prompt-powerline-not-clean-face ((t (:foreground ,s-base3 :background ,orange))))
 
+     `(jupyter-repl-input-prompt ((t (:foreground ,green :weight bold))))
+     `(jupyter-repl-output-prompt ((t (:foreground ,red :weight bold))))
+     `(jupyter-repl-traceback ((t (:background ,yellow-1bg))))
+
      `(dired-subtree-depth-1-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(dired-subtree-depth-2-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(dired-subtree-depth-3-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
