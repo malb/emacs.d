@@ -9372,7 +9372,7 @@ Easily change the text size:
 #+BEGIN_SRC emacs-lisp
 (use-package dimmer
   :commands dimmer-mode
-  :config (setq dimmer-percent 0.4))
+  :config (setq dimmer-percent 0.2))
 #+END_SRC
 
 * Key Bindings
