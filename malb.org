@@ -2322,7 +2322,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Options
 
 #+BEGIN_SRC emacs-lisp
-(setq org-enforce-todo-dependencies t   ; enforce todo dependencies
+(setq org-enforce-todo-dependencies nil   ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
       org-catch-invisible-edits 'show-and-error
