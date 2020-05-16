@@ -2389,11 +2389,12 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Look
 
 #+BEGIN_SRC emacs-lisp
-(setq org-hide-mphasis-markers nil ; don’t hide markers for like *foo*
-      org-ellipsis " ••• "
+(setq org-hide-mphasis-markers nil      ; don’t hide markers for like *foo*
+      ;; org-ellipsis " ••• "
+      org-ellipsis " ▼ "
       org-highlight-latex-and-related nil
       org-src-fontify-natively t        ; fontify code blocks
-      org-startup-with-inline-images t    ; show images when opening a file.
+      org-startup-with-inline-images t  ; show images when opening a file.
       org-startup-with-latex-preview nil
       org-preview-latex-default-process 'imagemagick
       org-pretty-entities nil
