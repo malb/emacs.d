@@ -4454,7 +4454,7 @@ This packages tries to smartly go to definition leveraging several methods to do
 
 *** Debuggers
 
-[[https://github.com/realgud/realgud][All the debuggers]].
+[[https://github.com/realgud/realgud][All the debuggers]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package realgud
@@ -4486,12 +4486,18 @@ Auto-format source code in many languages with one command – [[https://github.
 
 *** Jupyter
 
+[[https://github.com/dzop/emacs-jupyter][emacs-jupyter]]
+
 #+BEGIN_SRC emacs-lisp
 (use-package jupyter
+  :commands (jupyter-run-server-repl
+             jupyter-run-repl
+             jupyter-server-list-kernels)
   :config (progn
             (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
                                                                  (:session . "py")
-                                                                 (:kernel . "python3")))))
+                                                                 (:kernel . "python3")))
+            (unbind-key "C-c h" jupyter-org-interaction-mode-map)))
 #+END_SRC
 
 *** Language Server Protocol (LSP)
@@ -8330,14 +8336,14 @@ exports.boxes = [ "INBOX"];
             :url "http://127.0.0.1:4002/discrete-subgroup/"
             :tags '(web))
 
-          (prodigy-define-service
-            :name "fpylll"
-            :cwd malb/projects-dir
-            :command "fpylll-jupyter.sh"
-            :port 8889
-            :stop-signal 'sigkill
-            :kill-process-buffer-on-stop t
-            :tags '(development))
+          ;; (prodigy-define-service
+          ;;   :name "fpylll"
+          ;;   :cwd malb/projects-dir
+          ;;   :command "fpylll-jupyter.sh"
+          ;;   :port 8889
+          ;;   :stop-signal 'sigkill
+          ;;   :kill-process-buffer-on-stop t
+          ;;   :tags '(development))
 
           (prodigy-define-service
             :name "sage-devel"
@@ -8367,7 +8373,10 @@ exports.boxes = [ "INBOX"];
             :tags '(chat))
 
           ;; start imapnotify
-          (prodigy-start-service (prodigy-find-service "imapnotify"))))
+          (prodigy-start-service (prodigy-find-service "sage-devel"))
+          (prodigy-start-service (prodigy-find-service "bitlbee"))
+          (prodigy-start-service (prodigy-find-service "imapnotify"))
+          ))
 #+END_SRC
 
 * EMMS
