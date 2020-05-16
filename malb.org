@@ -2628,20 +2628,20 @@ Archive with some order in target file preserved. ([[https://gist.github.com/edg
 
 ** Bullets
 
-Prettier [[https://github.com/sabof/org-bullets][bullets]] in org-mode.
+Prettier [[https://github.com/integral-dw/org-superstar-mode/][bullets]] in org-mode.
 
-[[https://raw.githubusercontent.com/sabof/org-bullets/master/screenshot.png]] ([[https://raw.githubusercontent.com/sabof/org-bullets/master/screenshot.png][source]])
+[[https://raw.githubusercontent.com/integral-dw/org-superstar-mode/master/sample_image.png]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-bullets
-  :commands org-bullets-mode
+(use-package org-superstar
+  :commands org-superstar-mode
   :init  (progn
 
            (defun malb/enable-org-bullets ()
-             (org-bullets-mode 1))
+             (org-superstar-mode 1))
 
            (add-hook 'org-mode-hook #'malb/enable-org-bullets)
-           (setq org-bullets-bullet-list '("●" "▲" "■" "✶" "◉" "○" "○"))))
+           (setq org-superstar-headline-bullets-list '("●" "▲" "■" "✶" "◉" "○" "○"))))
 #+END_SRC
 
 ** Export
