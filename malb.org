@@ -9381,6 +9381,7 @@ Easily change the text size:
 (malb/set-menu-key "<f2>" #'malb/hydra-window/body)
 (malb/set-menu-key "A" #'malb/imenu-anywhere)
 (malb/set-menu-key "a" #'aws-polly-region)
+(malb/set-menu-key "B" #'malb/helm-mu-contacts)
 (malb/set-menu-key "b" #'helm-bookmarks)
 (malb/set-menu-key "C" #'helm-calcul-expression)
 (malb/set-menu-key "c" #'mu4e-compose-new)
@@ -9393,12 +9394,10 @@ Easily change the text size:
 (malb/set-menu-key "L" #'mathpix-screenshot)
 (malb/set-menu-key "m" (lambda () (interactive) (malb/switch-to-mu4e)))
 (malb/set-menu-key "M" #'malb/helm-mu)
-(malb/set-menu-key "n" #'malb/sage-notebook)
 (malb/set-menu-key "/" #'malb/helm-ag-projects)
 (malb/set-menu-key "o" #'malb/helm-org-rifle-agenda-files)
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "s" #'malb/toggle-sage)
-(malb/set-menu-key "S" #'slack-select-rooms)
 (malb/set-menu-key "t" #'helm-tramp)
 (malb/set-menu-key "r" #'spray-mode)
 (malb/set-menu-key "z" #'malb/toggle-vterm)
@@ -9406,6 +9405,8 @@ Easily change the text size:
 (malb/set-menu-key "<f4>" #'emms-previous)
 (malb/set-menu-key "<f5>" #'emms-pause)
 (malb/set-menu-key "<f6>" #'emms-next)
+(malb/set-menu-key "<up>" #'drag-stuff-up)
+(malb/set-menu-key "<down>" #'drag-stuff-down)
 #+END_SRC
 
 Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
