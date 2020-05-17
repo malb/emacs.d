@@ -338,7 +338,7 @@ Resize windows to accommodate new ones.
   :bind (("C-x o" . ace-window)
          ("C-`"  . malb/ace-window))
   :config (progn
-            (setq aw-keys   '(?a ?s ?d ?f ?j ?k ?l)
+            (setq aw-keys   '(?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8)
                   aw-dispatch-always nil
                   aw-dispatch-when-more-than 2
                   aw-dispatch-alist
@@ -357,8 +357,7 @@ Resize windows to accommodate new ones.
               (interactive "P")
               (let ((aw-dispatch-when-more-than 3)
                     (aw-scope 'frame))
-                (ace-window arg)))
-            ))
+                (ace-window arg)))))
 #+END_SRC
 
 *** Back and Forth
@@ -400,7 +399,7 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
                ((string-match-p (regexp-quote (buffer-name)) "\\*shell\\[.*\\]\\*") 10)
                ((string-match-p (regexp-quote (buffer-name)) "\\*eshell\\[.*\\]\\*") 10)
                ((string-match-p (regexp-quote (buffer-name)) "\\*Sage\\*") 10)
-               ((string-match-p (regexp-quote (buffer-name)) "\\*Ilist\\*") 8)
+               ((equal major-mode 'imenu-list-major-mode) 8)
                ((equal major-mode 'dired-sidebar-mode) 8)
                (t nil)))
 
@@ -7898,6 +7897,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                                      "\\.fdb_latexmk$" "\\.fls$"
                                      "\\.pyc"
                                      "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'"
+                                     "^autosaves#"
                                      "^\\.?#\\|^\\..+$")
                          "\\|"))
 
