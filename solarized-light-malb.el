@@ -126,6 +126,25 @@
      ;; `(slack-message-output-text ((t (:weight normal))))
      ;; `(slack-new-message-marker-face ((t (:foreground "#d33682" :weight bold :height 0.75))))
      ;; `(helm-xref-file-name ((t (:foreground ,s-base0))))
+
+     `(mode-line
+       ((,class (:inverse-video unspecified
+                                :overline ,s-mode-line-bg
+                                :underline ,s-mode-line-underline
+                                :foreground ,s-mode-line-fg
+                                :background ,(if solarized-high-contrast-mode-line
+                                                 s-mode-line-bg
+                                               yellow-1bg)
+                                :box (:line-width 1 :color ,s-mode-line-bg
+                                                  :style unspecified)))))
+     `(mode-line-inactive
+       ((,class (:inverse-video unspecified
+                                :overline ,s-mode-line-inactive-bc
+                                :underline ,s-mode-line-underline
+                                :foreground ,s-mode-line-inactive-fg
+                                :background ,s-mode-line-bg
+                                :box (:line-width 1 :color ,s-mode-line-inactive-bg
+                                                  :style unspecified)))))
      )
 
     (custom-theme-set-variables
