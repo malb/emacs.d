@@ -335,10 +335,12 @@ Resize windows to accommodate new ones.
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
   :commands ace-window
-  :bind ("C-x o" . ace-window)
+  :bind (("C-x o" . ace-window)
+         ("C-`"  . ace-window))
   :config (progn
             (setq aw-keys   '(?a ?s ?d ?f ?j ?k ?l)
                   aw-dispatch-always nil
+                  aw-dispatch-when-more-than 3
                   aw-dispatch-alist
                   '((?x aw-delete-window     "Ace - Delete Window")
                     (?c aw-swap-window       "Ace - Swap Window")
@@ -348,7 +350,10 @@ Resize windows to accommodate new ones.
                     (?g delete-other-windows "Ace - Maximize Window")
                     (?b balance-windows)
                     (?u winner-undo)
-                    (?r winner-redo)))))
+                    (?r winner-redo))
+                  (add-to-list 'aw-ignored-buffers "*Ilist*")
+                  (add-to-list 'aw-ignored-buffers 'dired-sidebar-mode)
+                  )))
 #+END_SRC
 
 *** Back and Forth
@@ -391,7 +396,7 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
                ((string-match-p (regexp-quote (buffer-name)) "\\*eshell\\[.*\\]\\*") 10)
                ((string-match-p (regexp-quote (buffer-name)) "\\*Sage\\*") 10)
                ((string-match-p (regexp-quote (buffer-name)) "\\*Ilist\\*") 8)
-               ((string-match-p (regexp-quote (buffer-name)) "Dired-sidebar") 8)
+               ((equal major-mode 'dired-sidebar-mode) 8)
                (t nil)))
 
             (add-to-list 'winum-assign-functions #'malb/winum-assign)
@@ -399,7 +404,6 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
             (setq winum-scope                       'frame-local
                   winum-reverse-frame-list          nil
                   winum-auto-assign-0-to-minibuffer t
-
                   winum-auto-setup-mode-line        nil
                   winum-ignored-buffers             '(" *which-key*"))
 
@@ -744,7 +748,6 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("C-`" other-window :color blue))
 
 (key-chord-define-global "\\x" #'malb/hydra-window/body)
-(bind-key "C-`" #'other-window)
 #+END_SRC
 
 ** Next/Previous Buffer
