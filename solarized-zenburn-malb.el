@@ -16,7 +16,7 @@
     (custom-theme-set-variables theme-name
                                 `(company-quickhelp-color-background ,s-base2)
                                 `(company-quickhelp-color-foreground ,s-base00)
-                                `(pdf-view-midnight-colors '(,s-base3 . ,s-base03))
+                                `(pdf-view-midnight-colors '(,s-base2 . ,s-base03))
                                 `(org-todo-keyword-faces
                                   '(("CANCELLED" :foreground "gray" :weight bold)
                                     ("ONHOLD"    :foreground "gray" :weight bold)
