@@ -9161,12 +9161,7 @@ The result looks like this:
                   x-underline-at-descent-line t)))
 #+END_SRC
 
-*** For those Higher Contrast Needs
-
-#+BEGIN_SRC emacs-lisp
-(use-package paper-theme
-  :disabled)
-#+END_SRC
+*** High Contrast/Bright
 
 #+BEGIN_SRC emacs-lisp
 (use-package one-themes
