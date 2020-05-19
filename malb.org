@@ -2649,7 +2649,7 @@ Prettier [[https://github.com/integral-dw/org-superstar-mode/][bullets]] in org-
              (org-superstar-mode 1))
 
            (add-hook 'org-mode-hook #'malb/enable-org-bullets)
-           (setq org-superstar-headline-bullets-list '("●" "▲" "■" "✶" "◉" "○" "○")
+           (setq org-superstar-headline-bullets-list '("●" "▲" "■" "◉" "✶" "○" "○")
                  org-superstar-prettify-item-bullets nil)))
 #+END_SRC
 
