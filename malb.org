@@ -5029,8 +5029,8 @@ On our system port 8888 is already taken.
             (setq ein:complete-on-dot nil
                   ein:notebook-create-checkpoint-on-save nil
                   ein:completion-backend 'ein:use-company-backend
-                  ein:url-or-port '(8890 8889)
-                  ein:default-url-or-port 8890
+                  ein:url-or-port '(8888 8889)
+                  ein:default-url-or-port 8888
                   ein:console-args '("--simple-prompt")
                   ein:console-security-dir "")
 
@@ -5063,7 +5063,7 @@ On our system port 8888 is already taken.
               "We have a link to our projects top directory, this function goes to anything below that."
               (interactive)
               (let ((url (replace-regexp-in-string malb/projects-dir "projects" default-directory)))
-                (ein:notebooklist-open 8890 url)))
+                (ein:notebooklist-open 8888 url)))
 
             (bind-key "S-<return>" #'ein:worksheet-execute-cell-and-goto-next-km ein:notebook-mode-map)
             (bind-key "C-<return>" #'ein:worksheet-execute-cell-km ein:notebook-mode-map)))
@@ -5331,13 +5331,13 @@ Shortcut for Sage Jupyter notebook.
           (prodigy-start-service sage)
           (sleep-for 1.5))))
   (venv-workon "sage-devel")
-  (ein:query-notebook-version 8890 t)
-  (ein:notebooklist-login "http://127.0.0.1:8890"
+  (ein:query-notebook-version 8888 t)
+  (ein:notebooklist-login "http://127.0.0.1:8888"
                           (lambda (buffer url-or-port) (pop-to-buffer buffer))
                           malb/sage-notebook-password))
 #+END_SRC
 
-*Note:* If you get =[warn] Null value passed to ein:get-ipython-major-version= try =(ein:query-ipython-version 8890 t)=
+*Note:* If you get =[warn] Null value passed to ein:get-ipython-major-version= try =(ein:query-ipython-version 8888 t)=
 
 org babel for Sage can be quite handy for writing talks etc. ([[https://github.com/stakemori/ob-sagemath][source]])
 
@@ -8358,7 +8358,7 @@ exports.boxes = [ "INBOX"];
             :name "sage-devel"
             :cwd (expand-file-name "sage/notebooks" malb/projects-dir)
             :command "sage-jupyter.sh"
-            :port 8890
+            :port 8888
             :stop-signal 'sigkill
             :kill-process-buffer-on-stop t
             :tags '(development))
@@ -8382,9 +8382,10 @@ exports.boxes = [ "INBOX"];
             :tags '(chat))
 
           ;; start imapnotify
-          (prodigy-start-service (prodigy-find-service "sage-devel"))
           (prodigy-start-service (prodigy-find-service "bitlbee"))
+          (prodigy-start-service (prodigy-find-service "sage-devel"))
           (prodigy-start-service (prodigy-find-service "imapnotify"))
+          (prodigy-start-service (prodigy-find-service "weechat"))
           ))
 #+END_SRC
 
@@ -8465,9 +8466,14 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
 
 ** Weechat
 
+Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/the-kenny/weechat.el][weechat.el]] to get [[https://matrix.org/docs/projects/client/weechat-matrix/][matrix]], [[https://github.com/wee-slack/wee-slack][slack]] and [[https://github.com/mbologna/docker-bitlbee][skype]].
+
 #+BEGIN_SRC emacs-lisp
 (use-package weechat
   :commands (weechat-connect malb/weechat)
+  :bind (:map weechat-mode-map
+              ("M-<up>" .  weechat-previous-input)
+              ("M-<down>" . weechat-next-input))
   :after prodigy
   :config (progn
             (require 'weechat-notifications)
@@ -8476,7 +8482,7 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
             (require 'weechat-spelling)
             (require 'weechat-image)
 
-            (setq weechat-tracking-types '(:highlight ("general" . :message))
+            (setq weechat-tracking-types '(:message)
                   weechat-completing-read-function #'completing-read
                   weechat-auto-monitor-buffers t
                   weechat-auto-close-buffers t
@@ -8484,6 +8490,7 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
 
             (add-hook 'weechat-mode-hook #'visual-line-mode)
             (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
+            (add-to-list 'helm-commands-using-frame #'weechat-switch-buffer)
 
             (defun malb/weechat ()
               (interactive)
@@ -8492,64 +8499,12 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
               (weechat-monitor-all-buffers))))
 #+END_SRC
 
-** ERC
+*** Notes
 
-#+BEGIN_SRC emacs-lisp
-(use-package erc
-  :ensure nil
-  :commands (erc erc-tls malb/bitlbee)
-  :bind (:map erc-mode-map
-              ("C-<up>" . erc-previous-command)
-              ("C-<down>" . erc-next-command))
-  :config (progn
-            (setq erc-timestamp-format "[%R-%m/%d]"
-                  erc-hide-timestamps nil
-                  erc-server-coding-system '(utf-8 . utf-8)
-                  erc-track-enable-keybindings nil)
-
-            ;; (defun malb/erc-hook ()
-            ;;   (erc-fill-disable)
-            ;;   (turn-on-visual-line-mode))
-            ;; (add-hook 'erc-mode-hook #'malb/erc-hook)
-
-            (erc-timestamp-mode t)
-
-            (add-to-list 'erc-modules 'notifications)
-            (add-to-list 'erc-modules 'spelling)
-
-            (erc-track-mode)
-
-            (defun malb/bitlbee ()
-              (interactive)
-              (if (get-buffer "&bitlbee")
-                  (switch-to-buffer (get-buffer "&bitlbee"))
-                (erc :server "localhost" :port 16667 :nick "malb")))))
-
-(use-package erc-image
-  :after erc
-  :config (progn
-            (add-to-list 'erc-modules 'image)
-            (erc-update-modules)))
-#+END_SRC
-
-** Slack
-
-#+BEGIN_SRC emacs-lisp
-(use-package slack
-  :defer 30
-  :commands (slack-start slack-select-rooms)
-  :bind (:map slack-mode-map
-              ("C-c C-d" . slack-message-delete)
-              ("C-c C-e" . slack-message-edit)
-              ("C-n" . slack-buffer-goto-next-message)
-              ("C-p" . slack-buffer-goto-prev-message))
-  :init (progn
-          (setq slack-buffer-emojify t))
-  :config (progn
-            (add-hook 'slack-mode-hook #'visual-fill-column-mode)
-            ;; (slack-start)
-          ))
-#+END_SRC
+#+begin_src sh
+/set matrix.print_unconfirmed_messages = off # https://github.com/the-kenny/weechat.el/issues/89
+/set matrix.human_buffer_names = on
+#+end_src
 
 * X11 Integration
 
@@ -9417,6 +9372,7 @@ Easily change the text size:
 (malb/set-menu-key "o" #'malb/helm-org-rifle-agenda-files)
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "s" #'malb/toggle-sage)
+(malb/set-menu-key "S" #'weechat-switch-buffer)
 (malb/set-menu-key "t" #'helm-tramp)
 (malb/set-menu-key "r" #'spray-mode)
 (malb/set-menu-key "z" #'malb/toggle-vterm)
