@@ -2159,6 +2159,7 @@ This library provides easy project management and navigation. The concept of a p
             (setq projectile-make-test-cmd "make check"
                   projectile-ignored-projects malb/projectile-ignored-projects
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
+                  projectile-globally-unignored-files `("\\.dir-locals\\.el" ,(rx ".pdf" eol)) ;; TODO pdf doesn’t work :(
                   projectile-mode-line  '(:eval (format "{%s}" (projectile-project-name))))
 
             (projectile-mode)))
