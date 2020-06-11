@@ -4769,9 +4769,11 @@ Go Projectile is a set of Go language related add-ons for the Emacs Projectile m
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
-(use-package go-projectile
-  :after projectile)
+;; (use-package go-projectile
+;;   :after projectile)
 #+END_SRC
+
+****** TODO run-hooks: Symbol’s value as variable is void: projectile-go-function
 
 ** Python
 
