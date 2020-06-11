@@ -4500,11 +4500,12 @@ Auto-format source code in many languages with one command – [[https://github.
   :commands (jupyter-run-server-repl
              jupyter-run-repl
              jupyter-server-list-kernels)
+  :init (eval-after-load 'jupyter-org-extensions
+          '(unbind-key "C-c h" jupyter-org-interaction-mode-map))
   :config (progn
             (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
                                                                  (:session . "py")
-                                                                 (:kernel . "python3")))
-            (unbind-key "C-c h" jupyter-org-interaction-mode-map)))
+                                                                 (:kernel . "python3")))))
 #+END_SRC
 
 *** Language Server Protocol (LSP)
