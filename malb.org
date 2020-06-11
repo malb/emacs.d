@@ -706,7 +706,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("<down>" windmove-down  :color blue)
   ("<up>" windmove-up  :color blue)
   ("<right>" windmove-right  :color blue)
-  ("j" avy-goto-word-1 :color blue)
+  ("j" avy-goto-char-timer :color blue)
   ("l" avy-goto-line :color blue)
   ("q" shrink-window-horizontally)
   ("w" shrink-window)
@@ -781,8 +781,8 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 
 #+BEGIN_SRC emacs-lisp
 (use-package avy
-  :bind (("C-c C-<SPC>" . avy-goto-word-or-subword-1) ;; avy-goto-char-timer
-         ("C-c j j" . avy-goto-word-or-subword-1)
+  :bind (("C-c C-<SPC>" . avy-goto-char-timer) ;; avy-goto-char-timer
+         ("C-c j j" . avy-goto-char-timer)
          ("M-g g" . avy-goto-line))
   :config (progn
             (setq avy-background t)))
@@ -2510,9 +2510,7 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
                                                   (kill-region
                                                    (region-beginning)
                                                    (region-end)))))
-(add-to-list 'org-speed-commands-user (cons "J" (lambda () ;; Jump to headline
-                                                  (avy-with avy-goto-line
-                                                    (avy--generic-jump "^\\*+" nil avy-style)))))
+(add-to-list 'org-speed-commands-user (cons "J" 'avy-org-goto-heading-timer))
 #+END_SRC
 
 #+BEGIN_QUOTE
@@ -9362,7 +9360,7 @@ Easily change the text size:
 (malb/set-menu-key "d" "\C-a\C- \C-n\M-w\C-y\C-p") ; duplicate previous line
 (malb/set-menu-key "e" #'malb/toggle-eshell)
 (malb/set-menu-key "i" #'malb/helm-in-buffer)
-(malb/set-menu-key "j" #'avy-goto-word-1)
+(malb/set-menu-key "j" #'avy-goto-char-timer)
 (malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex-with-local-bibliography)
 (malb/set-menu-key "L" #'mathpix-screenshot)
