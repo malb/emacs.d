@@ -4235,7 +4235,8 @@ Comments, as I mean, using [[https://github.com/remyferre/comment-dwim-2][commen
 
 #+BEGIN_SRC emacs-lisp
 (use-package comment-dwim-2
-  :bind ("M-;" . comment-dwim-2))
+  :bind ("M-;" . comment-dwim-2)
+  :config (setq cd2/region-command #'cd2/comment-or-uncomment-region))
 #+END_SRC
 
 Make bug references in comments and string clickable
