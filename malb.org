@@ -7555,6 +7555,7 @@ We change the default template to not include the title which is filled in by de
                        ", ")))
 
             (setq org2blog/wp-use-sourcecode-shortcode nil
+                  org2blog/wp-image-upload t
                   org2blog/wp-show-post-in-browser nil
                   org2blog/wp-default-categories '("cryptography")
                   org2blog/wp-buffer-format-function #'malb/org2blog/wp-format-buffer
