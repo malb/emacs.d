@@ -4201,10 +4201,6 @@ Make flycheck prettier based on what spacemacs does.
               :overlay-category 'flycheck-info-overlay
               :fringe-bitmap 'my-flycheck-fringe-indicator
               :fringe-face 'flycheck-fringe-info)
-
-            ;; (flycheck-add-mode 'proselint 'text-mode)
-            ;; (flycheck-add-mode 'proselint 'org-mode)
-            ;; (flycheck-add-next-checker 'markdown-mdl 'proselint)
             ))
 #+END_SRC
 
@@ -5738,15 +5734,23 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
                                                                (concat user-emacs-directory "langtool"))
-                  langtool-default-language "en"
+                  langtool-default-language "en-GB"
                   langtool-disabled-rules '("WHITESPACE_RULE"
-                                            "EN_QUOTES"))
+                                            "EN_QUOTES"
+                                            "DASH_RULE"
+                                            "OXFORD_SPELLING_ISE_VERBS"
+                                            "OXFORD_SPELLING_NOUNS"))
 
             (bind-key "C-x 4 w" #'langtool-check)
             (bind-key "C-x 4 W" #'langtool-check-done)
             (bind-key "C-x 4 l" #'langtool-switch-default-language)
             (bind-key "C-x 4 4" #'langtool-show-message-at-point)
             (bind-key "C-x 4 c" #'langtool-correct-buffer)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-languagetool
+  :ensure nil)
 #+END_SRC
 
 *** Synonyms
