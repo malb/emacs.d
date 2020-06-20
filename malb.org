@@ -164,16 +164,6 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 (use-package quelpa-use-package)
 #+END_SRC
 
-* Disable Clutter
-
-#+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-screen t)
-
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-#+END_SRC
-
 * Paths
 
 [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]
@@ -9172,17 +9162,6 @@ The result looks like this:
 
 ** Fonts
 
-We control style using =.Xresources=
-
-#+begin_src conf-xdefaults :tangle /home/malb/.Xresources
-Emacs.FontBackend:      xft
-Emacs*font: Cousine-18
-Emacs.menuBar: off
-Emacs.toolBar: off
-Emacs.verticalScrollBars: off
-Emacs*geometry: 220x64
-#+end_src
-
 Better unicode font support.
 
 #+BEGIN_SRC emacs-lisp
@@ -9202,7 +9181,6 @@ Better unicode font support.
 #+BEGIN_SRC emacs-lisp
 (defun malb/fonts (frame)
   (with-selected-frame frame
-    (set-default-font "Cousine-18")
     (setq face-font-rescale-alist nil)
     (add-to-list 'face-font-rescale-alist (cons (font-spec :family "DejaVu Sans Mono") 0.9) t)
     (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.85) t)
