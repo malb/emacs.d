@@ -3192,7 +3192,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ""
                     "%i")
          :empty-lines 1)
-        (,(format "%s\tSoftware" (all-the-icons-faicon "code" :face 'all-the-icons :v-adjust 0.01)) :keys "s"
+        (,(format "%s\tSoftware Tip" (all-the-icons-faicon "code" :face 'all-the-icons :v-adjust 0.01)) :keys "s"
          :file (lambda () (expand-file-name "software.org" deft-directory))
          :headline "Incoming"
          :template ("* %?"
