@@ -3071,7 +3071,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
          :headline "E-Mail"
          :empty-lines 1
          :children  ((,(format "%s\tRespond to Email" (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)) :keys "r"
-                      :template  ("* REPLY to %:fromname on %a"
+                      :template  ("* REPLY to %:fromname on %a :email:"
                                   "DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))"
                                   ":PROPERTIES:"
                                   ":CREATED: %U"
@@ -3095,7 +3095,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      (,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
                       :file malb/work-org
                       :headline "Admin"
-                      :template ("* %^{type|TODO|REPLY|READ} %? %^G"
+                      :template ("* %^{type|TODO|REPLY|READ} %? %^G:email:"
                                  "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
                                  ":PROPERTIES:"
                                  ":CREATED: %U"
@@ -3107,7 +3107,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      (,(format "%s\tOffice Task" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "o"
                       :file malb/work-org
                       :headline "Admin"
-                      :template ("* TODO %a (%:fromname) %^{tag|:@office:|:@train:}"
+                      :template ("* TODO %a (%:fromname) %^{tag|:@office:|:@train:}email:"
                                  "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
                                  "                             (thu (org-read-date nil t \"Thu\")))"
                                  "                         (if (time-less-p tue thu)"
@@ -3121,7 +3121,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
                       :file malb/work-org
                       :headline "Admin"
-                      :template ("* TODO %a (%:fromname)"
+                      :template ("* TODO %a (%:fromname) :email:"
                                  "SCHEDULED: %(let ((hour (third (decode-time (current-time)))))"
                                  "                  (if (< hour 16)"
                                  "                    (org-insert-time-stamp nil)"
@@ -3217,6 +3217,7 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                      )
          :immediate-finish nil
          :prepend t))))
+
     (setq org-capture-templates-contexts
           '(("er" ((in-mode . "mu4e-view-mode")))
             ("ef" ((in-mode . "mu4e-view-mode")))
