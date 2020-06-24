@@ -2982,6 +2982,42 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
       (newline 1))))
 #+END_SRC
 
+Some helper functions
+
+#+BEGIN_SRC emacs-lisp
+;; https://web.archive.org/web/20181019173343/http://ul.io/nb/2018/04/30/better-code-snippets-with-org-capture
+(defun malb/org-capture-get-src-block-string (major-mode)
+  "Given a major mode symbol, return the associated org-src block
+string that will enable syntax highlighting for that language
+
+E.g. tuareg-mode will return 'ocaml', python-mode 'python', etc..."
+
+  (let ((mm (intern (replace-regexp-in-string "-mode" "" (format "%s" major-mode)))))
+    (or (car (assoc mm org-babel-load-languages))
+        (car (rassoc mm org-src-lang-modes))
+        (format "%s" mm))))
+
+(defun malb/org-capture-code-snippet (f)
+  (with-current-buffer (find-buffer-visiting f)
+    (let ((code-snippet (buffer-substring-no-properties (mark) (- (point) 1)))
+          (func-name (which-function))
+          (file-name (buffer-file-name))
+          (line-number (line-number-at-pos (region-beginning)))
+          (org-src-mode (malb/org-capture-get-src-block-string major-mode)))
+      (format
+       "
+In [[file:%s::%s][%s]]:
+
+,#+begin_example %s
+%s
+,#+end_example"
+       file-name
+       line-number
+       func-name
+       org-src-mode
+       code-snippet))))
+#+END_SRC
+
 *Template Expansions*
 
 - =%[file]= Insert the contents of the file given by file.
@@ -3190,8 +3226,8 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
                     ":CREATED: %U"
                     ":END:"
                     ""
-                    "%i"
-                    "%a")
+                    "%(malb/org-capture-code-snippet \"%F\")"
+                    "")
          :prepend t
          :empty-lines 1)
         (,(format "%s\tWebsite" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01)) :keys "w"
