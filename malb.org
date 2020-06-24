@@ -7251,6 +7251,23 @@ DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subj
              '("dwim" . malb/mu4e-dwim-action) t)
 #+END_SRC
 
+This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d/mu4e.html][source]])
+
+#+begin_src emacs-lisp
+(defun malb/get-mail-header (header-name path)
+  (replace-regexp-in-string
+   "[ \t\n]*$"
+   ""
+   (shell-command-to-string
+    (concat "sed -n '/^"
+            header-name
+            ":/I{:loop t;h;n;/^ /{H;x;s/\\n//;t loop};x;p}' '"
+            path
+            "' | sed -n 's/^"
+            header-name
+            ": \\(.*\\)$/\\1/Ip'"))))
+#+end_src
+
 ** Writing
 
 Don’t break long lines manually.
