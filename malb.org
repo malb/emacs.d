@@ -7120,8 +7120,7 @@ Headers to show in header view.
 (setq mu4e-headers-fields '((:human-date . 10)
                             (:flags . 4)
                             (:mailing-list . 16)
-                            (:from . 22)
-                            (:to . 22)
+                            (:from-or-to . 22)
                             (:subject)))
 #+END_SRC
 
