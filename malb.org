@@ -8996,7 +8996,9 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 
 #+BEGIN_SRC emacs-lisp
 (use-package csv-mode
-  :hook (csv-mode . hl-line-mode))
+  :hook (csv-mode . hl-line-mode)
+  :hook (csv-mode . toggle-truncate-lines)
+  :hook (csv-mode . (lambda ()  (call-interactively #'csv-align-fields))))
 #+END_SRC
 
 ** Docker Filers
