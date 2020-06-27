@@ -2260,6 +2260,12 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 (use-package orgit)
 #+END_SRC
 
+[[https://github.com/magit/orgit-forge/][orgit-forge]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package orgit-forge)
+#+END_SRC
+
 ** Git Timemachine
 
 I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][git-timemachine]] but when I do …
