@@ -1647,6 +1647,7 @@ Make sure to auto automatically rescan for imenu change.
                                             '(t . nil)
                                           '(nil . t)))
                       (dedicated . t))))))
+  :custom (imenu-list-idle-update-delay 2.0)
   :config (progn
             (setq imenu-list-position 'left
                   imenu-list-size 0.15
