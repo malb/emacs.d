@@ -4035,6 +4035,20 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev
     (shell-command (concat "ykcd " (file-name-directory fn)))))
 #+END_SRC
 
+** Yequake
+
+#+BEGIN_SRC emacs-lisp
+(use-package yequake
+  :config (setq yequake-frames
+                '(("scratch" .
+                   ((width . 0.75)
+                    (height . 0.4)
+                    (alpha . 0.95)
+                    (buffer-fns . ("*scratch*"))
+                    (frame-parameters . ((undecorated . nil)
+                                         (internal-border-width . 24))))))))
+#+END_SRC
+
 * Programming (Languages)
 ** General
 *** REPL
