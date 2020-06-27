@@ -6429,22 +6429,22 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
                (mapcar #'malb/get-bibtex-keys (reftex-get-bibfile-list)))))
 #+END_SRC
 
-*** Helm BibTeX (BibTeX Completion)
+*** BibTeX Completion & Helm BibTeX
 
 [[https://github.com/tmalsburg/helm-bibtex/][Helm-bibtex]] is a nice interface for BibTeX.
 
 [[https://github.com/tmalsburg/helm-bibtex/raw/master/screenshot.png]] ([[https://github.com/tmalsburg/helm-bibtex/][source]])
 
-We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add an option to google the paper’s title
+
+- We patch =bibtex-completion-find-pdf-in-library= to replace =:= with =_=.
+- We add a cache to speed up loading.
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-bibtex
-  :commands (helm-bibtex helm-bibtex-with-local-bibliography)
+(use-package bibtex-completion
   :config (progn
             (setq bibtex-completion-bibliography malb/bibtex-files
                   bibtex-completion-library-path malb/literature-dirs
                   bibtex-completion-notes-path malb/literature-notes-file
-                  helm-bibtex-full-frame t
                   bibtex-completion-notes-template-one-file
                   (concat "** ${title} cite:${=key=}\n"
                           ":PROPERTIES:\n"
@@ -6458,22 +6458,9 @@ We patch =helm-bibtex-find-pdf-in-library= to replace =:= with =_=. We also add 
                           "fullcite:${=key=}\n"
                           "\n"))
 
-            (add-to-list 'helm-commands-using-frame 'helm-bibtex)
-
-            (defun malb/bibtex-completion-google-this (keys-or-entries)
-              (dolist (key-or-entry keys-or-entries)
-                (let* ((key (if (stringp key-or-entry)
-                                key-or-entry
-                              (bibtex-completion-get-value "=key=" key-or-entry))))
-                  (helm-googler (replace-regexp-in-string
-                                 "{\\|}" ""
-                                 (bibtex-completion-get-value
-                                  "title"
-                                  (bibtex-completion-get-entry key)))))))
-
-            (helm-bibtex-helmify-action malb/bibtex-completion-google-this
-                                        helm-malb/bibtex-completion-google-this)
-
+            ;;
+            ;; PDF Filenames
+            ;;
 
             (defun bibtex-completion-find-pdf-in-library (key-or-entry &optional find-additional)
               "Searches the directories in `bibtex-completion-library-path'
@@ -6534,38 +6521,77 @@ can be added either from an open buffer or a file."
                  (file
                   (copy-file file pdf)))))
 
-            (eval-after-load "org-ref-helm-bibtex"
-              '(progn (helm-delete-action-from-source
-                       "Insert BibTeX key"
-                       helm-source-bibtex)
-                      (helm-add-action-to-source
-                       "Insert BibTeX key"
-                       'helm-bibtex-insert-key helm-source-bibtex 0)))))
+            ;;
+            ;; Caching
+            ;;
+
+            (defvar malb/bibtex-completion-hashes nil)
+
+            (defun malb/bibtex-completion-hashes ()
+              (cons bibtex-completion-bibliography
+                    (mapcar 'cadr bibtex-completion-cache)))
+
+            (defvar malb/bibtex-completion-candidates-cache nil)
+
+            (defun malb/bibtex-completion-candidates-clear-cache ()
+              (setq malb/bibtex-completion-candidates-cache nil
+                    malb/bibtex-completion-hashes nil))
+
+            (defun malb/bibtex-completion-candidates-cache (old-function &rest arguments)
+              "Call `bibtex-completion-candidates` only when files changed."
+
+              (let ((local-hashes (malb/bibtex-completion-hashes)))
+                (when (not (equal local-hashes malb/bibtex-completion-hashes))
+                  (setq malb/bibtex-completion-hashes local-hashes
+                        malb/bibtex-completion-candidates-cache (apply old-function arguments))))
+              malb/bibtex-completion-candidates-cache)
+
+            (advice-add #'bibtex-completion-candidates :around #'malb/bibtex-completion-candidates-cache)))
 #+END_SRC
 
-Company interface to helm-bibtex.
+We add an option to search for the paper’s title online.
 
 #+BEGIN_SRC emacs-lisp
-(defvar company-bibtex-completion--hashes nil)
+(use-package helm-bibtex
+  :commands (helm-bibtex helm-bibtex-with-local-bibliography)
+  :config (progn
+            (setq helm-bibtex-full-frame t)
+            (add-to-list 'helm-commands-using-frame 'helm-bibtex)
 
-(defun company-bibtex-completion--hashes ()
-  (mapcar 'cadr bibtex-completion-cache))
+            (defun malb/bibtex-completion-google-this (keys-or-entries)
+              (dolist (key-or-entry keys-or-entries)
+                (let* ((key (if (stringp key-or-entry)
+                                key-or-entry
+                              (bibtex-completion-get-value "=key=" key-or-entry))))
+                  (helm-googler (replace-regexp-in-string
+                                 "{\\|}" ""
+                                 (bibtex-completion-get-value
+                                  "title"
+                                  (bibtex-completion-get-entry key)))))))
 
-(defvar company-bibtex-completion--candidates nil)
+            (helm-bibtex-helmify-action malb/bibtex-completion-google-this
+                                        helm-malb/bibtex-completion-google-this)
 
-(defun company-bibtex-completion--candidates ()
-  (setq company-bibtex-completion--hashes (company-bibtex-completion--hashes))
-  (setq company-bibtex-completion--candidates
-        (mapcar (lambda (x) (propertize (cdr (assoc "=key=" (cdr x)))
-                                        'bibtex-completion-annotation
-                                        (cdr (assoc "title" (cdr x)))))
-                (bibtex-completion-candidates))))
+            (eval-after-load "org-ref-helm-bibtex"
+              '(progn (helm-delete-action-from-source "Insert BibTeX key"
+                                                      helm-source-bibtex)
+                      (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key
+                                                 helm-source-bibtex 0)
+                      (helm-add-action-to-source "Find online" 'helm-malb/bibtex-completion-google-this
+                                                 helm-source-bibtex)))))
+#+END_SRC
 
+A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
+
+#+BEGIN_SRC emacs-lisp
 (defun company-bibtex-completion-candidates ()
-  (when (not (equal (company-bibtex-completion--hashes)
-                    company-bibtex-completion--hashes))
-    (company-bibtex-completion--candidates))
-  company-bibtex-completion--candidates)
+  (let ((bibtex-completion-bibliography
+         (or (bibtex-completion-find-local-bibliography)
+             bibtex-completion-bibliography)))
+    (mapcar (lambda (x) (propertize (cdr (assoc "=key=" (cdr x)))
+                                    'bibtex-completion-annotation
+                                    (cdr (assoc "title" (cdr x)))))
+            (bibtex-completion-candidates))))
 
 (defun company-bibtex-completion (command &optional arg &rest ignored)
   "bibtex-completion backend"
@@ -6615,9 +6641,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
                   org-ref-pdf-directory malb/literature-dirs
                   org-ref-show-broken-links nil
                   org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
-            (bind-key "<f2> ;" #'org-ref-bibtex-hydra/body bibtex-mode-map)
-
-            (helm-add-action-to-source "Find online" 'helm-malb/bibtex-completion-google-this helm-source-bibtex)))
+            (bind-key "<f2> ;" #'org-ref-bibtex-hydra/body bibtex-mode-map)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
