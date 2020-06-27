@@ -1073,6 +1073,8 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 ([[http://emacs.stackexchange.com/q/21182/8930][source]], [[http://emacs.stackexchange.com/q/7908/8930][source]])
 
 #+BEGIN_SRC emacs-lisp
+(use-package outline-magic)
+
 (defun malb/indent-fold-or-complete (&optional arg)
   (interactive "P")
   (cond
