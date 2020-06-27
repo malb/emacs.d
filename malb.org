@@ -8046,7 +8046,22 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-dired-history
-  :after (dired helm))
+  :after (dired helm)
+  :config (defun helm-dired-history--update(dir)
+            "update variable `helm-dired-history-variable'."
+            (unless helm-dired-history-cleanup-p
+              (setq helm-dired-history-cleanup-p t)
+              (let ((tmp-history ))
+                (dolist (d helm-dired-history-variable)
+                  (when (or (file-remote-p d) (file-directory-p d))
+                    (add-to-list 'tmp-history d t)))
+                (setq helm-dired-history-variable tmp-history)))
+            (setq helm-dired-history-variable
+                  (delete-dups (delete dir helm-dired-history-variable)))
+            (setq helm-dired-history-variable
+                  ;; HACK: adding "." to make it work again
+                  (append (list (concat dir ".")) helm-dired-history-variable))
+            (helm-dired-history-trim)))
 #+END_SRC
 
 [[https://camo.githubusercontent.com/966cf1fc63ee7bdb7631c0debc74957ccefaff37/687474703a2f2f692e696d6775722e636f6d2f6d6d36674662582e706e67]]
