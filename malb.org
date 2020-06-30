@@ -562,6 +562,7 @@ Find a frame not named =mu4e= if there is any, make one otherwise.
                        (dolist (frame (frame-list))
                          (if (and (not (string-match "*Minibuf-1*" (frame-parameter frame 'name))) ;; helm frame
                                   (not (string-match "mu4e" (frame-parameter frame 'name)))
+                                  (not (string-match "yequake-scratch" (frame-parameter frame 'name)))
                                   (not (string-match "F1" (frame-parameter frame 'name)))) ;; emacsclient
                              (throw 'other-frame frame)
                            nil)))))
@@ -4037,15 +4038,22 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev
 
 ** Yequake
 
+#+begin_quote
+[[https://github.com/alphapapa/yequake][This package]] provides configurable, drop-down Emacs frames, similar to drop-down terminal windows programs, like Yakuake.
+#+end_quote
+
+[[https://raw.githubusercontent.com/alphapapa/yequake/master/images/animation.gif]]
+
 #+BEGIN_SRC emacs-lisp
 (use-package yequake
   :config (setq yequake-frames
-                '(("scratch" .
+                '(("yequake-scratch" .
                    ((width . 0.75)
                     (height . 0.4)
                     (alpha . 0.95)
                     (buffer-fns . ("*scratch*"))
-                    (frame-parameters . ((undecorated . nil)
+                    (frame-parameters . ((undecorated . t)
+                                         (buffer-predicate . (lambda (x) nil))
                                          (internal-border-width . 24))))))))
 #+END_SRC
 
