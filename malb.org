@@ -2407,7 +2407,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-startup-with-latex-preview nil
       org-preview-latex-default-process 'imagemagick
       org-pretty-entities nil
-      org-image-actual-width '(1024))
+      org-image-actual-width '(800))
 #+END_SRC
 
 ** ToDo Keywords & Scheduling
@@ -5230,7 +5230,8 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
 
             (add-hook 'sage-shell-after-prompt-hook #'sage-shell-view-mode)
             (setq sage-shell-view-default-commands 'plots
-                  sage-shell-view-scale 1.5)
+                  sage-shell-view-scale 1.5
+                  sage-shell-view-default-resolution 180)
 
             (setq sage-shell:input-history-cache-file (concat user-emacs-directory "sage_shell_input_history")
                   sage-shell:sage-executable malb/sage-executable
