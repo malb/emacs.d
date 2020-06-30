@@ -4184,8 +4184,6 @@ shx or “shell-extras” extends comint-mode in Emacs — https://github.com/ri
   :config (progn
             (with-eval-after-load 'python
               (add-hook 'inferior-python-mode-hook #'shx-mode))
-            ;; (with-eval-after-load 'sage-shell-mode
-            ;;   (add-hook 'sage-shell-mode-hook #'shx-mode))
             (with-eval-after-load 'shell
               (add-hook 'shell-mode-hook #'shx-mode))))
 #+END_SRC
