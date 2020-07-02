@@ -5873,6 +5873,12 @@ Indicate soft wrapped lines.
   :config (progn
             (typo-global-mode)
             (setq-default typo-language "English")
+
+            (defun malb/typo-in-src-block ()
+              (memq (face-at-point) '(org-block)))
+
+            (add-to-list 'typo-disable-electricity-functions #'malb/typo-in-src-block)
+
             (add-hook 'org-mode-hook #'typo-mode)))
 #+END_SRC
 
