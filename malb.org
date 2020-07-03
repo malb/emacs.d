@@ -1005,7 +1005,14 @@ For Python use [[https://github.com/proofit404/company-anaconda][company-anacond
 For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We also allow unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
 
 #+BEGIN_SRC emacs-lisp
-(use-package company-math)
+(use-package company-math
+  :config (progn
+            ;; mu4e might disable it for address completion
+            (defun malb/enforce-case-sensitive (orig-function &rest arguments)
+              (let ((completion-ignore-case nil))
+                (apply orig-function arguments)))
+            (advice-add #'company-math-symbols-latex :around #'malb/enforce-case-sensitive)
+            (advice-add #'company-math-symbols-unicode :around #'malb/enforce-case-sensitive)))
 
 (use-package company-auctex
   :config (progn
