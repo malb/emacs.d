@@ -3577,13 +3577,14 @@ The function behaves as follows:
                         (file-name-directory (buffer-file-name))
                       default-directory))
             (height (/ (window-total-height) 3))
-            (name   (if (and (not arg) ,per-project)
-                        (concat "*" ,shell-name
-                                "[" (if (projectile-project-p)
-                                        (projectile-project-name)
-                                      (car (last (split-string parent "/" t)))) "]" "*")
-                      ,shell-name))
-            (window (get-buffer-window name)))
+            (name (if (projectile-project-p)
+                      (projectile-project-name)
+                    (car (last (split-string parent "/" t)))))
+            (buffer-name   (if (and (not arg) ,per-project)
+                               (concat "*" ,shell-name
+                                       "[" name "]" "*")
+                             ,shell-name))
+            (window (get-buffer-window buffer-name)))
        (if (and window (<= (window-height window) (/ (frame-height) 3)))
            (progn
              (select-window window)
@@ -3591,13 +3592,13 @@ The function behaves as follows:
          (progn
            (split-window-vertically (- height))
            (other-window 1)
-           (if (get-buffer name)
+           (if (get-buffer buffer-name)
                (progn
-                 (switch-to-buffer name)
+                 (switch-to-buffer buffer-name)
                  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
              (progn
                ,shell-cmd
-               (rename-buffer name)
+               (rename-buffer buffer-name)
                (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
                ,post-exec)))))))
 #+END_SRC
