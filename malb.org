@@ -3480,6 +3480,10 @@ Working with source code in org-mode.
                (jupyter . t)
                ))
 
+            (setq org-babel-default-header-args:sh '((:results . "output replace")))
+            (setq org-babel-default-header-args:bash '((:results . "output replace")))
+            (setq org-babel-default-header-args:shell '((:results . "output replace")))
+
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
