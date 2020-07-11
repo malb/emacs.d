@@ -2858,17 +2858,17 @@ iCal export is triggered after 600 seconds of inactivity.
                          '("lemma" "l" "\\begin{lemma}%a" "\\end{lemma}"))
             (defun malb/beamer-underline (contents backend info)
               (when (eq backend 'beamer)
-                (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
+                (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents))) ;; \\] org parse error
 
             (defun malb/beamer-strikethrough (contents backend info)
               (when (eq backend 'beamer)
                 (concat "{"
-                        (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\color{lightgray}" contents)
+                        (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\color{lightgray}" contents) ;; \\] org parse error
                         "}")))
 
             (defun malb/beamer-code (contents backend info)
               (when (eq backend 'beamer)
-                (concat (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\lstinline" contents))))
+                (concat (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\lstinline" contents)))) ;; \\] org parse error
 
             (add-to-list 'org-export-filter-underline-functions 'malb/beamer-underline)
             (add-to-list 'org-export-filter-strike-through-functions 'malb/beamer-strikethrough)
