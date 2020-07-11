@@ -8099,7 +8099,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
               (dired-omit-mode))
             (add-hook 'dired-mode-hook #'malb/enable-dired-omit-mode)
             (defun malb/dired-layout ()
-              (setq-local tab-width 2)
+              (setq-local tab-width 1)
               (toggle-truncate-lines 1))
             (add-hook 'dired-mode-hook #'malb/dired-layout)
 
