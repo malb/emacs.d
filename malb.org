@@ -7232,7 +7232,6 @@ Use =<TAB>= to preview messages and =q= to close previews.
 
 (bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
 (bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
-(bind-key "z" #'malb/close-message-view mu4e-headers-mode-map)
 #+END_SRC
 
 Visual-line mode all the way.
@@ -7265,8 +7264,6 @@ Use imagemagick, if available
   (set-fill-column 84)
   (visual-line-mode 1)
   (visual-fill-column-mode 1))
-
-(add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
 
 Discourage HTML rendering in GNUS:
@@ -7276,6 +7273,33 @@ Discourage HTML rendering in GNUS:
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 #+end_src
+
+Toggle between GNUS and traditional MU4E view.
+
+#+BEGIN_SRC emacs-lisp
+;; https://www.reddit.com/r/emacs/comments/ho8lxi/mu4e_office365_meeting_invitations/
+(defun malb/toggle-mu4e-gnus ()
+  (interactive)
+  "Toggle between old mu4e view mode and gnus-view-mode."
+  (if (equal mu4e-view-use-gnus t)
+      (progn
+        (setq mu4e-view-use-gnus nil)
+        (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
+        (remove-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook))
+    (progn
+      (setq mu4e-view-use-gnus t)
+      (add-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook)
+      (remove-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)))
+  (remove-overlays)
+  (condition-case nil
+      (mu4e-view-refresh)
+    (error nil)))
+
+(setq mu4e-view-use-gnus t)
+(add-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook)
+
+(bind-key "z" #'malb/toggle-mu4e-gnus mu4e-view-mode-map)
+#+END_SRC
 
 ** Actions
 
