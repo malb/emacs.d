@@ -6664,10 +6664,11 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
 
 I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] better, [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] covers more bases.
 
-[[https://github.com/cpitclaudel/biblio.el][- biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
+- [[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
 
   #+BEGIN_SRC emacs-lisp
-(use-package biblio)
+(use-package biblio
+  :config (setq biblio-bibtex-use-autokey t))
   #+END_SRC
 
 - [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
