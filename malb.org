@@ -4612,6 +4612,13 @@ Auto-format source code in many languages with one command – [[https://github.
                                                                  (:kernel . "python3")))))
 #+END_SRC
 
+**Note:** We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
+
+#+begin_src sh
+(env) pip install ipykernel
+(env) python -m ipykernel install --user --name=env
+#+end_src
+
 *** Language Server Protocol (LSP)
 
 #+BEGIN_QUOTE
