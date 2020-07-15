@@ -919,7 +919,7 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
             ;; yankpad can slow down helm by insisting on parsing the yankpad file each time, so
             ;; we disable it for helm
             (setq malb/disable-yankpad-major-modes
-                  '(helm-major-mode minibuffer-inactive-mode dired-mode dired-sidebar-mode))
+                  '(helm-major-mode minibuffer-inactive-mode dired-mode dired-sidebar-mode gnus-article-mode mu4e-view-mode))
 
             (defun malb/disable-yankpad-maybe (old-function &rest args)
               (if (member major-mode malb/disable-yankpad-major-modes)
