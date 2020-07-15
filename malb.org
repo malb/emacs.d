@@ -2785,6 +2785,30 @@ iCal export is triggered after 600 seconds of inactivity.
                                                        "}\n"))
 
             (add-to-list 'org-latex-classes
+                         (list "tufte-book"
+                               (concat "\\documentclass{tufte-book}\n"
+                                       "\\usepackage{fontspec}\n"
+                                       "[DEFAULT-PACKAGES]\n"
+                                       "[PACKAGES]\n"
+                                       malb/org-latex-default
+                                       "\\usepackage{ifxetex}\n"
+                                       "\\ifxetex\n"
+                                       " \\renewcommand{\\textls}[2][5]{%\n"
+                                       " \\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup\n"
+                                       "}\n"
+                                       "\\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}\n"
+                                       "\\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}\n"
+                                       "\\renewcommand{\\allcaps}[1]{\\textls[15]{\\MakeTextUppercase{#1}}}\n"
+                                       "\\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}\n"
+                                       "\\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}\n"
+                                       "\\usepackage{fontspec}\n"
+                                       "\\fi\n"
+                                       "[EXTRA]\n")
+                               '("\\part{%s}" . "\\part*{%s}")
+                               '("\\chapter{%s}" . "\\chapter*{%s}")
+                               '("\\section{%s}" . "\\section*{%s}")
+                               '("\\subsection{%s}" . "\\subsection*{%s}")
+                               '("\\paragraph{%s}" . "\\paragraph*{%s}"))
                          (list "handout"
                                (concat "\\documentclass{tufte-handout}\n"
                                        "\\usepackage{fontspec}\n"
