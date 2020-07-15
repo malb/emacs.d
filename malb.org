@@ -6535,6 +6535,7 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
                           ":YEAR: ${year}\n"
                           ":DOI: ${doi}\n"
                           ":URL: ${url}\n"
+                          ":NOTER_DOCUMENT: %(car (bibtex-completion-find-pdf \"${=key=}\"))\n"
                           ":END:\n"
                           "\n"
                           "fullcite:${=key=}\n"
