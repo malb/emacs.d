@@ -2917,7 +2917,7 @@ iCal export is triggered after 600 seconds of inactivity.
   :ensure nil
   :init (progn
           (setq org-odt-styles-file
-                (expand-file-name "org-export-template.odt" user-emacs-directory))))
+                (expand-file-name "org-export-template.ott" user-emacs-directory))))
 #+END_SRC
 
 Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/6baa1e42ad4d7353e125][source]])
@@ -2925,8 +2925,6 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 #+BEGIN_SRC emacs-lisp
 (load-file (expand-file-name "local/ox-inline-comments.el" user-emacs-directory))
 #+END_SRC
-
-****** TODO org-odt-style-file doesn’t seem to take
 
 *** Bootstrap
 
