@@ -3502,9 +3502,12 @@ Working with source code in org-mode.
                (jupyter . t)
                ))
 
-            (setq org-babel-default-header-args:sh '((:results . "output replace")))
-            (setq org-babel-default-header-args:bash '((:results . "output replace")))
-            (setq org-babel-default-header-args:shell '((:results . "output replace")))
+            (setq org-babel-default-header-args:sh    '((:results . "output replace"))
+                  org-babel-default-header-args:bash  '((:results . "output replace"))
+                  org-babel-default-header-args:shell '((:results . "output replace"))
+                  org-babel-default-header-args:jupyter-python '((:async . "yes")
+                                                                 (:session . "py")
+                                                                 (:kernel . "python3")))
 
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
@@ -4603,11 +4606,7 @@ Auto-format source code in many languages with one command – [[https://github.
              jupyter-run-repl
              jupyter-server-list-kernels)
   :init (eval-after-load 'jupyter-org-extensions
-          '(unbind-key "C-c h" jupyter-org-interaction-mode-map))
-  :config (progn
-            (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
-                                                                 (:session . "py")
-                                                                 (:kernel . "python3")))))
+          '(unbind-key "C-c h" jupyter-org-interaction-mode-map)))
 #+END_SRC
 
 **Note:** We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
