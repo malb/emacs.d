@@ -4920,6 +4920,11 @@ I often restart Python processes (Cython development), so let’s bind a key for
                   python-shell-interpreter-args "console --simple-prompt"
                   python-shell-prompt-detect-failure-warning nil)
 
+            (defun malb/python-mode-hook ()
+              (setq-local outline-blank-line t))
+
+            (add-hook 'python-mode-hook #'malb/python-mode-hook)
+
             (defun malb/inferior-python-setup ()
               (make-local-variable 'company-backends)
               (setq company-backends '(company-files company-capf)))
