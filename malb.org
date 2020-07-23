@@ -2763,26 +2763,26 @@ iCal export is triggered after 600 seconds of inactivity.
                                             (expand-file-name "article-header.tex" user-emacs-directory))
                                            (buffer-string)))
 
-            (setq org-latex-pdf-process '("latexmk -pdflatex=\"xelatex -src-specials -synctex=1 --shell-escape -halt-on-error -file-line-error %%O %%S\" -output-directory=%o -pdf %f")
-                  org-latex-prefer-user-labels t
-                  org-latex-caption-above nil
-                  org-latex-default-packages-alist (remove* '("T1" "fontenc" t ("pdflatex"))
-                                                            org-latex-default-packages-alist :test 'equal)
-                  org-latex-default-packages-alist (remove '("AUTO" "inputenc" t ("pdflatex"))
-                                                           org-latex-default-packages-alist)
-                  org-latex-hyperref-template  (concat "\\hypersetup{\n"
-                                                       "pdfauthor={%a},\n"
-                                                       "pdftitle={%t},\n"
-                                                       "pdfkeywords={%k},\n"
-                                                       "pdfsubject={%d},\n"
-                                                       "pdfcreator={%c},\n"
-                                                       "pdflang={%L},\n"
-                                                       "colorlinks,\n"
-                                                       "citecolor=gray,\n"
-                                                       "filecolor=gray,\n"
-                                                       "linkcolor=gray,\n"
-                                                       "urlcolor=gray\n"
-                                                       "}\n"))
+            (setq ;; org-latex-pdf-process '("latexmk -pdflatex=\"xelatex -src-specials -synctex=1 --shell-escape -halt-on-error -file-line-error %%O %%S\" -output-directory=%o -pdf %f")
+             org-latex-prefer-user-labels t
+             org-latex-caption-above nil
+             org-latex-default-packages-alist (remove* '("T1" "fontenc" t ("pdflatex"))
+                                                       org-latex-default-packages-alist :test 'equal)
+             org-latex-default-packages-alist (remove '("AUTO" "inputenc" t ("pdflatex"))
+                                                      org-latex-default-packages-alist)
+             org-latex-hyperref-template  (concat "\\hypersetup{\n"
+                                                  "pdfauthor={%a},\n"
+                                                  "pdftitle={%t},\n"
+                                                  "pdfkeywords={%k},\n"
+                                                  "pdfsubject={%d},\n"
+                                                  "pdfcreator={%c},\n"
+                                                  "pdflang={%L},\n"
+                                                  "colorlinks,\n"
+                                                  "citecolor=gray,\n"
+                                                  "filecolor=gray,\n"
+                                                  "linkcolor=gray,\n"
+                                                  "urlcolor=gray\n"
+                                                  "}\n"))
 
             (add-to-list 'org-latex-classes
                          (list "tufte-book"
