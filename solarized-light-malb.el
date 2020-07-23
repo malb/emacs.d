@@ -120,6 +120,7 @@
      `(ein:cell-input-area   ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.15)))))
      `(ein:cell-input-prompt ((t (:weight bold :foreground ,s-base00 :inherit (header-line)))))
 
+     `(helm-ff-file-extension ((t ())))
      `(bm-face ((t (:background "#FFE6E4"))))
      ;; `(helm-locate-finish ((t (:foreground ,green :weight bold))))
      ;; `(slack-message-output-header ((t (:weight bold))))
