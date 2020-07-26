@@ -3623,7 +3623,7 @@ The function behaves as follows:
                ,post-exec)))))))
 #+END_SRC
 
-** Multi-Term
+** [#B] Multi-Term
 
 [[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs.
 
@@ -3670,7 +3670,7 @@ The function behaves as follows:
 
 ** Vterm
 
-[[https://github.com/akermu/emacs-libvterm][Vterm]] is an Emacs terminal using libvterm
+[[https://github.com/akermu/emacs-libvterm][Vterm]] is an Emacs terminal using [[http://www.leonerd.org.uk/code/libvterm/][libvterm]]
 
 =C-c C-t= enters copy mode, =<enter>= adds selection to kill ring and leaves copy mode.
 
@@ -3695,7 +3695,7 @@ The function behaves as follows:
                    t))))
 #+end_src
 
-** Shell
+** [#B] Shell
 
 #+BEGIN_SRC emacs-lisp
 (use-package shell
@@ -4438,6 +4438,8 @@ mouse-3: go to end")
 
 *** Highlight Symbols
 
+[[https://github.com/wolray/symbol-overlay][symbol-overlay]] for highlighting symbols.
+
 #+BEGIN_SRC emacs-lisp
 (use-package symbol-overlay
   :bind ("M-s h ." . symbol-overlay-put)
@@ -4589,7 +4591,7 @@ Auto-format source code in many languages with one command – [[https://github.
 
 *** Jupyter
 
-[[https://github.com/dzop/emacs-jupyter][emacs-jupyter]]
+[[https://github.com/dzop/emacs-jupyter][emacs-jupyter]] is an Emacs frontend to Jupyter kernels
 
 #+BEGIN_SRC emacs-lisp
 (use-package jupyter
@@ -4600,12 +4602,16 @@ Auto-format source code in many languages with one command – [[https://github.
           '(unbind-key "C-c h" jupyter-org-interaction-mode-map)))
 #+END_SRC
 
-**Note:** We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
+**** Tips
 
-#+begin_src sh
+- We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
+
+  #+begin_example shell
 (env) pip install ipykernel
 (env) python -m ipykernel install --user --name=env
-#+end_src
+  #+end_example
+
+- It also works over Tramp
 
 *** Language Server Protocol (LSP)
 
@@ -4927,6 +4933,8 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")))
 #+END_SRC
 
+Create an iPython based toggle shell (consider using jupyter here)
+
 #+BEGIN_SRC emacs-lisp
 (defun malb/make-ipython-shell (shell-name virtual-env &optional venv-vars post-exec per-project)
   `(lambda (arg)
@@ -5064,6 +5072,8 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 
 *** Black
 
+Code formatting “do what they want”: [[https://github.com/psf/black][https://github.com/psf/black]]
+
 #+BEGIN_SRC emacs-lisp
 (use-package blacken
   :config (setq blacken-line-length 'fill))
@@ -5085,9 +5095,9 @@ pip install importmagic epc
 
 [[https://github.com/timothycrosley/isort][isort]] sorts Python imports. You need to install =isort= first.
 
-#+begin_src shell :tangle no
+#+begin_example shell :tangle no
 pip install isort
-#+end_src
+#+end_example
 
 #+BEGIN_SRC emacs-lisp
 (use-package py-isort
@@ -5119,7 +5129,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 (use-package pip-requirements)
 #+END_SRC
 
-*** iPython Notebook (EIN)
+*** [#B] iPython Notebook (EIN)
 
 [[https://github.com/millejoh/emacs-ipython-notebook][EIN]] is a interface to iPython.
 
@@ -5176,21 +5186,6 @@ On our system port 8888 is already taken.
 #+END_SRC
 
 *Note:* To use EIN [[https://millejoh.github.io/emacs-ipython-notebook/#org-mode-integration][from org-mode]], specify a notebook via the =:session= argument. The format for the session argument is ={url-or-port}/{path-to-notbook}=, e.g. =8889/Untitled.ipynb=
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/fpylll-notebook ()
-  (interactive)
-  (let ((fpylll (prodigy-find-service "fpylll")))
-    (if (not (prodigy-service-started-p fpylll))
-        (progn
-          (venv-deactivate) ;; avoid weird interactions
-          (prodigy-start-service fpylll)
-          (sleep-for 1.5))))
-  (venv-workon "fpylll3")
-  (ein:query-notebook-version 8889 t)
-  (ein:notebooklist-login "http://127.0.0.1:8889"
-                          (lambda (buffer url-or-port) (pop-to-buffer buffer))))
-#+END_SRC
 
 *** Virtual Environments
 
@@ -5272,6 +5267,8 @@ buffer-local `project-venv-name' variable."
                        (venv-workon project-venv-name)))))
             ))
 #+END_SRC
+
+****** TODO Replace by conda.el?
 
 ** Sage
 
@@ -5486,8 +5483,8 @@ Basic navigation by-list and by-region:
 Paredit transformations, callable by plain letters:
 
 | binding | command    |
-| ~>~     | slurps     |
 |---------+------------|
+| ~>~     | slurps     |
 | ~<~     | barfs      |
 | ~r~     | raises     |
 | ~C~     | convolutes |
