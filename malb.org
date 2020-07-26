@@ -825,8 +825,6 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 [[https://github.com/capitaomorte/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. ([[https://github.com/capitaomorte/yasnippet][source]])
 #+END_QUOTE
 
-[[http://blog.refu.co/wp-content/uploads/2015/07/wpid-yasnippet1.gif]] ([[http://blog.refu.co/?p=1355][source]])
-
 Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is on ~yasnippet~.
 
 You can call ~yas-decribe-tables~ to see currently defined snippets, I usually just use [[Helm YaSnippet]].
