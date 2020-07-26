@@ -776,7 +776,7 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 
 #+BEGIN_SRC emacs-lisp
 (use-package avy
-  :bind (("C-c C-<SPC>" . avy-goto-char-timer) ;; avy-goto-char-timer
+  :bind (("C-c C-<SPC>" . avy-goto-char-timer)
          ("C-c j j" . avy-goto-char-timer)
          ("M-g g" . avy-goto-line))
   :config (progn
