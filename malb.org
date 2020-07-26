@@ -7279,6 +7279,13 @@ Visual-line mode all the way.
 (bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
 #+END_SRC
 
+Use ace-link for links as it is compatible with gnus.
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "g" #'ace-link mu4e-view-mode-map)
+#+END_SRC
+
+
 Headers to show in header view.
 
 #+BEGIN_SRC emacs-lisp
