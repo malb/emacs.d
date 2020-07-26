@@ -643,11 +643,23 @@ automatically choosing a major mode, use `find-file-literally’."
 Run =old-function= with an empty =display-buffer-alist=
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/clean-display-buffer-alist (old-function &rest arguments)
+(defun malb/clean-display-buffer-alist-advice (old-function &rest arguments)
   "Call old-function with an empty display-buffers-alist"
   (let ((display-buffer-alist nil))
     (apply old-function arguments)))
 #+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(defun malb/make-frame-advice (old-function &rest arguments)
+  (with-selected-frame (make-frame)
+    (apply old-function arguments)
+    (dedicated-mode)
+    ;; (sleep 0.5)
+    ;; (add-hook 'kill-buffer-hook #'delete-frame t t)
+    ))
+#+END_SRC
+
 
 ** Dedicated Mode
 
@@ -7327,6 +7339,10 @@ Toggle between GNUS and traditional MU4E view.
 (bind-key "z" #'malb/toggle-mu4e-gnus mu4e-view-mode-map)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(advice-add #'gnus-mm-display-part :around #'malb/make-frame-advice)
+#+END_SRC
+
 ** Actions
 
 Action to view e-mails in external browser.
@@ -7505,8 +7521,16 @@ Various shortcuts to jump to/create headers.
 Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 
 #+BEGIN_SRC emacs-lisp
-(advice-add #'mu4e-compose :around #'malb/clean-display-buffer-alist)
-(advice-add #'mu4e~compose-handler :around #'malb/clean-display-buffer-alist)
+(defun malb/switch-to-mu4e-advice (old-function &rest arguments)
+  (malb/switch-to-mu4e)
+  (apply old-function arguments))
+
+(defun malb/switch-away-from-mu4e-advice (old-function &rest arguments)
+  (malb/switch-away-from-mu4e)
+  (apply old-function arguments))
+
+(advice-add #'mu4e-compose :around #'malb/clean-display-buffer-alist-advice)
+(advice-add #'mu4e~compose-handler :around #'malb/clean-display-buffer-alist-advice)
 (advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
 (advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
 #+END_SRC
@@ -7717,9 +7741,6 @@ Link to mu4e messages and threads.
   :ensure nil
   :config (progn
             (setq org-mu4e-link-query-in-headers-mode t)
-            (defun malb/switch-to-mu4e-advice (old-function &rest arguments)
-                   (malb/switch-to-mu4e)
-                   (apply old-function arguments))
             (advice-add 'org-mu4e-open :around  #'malb/switch-to-mu4e-advice)))
 #+END_SRC
 
