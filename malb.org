@@ -3503,6 +3503,7 @@ Working with source code in org-mode.
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
+
             (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
 #+END_SRC
 
