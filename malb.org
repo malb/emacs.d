@@ -3472,25 +3472,6 @@ Execute this command while the point is on or after the hyper-linked org link."
             (replace-match "\\2")))))))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(defun malb/copy-available-dates ()
-  "copy scheduled dates from headings 'TBD'"
-  (interactive)
-  (save-excursion
-    (let ((r))
-      (while
-          (let ((heading   (org-get-heading))
-                (scheduled (org-entry-get (point) "SCHEDULED" nil)))
-            (if (equal "TBD" heading)
-                (progn
-                  (push scheduled r)))
-            (org-get-next-sibling)))
-      (kill-new (mapconcat (lambda (x)
-                             (concat "- "
-                                     (replace-regexp-in-string "<\\|>" "" x)))
-                           (nreverse r) "\n")))))
-                                     #+END_SRC
-
 ** Org Babel
 
 Working with source code in org-mode.
