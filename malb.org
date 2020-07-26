@@ -3511,7 +3511,7 @@ Working with source code in org-mode.
                   org-babel-default-header-args:shell '((:results . "output replace"))
                   org-babel-default-header-args:jupyter-python '((:async . "yes")
                                                                  (:session . "py")
-                                                                 (:kernel . "python3")))
+                                                                 (:kernel . "sagemath")))
 
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
