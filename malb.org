@@ -285,14 +285,6 @@ Resize windows to accommodate new ones.
 [[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
 
 #+BEGIN_SRC emacs-lisp
-;; (use-package perspective
-;;   :init (setq persp-mode-prefix-key (kbd "C-x x")
-;;               persp-sort 'created)
-;;   :config (progn
-;;             (defun malb/persp-names-reverse (orig-fun &rest args)
-;;               (reverse (apply orig-fun args)))
-;;             (advice-add 'persp-names :around #'malb/persp-names-reverse)))
-
 (use-package eyebrowse
   :diminish eyebrowse-mode
   :init (setq eyebrowse-keymap-prefix (kbd "C-c E"))
