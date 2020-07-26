@@ -3491,8 +3491,7 @@ Working with source code in org-mode.
                (dot . t)
                (plantuml . t)
                (makefile . t)
-               (jupyter . t)
-               ))
+               (jupyter . t)))          ; must be last
 
             (setq org-babel-default-header-args:sh    '((:results . "output replace"))
                   org-babel-default-header-args:bash  '((:results . "output replace"))
