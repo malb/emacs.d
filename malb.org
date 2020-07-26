@@ -2815,7 +2815,9 @@ iCal export is triggered after 600 seconds of inactivity.
                                '("\\chapter{%s}" . "\\chapter*{%s}")
                                '("\\section{%s}" . "\\section*{%s}")
                                '("\\subsection{%s}" . "\\subsection*{%s}")
-                               '("\\paragraph{%s}" . "\\paragraph*{%s}"))
+                               '("\\paragraph{%s}" . "\\paragraph*{%s}")))
+
+            (add-to-list 'org-latex-classses
                          (list "handout"
                                (concat "\\documentclass{tufte-handout}\n"
                                        "\\usepackage{fontspec}\n"
@@ -3369,18 +3371,20 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
                                   ((debug error) (ocpf--delete-frame))) ;; MALB: handle "q"
                                 (setq header-line-format
                                       (list "Capture buffer. "
-                                            (propertize (substitute-command-keys "Finish \\[org-capture-finalize], ")  ;; \\] org parse error
-                                                        'mouse-face 'mode-line-highlight
-                                                        'keymap
-                                                        (let ((map (make-sparse-keymap)))
-                                                          (define-key map [header-line mouse-1] 'org-capture-finalize)
-                                                          map))
-                                            (propertize (substitute-command-keys "abort \\[org-capture-kill]. ")  ;; \\] org parse error
-                                                        'mouse-face 'mode-line-highlight
-                                                        'keymap
-                                                        (let ((map (make-sparse-keymap)))
-                                                          (define-key map [header-line mouse-1] 'org-capture-kill)
-                                                          map))))))))
+                                            (propertize
+                                             (substitute-command-keys "Finish \\[org-capture-finalize], ") ;; \\] org parse error
+                                             'mouse-face 'mode-line-highlight
+                                             'keymap
+                                             (let ((map (make-sparse-keymap)))
+                                               (define-key map [header-line mouse-1] 'org-capture-finalize)
+                                               map))
+                                            (propertize
+                                             (substitute-command-keys "abort \\[org-capture-kill]. ") ;; \\] org parse error
+                                             'mouse-face 'mode-line-highlight
+                                             'keymap
+                                             (let ((map (make-sparse-keymap)))
+                                               (define-key map [header-line mouse-1] 'org-capture-kill)
+                                               map))))))))
                      (make-frame
                       `((window-system . ,frame-window-system)
                         ,@ocpf-frame-parameters))))
