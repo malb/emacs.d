@@ -6668,7 +6668,10 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
   (interactive (list 'interactive))
   (cl-case command
     (interactive (company-begin-backend 'company-bibtex-completion))
-    (prefix (company-auctex-prefix "\\\\cite[^[{]*\\(?:\\[[^]]*\\]\\)?{\\([^},]*\\)\\="))
+    (prefix (let ((prefixes (company-auctex-prefix "\\\\cite[^[{]*\\(?:\\[[^]]*\\]\\)?{\\([^}]*\\)\\=")))
+              (if prefixes
+                  (last (split-string prefixes "," t))
+                nil)))
     (candidates (all-completions arg (company-bibtex-completion-candidates)))
     (annotation (get-text-property 0 'bibtex-completion-annotation arg))))
 
