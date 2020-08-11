@@ -2742,7 +2742,6 @@ iCal export is triggered after 600 seconds of inactivity.
 *** LaTeX
 
 - Use [[http://www.xelatex.org][XeLaTeX]] because UTF-8 and fonts.
-- Drop =\usepackage[T1]{fontenc}= because XeLaTeX doesn’t need and like it.
 - Add some standard (to us) packages
 - Handouts are done via [[https://www.ctan.org/pkg/tufte-latex?lang=en][tufte-handout]], letters via =ox-koma-letter=.
 
@@ -2750,7 +2749,7 @@ iCal export is triggered after 600 seconds of inactivity.
 (use-package ox-latex
   :ensure nil
   :config (progn
-            (setq org-latex-listings 't)
+
             (add-to-list 'org-latex-packages-alist '("" "listings"))
             (add-to-list 'org-latex-packages-alist '("" "xcolor"))
             (add-to-list 'org-latex-packages-alist '("" "amssymb"))
@@ -2770,26 +2769,23 @@ iCal export is triggered after 600 seconds of inactivity.
                                             (expand-file-name "article-header.tex" user-emacs-directory))
                                            (buffer-string)))
 
-            (setq ;; org-latex-pdf-process '("latexmk -pdflatex=\"xelatex -src-specials -synctex=1 --shell-escape -halt-on-error -file-line-error %%O %%S\" -output-directory=%o -pdf %f")
-             org-latex-prefer-user-labels t
-             org-latex-caption-above nil
-             org-latex-default-packages-alist (remove* '("T1" "fontenc" t ("pdflatex"))
-                                                       org-latex-default-packages-alist :test 'equal)
-             org-latex-default-packages-alist (remove '("AUTO" "inputenc" t ("pdflatex"))
-                                                      org-latex-default-packages-alist)
-             org-latex-hyperref-template  (concat "\\hypersetup{\n"
-                                                  "pdfauthor={%a},\n"
-                                                  "pdftitle={%t},\n"
-                                                  "pdfkeywords={%k},\n"
-                                                  "pdfsubject={%d},\n"
-                                                  "pdfcreator={%c},\n"
-                                                  "pdflang={%L},\n"
-                                                  "colorlinks,\n"
-                                                  "citecolor=gray,\n"
-                                                  "filecolor=gray,\n"
-                                                  "linkcolor=gray,\n"
-                                                  "urlcolor=gray\n"
-                                                  "}\n"))
+            (setq org-latex-listings 't
+                  org-latex-compiler "xelatex"
+                  org-latex-prefer-user-labels t
+                  org-latex-caption-above nil
+                  org-latex-hyperref-template  (concat "\\hypersetup{\n"
+                                                       "pdfauthor={%a},\n"
+                                                       "pdftitle={%t},\n"
+                                                       "pdfkeywords={%k},\n"
+                                                       "pdfsubject={%d},\n"
+                                                       "pdfcreator={%c},\n"
+                                                       "pdflang={%L},\n"
+                                                       "colorlinks,\n"
+                                                       "citecolor=gray,\n"
+                                                       "filecolor=gray,\n"
+                                                       "linkcolor=gray,\n"
+                                                       "urlcolor=gray\n"
+                                                       "}\n"))
 
             (add-to-list 'org-latex-classes
                          (list "tufte-book"
@@ -2817,6 +2813,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                '("\\subsection{%s}" . "\\subsection*{%s}")
                                '("\\paragraph{%s}" . "\\paragraph*{%s}")))
 
+            (add-to-list 'org-latex-classes
                          (list "handout"
                                (concat "\\documentclass{tufte-handout}\n"
                                        "\\usepackage{fontspec}\n"
