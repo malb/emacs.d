@@ -3401,14 +3401,6 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
   :after org)
 #+END_SRC
 
-** Auto Completion
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/org-mode-completion-hook ()
-  (add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
-(add-hook 'org-mode-hook #'malb/org-mode-completion-hook)
-#+END_SRC
-
 ** Eldoc
 
 Activate eldoc and show footnotes in minibuffer.
