@@ -2817,7 +2817,6 @@ iCal export is triggered after 600 seconds of inactivity.
                                '("\\subsection{%s}" . "\\subsection*{%s}")
                                '("\\paragraph{%s}" . "\\paragraph*{%s}")))
 
-            (add-to-list 'org-latex-classses
                          (list "handout"
                                (concat "\\documentclass{tufte-handout}\n"
                                        "\\usepackage{fontspec}\n"
