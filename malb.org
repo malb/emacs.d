@@ -317,7 +317,8 @@ Resize windows to accommodate new ones.
 #+BEGIN_SRC emacs-lisp
 (use-package ace-window
   :commands ace-window
-  :bind (("C-x o" . ace-window)
+  :bind (("M-o" . ace-window)
+         ("C-x o" . ace-window)
          ("C-`"  . malb/ace-window))
   :config (progn
             (setq aw-keys   '(?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8)
