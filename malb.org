@@ -4616,6 +4616,15 @@ Auto-format source code in many languages with one command – [[https://github.
           '(unbind-key "C-c h" jupyter-org-interaction-mode-map)))
 #+END_SRC
 
+#+begin_src emacs-lisp
+(defun malb/previous-org-jupyter-kernel ()
+  (save-excursion
+    (if (re-search-backward " :kernel \\(\\w+\\)" nil t)
+        (substring-no-properties (match-string 1))
+      "sagemath")))
+#+end_src
+
+
 **** Tips
 
 - We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
