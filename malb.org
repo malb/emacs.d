@@ -1025,10 +1025,10 @@ For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We
 (use-package company-auctex
   :config (progn
             (add-to-list 'company-backends
-                         '(company-auctex-macros
-                           company-auctex-environments
-                           company-math-symbols-unicode
-                           company-math-symbols-latex))))
+                         '(company-math-symbols-unicode
+                           company-math-symbols-latex
+                           company-auctex-macros
+                           company-auctex-environments))))
 #+END_SRC
 
 [[https://github.com/TheBB/company-reftex][company-refex]] is used for \LaTeX labels.
