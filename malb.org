@@ -6983,11 +6983,15 @@ A function to add new replacements.
 #+BEGIN_SRC emacs-lisp
 (defun malb/add-mu4e-name-replacement ()
   (interactive)
-  (let* ((email (helm-read-string "E-mail: " (downcase (get-text-property (point) 'email))))
+  (let* ((email (helm-read-string "E-mail: " (replace-regexp-in-string
+                                              ".*<\\(.*\\)>.*" "\\1"
+                                              (downcase (get-text-property (point) 'gnus-data)))))
          (name  (helm-read-string "Name: "
-                                  (malb/canonicalise-contact-name email
-                                                                  (get-text-property (point) 'long))))
-         (nick  (helm-read-string "Nick: " (replace-regexp-in-string "(.*) " "\\1" name))))
+                                  (malb/canonicalise-contact-name
+                                   email
+                                   (replace-regexp-in-string "\\(.*\\) <.*>.*" "\\1"
+                                                             (get-text-property (point) 'gnus-data)))))
+         (nick  (helm-read-string "Nick: " (replace-regexp-in-string "\\([^ ]?\\) .*" "\\1" name))))
     (add-to-list 'malb/mu4e-name-replacements (list email name nick) t)
     (customize-save-variable 'malb/mu4e-name-replacements malb/mu4e-name-replacements)))
 #+END_SRC
