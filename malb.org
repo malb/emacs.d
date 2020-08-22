@@ -4624,7 +4624,6 @@ Auto-format source code in many languages with one command – [[https://github.
       "sagemath")))
 #+end_src
 
-
 **** Tips
 
 - We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
