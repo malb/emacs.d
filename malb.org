@@ -5952,7 +5952,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
                 deft-use-filename-as-title nil
                 deft-auto-save-interval 300.0
                 deft-use-filter-string-for-filename t
-                deft-current-sort-method 'title
+                deft-current-sort-method 'mtime
                 deft-file-naming-rules '((noslash . "-")
                                          (nospace . "-")
                                          (case-fn . downcase)))
