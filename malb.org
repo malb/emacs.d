@@ -4651,10 +4651,6 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :config (progn (setq lsp-eldoc-render-all nil
                        lsp-prefer-flymake nil)
                  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
-
-(use-package lsp-clients
-  :after (lsp-mode)
-  :ensure lsp-mode)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
