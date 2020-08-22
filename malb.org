@@ -3674,8 +3674,8 @@ The function behaves as follows:
                   (malb/make-toggle-shell "multi-term"
                                           '(let ((current-prefix-arg nil)) (multi-term))
                                           '(progn
-                                             (when (and (boundp 'venv-current-name) venv-current-name)
-                                               (insert (format "workon %s" venv-current-name))
+                                             (when (and (boundp 'conda-env-current-name) conda-env-current-name)
+                                               (insert (format "conda activate %s" conda-env-current-name))
                                                (term-send-input))
                                              (insert "ls")
                                              (term-send-input))
@@ -3701,8 +3701,8 @@ The function behaves as follows:
                    "vterm"
                    '(let ((current-prefix-arg nil)) (vterm))
                    '(progn
-                      (when (and (boundp 'venv-current-name) venv-current-name)
-                        (vterm-send-string (format "workon %s" venv-current-name))
+                      (when (and (boundp 'conda-env-current-name) conda-env-current-name)
+                        (vterm-send-string (format "conda activate %s" conda-env-current-name))
                         (vterm-send-return))
                       (vterm-send-string "ls")
                       (vterm-send-return))
@@ -4958,7 +4958,7 @@ Create an iPython based toggle shell (consider using jupyter here)
   `(lambda (arg)
      (interactive "P")
      (let ((project-venv-vars ,venv-vars))
-       (venv-workon ,virtual-env))
+       (conda-env-activate ,virtual-env))
      (let* ((name   (if (and (not arg) ,per-project)
                         (concat "*" ,shell-name
                                 "[" (if (projectile-project-p)
@@ -5147,146 +5147,17 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 (use-package pip-requirements)
 #+END_SRC
 
-*** [#B] iPython Notebook (EIN)
-
-[[https://github.com/millejoh/emacs-ipython-notebook][EIN]] is a interface to iPython.
-
-[[https://github.com/millejoh/emacs-ipython-notebook/wiki/images/R-kernel-example.PNG]] ([[https://github.com/tkf/emacs-ipython-notebook/raw/data/screenshots/zenburn_plots.png][source]])
-
-On our system port 8888 is already taken.
-
-#+BEGIN_SRC emacs-lisp
-(use-package ein
-  :after ob
-  :commands (ein:notebooklist-login ein:query-notebook-version)
-  :config (progn
-            (setq ein:complete-on-dot nil
-                  ein:notebook-create-checkpoint-on-save nil
-                  ein:completion-backend 'ein:use-company-backend
-                  ein:url-or-port '(8888 8889)
-                  ein:default-url-or-port 8888
-                  ein:console-args '("--simple-prompt")
-                  ein:console-security-dir "")
-
-            (defun malb/ein-hook ()
-              (toggle-truncate-lines t)
-              (flycheck-mode -1)
-              (flyspell-mode-off))
-
-            (add-hook 'ein:notebook-multilang-mode-hook #' malb/ein-hook)
-
-            (add-to-list 'org-babel-load-languages '(ein . t))
-
-            (require 'ein-notebook)
-            ;; (add-to-list 'company-backends #'ein:company-backend)
-
-            (defun ein:ml-lang-setup-sage ()
-              "Based on `ein:ml-lang-setup-python'."
-              (setq-local mode-name "EIN[Sage]")
-              (setq-local comment-start "# ")
-              (setq-local comment-start-skip  "#+\\s-*")
-              (setq-local parse-sexp-lookup-properties t)
-              (setq-local indent-line-function
-                          (apply-partially #'ein:ml-indent-line-function #'python-indent-line-function))
-              (setq-local indent-region-function
-                          (apply-partially #'ein:ml-indent-region #'python-indent-region))
-              (set-syntax-table sage-shell:sage-mode-syntax-table)
-              (set-keymap-parent ein:notebook-multilang-mode-map python-mode-map))
-
-            (defun malb/ein-open-here ()
-              "We have a link to our projects top directory, this function goes to anything below that."
-              (interactive)
-              (let ((url (replace-regexp-in-string malb/projects-dir "projects" default-directory)))
-                (ein:notebooklist-open 8888 url)))
-
-            (bind-key "S-<return>" #'ein:worksheet-execute-cell-and-goto-next-km ein:notebook-mode-map)
-            (bind-key "C-<return>" #'ein:worksheet-execute-cell-km ein:notebook-mode-map)))
-#+END_SRC
-
-*Note:* To use EIN [[https://millejoh.github.io/emacs-ipython-notebook/#org-mode-integration][from org-mode]], specify a notebook via the =:session= argument. The format for the session argument is ={url-or-port}/{path-to-notbook}=, e.g. =8889/Untitled.ipynb=
-
 *** Virtual Environments
 
-[[https://github.com/porterjamesj/virtualenvwrapper.el][virtualenvwrapper]] emulates much of the functionality of [[https://bitbucket.org/dhellmann/virtualenvwrapper/][virtualenvwrapper.sh]]. It strikes me as the most feature complete of the many choices. I also added some features from [[https://github.com/jorgenschaefer/pyvenv/][pyvenv]]. Okay, so maybe it isn’t that feature complete.
-
-#+BEGIN_SRC emacs-lisp
-(use-package virtualenvwrapper
+#+begin_src emacs-lisp
+(use-package conda
   :config (progn
-            (venv-initialize-interactive-shells)
-            (venv-initialize-eshell)
-            (setq eshell-modify-global-environment nil)
-
-            (setq malb/venv-preactivate-hook--previous-vars nil)
-
-            (defun malb/venv-preactivate-hook ()
-              (dolist (pair malb/venv-preactivate-hook--previous-vars)
-                (setenv (car pair) nil))
-              (setq malb/venv-preactivate-hook--previous-vars nil)
-              (when (boundp 'project-venv-vars)
-                (dolist (pair project-venv-vars)
-                  (setenv (car pair) (cdr pair)))
-                (setq malb/venv-preactivate-hook--previous-vars project-venv-vars)))
-
-            (add-hook 'venv-preactivate-hook #'malb/venv-preactivate-hook)
-
-            ;; some modes don't need to have a virtualenv
-            (setq malb/venv-tracking-mode-excluded-modes
-                  '(mu4e-headers-mode mu4e-view-mode mu4e-main-mode))
-
-            ;; handling virtualenvs costs and we use post-command-hook, we use this variable to
-            ;; check for buffer changes
-            (setq malb/venv-tracking-mode--previous-buffer nil)
-
-            (defun malb/track-venv ()
-              "Enable virtualenv if local variable `project-venv-name' is set.
-
-Otherwise disable virtualenv."
-              ;; only trigger on buffer change
-              (when (not (eq (current-buffer)
-                             malb/venv-tracking-mode--previous-buffer))
-                ;; check for excluded modes
-                (if (not (memq major-mode malb/venv-tracking-mode-excluded-modes))
-                    ;; trigger
-                    (if (boundp 'project-venv-name)
-                        (venv-workon project-venv-name))
-                  (venv-deactivate))
-                (setq malb/venv-tracking-mode--previous-buffer (current-buffer))))
-
-            (define-minor-mode malb/venv-tracking-mode
-              "Global minor mode to track the current virtualenv.
-
-When this mode is active, venv will activate a buffer-specific
-virtualenv whenever the user switches to a buffer with a
-buffer-local `project-venv-name' variable."
-              :global t
-              (if malb/venv-tracking-mode
-                  (add-hook 'post-command-hook #'malb/track-venv)
-                (remove-hook 'post-command-hook #'malb/track-venv)))
-
-            (malb/venv-tracking-mode t) ; enable
-
-            (defun malb/venv-workon-buffer (arg)
-              "Enable virtualenv for current buffer.
-
- When `venv-tracking-mode' is on, `venv-workon' has no effect as
- it is immediately overruled. This function sets
- `project-venv-name' and thus circumvents that issue."
-              (interactive "P")
-              (cond (arg (progn
-                           (set (make-local-variable 'project-venv-name) nil)
-                           (venv-deactivate)))
-                    (t
-                     (progn
-                       (set (make-local-variable 'project-venv-name)
-                            (venv-read-name (if venv-current-name
-                                                (format "Choose a virtualenv (currently %s): "
-                                                        venv-current-name)
-                                              "Choose a virtualenv: ")))
-                       (venv-workon project-venv-name)))))
-            ))
-#+END_SRC
-
-****** TODO Replace by conda.el?
+            (conda-env-initialize-interactive-shells)
+            (conda-env-initialize-eshell)
+            (conda-env-autoactivate-mode t)
+            (setq conda-env-home-directory (expand-file-name "~/.conda/"))
+            (custom-set-variables '(conda-anaconda-home "/opt/conda/"))))
+#+end_src
 
 ** Sage
 
@@ -5310,13 +5181,15 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
 
             (fset 'malb/toggle-sage
                   (malb/make-toggle-shell "*Sage*"
-                                          '(progn (venv-deactivate) (sage-shell:run-sage "sage"))
+                                          '(progn
+                                             (conda-env-deactivate)
+                                             (sage-shell:run-sage "sage"))
                                           nil
                                           nil))
 
             (advice-add 'sage-shell:send-eof :around  #'malb/kill-buffer)
             (advice-add 'sage-shell:run-sage :before (lambda (cmd)
-                                                       (venv-deactivate)))
+                                                       (conda-env-deactivate)))
 
             (bind-key "C-<up>" #'comint-previous-matching-input-from-input sage-shell-mode-map)
             (bind-key "C-<down>" #'comint-next-matching-input-from-input sage-shell-mode-map)
@@ -5324,142 +5197,6 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
             (bind-key "M-n" #'comint-next-matching-input-from-input sage-shell-mode-map)
             (bind-key "C-<return>" #'auto-complete sage-shell:sage-mode-map)))
 #+END_SRC
-
-However, I usually don’t do that but use python-mode directly by hacking together an activate script for a sage-devel virtualenv
-
-#+BEGIN_SRC shell-script :tangle no
-# This file must be used with "source bin/activate" *from bash*
-# you cannot run it directly
-
-deactivate () {
-    unset -f pydoc >/dev/null 2>&1
-
-    # reset old environment variables
-    # ! [ -z ${VAR+_} ] returns true if VAR is declared at all
-    if ! [ -z "${_OLD_VIRTUAL_PATH+_}" ] ; then
-        PATH="$_OLD_VIRTUAL_PATH"
-        export PATH
-        unset _OLD_VIRTUAL_PATH
-    fi
-    if ! [ -z "${_OLD_VIRTUAL_PYTHONHOME+_}" ] ; then
-        PYTHONHOME="$_OLD_VIRTUAL_PYTHONHOME"
-        export PYTHONHOME
-        unset _OLD_VIRTUAL_PYTHONHOME
-    fi
-
-    # This should detect bash and zsh, which have a hash command that must
-    # be called to get it to forget past commands.  Without forgetting
-    # past commands the $PATH changes we made may not be respected
-    if [ -n "${BASH-}" ] || [ -n "${ZSH_VERSION-}" ] ; then
-        hash -r 2>/dev/null
-    fi
-
-    if ! [ -z "${_OLD_VIRTUAL_PS1+_}" ] ; then
-        PS1="$_OLD_VIRTUAL_PS1"
-        export PS1
-        unset _OLD_VIRTUAL_PS1
-    fi
-
-    ### LD_LIBRARY_HACK
-    if ! [ -z ${_OLD_LD_LIBRARY_PATH+x} ] ; then
-        LD_LIBRARY_PATH="$_OLD_LD_LIBRARY_PATH"
-        export LD_LIBRARY_PATH
-        unset _OLD_LD_LIBRARY_PATH
-    fi
-    ### END_LD_LIBRARY_HACK
-
-    ### PKG_CONFIG_HACK
-    if ! [ -z ${_OLD_PKG_CONFIG_PATH+x} ] ; then
-        PKG_CONFIG_PATH="$_OLD_PKG_CONFIG_PATH"
-        export PKG_CONFIG_PATH
-        unset _OLD_PKG_CONFIG_PATH
-    fi
-    ### END_PKG_CONFIG_HACK
-
-    unset VIRTUAL_ENV
-    if [ ! "${1-}" = "nondestructive" ] ; then
-    # Self destruct!
-        unset -f deactivate
-    fi
-}
-
-# unset irrelevant variables
-deactivate nondestructive
-
-VIRTUAL_ENV="/opt/sage-devel/local"
-export VIRTUAL_ENV
-
-_OLD_VIRTUAL_PATH="$PATH"
-PATH="$VIRTUAL_ENV/bin:$PATH"
-export PATH
-
-SAGE_ROOT="/opt/sage-devel/"
-SAGE_LOCAL="/opt/sage-devel/local/"
-export SAGE_ROOT
-export SAGE_LOCAL
-
-# unset PYTHONHOME if set
-if ! [ -z "${PYTHONHOME+_}" ] ; then
-    _OLD_VIRTUAL_PYTHONHOME="$PYTHONHOME"
-    unset PYTHONHOME
-fi
-
-if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT-}" ] ; then
-    _OLD_VIRTUAL_PS1="$PS1"
-    if [ "x" != x ] ; then
-        PS1="$PS1"
-    else
-        PS1="(sage-devel) $PS1"
-    fi
-    export PS1
-fi
-
-# Make sure to unalias pydoc if it's already there
-alias pydoc 2>/dev/null >/dev/null && unalias pydoc
-
-### LD_LIBRARY_HACK
-_OLD_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
-LD_LIBRARY_PATH="$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH
-### END_LD_LIBRARY_HACK
-
-### PKG_CONFIG_HACK
-_OLD_PKG_CONFIG_PATH="$PKG_CONFIG_PATH"
-PKG_CONFIG_PATH="$VIRTUAL_ENV/lib/pkgconfig:$PKG_CONFIG_PATH"
-export PKG_CONFIG_PATH
-### END_PKG_CONFIG_HACK
-
-pydoc () {
-    python -m pydoc "$@"
-}
-
-# This should detect bash and zsh, which have a hash command that must
-# be called to get it to forget past commands.  Without forgetting
-# past commands the $PATH changes we made may not be respected
-if [ -n "${BASH-}" ] || [ -n "${ZSH_VERSION-}" ] ; then
-    hash -r 2>/dev/null
-fi
-#+END_SRC
-
-Shortcut for Sage Jupyter notebook.
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/sage-notebook ()
-  (interactive)
-  (let ((sage (prodigy-find-service "sage-devel")))
-    (if (not (prodigy-service-started-p sage))
-        (progn
-          (venv-deactivate) ;; avoid weird interactions
-          (prodigy-start-service sage)
-          (sleep-for 1.5))))
-  (venv-workon "sage-devel")
-  (ein:query-notebook-version 8888 t)
-  (ein:notebooklist-login "http://127.0.0.1:8888"
-                          (lambda (buffer url-or-port) (pop-to-buffer buffer))
-                          malb/sage-notebook-password))
-#+END_SRC
-
-*Note:* If you get =[warn] Null value passed to ein:get-ipython-major-version= try =(ein:query-ipython-version 8888 t)=
 
 org babel for Sage can be quite handy for writing talks etc. ([[https://github.com/stakemori/ob-sagemath][source]])
 
@@ -9307,13 +9044,13 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 (use-package doom-modeline
   :config (progn
             (require 'doom-modeline-segments)
-            (doom-modeline-def-segment python-venv
-              "The current python venv.  Works with `venv'."
-              (when (bound-and-true-p venv-current-name)
-                (propertize (format " |%s|" venv-current-name)
+            (doom-modeline-def-segment conda-env
+              "The current conda environment.  Works with `conda'."
+              (when (bound-and-true-p conda-env-current-name)
+                (propertize (format " |%s|" conda-env-current-name)
                             'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
-                            'help-echo (format "Virtual environment (via venv): %s"
-                                               venv-current-name))))
+                            'help-echo (format "Conda environment: %s"
+                                               conda-env-current-name))))
             (setq doom-modeline-icon t
                   doom-modeline-major-mode-icon t
                   doom-modeline-major-mode-color-icon t
@@ -9326,7 +9063,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
               '(bar workspace-name window-number modals
                     matches buffer-info remote-host
                     buffer-position word-count parrot selection-info
-                    python-venv)
+                    conda-env)
               '(objed-state misc-info persp-name battery grip irc mu4e
                             gnus github debug lsp minor-modes input-method
                             indent-info buffer-encoding major-mode process vcs checker))
