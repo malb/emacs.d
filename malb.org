@@ -9632,6 +9632,7 @@ Easily change the text size:
 (malb/set-menu-key "<f6>" #'emms-next)
 (malb/set-menu-key "<up>" #'drag-stuff-up)
 (malb/set-menu-key "<down>" #'drag-stuff-down)
+(malb/set-menu-key "#" #'jupyter-org-hydra/body)
 #+END_SRC
 
 Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
