@@ -3437,7 +3437,7 @@ Activate eldoc and show footnotes in minibuffer.
             (add-hook 'org-mode-hook #'org-eldoc-load)
             (add-hook 'org-mode-hook #'eldoc-mode)))
 
-(defun malb/org-eldoc-get-footnote ()
+(defun malb/org-eldoc-get-footnote (&rest _ignored)
   (save-excursion
     (let ((fn (org-between-regexps-p "\\[fn:" "\\]")))
       (when fn
