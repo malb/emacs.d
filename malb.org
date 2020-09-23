@@ -8433,16 +8433,6 @@ Set Firefox directly because using =xdg-open= can lead to weird redirect on load
 (setq browse-url-browser-function 'browse-url-firefox)
 #+END_SRC
 
-** Org EWW
-
-Paste websites to org-mode with ~org-eww-copy-for-org-mode~.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-eww
-  :ensure nil
-  :after org)
-#+END_SRC
-
 ** Pocket
 
 #+begin_quote
