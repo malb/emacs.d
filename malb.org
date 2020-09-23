@@ -4614,6 +4614,11 @@ Auto-format source code in many languages with one command – [[https://github.
   :commands (jupyter-run-server-repl
              jupyter-run-repl
              jupyter-server-list-kernels)
+  :bind (:map jupyter-repl-mode-map
+              ("M-<up>" . jupyter-repl-history-previous)
+              ("C-<up>" . jupyter-repl-history-previous)
+              ("M-<down>" . jupyter-repl-history-next)
+              ("C-<down>" . jupyter-repl-history-next))
   :init (eval-after-load 'jupyter-org-extensions
           '(unbind-key "C-c h" jupyter-org-interaction-mode-map)))
 #+END_SRC
