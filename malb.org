@@ -7973,7 +7973,10 @@ Show dired histories you have visited.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-subtree
-  :config
+  :config (progn
+            (defun malb/dired-subtree-all-the-icons ()
+              (when all-the-icons-dired-mode (revert-buffer)))
+            (advice-add 'dired-subtree-toggle :after #'malb/dired-subtree-all-the-icons))
   :bind (:map dired-mode-map
               ("<tab>" . dired-subtree-toggle)
               ("<backtab>" . dired-subtree-cycle)))
