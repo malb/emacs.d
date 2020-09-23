@@ -2868,6 +2868,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                '("\\chapter{%s}" . "\\chapter*{%s}")
                                '("\\section{%s}" . "\\section*{%s}")
                                '("\\subsection{%s}" . "\\subsection*{%s}")
+                               '("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                                '("\\paragraph{%s}" . "\\paragraph*{%s}")
                                '("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
@@ -2885,6 +2886,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                        "[EXTRA]\n")
                                '("\\section{%s}" . "\\section*{%s}")
                                '("\\subsection{%s}" . "\\subsection*{%s}")
+                               '("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                                '("\\paragraph{%s}" . "\\paragraph*{%s}")
                                '("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
