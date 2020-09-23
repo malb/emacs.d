@@ -8783,6 +8783,20 @@ Open man pages with focus set
 (setq Man-notify-method 'aggressive)
 #+END_SRC
 
+=/etc/mailcap= is a bit of a mess, selecting whatever was installed/updated last. My local =.mailcap= is
+
+#+begin_example conf
+*/*; xdg-open %s
+#+end_example
+
+#+BEGIN_SRC emacs-lisp
+(use-package mailcap
+  :ensure nil
+  :config (progn
+            (setq mailcap-mime-data nil)
+            (mailcap-parse-mailcap "~/.mailcap")))
+#+END_SRC
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
