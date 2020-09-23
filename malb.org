@@ -119,7 +119,8 @@ Configure package repositories.
 Get the package manager going.
 
 #+BEGIN_SRC emacs-lisp
-(package-initialize)
+(if (< emacs-major-version 28)
+    (package-initialize))
 #+END_SRC
 
 Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our configuration readable.
