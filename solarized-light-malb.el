@@ -79,11 +79,11 @@
      `(org-scheduled-previously ((t (:foreground ,orange))))
      `(org-tag ((t (:weight normal :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#9A9FA4"))))
      `(org-todo ((t (:weight bold :box (:line-width 1 :color "#D8ABA7" :style nil) :foreground ,orange :background "#FFE6E4"))))
-     `(org-block-begin-line ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line)))))
-     `(org-block-end-line   ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line)))))
-     `(org-block ((t (:foreground ,s-base00 :background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+     `(org-block-begin-line ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line) :extend t))))
+     `(org-block-end-line   ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line) :extend t))))
+     `(org-block ((t (:foreground ,s-base00 :background ,(solarized-color-blend "#cccccc" s-base3 0.2) :extend t))))
 
-     `(markdown-code-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit nil ))))
+     `(markdown-code-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit nil :extend t))))
      `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)
                                                        :inherit (highlight)))))
 
