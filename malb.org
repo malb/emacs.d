@@ -165,6 +165,14 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 (use-package quelpa-use-package)
 #+END_SRC
 
+* Clean Mode Line
+
+Use [[https://github.com/raxod502/blackout][blackout]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:blackout~ parameter to =use-package=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package blackout)
+#+END_SRC
+
 * Paths
 
 [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]
@@ -761,14 +769,6 @@ _SPC_ cancel  _D_lt other     _s_wap
   :blackout skip-buffers-mode
   :config (skip-buffers-mode))
 #+end_src
-
-* Clean Mode Line
-
-Use [[https://github.com/raxod502/blackout][blackout]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:blackout~ parameter to =use-package=.
-
-#+BEGIN_SRC emacs-lisp
-(use-package blackout)
-#+END_SRC
 
 * Jumping Around
 
