@@ -1858,6 +1858,8 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
          ("C-S-s" . vr/isearch-forward)
          ("C-S-r" . vr/isearch-backward)))
 
+(use-package pcre2el)
+
 (use-package visual-regexp-steroids
   :config (setq vr/engine 'pcre2el))
 #+END_SRC
