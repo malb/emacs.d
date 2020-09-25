@@ -9436,7 +9436,7 @@ I never use ~list-directory~, I only mistype it.
 * Technical Artefacts
 
 # Local Variables:
-# eval: (ws-butler-mode 1)
+# eval: (when (fboundp 'ws-butler-mode) (ws-butler-mode 1))
 # org-cycle-separator-lines: 0
 # fill-column: 158
 # End:
