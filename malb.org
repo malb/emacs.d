@@ -3495,6 +3495,7 @@ Working with source code in org-mode.
 #+BEGIN_SRC emacs-lisp
 (use-package ob
   :ensure nil
+  :after jupyter
   :config (progn
             ;; load more languages for org-babel
             (org-babel-do-load-languages
@@ -4615,6 +4616,7 @@ Auto-format source code in many languages with one command – [[https://github.
   :commands (jupyter-run-server-repl
              jupyter-run-repl
              jupyter-server-list-kernels)
+  :defer 10
   :bind (:map jupyter-repl-mode-map
               ("M-<up>" . jupyter-repl-history-previous)
               ("C-<up>" . jupyter-repl-history-previous)
@@ -6520,6 +6522,8 @@ A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s
 
 #+BEGIN_SRC emacs-lisp
 (use-package aws-polly
+  :after xmms
+  :commands (aws-polly-region)
   :ensure nil)
 #+END_SRC
 
