@@ -1560,7 +1560,7 @@ Don’t include boring or remote stuff in list of recently visited files.
                                          "/ssh:"
                                          "/sudo:"
                                          "/scp:"))
-             (loop for ext in helm-boring-file-regexp-list
+             (cl-loop for ext in helm-boring-file-regexp-list
                    do (add-to-list 'recentf-exclude ext t))))
 #+END_SRC
 
