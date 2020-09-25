@@ -119,7 +119,7 @@ Configure package repositories.
 Get the package manager going.
 
 #+BEGIN_SRC emacs-lisp
-(if (< emacs-major-version 28)
+(if (< emacs-major-version 27)
     (package-initialize))
 #+END_SRC
 
