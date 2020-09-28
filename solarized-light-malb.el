@@ -89,7 +89,7 @@
 
      `(hl-sentence ((t (:background ,yellow-1bg :inherit (highlight)))))
      ;; `(which-func  ((t (:foreground ,green :weight bold))))
-     `(stripe-highlight ((t (:background ,s-base2))))
+     `(stripe-highlight ((t (:background ,s-base2 :extend t))))
 
      ;; `(sp-wrap-overlay-opening-pair ((t (:foreground ,green))))
      ;; `(sp-wrap-overlay-closing-pair ((t (:foreground ,orange))))
