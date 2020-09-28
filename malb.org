@@ -296,6 +296,7 @@ Resize windows to accommodate new ones.
 #+BEGIN_SRC emacs-lisp
 (use-package eyebrowse
   :diminish eyebrowse-mode
+
   :init (setq eyebrowse-keymap-prefix (kbd "C-c E"))
   :config (progn
             (setq eyebrowse-wrap-around t)
@@ -3524,6 +3525,7 @@ Working with source code in org-mode.
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
 
             (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
+
 #+END_SRC
 
 *** Async
@@ -4618,7 +4620,7 @@ Auto-format source code in many languages with one command – [[https://github.
   :commands (jupyter-run-server-repl
              jupyter-run-repl
              jupyter-server-list-kernels)
-  :defer 10
+  :defer 2
   :bind (:map jupyter-repl-mode-map
               ("M-<up>" . jupyter-repl-history-previous)
               ("C-<up>" . jupyter-repl-history-previous)
