@@ -5122,7 +5122,8 @@ pip install importmagic epc
 #+BEGIN_SRC emacs-lisp
 (use-package importmagic
   :blackout importmagic-mode
-  :hook (python-mode-hook . importmagic-mode))
+  :hook (python-mode-hook . importmagic-mode)
+  :config (setq importmagic-python-interpreter "python"))
 #+END_SRC
 
 [[https://github.com/timothycrosley/isort][isort]] sorts Python imports. You need to install =isort= first.
