@@ -8472,10 +8472,12 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
 
 #+BEGIN_SRC emacs-lisp
 (use-package weechat
-  :commands (weechat-connect malb/weechat)
+  :commands (weechat-connect malb/weechat weechat-switch-buffer)
   :bind (:map weechat-mode-map
               ("M-<up>" .  weechat-previous-input)
-              ("M-<down>" . weechat-next-input))
+              ("C-<up>" .  weechat-previous-input)
+              ("M-<down>" . weechat-next-input)
+              ("C-<down>" . weechat-next-input))
   :after prodigy
   :config (progn
             (require 'weechat-notifications)
@@ -9067,6 +9069,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
             (setq doom-modeline-icon t
                   doom-modeline-major-mode-icon t
                   doom-modeline-major-mode-color-icon t
+                  doom-modeline-buffer-file-name-style 'truncate-upto-project
                   doom-modeline-buffer-state-icon t
                   doom-modeline-github nil
                   doom-modeline-buffer-encoding nil
