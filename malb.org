@@ -5169,7 +5169,8 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (conda-env-initialize-interactive-shells)
             (conda-env-initialize-eshell)
             (conda-env-autoactivate-mode t)
-            (setq conda-env-home-directory (expand-file-name "~/.conda/"))
+            (setq conda-env-home-directory (expand-file-name "~/.conda/")
+                  conda-message-on-environment-switch nil)
             (custom-set-variables '(conda-anaconda-home "/opt/conda/"))))
 #+end_src
 
