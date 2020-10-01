@@ -11,6 +11,8 @@
      `(markdown-code-face ((t (:background ,(solarized-color-blend "#222222" s-base03 0.2) :inherit nil  :extend t))))
      `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#222222" s-base03 0.2)
                                                        :inherit (highlight)))))
+     `(stripe-highlight ((t (:background ,s-base02 :extend t))))
+     `(helm-ff-file-extension ((t ())))
      )
 
     (custom-theme-set-variables theme-name
