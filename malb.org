@@ -6528,8 +6528,8 @@ A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s
 
 #+BEGIN_SRC emacs-lisp
 (use-package aws-polly
-  :after xmms
-  :commands (aws-polly-region)
+  :after emms
+  :commands aws-polly-region
   :ensure nil)
 #+END_SRC
 
