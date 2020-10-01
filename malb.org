@@ -8801,6 +8801,15 @@ Use =xdg-open= by default.
 (setq mailcap-user-mime-data '(((viewer . "xdg-open %s") (type . ".*/.*"))))
 #+end_src
 
+Make long lines kinda work ([[https://200ok.ch/posts/2020-09-29_comprehensive_guide_on_handling_long_lines_in_emacs.html][source]])
+
+#+begin_src emacs-lisp
+(setq bidi-paragraph-direction 'left-to-right)
+(when (version<= "27.1" emacs-version)
+  (setq bidi-inhibit-bpa t)
+  (global-so-long-mode 1))
+#+end_src
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
