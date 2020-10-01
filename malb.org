@@ -8643,7 +8643,7 @@ but if they happen to be there (I’m looking at you Go)
 (setq-default tab-width 4)
 #+END_SRC
 
-Pressing =y= or =n= is sufficent.
+Pressing =y= or =n= is sufficient.
 
 #+BEGIN_SRC emacs-lisp
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -8655,10 +8655,19 @@ Kill whole line not just content on =C-k=.
 (setq kill-whole-line t)
 #+END_SRC
 
-In emacs minibuffer prompt, when you press the left arrow key, the cursor will move back all the way over the prompt text. This is annoying because user often will hold down ~Alt+b~ to move back by word to edit, and when user starts to type something, emacs will say ’This is read-only’. Then you have to manually move cursor out of the prompt. You can try it now by calling query-replace or shell-command. Here's how to set the cursor not going into prompt. ([[http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html][source]])
+In emacs minibuffer prompt, when you press the left arrow key, the cursor will move back all the way
+over the prompt text. This is annoying because user often will hold down ~Alt+b~ to move back by
+word to edit, and when user starts to type something, emacs will say ’This is read-only’. Then you
+have to manually move cursor out of the prompt. You can try it now by calling query-replace or
+shell-command. Here's how to set the cursor not going into prompt. ([[http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-(setq minibuffer-prompt-properties (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
+(setq minibuffer-prompt-properties
+      (quote
+       (read-only
+        t
+        point-entered minibuffer-avoid-prompt
+        face minibuffer-prompt)))
 #+END_SRC
 
 Always prefer to load newer files, instead of giving precedence to the .elc files.
@@ -8739,7 +8748,11 @@ Diminish =abbrev-mode=
 #+END_SRC
 
 #+BEGIN_QUOTE
-In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, or 𝒶) when you search for ASCII characters (a in this example). To enable this feature, set the variable =search-default-mode= to =char-fold-to-regexp=. ([[http://endlessparentheses.com/new-in-emacs-25-1-easily-search-non-ascii-characters.html][source]])
+
+In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, or 𝒶) when you search
+for ASCII characters (a in this example). To enable this feature, set the variable
+=search-default-mode= to =char-fold-to-regexp=. ([[http://endlessparentheses.com/new-in-emacs-25-1-easily-search-non-ascii-characters.html][source]])
+
 #+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
