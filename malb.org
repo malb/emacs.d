@@ -5277,7 +5277,8 @@ Code manipulation:
 | ~M~     | formats the code into multiple lines                                    |
 
 #+BEGIN_SRC emacs-lisp
-(use-package lispy)
+(use-package lispy
+   :hook (lisp-data-mode . lispy-mode))
 #+END_SRC
 
 [[https://raw.githubusercontent.com/cpitclaudel/easy-escape/master/img/easy-escape.png]]
