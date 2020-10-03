@@ -13,6 +13,9 @@
                                                        :inherit (highlight)))))
      `(stripe-highlight ((t (:background ,s-base02 :extend t))))
      `(helm-ff-file-extension ((t ())))
+     `(flycheck-fringe-error ((,class (:foreground ,(if solarized-emphasize-indicators red-hc red) :weight bold))))
+     `(flycheck-fringe-warning ((,class (:foreground ,(if solarized-emphasize-indicators yellow-hc yellow) :weight bold))))
+     `(flycheck-fringe-info ((,class (:foreground ,(if solarized-emphasize-indicators blue-hc base01) :weight bold))))
      )
 
     (custom-theme-set-variables theme-name
