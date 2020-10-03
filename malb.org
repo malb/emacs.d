@@ -461,17 +461,23 @@ In case we just want to kill the bottom window, set a shortcut do to this.
     (if (<= (window-height window) (/ (frame-height) 3))
         (delete-window window))))
 
-(defun malb/promote-disposable-window ()
+(defun malb/promote-disposable-window-or-to-frame ()
   "Promote disposable window to real window."
   (interactive)
-  (dolist (window (window-at-side-list))
-    (let ((buffer (window-buffer window))
-          (display-buffer-alist nil))
-      (delete-window window)
-      (display-buffer buffer))))
+  (if (not (eq major-mode 'vterm-mode))
+      (dolist (window (window-at-side-list))
+        (let ((buffer (window-buffer window))
+              (display-buffer-alist nil))
+          (delete-window window)
+          (display-buffer buffer)))
+    (progn
+      (let* ((window (get-buffer-window))
+             (buffer (window-buffer window)))
+        (delete-window window)
+        (switch-to-buffer-other-frame buffer)))))
 
 (key-chord-define-global "qq" #'malb/quit-bottom-disposable-windows)
-(key-chord-define-global "qw" #'malb/promote-disposable-window)
+(key-chord-define-global "qw" #'malb/promote-disposable-window-or-to-frame)
 #+END_SRC
 
 ** Compilation Window
@@ -511,6 +517,26 @@ Mu4e buffers start with =*mu4e-=:
 (defvar malb/mu4e-buffer-regexps '("\\`\\*mu4e-.*\\*")
   "Buffer names of mu4e buffers.")
 #+END_SRC
+
+
+#+begin_src emacs-lisp
+(defvar malb/special-frame-names '("*Minibuf-1*" ;; helm
+                                   "mu4e"
+                                   "yequake-scratch"
+                                   "F1" ;; daemon
+                                   )
+  "Special frame names")
+
+(defun malb/frame-is-not-special-p (frame)
+  (seq-every-p (lambda (name)
+                 (not (string-match (frame-parameter frame 'name) name)))
+               malb/special-frame-names))
+
+(defun malb/only-frame-p (frame)
+  "Return t when the current frame is the only not special frame"
+  (and (malb/frame-is-not-special-p frame)
+       (< (length (seq-filter 'malb/frame-is-not-special-p (frame-list))) 2)))
+#+end_src
 
 But we allow helm buffers in the mu4e frame, e.g. to pick attachments.
 
@@ -563,10 +589,7 @@ Find a frame not named =mu4e= if there is any, make one otherwise.
 (defun malb/switch-away-from-mu4e ()
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
-                         (if (and (not (string-match "*Minibuf-1*" (frame-parameter frame 'name))) ;; helm frame
-                                  (not (string-match "mu4e" (frame-parameter frame 'name)))
-                                  (not (string-match "yequake-scratch" (frame-parameter frame 'name)))
-                                  (not (string-match "F1" (frame-parameter frame 'name)))) ;; emacsclient
+                         (if (malb/frame-is-not-special-p frame)
                              (throw 'other-frame frame)
                            nil)))))
     (if other-frame
@@ -609,48 +632,6 @@ Main dispatch function:
 (add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
 #+END_SRC
 
-Overwrite =find-file= to avoid =mu4e= frame.
-
-#+BEGIN_SRC emacs-lisp
-(defun find-file (filename &optional wildcards)
-  "Edit file FILENAME.
-Switch to a buffer visiting file FILENAME,
-creating one if none already exists.
-Interactively, the default if you just type RET is the current directory,
-but the visited file name is available through the minibuffer history:
-type M-n to pull it into the minibuffer.
-
-You can visit files on remote machines by specifying something
-like /ssh:SOME_REMOTE_MACHINE:FILE for the file name.  You can
-also visit local files as a different user by specifying
-/sudo::FILE for the file name.
-See the Info node `(tramp)File name Syntax' in the Tramp Info
-manual, for more about this.
-
-Interactively, or if WILDCARDS is non-nil in a call from Lisp,
-expand wildcards (if any) and visit multiple files.  You can
-suppress wildcard expansion by setting `find-file-wildcards' to nil.
-
-To visit a file without any kind of conversion and without
-automatically choosing a major mode, use `find-file-literally’."
-  (interactive
-   (find-file-read-args "Find file: "
-                        (confirm-nonexistent-file-or-buffer)))
-  (let ((value (find-file-noselect filename nil nil wildcards)))
-    (if (string-match "mu4e" (frame-parameter nil 'name))
-        (progn
-          (if (listp value)
-              (mapcar display-buffer (nreverse value))
-            (display-buffer value)
-            (switch-to-buffer value)))
-      (progn
-        (if (listp value)
-            (mapcar switch-to-buffer (nreverse value))
-          (switch-to-buffer value))))))
-#+END_SRC
-
-****** TODO don’t replace =find-file= but advice =find-file=
-
 Run =old-function= with an empty =display-buffer-alist=
 
 #+BEGIN_SRC emacs-lisp
@@ -660,17 +641,12 @@ Run =old-function= with an empty =display-buffer-alist=
     (apply old-function arguments)))
 #+END_SRC
 
-
 #+BEGIN_SRC emacs-lisp
 (defun malb/make-frame-advice (old-function &rest arguments)
   (with-selected-frame (make-frame)
     (apply old-function arguments)
-    (dedicated-mode)
-    ;; (sleep 0.5)
-    ;; (add-hook 'kill-buffer-hook #'delete-frame t t)
-    ))
+    (dedicated-mode)))
 #+END_SRC
-
 
 ** Dedicated Mode
 
@@ -3715,7 +3691,16 @@ The function behaves as follows:
                         (vterm-send-return))
                       (vterm-send-string "ls")
                       (vterm-send-return))
-                   t))))
+                   t))
+
+            (defun malb/vterm-send-C-d-advive (orig-function &rest args)
+              (let ((do-kill-frame (and (not (malb/only-frame-p (selected-frame)))
+                                        (= (length (window-list)) 1))))
+                (apply orig-function args)
+                (if do-kill-frame
+                    (delete-frame))))
+
+            (advice-add #'vterm-send-C-d :around #'malb/vterm-send-C-d-advive)))
 #+end_src
 
 ** [#B] Shell
