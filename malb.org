@@ -345,6 +345,7 @@ Resize windows to accommodate new ones.
                     (?u winner-undo)
                     (?r winner-redo)))
             (add-to-list 'aw-ignored-buffers "*Ilist*")
+            (add-to-list 'aw-ignored-buffers "*toc*")
             (add-to-list 'aw-ignored-buffers 'dired-sidebar-mode)
             (defun malb/ace-window (arg)
               (interactive "P")
@@ -394,6 +395,7 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
                ((string-match-p (regexp-quote (buffer-name)) "\\*Sage\\*") 10)
                ((equal major-mode 'imenu-list-major-mode) 8)
                ((equal major-mode 'dired-sidebar-mode) 8)
+               ((equal major-mode 'reftex-toc-mode) 8)
                (t nil)))
 
             (add-to-list 'winum-assign-functions #'malb/winum-assign)
@@ -5868,16 +5870,14 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                '("example" LaTeX-env-label)
                '("proposition" LaTeX-env-label)))
 
-            (setq reftex-section-levels '(("part" . 0)
-                                          ("chapter" . 1)
-                                          ("section" . 2)
-                                          ("subsection" . 3)
-                                          ("subsubsection" . 4)
-                                          ("frametitle" . 5)
-                                          ("paragraph" . 6)
-                                          ("subparagraph" . 7)
-                                          ("addchap" . -1)
-                                          ("addsec" . -2)))
+            (setq reftex-section-levels '(("chapter" . 0)
+                                          ("section" . 1)
+                                          ("subsection" . 2)
+                                          ("subsubsection" . 3)
+                                          ("frametitle" . 4)
+                                          ("paragraph" . 5)
+                                          ("subparagraph" . 6)
+                                          ("addsec" . -1)))
 
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
 
@@ -5916,7 +5916,26 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-electric-sub-and-superscript t
                   TeX-electric-math '("\\(" . "\\)")
                   ;; LaTeX-electric-left-right-brace t
-                  TeX-quote-after-quote nil)
+                  TeX-quote-after-quote nil
+                  reftex-toc-split-windows-fraction 0.15
+                  reftex-toc-split-windows-horizontally t)
+
+            (add-to-list 'display-buffer-alist
+                         '("^\\*toc\\*$" display-buffer-in-side-window
+                           (window-parameters
+                            (no-other-window . t)
+                            (no-delete-other-window . t))
+                           (side . left)
+                           (window-width . 0.15)
+                           (preserve-size t)
+                           (dedicated . t)))
+
+            (defun malb/reftex-toc-advice (old-function &rest arguments)
+              (apply old-function arguments)
+              (delete-window)
+              (display-buffer "*toc*"))
+
+            (advice-add #'reftex-toc :around #'malb/reftex-toc-advice)
 
             ;; https://stackoverflow.com/questions/19845598/emacs-regex-replacing-a-string-inside-a-latex-equation
             (defun malb/latex-replace-in-math ()
