@@ -9104,7 +9104,8 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
                         " "
                         (:eval
                          (doom-modeline-segment--matches)))))
-            (add-hook 'mu4e-compose-mode-hook #'doom-modeline-set-minimal-modeline)))
+            (add-hook 'mu4e-compose-mode-hook #'doom-modeline-set-minimal-modeline))
+  :custom (doom-modeline-project-detection 'projectile))
 #+END_SRC
 
 ** Theme
