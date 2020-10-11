@@ -1201,8 +1201,9 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
          ("C-i"   . helm-execute-persistent-action) ;; make TAB works in terminal
          ("C-z"   . helm-select-action)             ;; list actions using C-z
          ("C-<right>" . helm-next-source)
-         ("C-<left>" . helm-previous-source)
-         )
+         ("C-<left>" . helm-previous-source))
+
+  :custom (helm-ff-keep-cached-candidates nil)  ;; https://issues.guix.gnu.org/43406
 
   :config (progn
             (require 'helm-config)
