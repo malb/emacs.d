@@ -6155,8 +6155,9 @@ Run =latexmk -pvc= in async shell
 (defun malb/align-& (start end)
   "Align columns by ampersand"
   (interactive "r")
-  (align-regexp start end
-                "\\(\\s-*\\)&" 1 1 t))
+  (save-excursion
+    (replace-regexp "\\s-*&\\s-*" " & " nil start end))
+  (align-regexp start end "\\(\\s-*\\)&" 1 1 t))
 
 (defun malb/align-whitespace (start end)
   "Align columns by whitespace"
