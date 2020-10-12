@@ -522,12 +522,17 @@ Mu4e buffers start with =*mu4e-=:
 
 
 #+begin_src emacs-lisp
-(defvar malb/special-frame-names '("*Minibuf-1*" ;; helm
-                                   "mu4e"
+(defvar malb/special-frame-names '("\\*Minibuf-1\\*.*" ;; helm
+                                   "\\*mu4e\\*"
                                    "yequake-scratch"
                                    "F1" ;; daemon
                                    )
   "Special frame names")
+
+(defun malb/frame-is-special-p (frame)
+  (seq-some (lambda (name)
+              (if (eq (string-match name (frame-parameter frame 'name)) 0) t nil))
+            malb/special-frame-names))
 
 (defun malb/frame-is-not-special-p (frame)
   (seq-every-p (lambda (name)
@@ -3698,9 +3703,11 @@ The function behaves as follows:
 
             (defun malb/vterm-send-C-d-advive (orig-function &rest args)
               (let ((do-kill-frame (and (not (malb/only-frame-p (selected-frame)))
-                                        (= (length (window-list)) 1))))
+                                        (= (length (window-list)) 1)))
+                    (buffer  (current-buffer)))
                 (apply orig-function args)
-                (if do-kill-frame
+                (sit-for 0.1)
+                (if (and do-kill-frame (not (buffer-live-p buffer)))
                     (delete-frame))))
 
             (advice-add #'vterm-send-C-d :around #'malb/vterm-send-C-d-advive)))
