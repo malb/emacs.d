@@ -9174,7 +9174,24 @@ The result looks like this:
         (load-theme 'solarized-zenburn-malb))
     (progn
       (disable-theme 'solarized-zenburn-malb)
-      (load-theme 'solarized-light-malb))))
+      (load-theme 'solarized-light-malb)))
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      (cond ((eq major-mode 'org-mode)
+             ;; nicked from org-ctrl-c-ctrl-c
+             (let ((org-inhibit-startup-visibility-stuff t)
+	               (org-startup-align-all-tables nil))
+	           (when (boundp 'org-table-coordinate-overlays)
+	             (mapc #'delete-overlay org-table-coordinate-overlays)
+	             (setq org-table-coordinate-overlays nil))
+	           (org-save-outline-visibility 'use-markers (org-mode-restart)))))
+      (cond ((eq major-mode 'org-agenda-mode)
+             (org-agenda-redo-all)))
+      (cond ((eq major-mode 'pdf-view-mode)
+             (if (custom-theme-enabled-p 'solarized-light-malb)
+                 (pdf-view-midnight-minor-mode -1)
+               (pdf-view-midnight-minor-mode 1))
+             )))))
 #+END_SRC
 
 *** Load Theme
