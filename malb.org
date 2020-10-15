@@ -9233,7 +9233,7 @@ Better unicode font support.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/fonts (frame)
-  (when (string-match "Cousine" (face-font 'default))
+  (when (string-match "Cousine" (alist-get 'font default-frame-alist))
     (with-selected-frame frame
       (setq face-font-rescale-alist nil)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "DejaVu Sans Mono") 0.9) t)
