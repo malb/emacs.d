@@ -939,7 +939,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
                   company-show-numbers t   ; show numbers for easy selection
                   company-selection-wrap-around t
                   company-require-match nil
-                  company-dabbrev-ignore-case t
+                  company-dabbrev-ignore-case nil
                   company-dabbrev-ignore-invisible t
                   company-dabbrev-other-buffers t
                   company-dabbrev-downcase nil
