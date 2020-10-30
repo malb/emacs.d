@@ -9170,10 +9170,12 @@ The result looks like this:
   (if (custom-theme-enabled-p 'solarized-light-malb)
       (progn
         (disable-theme 'solarized-light-malb)
-        (load-theme 'solarized-zenburn-malb))
+        (load-theme 'solarized-zenburn-malb)
+        (add-hook 'pdf-view-mode-hook #'pdf-view-midnight-minor-mode))
     (progn
       (disable-theme 'solarized-zenburn-malb)
-      (load-theme 'solarized-light-malb)))
+      (load-theme 'solarized-light-malb)
+      (remove-hook 'pdf-view-mode-hook #'pdf-view-midnight-minor-mode)))
   (dolist (buffer (buffer-list))
     (with-current-buffer buffer
       (cond ((eq major-mode 'org-mode)
