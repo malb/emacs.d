@@ -8400,8 +8400,7 @@ exports.boxes = [ "INBOX"];
           (prodigy-start-service (prodigy-find-service "bitlbee"))
           (prodigy-start-service (prodigy-find-service "sage-devel"))
           (prodigy-start-service (prodigy-find-service "imapnotify"))
-          (prodigy-start-service (prodigy-find-service "weechat"))
-          ))
+          (prodigy-start-service (prodigy-find-service "weechat"))))
 #+END_SRC
 
 * EMMS
