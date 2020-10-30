@@ -5938,7 +5938,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             ;; https://stackoverflow.com/questions/19845598/emacs-regex-replacing-a-string-inside-a-latex-equation
             (defun malb/latex-replace-in-math ()
-              "Call `query-replace-regexp' with `isearch-filter-predicate' set to filter out matches outside LaTeX math environments."
+              "Call `query-replace-regexp' with `isearch-filter-predicate' to filter out outside math environments."
               (interactive)
               (let ((isearch-filter-predicate
                      (lambda (BEG END)
