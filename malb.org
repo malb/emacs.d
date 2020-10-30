@@ -435,7 +435,8 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\`\\*Backtrace\\*\\'"
                              "\\`\\*Messages\\*\\'"
                              "\\`\\*Calendar\\*\\'"
-                             "\\`\\*mscdb\\*\\'"))
+                             "\\`\\*mscdb\\*\\'"
+                             "\\`\\*jupyter-repl\\[.*\\]\\*"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -448,6 +449,9 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                   display-buffer-in-side-window)
                  (reusable-frames . visible)
                  (side            . bottom)
+                 (window-parameters
+                  (no-other-window . t)
+                  (no-delete-other-window . t))
                  (window-height   . 0.3))) t)
 #+END_SRC
 
