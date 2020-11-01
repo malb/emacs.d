@@ -1103,6 +1103,8 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
          (looking-back "[^[:space:]]" nil)
          (not (looking-back "^" nil)))
     (cond
+     ((bound-and-true-p cdlatex-mode)
+      (cdlatex-tab))
      ((bound-and-true-p hs-minor-mode)
       (save-excursion (end-of-line) (hs-toggle-hiding)))
      ((bound-and-true-p outline-minor-mode)
