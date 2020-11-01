@@ -1752,25 +1752,28 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                     (goto-char (if at-beg (1+ :beg-in) :end))))))
 
             (sp-with-modes
-                '(tex-mode plain-tex-mode latex-mode)
-              ;; (sp-local-pair "\\(" "\\)"
-              ;;                :unless '(sp-point-before-word-p
-              ;;                          sp-point-before-same-p
-              ;;                          sp-latex-point-after-backslash)
-              ;;                :trigger-wrap "\$"
-              ;;                :trigger "\$")
+                '(tex-mode plain-tex-mode latex-mode org-mode)
+              (sp-local-pair "\\(" "\\)"
+                             :unless '(sp-point-before-word-p
+                                       sp-point-before-same-p
+                                       sp-latex-point-after-backslash)
+                             :trigger-wrap "\$"
+                             :trigger "\$"
+                             )
 
-              ;; (sp-local-pair  "$" nil
-              ;;                 :unless '(sp-point-before-word-p
-              ;;                           sp-point-before-same-p
-              ;;                           sp-latex-point-after-backslash)
-              ;;                 :post-handlers '(:add malb/latex-replace-dollar))
+              (sp-local-pair  "$" "$"
+                              :unless '(sp-point-before-word-p
+                                        sp-point-before-same-p
+                                        sp-latex-point-after-backslash)
+                              :post-handlers '(:add malb/latex-replace-dollar))
 
-              ;; (sp-local-pair "\\[" "\\]"
-              ;;                :unless '(sp-point-before-word-p
-              ;;                          sp-point-before-same-p
-              ;;                          sp-latex-point-after-backslash))
-              (sp-local-pair "$" nil :actions :rem))
+              (sp-local-pair "\\[" "\\]"
+                             :unless '(sp-point-before-word-p
+                                       sp-point-before-same-p
+                                       sp-latex-point-after-backslash))
+              ;; (sp-local-pair "$" nil :actions :rem)
+              (sp-local-pair "=" "=" :actions :rem)
+              )
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
@@ -2656,9 +2659,10 @@ UTF-8 everywhere.
 #+BEGIN_SRC emacs-lisp
 (setq org-export-coding-system 'utf-8
       org-export-in-background nil
-      org-export-use-babel nil
+      org-export-use-babel t
       org-export-with-toc nil
       org-export-with-timestamps 'active
+      org-latex-pdf-process '("latexmk -g -pdf -pdflatex=\"%latex --shell-escape -halt-on-error\" -outdir=%o %f")
       org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))
 #+END_SRC
 
@@ -4395,7 +4399,7 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
             (add-hook 'c-mode-common-hook   #'ws-butler-mode)
             (add-hook 'python-mode-hook     #'ws-butler-mode)
             (add-hook 'cython-mode-hook     #'ws-butler-mode)
-            (add-hook 'latex-mode-hook      #'ws-butler-mode)
+            (add-hook 'LaTeX-mode-hook      #'ws-butler-mode)
             (add-hook 'emacs-lisp-mode-hook #'ws-butler-mode)
             ))
 #+END_SRC
@@ -5642,7 +5646,7 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
             (unbind-key "C-c s l" synosaurus-mode-map)
             (unbind-key "C-c s r" synosaurus-mode-map)
             (add-hook 'org-mode-hook #'synosaurus-mode)
-            (add-hook 'latex-mode-hook #'synosaurus-mode)))
+            (add-hook 'LaTeX-mode-hook #'synosaurus-mode)))
 #+END_SRC
 
 [[https://raw.githubusercontent.com/SavchenkoValeriy/emacs-powerthesaurus/master/assets/demo.gif]]
@@ -5879,8 +5883,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                           ("addsec" . -1)))
 
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
-
             (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
+            (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)
 
             (defun malb/latex-jump ()
               "If point is on a citation, jump to the bibtex file, otherwise open refex menu."
@@ -5913,7 +5917,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-save-query nil
                   TeX-error-overview-open-after-TeX-run t
                   TeX-electric-sub-and-superscript t
-                  TeX-electric-math '("\\(" . "\\)")
+                  ;; TeX-electric-math '("\\(" . "\\)")
                   ;; LaTeX-electric-left-right-brace t
                   TeX-quote-after-quote nil
                   reftex-toc-split-windows-fraction 0.15
@@ -5954,6 +5958,20 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+END_SRC
 
+*** CDLaTeX
+
+#+begin_src emacs-lisp
+(use-package cdlatex
+  :config (progn
+            (unbind-key "$" 'cdlatex-mode-map)
+            (setq cdlatex-math-modify-alist '((?m "\\mat" nil t t nil)
+                                              (?v "\\vec" nil t t nil))
+                  cdlatex-command-alist '(("ZZ" "Insert \\ZZ" "\\ZZ?"
+                                           cdlatex-position-cursor nil nil t)
+                                          ("nrm" "Insert ||foo||" "\\lVert{?}\\rVert"
+                                           cdlatex-position-cursor nil nil t)))))
+#+end_src
+
 *** LatexMK
 
 #+BEGIN_SRC emacs-lisp
@@ -5989,27 +6007,40 @@ Run =latexmk -pvc= in async shell
 (defun malb/align-& (start end)
   "Align columns by ampersand"
   (interactive "r")
+
+  (when (not (use-region-p))
+    (save-excursion
+      (LaTeX-mark-environment)
+      (setq start (region-beginning))
+      (setq end (region-end))))
+
   (save-excursion
-    (replace-regexp "\\s-*&\\s-*" " & " nil start end))
+    (replace-regexp "\\s-*&\\s-*" " & " nil start end)
+    (replace-regexp "^\\s-*" " " nil start end))
   (align-regexp start end "\\(\\s-*\\)&" 1 1 t))
+
+(bind-key "C-c w &" #'malb/align-&)
 
 (defun malb/align-whitespace (start end)
   "Align columns by whitespace"
   (interactive "r")
-  (align-regexp start end
-                "\\(\\s-*\\)\\s-" 1 0 t))
+  (save-excursion
+    (align-regexp start end
+                  "\\(\\s-*\\)\\s-" 1 0 t)))
 
 (defun malb/align-= (start end)
   "Align columns by equals sign"
   (interactive "r")
-  (align-regexp start end
-                "\\(\\s-*\\)=" 1 0 t))
+  (save-excursion
+    (align-regexp start end
+                  "\\(\\s-*\\)=" 1 0 t)))
 
 (defun malb/align-: (start end)
   "Align columns by equals sign"
   (interactive "r")
-  (align-regexp start end
-                "\\(\\s-*\\):" 1 0 t))
+  (save-excursion
+    (align-regexp start end
+                  "\\(\\s-*\\):" 1 0 t)))
 #+END_SRC
 
 ** BibTeX
