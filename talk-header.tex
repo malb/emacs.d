@@ -48,6 +48,7 @@
 %%%
 
 \RequirePackage{tikz,pgfplots}
+\pgfplotsset{compat=newest}
 
 \usetikzlibrary{calc}
 \usetikzlibrary{arrows}
@@ -62,24 +63,22 @@
 \usetikzlibrary{shapes.arrows}
 \usetikzlibrary{graphs}
 
-%% Cache
+%% Cache but disable by default
 
-\ifdefined\tikzcaching  % chktex 1
-  \usetikzlibrary{external}
-  \tikzexternalize[prefix=build/]
-  \tikzset{external/up to date check=diff}  %% MD5 fails from within emacs
-\fi
+\usetikzlibrary{external}
+\tikzexternalize[]
+\tikzset{external/export=false}
 
 %%%
 %%% SVG (Inkscape)
 %%%
 
 \ifxetex % chktex 1
-\newcommand{\executeiffilenewer}[3]{%
+\providecommand{\executeiffilenewer}[3]{%
   {\immediate\write18{#3}} % hack
 }
 \else
-\newcommand{\executeiffilenewer}[3]{%
+\providecommand{\executeiffilenewer}[3]{%
   \ifnum\pdfstrcmp{\pdffilemoddate{#1}}%
     {\pdffilemoddate{#2}}>0%
     {\immediate\write18{#3}}
@@ -87,7 +86,7 @@
 }
 \fi
 
-\newcommand{\includesvg}[2][1.0\textwidth]{%
+\providecommand{\includesvg}[2][1.0\textwidth]{%
  \executeiffilenewer{#1.svg}{#1.pdf}%
  {inkscape -z -D --file=#2.svg --export-pdf=#2.pdf --export-latex --export-area-page}%
  \def\svgwidth{#1} 
@@ -132,7 +131,7 @@
             maxnames=4,
             citestyle=alphabetic]{biblatex}
 
-\bibliography{local.bib,abbrev3.bib,crypto_crossref.bib,rfc.bib,jacm.bib}
+\bibliography{local.bib,abbrev3.bib,crypto_crossref.bib,rfc.bib,jacm.bib,dcc.bib}
 
 \DeclareFieldFormat{title}{\alert{#1}}
 \DeclareFieldFormat[book]{title}{\alert{#1}}
