@@ -1779,7 +1779,9 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
             (add-to-list 'sp-ignore-modes-list 'markdown-mode)
             (add-to-list 'sp-ignore-modes-list 'org-mode)
-            (add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)))
+            (add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)
+            (add-to-list 'sp-ignore-modes-list 'sage-shell-mode)
+            (add-to-list 'sp-ignore-modes-list 'jupyter-repl-mode)))
 #+END_SRC
 
 Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing delimiter]]
