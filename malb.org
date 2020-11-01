@@ -5962,6 +5962,17 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+END_SRC
 
+
+*** Yanking
+
+- https://abizjak.github.io/emacs/2016/03/05/latex-environment-yank.html
+- https://abizjak.github.io/emacs/2016/03/05/latex-environment.html
+
+#+begin_src emacs-lisp
+(use-package latex-math-yank
+  :ensure nil)
+#+end_src
+
 *** CDLaTeX
 
 #+begin_src emacs-lisp
