@@ -5978,7 +5978,10 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 #+begin_src emacs-lisp
 (use-package cdlatex
   :config (progn
-            (unbind-key "$" 'cdlatex-mode-map)
+            (unbind-key "$" 'cdlatex-mode-map) ;; smartparens
+            (unbind-key "{" 'cdlatex-mode-map) ;; smartparens
+            (unbind-key "(" 'cdlatex-mode-map) ;; smartparens
+            (unbind-key "[" 'cdlatex-mode-map) ;; smartparens
             (setq cdlatex-math-modify-alist '((?m "\\mat" nil t t nil)
                                               (?v "\\vec" nil t t nil))
                   cdlatex-command-alist '(("ZZ" "Insert \\ZZ" "\\ZZ?"
@@ -7768,6 +7771,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (push ".out" dired-latex-unclean-extensions)
             (push ".nav" dired-latex-unclean-extensions)
             (push ".snm" dired-latex-unclean-extensions)
+            (push ".synctex.gz" dired-latex-unclean-extensions)
             (push ".vrb" dired-latex-unclean-extensions)
 
             (setq dired-garbage-files-regexp malb/unimportant-files
