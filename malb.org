@@ -5855,7 +5855,13 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
   :defer t
   :bind (:map LaTeX-mode-map
               ("C-<tab>" . outline-cycle)
-              ("M-." . malb/latex-jump))
+              ("M-." . malb/latex-jump)
+              ("M-f" . sp-forward-sexp)
+              ("ESC <right>" . sp-forward-sexp)
+              ("M-b" . sp-backward-sexp)
+              ("ESC <left>" . sp-backward-sexp)
+              ("ESC <down>" . sp-down-sexp)
+              ("ESC <up>" . sp-up-sexp))
   :config (progn
             (add-hook 'LaTeX-mode-hook #'visual-line-mode)
             (add-hook 'LaTeX-mode-hook #'flyspell-mode)
