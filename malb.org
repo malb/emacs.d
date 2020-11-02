@@ -831,7 +831,15 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
             (defun malb/disable-yas-if-no-snippets ()
               (when (and yas-minor-mode (null (yas--get-snippet-tables)))
                 (yas-minor-mode -1)))
-            (add-hook 'yas-minor-mode-hook #'malb/disable-yas-if-no-snippets)))
+
+            (add-hook 'yas-minor-mode-hook #'malb/disable-yas-if-no-snippets)
+
+            (defun malb/yas-dir-f-oh ()
+              (save-excursion
+                (re-search-forward "^# name: \\(.*?\\)$")
+                (let  ((fn (match-string 1))
+                       (dir (downcase (org-entry-get nil "ITEM"))))
+                  (concat user-emacs-directory "snippets/" dir  "/" fn))))))
 #+END_SRC
 
 The official yasnippet snippet collection
@@ -1762,7 +1770,6 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                              :trigger-wrap "\$"
                              :trigger "\$"
                              )
-
               (sp-local-pair  "$" "$"
                               :unless '(sp-point-before-word-p
                                         sp-point-before-same-p
