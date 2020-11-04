@@ -5858,12 +5858,10 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
   :bind (:map LaTeX-mode-map
               ("C-<tab>" . outline-cycle)
               ("M-." . malb/latex-jump)
-              ("M-f" . sp-forward-sexp)
-              ("ESC <right>" . sp-forward-sexp)
-              ("M-b" . sp-backward-sexp)
-              ("ESC <left>" . sp-backward-sexp)
-              ("ESC <down>" . sp-down-sexp)
-              ("ESC <up>" . sp-up-sexp))
+              ("M-<right>" . sp-forward-sexp)
+              ("M-<left>" . sp-backward-sexp)
+              ("M-<up>" . sp-up-sexp)
+              ("M-<down>" . sp-down-sexp))
   :config (progn
             (add-hook 'LaTeX-mode-hook #'visual-line-mode)
             (add-hook 'LaTeX-mode-hook #'flyspell-mode)
@@ -5997,12 +5995,14 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (unbind-key "{" 'cdlatex-mode-map) ;; smartparens
             (unbind-key "(" 'cdlatex-mode-map) ;; smartparens
             (unbind-key "[" 'cdlatex-mode-map) ;; smartparens
-            (setq cdlatex-math-modify-alist '((?m "\\mat" nil t t nil)
+            (setq cdlatex-math-modify-alist '((?a "\\alert" "\\alert" t t nil)
+                                              (?m "\\mat" nil t t nil)
                                               (?v "\\vec" nil t t nil))
                   cdlatex-command-alist '(("ZZ" "Insert \\ZZ" "\\ZZ?"
                                            cdlatex-position-cursor nil nil t)
                                           ("nrm" "Insert ||foo||" "\\lVert{?}\\rVert"
-                                           cdlatex-position-cursor nil nil t)))))
+                                           cdlatex-position-cursor nil nil t))
+                  cdlatex-math-symbol-alist '( ( ?a  ("\\alpha" "\\alert{?}"))))))
 #+end_src
 
 *** LaTeXMK
