@@ -3535,7 +3535,10 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 This extension facilitates moving images from point A (e.g. an image inside your browser that you can drag to Emacs) to point B (an Emacs org-mode buffer where the inline link will be inserted).
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-download)
+(use-package org-download
+  :config (progn
+            (setq-default org-download-heading-lvl nil)
+            (add-hook 'dired-mode-hook 'org-download-enable)))
 #+END_SRC
 
 ** Tips
@@ -9297,6 +9300,7 @@ Easily change the text size:
 (malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex-with-local-bibliography)
 (malb/set-menu-key "L" #'mathpix-screenshot)
+(malb/set-menu-key "K" #'org-download-screenshot)
 (malb/set-menu-key "m" (lambda () (interactive) (malb/switch-to-mu4e)))
 (malb/set-menu-key "M" #'malb/helm-mu)
 (malb/set-menu-key "/" #'malb/helm-ag-projects)
