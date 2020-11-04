@@ -1852,6 +1852,7 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
 (use-package visual-regexp
   :bind (("C-c m" . vr/mc-mark)
          ("M-%" . vr/query-replace)
+         ("C-%" . query-replace)
          ("C-S-s" . vr/isearch-forward)
          ("C-S-r" . vr/isearch-backward)))
 
