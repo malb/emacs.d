@@ -13,7 +13,6 @@
 
 We assume that the following variables are defined:
 
-- ~malb/common-file-targets~ - for helm
 - ~malb/documents-dir~ - documents
 - ~malb/inbox-org~ - this is where I store tasks
 - ~malb/literature-dirs~ - PDFs of papers
@@ -1188,11 +1187,6 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
         '(helm-source-projectile-recentf-list
           helm-source-recentf)
       '(helm-source-recentf)) ;; all recent files
-
-    ;; always make some common files easily accessible
-    '(((name . "Common Files")
-       (candidates . malb/common-file-targets)
-       (action . (("Open" . (lambda (x) (find-file (eval x))))))))
 
     '(helm-source-files-in-current-dir
       helm-source-bookmarks
