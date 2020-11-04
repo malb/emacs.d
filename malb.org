@@ -1983,7 +1983,8 @@ https://github.com/cute-jumper/embrace.el
 
             (bind-key "M-\\" #'embrace-commander)
             (add-hook 'org-mode-hook #'embrace-org-mode-hook)
-            (add-hook 'LaTeX-mode-hook #'malb/embrace-latex-mode-hook)))
+            (add-hook 'LaTeX-mode-hook #'malb/embrace-latex-mode-hook)
+            (add-hook 'org-mode-hook #'malb/embrace-latex-mode-hook)))
 #+END_SRC
 
 ** Wrap Region
