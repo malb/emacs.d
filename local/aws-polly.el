@@ -16,7 +16,7 @@
 
 ;; AWS offers various voices to choose from
 
-(defcustom aws-polly-voices '(("Emma"     "en-GB") ("Brian"     "en-GB") ("Joanna"    "en-US") ("Mizuki"   "ja-JP")
+(defcustom aws-polly-voices '(("Amy"      "en-GB") ("Brian"     "en-GB") ("Joanna"    "en-US") ("Mizuki"   "ja-JP")
                               ("Filiz"    "tr-TR") ("Astrid"    "sv-SE") ("Maxim"     "ru-RU") ("Tatyana"  "ru-RU")
                               ("Carmen"   "ro-RO") ("Ines"      "pt-PT") ("Cristiano" "pt-PT") ("Vitoria"  "pt-BR")
                               ("Ricardo"  "pt-BR") ("Maja"      "pl-PL") ("Jan"       "pl-PL") ("Ewa"      "pl-PL")
@@ -25,7 +25,7 @@
                               ("Celine"   "fr-FR") ("Chantal"   "fr-CA") ("Penelope"  "es-US") ("Miguel"   "es-US")
                               ("Enrique"  "es-ES") ("Conchita"  "es-ES") ("Geraint"   "en-GB-WLS") ("Salli" "en-US")
                               ("Kimberly" "en-US") ("Kendra"    "en-US") ("Justin"    "en-US") ("Joey"     "en-US")
-                              ("Ivy"      "en-US") ("Raveena"   "en-IN")  ("Amy"      "en-GB") ("Russell"  "en-AU")
+                              ("Ivy"      "en-US") ("Raveena"   "en-IN") ("Emma"     "en-GB")  ("Russell"  "en-AU")
                               ("Nicole"   "en-AU") ("Marlene"   "de-DE") ("Hans"      "de-DE") ("Naja"     "da-DK")
                               ("Mads"     "da-DK") ("Gwyneth"  " cy-GB") ("Jacek"     "pl-PL"))
   "Voices to use in AWS polly in order of preference."
