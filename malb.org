@@ -6528,7 +6528,10 @@ Just press ~l~ in the headers view and any mailing list you've subscribed to wil
 #+end_quote
 
 #+BEGIN_SRC emacs-lisp
-(use-package mu4e-jump-to-list)
+(use-package mu4e-jump-to-list
+  :config (progn
+            (unbind-key "l" mu4e-main-mode-map)
+            (unbind-key "l" mu4e-headers-mode-map)))
 #+END_SRC
 
 Canned queries.
@@ -6884,10 +6887,12 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
               (unbind-key "s" mode-map)
               (bind-key "ss" #'mu4e-query-fragments-search mode-map)
               (bind-key "sm" #'mu4e-query-fragments-search mode-map)
+              (bind-key "sl" #'mu4e-jump-to-list mode-map)
               (bind-key "sh" #'malb/helm-mu mode-map)
               (bind-key "sc" (defun malb/helm-mu-contacts-messages ()
                                (interactive)
-                               (malb/helm-mu-contacts 4)) mode-map))))
+                               (malb/helm-mu-contacts 4))
+                        mode-map))))
 #+END_SRC
 
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
