@@ -1174,8 +1174,11 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
 
     (if (projectile-project-p)
         '(helm-source-projectile-buffers-list
-          helm-source-buffers-list)
-      '(helm-source-buffers-list)) ;; list of all open buffers
+          helm-source-files-in-current-dir
+          helm-source-projectile-recentf-list)
+      '(helm-source-buffers-list
+        helm-source-files-in-current-dir
+        helm-source-recentf)) ;; list of all open buffers
 
     `(((name . "Virtual Workspace")
        (candidates . ,(--map (cons (eyebrowse-format-slot it) (car it))
@@ -1183,15 +1186,15 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
        (action . (lambda (candidate)
                    (eyebrowse-switch-to-window-config candidate)))))
 
-    (if (projectile-project-p)
-        '(helm-source-projectile-recentf-list
-          helm-source-recentf)
-      '(helm-source-recentf)) ;; all recent files
+    '(helm-source-bookmarks)
 
-    '(helm-source-files-in-current-dir
-      helm-source-bookmarks
-      helm-source-buffer-not-found ;; ask to create a buffer otherwise
-      ))
+    (when (projectile-project-p)
+      '(helm-source-buffers-list
+        helm-source-recentf))
+
+    '(helm-source-buffer-not-found) ;; ask to create a buffer otherwise
+    )
+
    "*Helm all the things*"))
 #+END_SRC
 
