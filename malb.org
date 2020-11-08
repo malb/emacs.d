@@ -534,13 +534,11 @@ Mu4e buffers start with =*mu4e-=:
 
 (defun malb/frame-is-special-p (frame)
   (seq-some (lambda (name)
-              (if (eq (string-match name (frame-parameter frame 'name)) 0) t nil))
+              (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
             malb/special-frame-names))
 
 (defun malb/frame-is-not-special-p (frame)
-  (seq-every-p (lambda (name)
-                 (not (string-match (frame-parameter frame 'name) name)))
-               malb/special-frame-names))
+  (not (malb/frame-is-special-p frame)))
 
 (defun malb/only-frame-p (frame)
   "Return t when the current frame is the only not special frame"
