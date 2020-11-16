@@ -2380,7 +2380,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (add-hook 'org-agenda-mode-hook (lambda () (toggle-truncate-lines 1)))
 (add-hook 'org-agenda-mode-hook (lambda ()
                                   (setq-local imenu-generic-expression
-                                              '((nil "^.+? \\([0-9]+ [a-zA-Z]+ 20[0-9][0-9]\\)$" 1)))))
+                                              '((nil "^\\([a-zA-Z]+ +[0-9]+ [a-zA-Z]+ 20[0-9][0-9]\\)$" 1)))))
 
 (bind-key "<home>" #'org-beginning-of-line org-mode-map)
 (bind-key "<end>" #'org-end-of-line org-mode-map)
