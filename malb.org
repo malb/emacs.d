@@ -3300,6 +3300,13 @@ In [[file:%s::%s][%s]]:
                     "")
          :prepend t
          :empty-lines 1)
+
+        (,(format "%s\tWeight" (all-the-icons-faicon "tachometer"  :face 'all-the-icons :v-adjust 0.01)) :keys "w"
+         :file malb/private-org
+         :headline "Weight"
+         :type table-line
+         :template "| %u | %? | |")
+
         (,(format "%s\t[External] " (all-the-icons-faicon "firefox" :face 'all-the-icons :v-adjust 0.01)) :keys "%"
          :children (
                     (,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01)) :keys "r"
