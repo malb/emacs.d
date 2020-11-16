@@ -1221,7 +1221,11 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
          ("C-<right>" . helm-next-source)
          ("C-<left>" . helm-previous-source))
 
-  :custom (helm-ff-keep-cached-candidates nil)  ;; https://issues.guix.gnu.org/43406
+  :custom
+  (helm-ff-keep-cached-candidates nil) ;; https://issues.guix.gnu.org/43406
+  (helm-completion-style 'emacs)
+  ;; (helm-external-programs-associations '(("pdf" . "okular")
+  ;;                                        ("docx" . "libreoffice")))
 
   :config (progn
             (require 'helm-config)
@@ -1251,8 +1255,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-display-buffer-width 180
                   helm-display-buffer-height 60
                   helm-use-undecorated-frame-option nil
-
-                  helm-completion-style 'emacs
 
                   helm-file-cache-fuzzy-match           t
                   helm-locate-fuzzy-match               nil
@@ -2228,10 +2230,10 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
             (add-hook 'magit-diff-visit-file-hook #'malb/expand-org-mode-entry)
 
             (setq magit-push-always-verify nil
-                  magit-last-seen-setup-instructions "2.1.0")
+                  magit-last-seen-setup-instructions "2.1.0"
+                  magit-define-global-key-bindings t)
 
-            (setq-default magit-diff-refine-hunk t)
-            (global-magit-file-mode t)))
+            (setq-default magit-diff-refine-hunk t)))
 #+END_SRC
 
 *Notes*
@@ -5174,13 +5176,13 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 #+begin_src emacs-lisp
 (use-package conda
+  :custom (conda-anaconda-home "/opt/conda/")
   :config (progn
             (conda-env-initialize-interactive-shells)
             (conda-env-initialize-eshell)
             (conda-env-autoactivate-mode t)
             (setq conda-env-home-directory (expand-file-name "~/.conda/")
-                  conda-message-on-environment-switch nil)
-            (custom-set-variables '(conda-anaconda-home "/opt/conda/"))))
+                  conda-message-on-environment-switch nil)))
 #+end_src
 
 ** Sage
@@ -8089,7 +8091,8 @@ Uses baloo to find files."
 (use-package plantuml-mode
   :commands (plantuml-mode)
   :init (progn
-            (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar")))
+          (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
+                plantuml-default-exec-mode 'jar)))
 #+END_SRC
 
 *Example*
@@ -8704,6 +8707,12 @@ Make long lines kinda work ([[https://200ok.ch/posts/2020-09-29_comprehensive_gu
 (when (version<= "27.1" emacs-version)
   (setq bidi-inhibit-bpa t)
   (global-so-long-mode 1))
+#+end_src
+
+Don’t prompt to save passwords.
+
+#+begin_src emacs-lisp
+(setq auth-source-save-behavior nil)
 #+end_src
 
 ** Functions
