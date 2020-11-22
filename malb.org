@@ -8476,6 +8476,14 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (prefer-coding-system 'utf-8)
 #+END_SRC
 
+Use [[https://gitlab.com/matsievskiysv/insert-char-preview][insert-char-preview]] for handling unicode character insertion.
+
+#+begin_src emacs-lisp
+(use-package insert-char-preview
+    :commands insert-char-preview
+    :bind ("C-x 8 RET" . insert-char-preview))
+#+end_src
+
 * Large Files
 
 A file is large if it is 32MB in my world.
