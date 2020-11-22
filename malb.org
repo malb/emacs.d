@@ -1181,10 +1181,11 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
         helm-source-recentf)) ;; list of all open buffers
 
     `(((name . "Virtual Workspace")
-       (candidates . ,(--map (cons (eyebrowse-format-slot it) (car it))
+       (candidates . ,(--map (eyebrowse-format-slot it)
                              (eyebrowse--get 'window-configs)))
        (action . (lambda (candidate)
-                   (eyebrowse-switch-to-window-config candidate)))))
+                   (eyebrowse-switch-to-window-config
+                    (string-to-number (car (split-string candidate ":"))))))))
 
     '(helm-source-bookmarks)
 
