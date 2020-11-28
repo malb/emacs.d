@@ -3538,7 +3538,7 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 #+BEGIN_SRC emacs-lisp
 (use-package ob-async
   :after ob
-  :config (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia")))
+  :init (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia")))
 #+END_SRC
 
 ** Org Download
