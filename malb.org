@@ -9183,15 +9183,17 @@ Better unicode font support.
 #+BEGIN_SRC emacs-lisp
 (use-package shrface
   :after shr
-  :quelpa (shrface :repo "chenyanming/shrface" :fetcher github)
   :config (progn
             (shrface-basic)
-            (setq shrface-paragraph-indentation 2
+            (shrface-trial)
+            (setq shrface-paragraph-indentation 0
                   shrface-href-versatile t
                   shrface-paragraph-fill-column fill-column)
+
             (with-eval-after-load 'nov
               ;; reset nov-shr-rendering-functions, in case of the list get bigger and bigger
-              (setq nov-shr-rendering-functions '((img . nov-render-img) (title . nov-render-title)))
+              (setq nov-shr-rendering-functions '((img . nov-render-img)
+                                                  (title . nov-render-title)))
               (setq nov-shr-rendering-functions (append nov-shr-rendering-functions
                                                         shr-external-rendering-functions))
               (add-hook 'nov-mode-hook #'shrface-mode))))
