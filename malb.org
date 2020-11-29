@@ -1464,44 +1464,21 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
 ** Helm Org
 
-[[https://github.com/emacs-helm/helm-org][Helm for org headlines and keywords completion]]
+[[https://github.com/alphapapa/org-ql][org-ql]]
 
-#+BEGIN_SRC emacs-lisp
-(use-package helm-org
+#+begin_src emacs-lisp
+(use-package helm-org-ql
   :config (progn
-            (setq helm-org-headings-fontify t)
-
-            (defun malb/helm-in-buffer ()
-              "The right kind™ of buffer menu."
-              (interactive)
-              (cond ((eq major-mode 'org-mode)
-                     (call-interactively #'helm-org-in-buffer-headings))
-                    ((bound-and-true-p lsp-mode)
-                     (call-interactively #'helm-lsp-workspace-symbol))
-                    (t
-                     (call-interactively #'helm-semantic-or-imenu))))
-
-            (add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
-            (add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)))
-#+END_SRC
-
-[[https://github.com/alphapapa/helm-org-rifle][Helm + Grep for Org-files]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-org-rifle
-  :commands (helm-org-rifle-agenda-files helm-org-rifle-occur-agenda-files malb/helm-org-rifle-agenda-files)
-  :config (progn
-            (defun malb/helm-org-rifle-agenda-files (arg)
+            (defun malb/helm-org-ql-agenda-files (arg)
               (interactive "p")
               (let ((current-prefix-arg nil))
                 (cond
-                 ((equal arg 4) (call-interactively #'helm-org-rifle-agenda-files nil))
-                 ((equal arg 16) (helm-org-rifle-occur-agenda-files))
+                 ((equal arg 4) (call-interactively #'helm-org-ql-agenda-files nil))
                  (t (helm-org-agenda-files-headings)))))
 
-            (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)
-            (add-to-list 'helm-commands-using-frame 'helm-org-rifle-files)))
-#+END_SRC
+            (add-to-list 'helm-commands-using-frame 'helm-org-ql)
+            (add-to-list 'helm-commands-using-frame 'helm-org-ql-agenda-files)))
+#+end_src
 
 ** Helm & Google
 
@@ -9342,7 +9319,7 @@ Easily change the text size:
 (malb/set-menu-key "m" (lambda () (interactive) (malb/switch-to-mu4e)))
 (malb/set-menu-key "M" #'malb/helm-mu)
 (malb/set-menu-key "/" #'malb/helm-ag-projects)
-(malb/set-menu-key "o" #'malb/helm-org-rifle-agenda-files)
+(malb/set-menu-key "o" #'malb/helm-org-ql-agenda-files)
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "s" #'malb/toggle-sage)
 (malb/set-menu-key "S" #'weechat-switch-buffer)
