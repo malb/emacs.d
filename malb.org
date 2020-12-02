@@ -1467,6 +1467,26 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 [[https://github.com/alphapapa/org-ql][org-ql]]
 
 #+begin_src emacs-lisp
+(use-package helm-org
+  :config (progn
+            (setq helm-org-headings-fontify t)
+
+            (defun malb/helm-in-buffer ()
+              "The right kind™ of buffer menu."
+              (interactive)
+              (cond ((eq major-mode 'org-mode)
+                     (call-interactively #'helm-org-in-buffer-headings))
+                    ((bound-and-true-p lsp-mode)
+                     (call-interactively #'helm-lsp-workspace-symbol))
+                    (t
+                     (call-interactively #'helm-semantic-or-imenu))))
+
+            (add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
+            (add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)
+            (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)))
+#+end_src
+
+#+begin_src emacs-lisp
 (use-package helm-org-ql
   :config (progn
             (defun malb/helm-org-ql-agenda-files (arg)
@@ -1475,6 +1495,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                 (cond
                  ((equal arg 4) (call-interactively #'helm-org-ql-agenda-files nil))
                  (t (helm-org-agenda-files-headings)))))
+
 
             (add-to-list 'helm-commands-using-frame 'helm-org-ql)
             (add-to-list 'helm-commands-using-frame 'helm-org-ql-agenda-files)))
