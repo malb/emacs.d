@@ -2057,6 +2057,20 @@ Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-mi
               (blackout (cdr mode)))))
 #+END_SRC
 
+** Pulse Kills and Yanks
+
+#+begin_quote
+[[https://github.com/minad/goggles][Goggles]] highlights the modified region using pulse. Currently the commands undo, yank, kill and delete are supported.
+#+end_quote
+
+#+begin_src emacs-lisp
+(use-package goggles
+  :demand t
+  :config
+  (goggles-mode)
+  (setq-default goggles-pulse t))
+#+end_src
+
 * Help
 ** Helpful
 
