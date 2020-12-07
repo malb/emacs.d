@@ -5228,7 +5228,7 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                   (malb/make-toggle-shell "*Sage*"
                                           '(progn
                                              (conda-env-deactivate)
-                                             (sage-shell:run-sage "sage"))
+                                             (sage-shell:run-sage "sage --simple-prompt"))
                                           nil
                                           nil))
 
