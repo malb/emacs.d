@@ -7034,6 +7034,12 @@ Toggle between GNUS and traditional MU4E view.
 (bind-key "z" #'malb/toggle-mu4e-gnus mu4e-view-mode-map)
 #+END_SRC
 
+Gnus formatting
+
+#+begin_src emacs-lisp
+(setq gnus-article-date-headers '(original))
+#+end_src
+
 ** Actions
 
 Action to view e-mails in external browser.
