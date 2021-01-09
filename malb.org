@@ -8618,8 +8618,10 @@ Always prefer to load newer files, instead of giving precedence to the .elc file
 Smoother scrolling.
 
 #+BEGIN_SRC emacs-lisp
-(setq scroll-conservatively 10
-      scroll-preserve-screen-position t)
+(setq scroll-conservatively 10000
+      scroll-preserve-screen-position t
+      fast-but-imprecise-scrolling t
+      auto-window-vscroll nil)
 #+END_SRC
 
 Smoother mouse scrolling.
