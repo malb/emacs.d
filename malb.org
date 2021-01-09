@@ -5210,12 +5210,15 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
 
 #+BEGIN_SRC emacs-lisp
 (use-package sage-shell-mode
+  :custom ((sage-shell:use-simple-prompt t)
+           (sage-shell:use-prompt-toolkit nil)
+           (sage-shell:set-ipython-version-on-startup nil)
+           (sage-shell:check-ipython-version-on-startup nil))
   :config (progn
             (add-hook 'sage-shell:sage-mode-hook #'eldoc-mode)
             (add-hook 'sage-shell-mode-hook #'eldoc-mode)
-            (setq sage-shell:use-prompt-toolkit t)
-
             (add-hook 'sage-shell-after-prompt-hook #'sage-shell-view-mode)
+
             (setq sage-shell-view-default-commands 'plots
                   sage-shell-view-scale 1.5
                   sage-shell-view-default-resolution 180)
