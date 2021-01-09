@@ -224,3 +224,6 @@
     (with-current-buffer buffer
       (face-remap-add-relative 'default '(:foreground "#999999")))))
 
+
+(eval-after-load "auth-source"
+  '(setq auth-source-save-behavior nil))
