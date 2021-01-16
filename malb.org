@@ -3532,8 +3532,12 @@ Working with source code in org-mode.
                   org-babel-default-header-args:bash  '((:results . "output replace"))
                   org-babel-default-header-args:shell '((:results . "output replace"))
                   org-babel-default-header-args:jupyter-python '((:async . "yes")
+                                                                 (:results . "scalar")
                                                                  (:session . "py")
+                                                                 (:exports . "both")
                                                                  (:kernel . "sagemath")))
+
+            (add-to-list 'org-latex-listings-langs '(jupyter-python "python"))
 
             (setq org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
@@ -8552,7 +8556,7 @@ then enter the text in that file's own buffer.
 
 ,#+end_src
 
-,#+begin_src jupyter-python :kernel sagemath
+,#+begin_src jupyter-python
 
 ,#+end_src
 
