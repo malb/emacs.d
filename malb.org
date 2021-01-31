@@ -8875,7 +8875,10 @@ Make links in comments and string clickable
 Grab the link in the current browser tab
 
 #+BEGIN_SRC emacs-lisp
-(use-package grab-x-link)
+(use-package grab-x-link
+  :bind (("C-c i l" . grab-x-link-firefox-insert-link)
+         ("C-c i o" . grab-x-link-firefox-insert-org-link)
+         ("C-c i m" . grab-x-link-firefox-insert-markdown-link)))
 #+END_SRC
 
 ** Encryption
