@@ -3821,7 +3821,7 @@ When `exit' from shell buffer."
             (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
 
             (defun malb/visual-command-frame (old-function &rest arguments)
-              (let  ((frame (new-frame '((width . 160) (height . 40)))))
+              (let  ((frame (make-frame '((width . 160) (height . 40)))))
                 (select-frame frame)
                 (apply old-function arguments)
                 ;; (set-process-sentinel (get-buffer-process (current-buffer))
