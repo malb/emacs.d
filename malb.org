@@ -437,6 +437,7 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\`\\*Messages\\*\\'"
                              "\\`\\*Calendar\\*\\'"
                              "\\`\\*mscdb\\*\\'"
+                             "\\`\\*lexic\\*\\'"
                              "\\`\\*jupyter-repl\\[.*\\]\\*"))
 #+END_SRC
 
@@ -5710,8 +5711,27 @@ Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick r
 
 #+BEGIN_SRC emacs-lisp
 (use-package define-word
-  :bind (("C-c w d" . define-word-at-point)))
+  :bind (("C-c w D" . define-word-at-point)))
 #+END_SRC
+
+Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
+
+#+begin_src emacs-lisp
+(use-package lexic
+  :commands lexic-search lexic-list-dictionary malb/define-word-at-point-lexic
+  :bind (("C-c w d" . malb/define-word-at-point-lexic))
+  :config (progn
+            (defun malb/define-word-at-point-lexic (identifier &optional arg)
+              "Look up the definition of the word at point (or selection) using `lexic-search'."
+              :override #'+lookup/dictionary-definition
+              (interactive
+               (list (or (thing-at-point 'word)
+                         (read-string "Look up in dictionary: "))
+                     current-prefix-arg))
+              (cl-letf (((symbol-function 'visual-fill-column-mode)
+                         (lambda (&optional arg)) nil))
+                (lexic-search identifier nil nil t)))))
+#+end_src
 
 *** Translating
 
