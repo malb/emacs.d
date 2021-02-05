@@ -8854,6 +8854,31 @@ Run a command in a named compile buffer ([[https://ivanmalison.github.io/dotfile
                                    (format "*compilation %s*" command))))
 #+END_SRC
 
+Generate new random URLs for some commonly used online services.
+
+#+begin_src emacs-lisp
+(defun malb/new-hedgedoc-url ()
+  (interactive)
+
+  (let ((url (shell-command-to-string
+              "curl -Ls -o /dev/null -w %{url_effective} https://md.kif.rocks/new")))
+    (when (called-interactively-p 'any)
+      (insert url)
+      (kill-new url))
+    url))
+
+(defun malb/new-jitsi-url (&optional prefix)
+  (interactive)
+  (let ((url (concat "https://meet.jit.si/"
+                     prefix
+                     (replace-regexp-in-string "\n" ""
+                                               (shell-command-to-string "diceware -n 4")))))
+    (when (called-interactively-p 'any)
+      (insert url)
+      (kill-new url))
+    url))
+#+end_src
+
 ** Clickable URLs
 
 Make links in comments and string clickable
