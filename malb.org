@@ -8460,7 +8460,9 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
               (interactive)
               (weechat-connect "localhost" 9000 nil 'plain)
               (sleep-for 1.0)
-              (weechat-monitor-all-buffers))))
+              (weechat-monitor-all-buffers))
+            ;; run it on startup
+            (malb/weechat)))
 #+END_SRC
 
 *** Notes
