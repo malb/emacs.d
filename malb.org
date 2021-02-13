@@ -5920,8 +5920,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               ("M-." . malb/latex-jump)
               ("M-<right>" . sp-forward-sexp)
               ("M-<left>" . sp-backward-sexp)
-              ("M-<up>" . sp-up-sexp)
-              ("M-<down>" . sp-down-sexp))
+              ("M-<up>" . outline-move-subtree-up)
+              ("M-<down>" . outline-move-subtree-down)
+              ("C-c h ." . TeX-doc))
   :config (progn
             (add-hook 'LaTeX-mode-hook #'visual-line-mode)
             (add-hook 'LaTeX-mode-hook #'flyspell-mode)
@@ -6055,6 +6056,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (unbind-key "{" 'cdlatex-mode-map) ;; smartparens
             (unbind-key "(" 'cdlatex-mode-map) ;; smartparens
             (unbind-key "[" 'cdlatex-mode-map) ;; smartparens
+            (unbind-key "C-c ?" 'cdlatex-mode-map) ;; TeX-doc
             (setq cdlatex-math-modify-alist '((?a "\\alert" "\\alert" t t nil)
                                               (?m "\\mat" nil t t nil)
                                               (?v "\\vec" nil t t nil))
