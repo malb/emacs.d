@@ -5521,6 +5521,7 @@ Indicate soft wrapped lines.
   :commands (visual-fill-column-mode turn-on-visual-fill-column-mode)
   :config (progn
             (setq-default visual-fill-column-center-text t
+                          visual-fill-column-inhibit-sensible-window-split t
                           visual-fill-column-fringes-outside-margins nil)
 
             (dolist (fn '(text-scale-increase text-scale-decrease text-scale-adjust))
