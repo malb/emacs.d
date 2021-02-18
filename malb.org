@@ -8872,8 +8872,8 @@ Generate new random URLs for some commonly used online services.
   (let ((url (shell-command-to-string
               "curl -Ls -o /dev/null -w %{url_effective} https://md.kif.rocks/new")))
     (when (called-interactively-p 'any)
-      (insert url)
-      (kill-new url))
+      (kill-new url)
+      (insert url))
     url))
 
 (defun malb/new-jitsi-url (&optional prefix)
@@ -8883,8 +8883,8 @@ Generate new random URLs for some commonly used online services.
                      (replace-regexp-in-string "\n" ""
                                                (shell-command-to-string "diceware -n 4")))))
     (when (called-interactively-p 'any)
-      (insert url)
-      (kill-new url))
+      (kill-new url)
+      (insert url))
     url))
 #+end_src
 
