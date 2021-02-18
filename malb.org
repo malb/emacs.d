@@ -5778,7 +5778,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
           (defun malb/deft-in-dir (dir)
             "Run deft in directory DIR"
-            (setq deft-directory dir)
+            (setq deft-directory dir) ;; TODO: cannot let-bind
             (switch-to-buffer "*Deft*")
             (kill-this-buffer)
             (deft))
