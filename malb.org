@@ -7083,6 +7083,21 @@ Gnus formatting
 (setq gnus-article-date-headers '(original))
 #+end_src
 
+** Threading
+
+[[https://raw.githubusercontent.com/rougier/mu4e-thread-folding/master/screenshot.png]]
+
+#+begin_src emacs-lisp
+(use-package mu4e-thread-folding
+  :quelpa (mu4e-thread-folding :fetcher github :repo "rougier/mu4e-thread-folding")
+  :config (progn
+            (setq mu4e-thread-folding-default-view 'unfolded)
+            (add-to-list 'mu4e-header-info-custom
+                         '(:empty . (:name "Empty"
+                                           :shortname ""
+                                           :function (lambda (msg) "  "))))))
+#+end_src
+
 ** Actions
 
 Action to view e-mails in external browser.
