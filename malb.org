@@ -3570,6 +3570,14 @@ This extension facilitates moving images from point A (e.g. an image inside your
             (add-hook 'dired-mode-hook 'org-download-enable)))
 #+END_SRC
 
+** Org Chef
+
+[[https://github.com/Chobbes/org-chef][org-chef]]
+
+#+begin_src emacs-lisp
+(use-package org-chef)
+#+end_src
+
 ** Tips
 
 *** Agenda commands
