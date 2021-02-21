@@ -83,6 +83,12 @@
      `(org-block-end-line   ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line) :extend t))))
      `(org-block ((t (:foreground ,s-base00 :background ,(solarized-color-blend "#cccccc" s-base3 0.2) :extend t))))
 
+     `(org-agenda-structure
+       ((,class (:foreground ,base1 :background ,base02
+                             :weight bold :slant normal :inverse-video nil :height ,solarized-height-plus-1
+                             :underline nil :extend t
+                             :box (:line-width 2 :color ,base03)))))
+
      `(markdown-code-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit nil :extend t))))
      `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)
                                                        :inherit (highlight)))))
@@ -116,6 +122,9 @@
      `(dired-subtree-depth-4-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(dired-subtree-depth-5-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(dired-subtree-depth-6-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+
+     `(mu4e-thread-folding-child-face         ((t (:background "#EEF3FC" :extend t))))
+     `(mu4e-thread-folding-root-unfolded-face ((t (:background "#DCE6F9" :extend t))))
 
      `(ein:cell-input-area   ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.15)))))
      `(ein:cell-input-prompt ((t (:weight bold :foreground ,s-base00 :inherit (header-line)))))
