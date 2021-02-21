@@ -8931,12 +8931,13 @@ Make links in comments and string clickable
   :commands (goto-address-prog-mode goto-address-mode))
 #+END_SRC
 
-** Emacs from Browsers
+** Emacs from Elsewhere
 
 [[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package edit-server
+(use-package edit-server ;; use emacs-everywhere
+  :disabled t
   :config (progn
             (edit-server-start)
             (setq edit-server-new-frame-alist '((name . "Edit Firefox with Emacs")
@@ -8950,7 +8951,7 @@ Make links in comments and string clickable
                   edit-server-default-major-mode 'markdown-mode)))
 #+END_SRC
 
-Grab the link in the current browser tab
+[[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
 
 #+BEGIN_SRC emacs-lisp
 (use-package grab-x-link
@@ -8959,7 +8960,27 @@ Grab the link in the current browser tab
          ("C-c i m" . grab-x-link-firefox-insert-markdown-link)))
 #+END_SRC
 
-*** Org-protocol entpoints for Bookmarklets
+
+#+begin_src emacs-lisp
+(use-package emacs-everywhere
+  :after hide-mode-line-mode
+  :quelpa (emacs-everywhere :fetcher github :repo "tecosaur/emacs-everywhere")
+  :config (progn
+            (setq emacs-everywhere-frame-parameters  '((name . "emacs-everywhere")
+                                                       (minibuffer . nil)
+                                                       (internal-border-width . 10)
+                                                       (skip-taskbar . t)
+                                                       (unsplittable . t)
+                                                       (menu-bar-lines . nil)
+                                                       (width . 80)
+                                                       (height . 12)
+                                                       (alpha . 0.95)
+                                                       (buffer-predicate . (lambda (x) nil))))
+            (add-hook 'emacs-everywhere-mode-hook #'hide-mode-line-mode)))
+#+end_src
+
+
+*** Org-protocol entpoints for bookmarklets
 
 Load a URL in EWW
 
@@ -9482,6 +9503,12 @@ Easily change the text size:
   :commands dimmer-mode
   :config (setq dimmer-percent 0.2))
 #+END_SRC
+
+** Hide Mode Line
+
+#+begin_src emacs-lisp
+(use-package hide-mode-line)
+#+end_src
 
 * Key Bindings
 
