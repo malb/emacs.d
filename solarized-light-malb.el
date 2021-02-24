@@ -131,11 +131,6 @@
 
      `(helm-ff-file-extension ((t ())))
      `(bm-face ((t (:background "#FFE6E4"))))
-     ;; `(helm-locate-finish ((t (:foreground ,green :weight bold))))
-     ;; `(slack-message-output-header ((t (:weight bold))))
-     ;; `(slack-message-output-text ((t (:weight normal))))
-     ;; `(slack-new-message-marker-face ((t (:foreground "#d33682" :weight bold :height 0.75))))
-     ;; `(helm-xref-file-name ((t (:foreground ,s-base0))))
 
      `(mode-line
        ((,class (:inverse-video unspecified
@@ -159,28 +154,6 @@
 
     (custom-theme-set-variables
      theme-name
-     ;; `(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
-     ;; `(highlight-symbol-colors (--map (solarized-color-blend it ,s-base3 0.25)
-     ;;                                  (quote (,yellow ,cyan ,red ,violet ,green ,orange ,blue))))
-     ;; `(highlight-symbol-foreground-color "#586e75")
-     ;; `(highlight-tail-colors
-     ;;   (quote
-     ;;    ((,s-base2 . 0)
-     ;;     ("#B4C342" . 20)
-     ;;     ("#69CABF" . 30)
-     ;;     ("#69B7F0" . 50)
-     ;;     ("#DEB542" . 60)
-     ;;     ("#F2804F" . 70)
-     ;;     ("#F771AC" . 85)
-     ;;     (,s-base2 . 100))))
-     ;; `(hl-bg-colors (quote ("#DEB542" "#F2804F" "#FF6E64" "#F771AC" "#9EA0E5" "#69B7F0" "#69CABF" "#B4C342")))
-     ;; `(hl-fg-colors (quote (,s-base3 ,s-base3 ,s-base3 ,s-base3 ,s-base3 ,s-base3 ,s-base3 ,s-base3)))
-     ;; `(hl-paren-colors
-     ;;   (quote ("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900")))
-     ;; `(nrepl-message-colors (quote ("#dc322f" ,orange "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
-     ;; `(smartrep-mode-line-active-bg (solarized-color-blend "#859900" ,s-base2 0.2))
-     ;; `(vc-annotate-background nil)
-     ;; `(vc-annotate-background-mode nil)
 
      `(company-quickhelp-color-background ,s-base2)
      `(company-quickhelp-color-foreground ,s-base00)
