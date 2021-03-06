@@ -9365,6 +9365,7 @@ Better unicode font support.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "github-octicons") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.9) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "file-icons") 0.75) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Asana Math") 0.7) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Symbols") 0.7) t))))
 
   (add-hook 'after-make-frame-functions #'malb/fonts)
