@@ -9518,7 +9518,12 @@ Easily change the text size:
 #+BEGIN_SRC emacs-lisp
 (use-package dimmer
   :commands dimmer-mode
-  :config (setq dimmer-percent 0.2))
+  :config (progn
+            (dimmer-configure-which-key)
+            (dimmer-configure-helm)
+            (dimmer-configure-posframe)
+            (dimmer-configure-company-box)
+            (setq dimmer-percent 0.25)))
 #+END_SRC
 
 ** Hide Mode Line
