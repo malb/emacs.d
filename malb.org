@@ -6546,6 +6546,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-confirm-quit nil
                  mu4e-index-cleanup t
                  mu4e-view-show-addresses t
+                 mu4e-headers-precise-alignment t
                  mu4e-index-lazy-check nil
                  mu4e-headers-auto-update nil))
 #+END_SRC
