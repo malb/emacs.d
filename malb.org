@@ -8310,7 +8310,7 @@ Copy source code marked up in various ways.
              copy-as-format-slack))
 #+END_SRC
 
-* Manage Local Servers
+* Manage Local Services (Prodigy)
 
 [[https://github.com/rejeep/prodigy.el][Prodigy]] is a way of managing services from Emacs. Use it for IMAP idle via [[https://www.npmjs.com/package/imapnotify][imapnotify]]. For completeness here’s a matching imapnotify config.
 
@@ -8362,15 +8362,6 @@ exports.boxes = [ "INBOX"];
             :url "http://127.0.0.1:4002/discrete-subgroup/"
             :tags '(web))
 
-          ;; (prodigy-define-service
-          ;;   :name "fpylll"
-          ;;   :cwd malb/projects-dir
-          ;;   :command "fpylll-jupyter.sh"
-          ;;   :port 8889
-          ;;   :stop-signal 'sigkill
-          ;;   :kill-process-buffer-on-stop t
-          ;;   :tags '(development))
-
           (prodigy-define-service
             :name "sage-devel"
             :cwd (expand-file-name "sage/notebooks" malb/projects-dir)
@@ -8379,14 +8370,6 @@ exports.boxes = [ "INBOX"];
             :stop-signal 'sigkill
             :kill-process-buffer-on-stop t
             :tags '(development))
-
-          (prodigy-define-service
-            :name "weechat"
-            :command "weechat-headless"
-            :port 9000
-            :stop-signal 'sigterm
-            :kill-process-buffer-on-stop t
-            :tags '(chat))
 
           (prodigy-define-service
             :name "bitlbee"
@@ -8398,10 +8381,17 @@ exports.boxes = [ "INBOX"];
             :kill-process-buffer-on-stop t
             :tags '(chat))
 
-          ;; start imapnotify
-          (prodigy-start-service (prodigy-find-service "bitlbee"))
-          (prodigy-start-service (prodigy-find-service "sage-devel"))
+          (prodigy-define-service
+            :name "weechat"
+            :command "weechat-headless"
+            :port 9000
+            :stop-signal 'sigterm
+            :kill-process-buffer-on-stop t
+            :tags '(chat))
+
+          ;; start some services
           (prodigy-start-service (prodigy-find-service "imapnotify"))
+          (prodigy-start-service (prodigy-find-service "bitlbee"))
           (prodigy-start-service (prodigy-find-service "weechat"))))
 #+END_SRC
 
