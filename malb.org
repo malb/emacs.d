@@ -7311,6 +7311,7 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 (advice-add #'mu4e~compose-handler :around #'malb/clean-display-buffer-alist-advice)
 (advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
 (advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
+(advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-mu4e-advice)
 #+END_SRC
 
 Don’t ask me to remove the backup file, I do want to remove the backup file, too.
