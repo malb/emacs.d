@@ -536,9 +536,10 @@ Mu4e buffers start with =*mu4e-=:
   "Special frame names")
 
 (defun malb/frame-is-special-p (frame)
-  (seq-some (lambda (name)
-              (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
-            malb/special-frame-names))
+  (or (frame-parameter frame 'malb/is-special)
+      (seq-some (lambda (name)
+                  (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
+                malb/special-frame-names)))
 
 (defun malb/frame-is-not-special-p (frame)
   (not (malb/frame-is-special-p frame)))
@@ -620,7 +621,8 @@ Main dispatch function:
      (malb/regexp-match-p malb/mu4e-buffer-regexps (buffer-name buffer))
      (memq (buffer-local-value 'major-mode buffer) '(mu4e-view-mode mu4e-headers-mode)))
     (if (malb/get-frame "*mu4e*") (select-frame-set-input-focus (malb/get-frame "*mu4e*"))
-      (make-frame (list '(name . "*mu4e*"))))
+      (make-frame (list '(name . "*mu4e*")
+                        '(malb/is-special . t))))
     (unless (get-buffer-window buffer)
       (set-window-buffer (get-largest-window) buffer))
     (select-window (get-buffer-window buffer))
@@ -3390,6 +3392,7 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
                                                (width . 120)
                                                (height . 40)
                                                (sticky . t)
+                                               (malb/is-special . t)
                                                (fullscreen . nil)
                                                (tool-bar-lines . 0)
                                                (menu-bar-lines . 0)))
@@ -3840,7 +3843,8 @@ When `exit' from shell buffer."
                 ;;                           (delete-frame (window-frame
                 ;;                                          (get-buffer-window
                 ;;                                           (process-buffer proc)))))))
-                (set-window-dedicated-p (get-buffer-window) t)))
+                (set-window-dedicated-p (get-buffer-window) t)
+                (set-frame-parameter frame 'malb/is-special t)))
 
             (advice-add #'eshell-exec-visual :around #'malb/visual-command-frame)
 
@@ -6113,7 +6117,8 @@ Run =latexmk -pvc= in async shell
           (filename (file-name-sans-extension (buffer-file-name)))
           (output-buffer (format "*LaTeXMK %s*" (file-name-nondirectory (buffer-file-name)))))
     (ignore-errors
-      (select-frame (make-frame-command)))
+      (select-frame (make-frame '((malb/is-special . t)
+                                  (unsplittable . t)))))
     (async-shell-command (format "latexmk -pvc -pdf \"%s\" -interaction=nonstopmode \"%s.tex\""
                                  engine filename)
                          output-buffer)
@@ -7449,7 +7454,7 @@ Create a new mu4e session in a new frame.
 #+BEGIN_SRC emacs-lisp
 (defun malb/mail ()
   (interactive)
-  (select-frame (make-frame-command))
+  (select-frame (make-frame '((malb/is-special . t))))
   (set-frame-name "*mu4e*") ;; we use this in our window management
   (mu4e))
 #+END_SRC
@@ -7493,6 +7498,7 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
   (sleep-for 0.25) ;; this is a HACK
   (set-frame-size (selected-frame) 80 60)
   (sleep-for 0.25) ;; this is a HACK
+  (set-frame-parameter nil 'malb/is-special t)
   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
 #+END_SRC
 
