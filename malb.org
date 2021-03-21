@@ -9083,6 +9083,12 @@ Transparent encryption and decryption.
 #+END_SRC
 
 * File Types
+** CMake Files
+
+#+begin_src emacs-lisp
+(use-package cmake-mode)
+#+end_src
+
 ** PCAP Files
 
 Wireshark et al. outputs ([[https://github.com/orgcandman/pcap-mode][source]])
