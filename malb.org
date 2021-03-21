@@ -2532,6 +2532,10 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
  ("C-c {" . org-table-toggle-formula-debugger))
 #+END_SRC
 
+#+begin_src emacs-lisp
+(setq org-latex-tables-booktabs t)
+#+end_src
+
 ** Speed Commands
 
 ([[https://raw.githubusercontent.com/jkitchin/scimax/][source]])
