@@ -2010,7 +2010,7 @@ https://github.com/cute-jumper/embrace.el
              ("/" "/" nil org-mode)
              ("=" "=" nil org-mode)
              ("_" "_" nil org-mode)
-             ("$" "$" nil org-mode)
+             ("\\(" "\\)" "$" org-mode)
              ("#+begin_quote\n" "#+end_quote\n" "q" org-mode)
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
