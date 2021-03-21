@@ -8502,7 +8502,6 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
 
             (add-hook 'weechat-mode-hook #'visual-line-mode)
             (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
-            (add-to-list 'helm-commands-using-frame #'weechat-switch-buffer)
 
             (defun malb/weechat ()
               (interactive)
