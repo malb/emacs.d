@@ -38,24 +38,6 @@ We collect our own customisations in the =malb= group.
   :group 'convenience)
 #+END_SRC
 
-* Memory
-
-We have RAM, lots of it.
-
-#+BEGIN_SRC emacs-lisp
-(setq global-mark-ring-max 256
-      mark-ring-max 256
-      kill-ring-max 256)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(setq gc-cons-threshold (* 32 1024 1024)
-      gc-cons-percentage 0.1
-      garbage-collection-messages nil)
-#+END_SRC
-
-*Note:* Don’t set ~gc-cons-threshold~ to something much bigger as it will cause to hang occasionally for a long-ish time.
-
 * TLS
 
 Enable TLS cert checking ([[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][source]])
@@ -164,6 +146,25 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 #+BEGIN_SRC emacs-lisp
 (use-package quelpa)
 (use-package quelpa-use-package)
+#+END_SRC
+
+* Memory
+
+We have RAM, lots of it.
+
+#+BEGIN_SRC emacs-lisp
+(setq global-mark-ring-max 256
+      mark-ring-max 256
+      kill-ring-max 256)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package gcmh
+  :defer nil
+  :config (progn
+            (setq gcmh-high-cons-threshold (* 256 1024 1024)
+                  gcmh-low-cons-threshold (* 1 1024 1024))
+            (gcmh-mode 1)))
 #+END_SRC
 
 * Clean Mode Line
