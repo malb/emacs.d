@@ -8493,8 +8493,7 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
             (require 'weechat-spelling)
             (require 'weechat-image)
 
-            (setq weechat-tracking-types '(:highlight :message)
-                  weechat-completing-read-function #'completing-read
+            (setq weechat-completing-read-function #'completing-read
                   weechat-auto-monitor-buffers t
                   weechat-auto-close-buffers t
                   weechat-buffer-kill-buffers-on-disconnect t)
