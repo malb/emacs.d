@@ -3739,7 +3739,7 @@ The function behaves as follows:
 #+begin_src emacs-lisp
 (use-package vterm
   :commands (malb/toggle-vterm vterm)
-  :init (setq vterm-module-cmake-args "-DUSE_SYSTEM_LIBVTERM=no")
+  :init (setq vterm-module-cmake-args " -DUSE_SYSTEM_LIBVTERM=no")
   :config (progn
             (setq vterm-kill-buffer-on-exit t)
             (bind-key "M-<up>"   #'vterm-send-up   vterm-mode-map)
