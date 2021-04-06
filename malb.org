@@ -5657,14 +5657,14 @@ Automatically pick dictionary.
 (use-package auto-dictionary
   :disabled
   :config (progn
-            (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")))
+            (setf (cdr (rassoc "en" adict-dictionary-list)) "en-custom")))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package guess-language
   :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
-  :config (setq guess-language-langcodes '((en . ("en_GB" "English"))
+  :config (setq guess-language-langcodes '((en . ("en-custom" "English"))
                                            (de . ("de_DE" "German")))
                 guess-language-languages '(en de)))
 #+END_SRC
