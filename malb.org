@@ -5823,6 +5823,9 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
 
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
+  :bind (:map markdown-mode-map
+              ("M-<up>" . markdown-move-up)
+              ("M-<down>" . markdown-move-down))
   :mode (("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode)
          ("\\.text\\'" . markdown-mode)
