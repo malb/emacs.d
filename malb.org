@@ -6279,6 +6279,7 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
 
 #+BEGIN_SRC emacs-lisp
 (use-package bibtex-completion
+  :defer nil
   :config (progn
             (setq bibtex-completion-bibliography malb/bibtex-files
                   bibtex-completion-library-path malb/literature-dirs
@@ -6385,7 +6386,25 @@ can be added either from an open buffer or a file."
                         malb/bibtex-completion-candidates-cache (apply old-function arguments))))
               malb/bibtex-completion-candidates-cache)
 
-            (advice-add #'bibtex-completion-candidates :around #'malb/bibtex-completion-candidates-cache)))
+            (advice-add #'bibtex-completion-candidates :around #'malb/bibtex-completion-candidates-cache)
+
+            (async-start
+             `(lambda ()
+                (package-initialize)
+                (require 'bibtex-completion)
+                ,(async-inject-variables "\\`\\(bibtex-completion\\)")
+                (bibtex-completion-candidates)
+
+                (list
+                 bibtex-completion-cache
+                 bibtex-completion-string-cache
+                 bibtex-completion-string-hash-table))
+
+             (lambda (result)
+               (setq bibtex-completion-cache (nth 0 result)
+                     bibtex-completion-string-cache (nth 1 result)
+                     bibtex-completion-string-hash-table (nth 2 result))
+               (message "Finished scanning BibTeX file.")))))
 #+END_SRC
 
 We add an option to search for the paper’s title online.
