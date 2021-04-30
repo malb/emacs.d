@@ -8635,6 +8635,108 @@ then enter the text in that file's own buffer.
 ")
 #+END_SRC
 
+* Emacs from Elsewhere
+
+[[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package edit-server ;; use emacs-everywhere
+  :disabled t
+  :config (progn
+            (edit-server-start)
+            (setq edit-server-new-frame-alist '((name . "Edit Firefox with Emacs")
+                                                (width . 80)
+                                                (height . 60)
+                                                (minibuffer . t)
+                                                (internal-border-width . 10)
+                                                (skip-taskbar . t)
+                                                (unsplittable . t)
+                                                (menu-bar-lines . nil))
+                  edit-server-default-major-mode 'markdown-mode)))
+#+END_SRC
+
+[[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
+
+#+BEGIN_SRC emacs-lisp
+(use-package grab-x-link
+  :bind (("C-c i l" . grab-x-link-firefox-insert-link)
+         ("C-c i o" . grab-x-link-firefox-insert-org-link)
+         ("C-c i m" . grab-x-link-firefox-insert-markdown-link)))
+#+END_SRC
+
+
+#+begin_src emacs-lisp
+(use-package emacs-everywhere
+  :after hide-mode-line-mode
+  :quelpa (emacs-everywhere :fetcher github :repo "tecosaur/emacs-everywhere")
+  :config (progn
+            (setq emacs-everywhere-frame-parameters  '((name . "emacs-everywhere")
+                                                       (minibuffer . nil)
+                                                       (internal-border-width . 10)
+                                                       (skip-taskbar . t)
+                                                       (unsplittable . t)
+                                                       (menu-bar-lines . nil)
+                                                       (width . 80)
+                                                       (height . 12)
+                                                       (alpha . 0.95)
+                                                       (buffer-predicate . (lambda (x) nil))))
+            (add-hook 'emacs-everywhere-mode-hook #'hide-mode-line-mode)))
+#+end_src
+
+
+** Org-protocol entpoints for bookmarklets
+
+Load a URL in EWW
+
+~javascript:location.href='org-protocol://eww?url='+encodeURIComponent(location.href)~
+
+#+begin_src emacs-lisp
+(defun malb/start-eww-for-url (plist)
+  "Raise Emacs and call eww with the url in PLIST."
+  (raise-frame)
+  (eww (plist-get plist :url))
+  nil)
+
+(add-to-list 'org-protocol-protocol-alist
+             '("eww"
+               :protocol "eww"
+               :function malb/start-eww-for-url))
+#+end_src
+
+Load URL as org-mode file
+
+~javascript:location.href='org-protocol://read-url-as-org?url='+encodeURIComponent(location.href)~
+
+#+begin_src emacs-lisp
+(defun malb/read-url-as-org (plist)
+  "Raise Emacs and readl url in PLIST as org-mode buffer."
+  (raise-frame)
+  (org-web-tools-read-url-as-org (plist-get plist :url))
+  nil)
+
+(add-to-list 'org-protocol-protocol-alist
+             '("read-url-as-org"
+               :protocol "read-url-as-org"
+               :function malb/read-url-as-org))
+
+#+end_src
+
+Store URL as org link
+
+~javascript:location.href='org-protocol://org-store-link?url='+encodeURIComponent(location.href)~
+
+#+begin_src emacs-lisp
+(defun malb/org-store-link-for-url (plist)
+  "Raise Emacs and store url in PLIST as org-link."
+  (raise-frame)
+  (org-web-tools-insert-link-for-url (plist-get plist :url))
+  nil)
+
+(add-to-list 'org-protocol-protocol-alist
+             '("org-store-link"
+               :protocol "org-store-link"
+               :function malb/org-store-link-for-url))
+#+end_src
 * Misc
 ** Settings
 
@@ -8949,109 +9051,6 @@ Make links in comments and string clickable
 
   :commands (goto-address-prog-mode goto-address-mode))
 #+END_SRC
-
-** Emacs from Elsewhere
-
-[[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package edit-server ;; use emacs-everywhere
-  :disabled t
-  :config (progn
-            (edit-server-start)
-            (setq edit-server-new-frame-alist '((name . "Edit Firefox with Emacs")
-                                                (width . 80)
-                                                (height . 60)
-                                                (minibuffer . t)
-                                                (internal-border-width . 10)
-                                                (skip-taskbar . t)
-                                                (unsplittable . t)
-                                                (menu-bar-lines . nil))
-                  edit-server-default-major-mode 'markdown-mode)))
-#+END_SRC
-
-[[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
-
-#+BEGIN_SRC emacs-lisp
-(use-package grab-x-link
-  :bind (("C-c i l" . grab-x-link-firefox-insert-link)
-         ("C-c i o" . grab-x-link-firefox-insert-org-link)
-         ("C-c i m" . grab-x-link-firefox-insert-markdown-link)))
-#+END_SRC
-
-
-#+begin_src emacs-lisp
-(use-package emacs-everywhere
-  :after hide-mode-line-mode
-  :quelpa (emacs-everywhere :fetcher github :repo "tecosaur/emacs-everywhere")
-  :config (progn
-            (setq emacs-everywhere-frame-parameters  '((name . "emacs-everywhere")
-                                                       (minibuffer . nil)
-                                                       (internal-border-width . 10)
-                                                       (skip-taskbar . t)
-                                                       (unsplittable . t)
-                                                       (menu-bar-lines . nil)
-                                                       (width . 80)
-                                                       (height . 12)
-                                                       (alpha . 0.95)
-                                                       (buffer-predicate . (lambda (x) nil))))
-            (add-hook 'emacs-everywhere-mode-hook #'hide-mode-line-mode)))
-#+end_src
-
-
-*** Org-protocol entpoints for bookmarklets
-
-Load a URL in EWW
-
-~javascript:location.href='org-protocol://eww?url='+encodeURIComponent(location.href)~
-
-#+begin_src emacs-lisp
-(defun malb/start-eww-for-url (plist)
-  "Raise Emacs and call eww with the url in PLIST."
-  (raise-frame)
-  (eww (plist-get plist :url))
-  nil)
-
-(add-to-list 'org-protocol-protocol-alist
-             '("eww"
-               :protocol "eww"
-               :function malb/start-eww-for-url))
-#+end_src
-
-Load URL as org-mode file
-
-~javascript:location.href='org-protocol://read-url-as-org?url='+encodeURIComponent(location.href)~
-
-#+begin_src emacs-lisp
-(defun malb/read-url-as-org (plist)
-  "Raise Emacs and readl url in PLIST as org-mode buffer."
-  (raise-frame)
-  (org-web-tools-read-url-as-org (plist-get plist :url))
-  nil)
-
-(add-to-list 'org-protocol-protocol-alist
-             '("read-url-as-org"
-               :protocol "read-url-as-org"
-               :function malb/read-url-as-org))
-
-#+end_src
-
-Store URL as org link
-
-~javascript:location.href='org-protocol://org-store-link?url='+encodeURIComponent(location.href)~
-
-#+begin_src emacs-lisp
-(defun malb/org-store-link-for-url (plist)
-  "Raise Emacs and store url in PLIST as org-link."
-  (raise-frame)
-  (org-web-tools-insert-link-for-url (plist-get plist :url))
-  nil)
-
-(add-to-list 'org-protocol-protocol-alist
-             '("org-store-link"
-               :protocol "org-store-link"
-               :function malb/org-store-link-for-url))
-#+end_src
 
 ** Encryption
 
