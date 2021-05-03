@@ -158,13 +158,20 @@ We have RAM, lots of it.
       kill-ring-max 256)
 #+END_SRC
 
+* GCMH
+
+We set =(setq gc-cons-threshold most-positive-fixnum)= in =early-init.el=, after init files are loded we enable the [[https://github.com/emacsmirror/gcmh][garbage collector magic hack]] with something more sensible.
+
 #+BEGIN_SRC emacs-lisp
 (use-package gcmh
   :defer nil
   :config (progn
             (setq gcmh-high-cons-threshold (* 256 1024 1024)
                   gcmh-low-cons-threshold (* 1 1024 1024))
-            (gcmh-mode 1)))
+            (defun malb/enable-gcmh ()
+              (setq gc-cons-threshold (* 256 1024 1024))
+              (gcmh-mode 1))
+            (add-hook 'emacs-startup-hook #'malb/enable-gcmh)))
 #+END_SRC
 
 * Clean Mode Line
@@ -929,12 +936,11 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
                     gnus-article-mode
                     mu4e-view-mode))
 
-            (defun malb/disable-yankpad-maybe (old-function &rest args)
+            (define-advice yankpad-local-category-to-major-mode
+                (:around (old-function &rest args) malb/disable-yankpad-maybe)
               (if (member major-mode malb/disable-yankpad-major-modes)
                   nil
-                (apply old-function args)))
-
-            (advice-add 'yankpad-local-category-to-major-mode :around #'malb/disable-yankpad-maybe)))
+                (apply old-function args)))))
 #+END_SRC
 
 * Auto Completion (Company)
@@ -1258,7 +1264,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-display-function #'helm-default-display-buffer
                   helm-display-buffer-reuse-frame t
                   helm-display-buffer-width 180
-                  helm-display-buffer-height 60
+                  helm-display-buffer-height 50
                   helm-use-undecorated-frame-option nil
 
                   helm-file-cache-fuzzy-match           t
@@ -3396,7 +3402,7 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
   :after (org-capture)
   :config (progn (setq ocpf-frame-parameters '((name . "*Org Capture*")
                                                (width . 120)
-                                               (height . 40)
+                                               (height . 32)
                                                (sticky . t)
                                                (malb/is-special . t)
                                                (fullscreen . nil)
@@ -6388,23 +6394,24 @@ can be added either from an open buffer or a file."
 
             (advice-add #'bibtex-completion-candidates :around #'malb/bibtex-completion-candidates-cache)
 
-            (async-start
-             `(lambda ()
-                (package-initialize)
-                (require 'bibtex-completion)
-                ,(async-inject-variables "\\`\\(bibtex-completion\\)")
-                (bibtex-completion-candidates)
+            (when (daemonp)
+              (async-start
+               `(lambda ()
+                  (package-initialize)
+                  (require 'bibtex-completion)
+                  ,(async-inject-variables "\\`\\(bibtex-completion\\)")
+                  (bibtex-completion-candidates)
 
-                (list
-                 bibtex-completion-cache
-                 bibtex-completion-string-cache
-                 bibtex-completion-string-hash-table))
+                  (list
+                   bibtex-completion-cache
+                   bibtex-completion-string-cache
+                   bibtex-completion-string-hash-table))
 
-             (lambda (result)
-               (setq bibtex-completion-cache (nth 0 result)
-                     bibtex-completion-string-cache (nth 1 result)
-                     bibtex-completion-string-hash-table (nth 2 result))
-               (message "Finished scanning BibTeX file.")))))
+               (lambda (result)
+                 (setq bibtex-completion-cache (nth 0 result)
+                       bibtex-completion-string-cache (nth 1 result)
+                       bibtex-completion-string-hash-table (nth 2 result))
+                 (message "Finished scanning BibTeX file."))))))
 #+END_SRC
 
 We add an option to search for the paper’s title online.
@@ -8426,9 +8433,10 @@ exports.boxes = [ "INBOX"];
             :tags '(chat))
 
           ;; start some services
-          (prodigy-start-service (prodigy-find-service "imapnotify"))
-          (prodigy-start-service (prodigy-find-service "bitlbee"))
-          (prodigy-start-service (prodigy-find-service "weechat"))))
+          (when (daemonp)
+            (prodigy-start-service (prodigy-find-service "imapnotify"))
+            (prodigy-start-service (prodigy-find-service "bitlbee"))
+            (prodigy-start-service (prodigy-find-service "weechat")))))
 #+END_SRC
 
 * EMMS
@@ -8502,6 +8510,7 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
 
 #+BEGIN_SRC emacs-lisp
 (use-package weechat
+  :defer nil
   :commands (weechat-connect malb/weechat weechat-switch-buffer)
   :bind (:map weechat-mode-map
               ("M-<up>" .  weechat-previous-input)
@@ -8517,9 +8526,19 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
             (require 'weechat-image)
 
             (setq weechat-completing-read-function #'completing-read
-                  weechat-auto-monitor-buffers t
+                  weechat-auto-monitor-buffers nil
                   weechat-auto-close-buffers t
+                  weechat-max-nick-length 32
+                  weechat-notification-mode t
+                  weechat-notification-types '(:highlight :message :disconnect :query)
+                  weechat-tracking-types     '(:highlight :message :query)
                   weechat-buffer-kill-buffers-on-disconnect t)
+
+            (defun weechat-tracking-handle-query ()
+              (when (weechat-tracking-show-buffer? :query (current-buffer))
+                (tracking-add-buffer (current-buffer))))
+
+            (add-hook 'weechat-buffer-background-message-hook  'weechat-tracking-handle-query)
 
             (add-hook 'weechat-mode-hook #'visual-line-mode)
             (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
@@ -8527,10 +8546,12 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
             (defun malb/weechat ()
               (interactive)
               (weechat-connect "localhost" 9000 nil 'plain)
-              (sleep-for 1.0)
-              (weechat-monitor-all-buffers))
+              (run-at-time 10 nil #'weechat-monitor-all-buffers))
+
             ;; run it on startup
-            (malb/weechat)))
+            (when (daemonp)
+              (weechat-connect "localhost" 9000 nil 'plain)
+              (run-at-time 120 nil #'weechat-monitor-all-buffers))))
 #+END_SRC
 
 *** Notes
@@ -8669,7 +8690,7 @@ then enter the text in that file's own buffer.
             (edit-server-start)
             (setq edit-server-new-frame-alist '((name . "Edit Firefox with Emacs")
                                                 (width . 80)
-                                                (height . 60)
+                                                (height . 50)
                                                 (minibuffer . t)
                                                 (internal-border-width . 10)
                                                 (skip-taskbar . t)
@@ -8808,12 +8829,6 @@ shell-command. Here's how to set the cursor not going into prompt. ([[http://erg
         t
         point-entered minibuffer-avoid-prompt
         face minibuffer-prompt)))
-#+END_SRC
-
-Always prefer to load newer files, instead of giving precedence to the .elc files.
-
-#+BEGIN_SRC emacs-lisp
-(setq load-prefer-newer t)
 #+END_SRC
 
 Smoother scrolling.
