@@ -1264,7 +1264,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-display-function #'helm-default-display-buffer
                   helm-display-buffer-reuse-frame t
                   helm-display-buffer-width 180
-                  helm-display-buffer-height 50
+                  helm-display-buffer-height (ceiling (/ (alist-get 'height default-frame-alist) 1.61))
                   helm-use-undecorated-frame-option nil
 
                   helm-file-cache-fuzzy-match           t
@@ -7533,7 +7533,7 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-compose-frame ()
   (sleep-for 0.25) ;; this is a HACK
-  (set-frame-size (selected-frame) 80 60)
+  (set-frame-size (selected-frame) 76 (alist-get 'height default-frame-alist))
   (sleep-for 0.25) ;; this is a HACK
   (set-frame-parameter nil 'malb/is-special t)
   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
@@ -8688,11 +8688,11 @@ then enter the text in that file's own buffer.
   :disabled t
   :config (progn
             (edit-server-start)
-            (setq edit-server-new-frame-alist '((name . "Edit Firefox with Emacs")
-                                                (width . 80)
-                                                (height . 50)
+            (setq edit-server-new-frame-alist `((name . "Edit Firefox with Emacs")
+                                                (width . 120)
+                                                (height . ,(ceiling (/ (alist-get 'height default-frame-alist) 1.61)))
                                                 (minibuffer . t)
-                                                (internal-border-width . 10)
+                                                (internal-border-width . 16)
                                                 (skip-taskbar . t)
                                                 (unsplittable . t)
                                                 (menu-bar-lines . nil))
@@ -8714,14 +8714,14 @@ then enter the text in that file's own buffer.
   :after hide-mode-line-mode
   :quelpa (emacs-everywhere :fetcher github :repo "tecosaur/emacs-everywhere")
   :config (progn
-            (setq emacs-everywhere-frame-parameters  '((name . "emacs-everywhere")
+            (setq emacs-everywhere-frame-parameters  `((name . "emacs-everywhere")
                                                        (minibuffer . nil)
-                                                       (internal-border-width . 10)
+                                                       (internal-border-width . 16)
                                                        (skip-taskbar . t)
                                                        (unsplittable . t)
                                                        (menu-bar-lines . nil)
-                                                       (width . 80)
-                                                       (height . 12)
+                                                       (width . 120)
+                                                       (height . ,(ceiling (/ (alist-get 'height default-frame-alist) 1.61)))
                                                        (alpha . 0.95)
                                                        (buffer-predicate . (lambda (x) nil))))
             (add-hook 'emacs-everywhere-mode-hook #'hide-mode-line-mode)))
@@ -9371,8 +9371,8 @@ The result looks like this:
   (when (not malb/theme-loaded)
     (select-frame frame)
     (load-theme 'solarized-light-malb)
-    (eval-after-load "unicode-fonts"
-      '(unicode-fonts-setup))
+    ;; (eval-after-load "unicode-fonts"
+    ;;   '(unicode-fonts-setup))
     (doom-modeline-mode t)
     (setq malb/theme-loaded t)))
 
