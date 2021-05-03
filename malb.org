@@ -3402,7 +3402,7 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
   :after (org-capture)
   :config (progn (setq ocpf-frame-parameters '((name . "*Org Capture*")
                                                (width . 120)
-                                               (height . 32)
+                                               (height . 24)
                                                (sticky . t)
                                                (malb/is-special . t)
                                                (fullscreen . nil)
