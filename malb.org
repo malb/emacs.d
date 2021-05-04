@@ -8558,8 +8558,8 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
 
             ;; run it on startup
             (when (daemonp)
-              (weechat-connect "localhost" 9000 nil 'plain)
-              (run-at-time 120 nil #'weechat-monitor-all-buffers))))
+              (run-at-time  60 nil #'weechat-connect "localhost" 9000 nil 'plain)
+              (run-at-time 180 nil #'weechat-monitor-all-buffers))))
 #+END_SRC
 
 *** Notes
