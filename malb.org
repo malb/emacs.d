@@ -6396,24 +6396,25 @@ can be added either from an open buffer or a file."
 
             (advice-add #'bibtex-completion-candidates :around #'malb/bibtex-completion-candidates-cache)
 
-            (when (daemonp)
-              (async-start
-               `(lambda ()
-                  (package-initialize)
-                  (require 'bibtex-completion)
-                  ,(async-inject-variables "\\`\\(bibtex-completion\\)")
-                  (bibtex-completion-candidates)
+            (require 'async)
 
-                  (list
-                   bibtex-completion-cache
-                   bibtex-completion-string-cache
-                   bibtex-completion-string-hash-table))
+            (if (daemonp)
+                (prog1
+                    (async-start `(lambda ()
+                                    (package-initialize)
+                                    (require 'bibtex-completion)
+                                    ,(async-inject-variables "\\`\\(bibtex-completion\\)")
+                                    (bibtex-completion-candidates)
 
-               (lambda (result)
-                 (setq bibtex-completion-cache (nth 0 result)
-                       bibtex-completion-string-cache (nth 1 result)
-                       bibtex-completion-string-hash-table (nth 2 result))
-                 (message "Finished scanning BibTeX file."))))))
+                                    (list bibtex-completion-cache
+                                          bibtex-completion-string-cache
+                                          bibtex-completion-string-hash-table))
+
+                                 (lambda (result)
+                                   (setq bibtex-completion-cache (nth 0 result)
+                                         bibtex-completion-string-cache (nth 1 result)
+                                         bibtex-completion-string-hash-table (nth 2 result))
+                                   (message "Finished scanning BibTeX file.")))))))
 #+END_SRC
 
 We add an option to search for the paper’s title online.
