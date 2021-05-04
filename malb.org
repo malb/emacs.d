@@ -5985,10 +5985,12 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                '("proposition" LaTeX-env-label)))
 
             (defun malb/latex-add-font-lock ()
-              ;; dunno why cleveref.el isn't loaded
               (font-latex-add-keywords '(("malb" "*[{")
-                                         ("todo" "*[{"))
+                                         ("todo" "*[{")
+                                         ("anonymous" "{{")
+                                         ("fullversion" "{{"))
                                        'function)
+              ;; dunno why cleveref.el isn't loaded
               (font-latex-add-keywords '(("cref"          "*{")
                                          ("Cref"          "*{")
                                          ("crefrange"     "*{{")
