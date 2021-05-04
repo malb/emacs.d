@@ -2414,7 +2414,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Agenda
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-tags-column -127
+(setq org-agenda-tags-column -137
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
       org-agenda-default-appointment-duration 60
