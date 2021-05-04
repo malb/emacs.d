@@ -5956,12 +5956,13 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               ("M-<down>" . outline-move-subtree-down)
               ("C-c h ." . TeX-doc))
   :config (progn
-            (add-hook 'LaTeX-mode-hook #'visual-line-mode)
-            (add-hook 'LaTeX-mode-hook #'flyspell-mode)
-            (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
+            (add-hook 'LaTeX-mode-hook #'turn-on-visual-line-mode)
+            (add-hook 'LaTeX-mode-hook #'turn-on-flyspell)
+            ;; (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
-            (add-hook 'LaTeX-mode-hook #'visual-fill-column-mode)
-            (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
+            (add-hook 'LaTeX-mode-hook #'turn-on-visual-fill-column-mode)
+            (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
+            (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
@@ -8541,8 +8542,8 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
 
             (add-hook 'weechat-buffer-background-message-hook  'weechat-tracking-handle-query)
 
-            (add-hook 'weechat-mode-hook #'visual-line-mode)
-            (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
+            (add-hook 'weechat-mode-hook #'turn-on-visual-line-mode)
+            (add-hook 'weechat-mode-hook #'turn-on-visual-fill-column-mode)
 
             (defun malb/weechat ()
               (interactive)
@@ -9215,7 +9216,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 (use-package nov
   :mode ("\\.epub$" . nov-mode)
   :config (progn
-            (add-hook 'nov-mode-hook #'visual-fill-column-mode)))
+            (add-hook 'nov-mode-hook #'turn-on-visual-fill-column-mode)))
 #+END_SRC
 
 * Theme & Look
@@ -9458,7 +9459,7 @@ Better unicode font support.
               ("<tab>" .  org-cycle)
               ("<backtab>" . org-shifttab))
   :config (progn
-            (add-hook 'eww-mode-hook #'visual-fill-column-mode)
+            (add-hook 'eww-mode-hook #'turn-on-visual-fill-column-mode)
             (add-hook 'eww-after-render-hook 'shrface-mode)))
 #+END_SRC
 
