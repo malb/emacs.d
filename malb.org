@@ -7078,22 +7078,15 @@ Use ace-link for links as it is compatible with gnus.
 (bind-key "g" #'ace-link mu4e-view-mode-map)
 #+END_SRC
 
-
 Headers to show in header view.
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-headers-fields '((:human-date . 10)
-                            (:flags . 4)
+(setq mu4e-headers-fields '((:empty . 2)
+                            (:human-date . 12)
+                            (:flags . 6)
                             (:mailing-list . 16)
                             (:from-or-to . 22)
-                            (:subject)))
-#+END_SRC
-
-Use imagemagick, if available
-
-#+BEGIN_SRC emacs-lisp
-(when (fboundp 'imagemagick-register-types)
-  (imagemagick-register-types))
+                            (:subject . nil)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -7151,9 +7144,21 @@ Gnus formatting
 
 #+begin_src emacs-lisp
 (use-package mu4e-thread-folding
+  :defer nil
+  :after (mu4e)
   :quelpa (mu4e-thread-folding :fetcher github :repo "rougier/mu4e-thread-folding")
+  ;; workaround
+  :init (setq nano-color-background (face-attribute 'default :background))
+  :bind (:map mu4e-headers-mode-map
+              ("<tab>"     . mu4e-headers-toggle-at-point)
+              ("<left>"    . mu4e-headers-fold-at-point)
+              ("<S-left>"  . mu4e-headers-fold-all)
+              ("<right>"   . mu4e-headers-unfold-at-point)
+              ("<S-right>" . mu4e-headers-unfold-all))
   :config (progn
-            (setq mu4e-thread-folding-default-view 'unfolded)
+            (setq mu4e-thread-folding-default-view 'unfolded
+                  mu4e-thread-folding-root-unfolded-prefix-string "⯆"
+                  mu4e-thread-folding-root-folded-prefix-string "⯈")
             (add-to-list 'mu4e-header-info-custom
                          '(:empty . (:name "Empty"
                                            :shortname ""
