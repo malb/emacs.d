@@ -3570,7 +3570,7 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 #+BEGIN_SRC emacs-lisp
 (use-package ob-async
   :after ob
-  :init (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia")))
+  :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia")))
 #+END_SRC
 
 ** Org Download
@@ -4686,7 +4686,8 @@ Auto-format source code in many languages with one command – [[https://github.
               ("M-<down>" . jupyter-repl-history-next)
               ("C-<down>" . jupyter-repl-history-next))
   :init (eval-after-load 'jupyter-org-extensions
-          '(unbind-key "C-c h" jupyter-org-interaction-mode-map)))
+          '(unbind-key "C-c h" jupyter-org-interaction-mode-map))
+  :config (org-babel-jupyter-override-src-block "python"))
 #+END_SRC
 
 #+begin_src emacs-lisp
