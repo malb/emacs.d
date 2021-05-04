@@ -6012,8 +6012,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-font-lock)
-            (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
-            (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)
 
             (defun malb/latex-jump ()
               "If point is on a citation, jump to the bibtex file, otherwise open refex menu."
