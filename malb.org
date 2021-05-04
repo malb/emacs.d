@@ -158,8 +158,6 @@ We have RAM, lots of it.
       kill-ring-max 256)
 #+END_SRC
 
-* GCMH
-
 We set =(setq gc-cons-threshold most-positive-fixnum)= in =early-init.el=, after init files are loded we enable the [[https://github.com/emacsmirror/gcmh][garbage collector magic hack]] with something more sensible.
 
 #+BEGIN_SRC emacs-lisp
