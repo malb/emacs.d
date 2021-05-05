@@ -9405,13 +9405,16 @@ Better unicode font support.
 (use-package all-the-icons)
 #+END_SRC
 
-[[https://fonts.google.com/specimen/Cousine][Cousine]] is wide font which means glyphs rendered in different fonts (when Cousine doesn’t have the matching glyph) are too high. Thus, we scale those other fonts down when Cousine is the default face. Note that =face-font-rescale-alist= is frame specific, thus the hook.
+- [[https://fonts.google.com/specimen/Cousine][Cousine]] is wide font which means glyphs rendered in different fonts (when Cousine doesn’t have the matching glyph) are too high. Thus, we scale those other fonts down when Cousine is the default face.
+- We use [[https://www.google.com/get/noto/][Noto Sans Mono]] in condensed form which means some other glyphs can be too wide.
+
+Note that =face-font-rescale-alist= is frame specific, thus the hook.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/fonts (frame)
-  (when (string-match "Cousine" (alist-get 'font default-frame-alist))
-    (with-selected-frame frame
-      (setq face-font-rescale-alist nil)
+  (with-selected-frame frame
+    (setq face-font-rescale-alist nil)
+    (when (string-match "Cousine" (alist-get 'font default-frame-alist))
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "DejaVu Sans Mono") 0.9) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Material Icons") 0.7) t)
@@ -9421,10 +9424,20 @@ Better unicode font support.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "file-icons") 0.75) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Asana Math") 0.7) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Symbols") 0.7) t)
-      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.7) t))))
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.7) t))
+    (when (string-match "Noto Sans Mono" (alist-get 'font default-frame-alist))
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.9) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "all-the-icons") 0.85) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "file-icons") 0.85) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "github-octicons") 0.85) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.95) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.95) t)
+      ;; (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Material Icons") 0.75) t)
+      )))
 
-  (add-hook 'after-make-frame-functions #'malb/fonts)
-  (malb/fonts (selected-frame)) ;; initial frame
+(add-hook 'after-make-frame-functions #'malb/fonts)
+(malb/fonts (selected-frame)) ;; initial frame
+
 #+END_SRC
 
 ** SHR (EWW et al)
