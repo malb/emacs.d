@@ -325,6 +325,8 @@ Resize windows to accommodate new ones.
                       (setq done t))))))))
 #+END_SRC
 
+*** TODO Replace by =tab-bar-mode= ?
+
 ** Switching
 
 *** Ace Window
@@ -818,7 +820,6 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 #+END_SRC
 
 * Snippets
-
 ** YaSnippet
 
 #+BEGIN_QUOTE
@@ -830,6 +831,8 @@ Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is on ~yasni
 You can call ~yas-decribe-tables~ to see currently defined snippets, I usually just use [[Helm YaSnippet]].
 
 We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/yasnippet/issues/669][source]])
+
+=malb/yas-dir-f-oh= is used to tangle =snippets.org=
 
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
@@ -2416,7 +2419,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Agenda
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-tags-column -137
+(setq org-agenda-tags-column -122
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
       org-agenda-default-appointment-duration 60
@@ -8107,6 +8110,7 @@ Show dired histories you have visited.
                  (setq dired-sidebar-theme 'icons
                        dired-sidebar-should-follow-file t
                        dired-sidebar-use-term-integration t
+                       dired-sidebar-width 40
                        dired-sidebar-display-alist '((side . left)
                                                      (slot . -1)
                                                      (window-parameters
