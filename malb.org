@@ -5528,10 +5528,9 @@ Indicate soft wrapped lines.
             (setq-default typo-language "English")
 
             (defun malb/typo-in-src-block ()
-              (memq (face-at-point) '(org-block
-                                      font-lock-string-face
-                                      font-lock-comment-face
-                                      markdown-code-face)))
+
+              (or (org-in-block-p '("src" "example"))
+                  (memq (face-at-point) '(markdown-code-face))))
 
             (add-to-list 'typo-disable-electricity-functions #'malb/typo-in-src-block)
 
