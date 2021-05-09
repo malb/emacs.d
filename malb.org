@@ -461,7 +461,7 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                  (side            . bottom)
                  (window-parameters
                   (no-other-window . t)
-                  (no-delete-other-window . t))
+                  (no-delete-other-windows . t))
                  (window-height   . 0.3))) t)
 #+END_SRC
 
@@ -1653,7 +1653,7 @@ Make sure to auto automatically rescan for imenu change.
                                display-buffer-alist nil nil #'equal)
                     `(display-buffer-in-side-window
                       (window-parameters  . ((no-other-window . t)
-                                             (no-delete-other-window . t)))
+                                             (no-delete-other-windows . t)))
                       (side . ,side)
                       ;; It is not totally clear to me if `imenu-list-size' is
                       ;; supposed to be the window's body height/width or the
@@ -6056,7 +6056,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                          '("^\\*toc\\*$" display-buffer-in-side-window
                            (window-parameters
                             (no-other-window . t)
-                            (no-delete-other-window . t))
+                            (no-delete-other-windows . t))
                            (side . left)
                            (window-width . 0.15)
                            (preserve-size t)
@@ -8108,16 +8108,22 @@ Show dired histories you have visited.
                  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
                  (setq dired-sidebar-theme 'icons
                        dired-sidebar-should-follow-file t
-                       dired-sidebar-use-term-integration t)
-                 (defun malb/dired-sidebar-drop-icons (orig-fun &rest args)
-                   (if (member 'all-the-icons-dired-mode dired-mode-hook)
-                       (progn
-                         (remove-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-                         (let ((r (apply orig-fun args)))
-                           (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-                           r))
-                     (apply orig-fun args)))
-                 (advice-add #'dired-sidebar-get-or-create-buffer :around #'malb/dired-sidebar-drop-icons)))
+                       dired-sidebar-use-term-integration t
+                       dired-sidebar-display-alist '((side . left)
+                                                     (slot . -1)
+                                                     (window-parameters
+                                                      (no-other-window . t)
+                                                      (no-delete-other-windows . t))))
+                 ;; (defun malb/dired-sidebar-drop-icons (orig-fun &rest args)
+                 ;;   (if (member 'all-the-icons-dired-mode dired-mode-hook)
+                 ;;       (progn
+                 ;;         (remove-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+                 ;;         (let ((r (apply orig-fun args)))
+                 ;;           (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+                 ;;           r))
+                 ;;     (apply orig-fun args)))
+                 ;; (advice-add #'dired-sidebar-get-or-create-buffer :around #'malb/dired-sidebar-drop-icons)
+                 ))
 #+END_SRC
 
 ** Tramp
