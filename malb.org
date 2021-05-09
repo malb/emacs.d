@@ -5815,8 +5815,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
           (defun malb/blog ()
             (interactive)
-            (let ((deft-current-sort-method 'mtime))
-              (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir))))
+            (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir)))
 
           (defun malb/deft ()
             (interactive)
