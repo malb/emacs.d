@@ -5891,6 +5891,7 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
 
             (add-hook 'markdown-mode-hook #'flyspell-mode)
             (add-hook 'markdown-mode-hook #'outline-minor-mode)
+            (add-hook 'markdown-mode-hook #'turn-on-visual-fill-column-mode)
 
             (bind-key "M-." #'markdown-do markdown-mode-map)
 
@@ -8614,7 +8615,7 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
             (add-hook 'weechat-buffer-background-message-hook  'weechat-tracking-handle-query)
 
             (add-hook 'weechat-mode-hook #'turn-on-visual-line-mode)
-            (add-hook 'weechat-mode-hook #'turn-on-visual-fill-column-mode)
+            (add-hook 'weechat-mode-hook #'visual-fill-column-mode)
 
             (defun malb/weechat ()
               (interactive)
