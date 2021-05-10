@@ -486,6 +486,7 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\`\\*Calendar\\*\\'"
                              "\\`\\*mscdb\\*\\'"
                              "\\`\\*lexic\\*\\'"
+                             "\\`\\*LaTeXMK\\[.*\\]\\*"
                              "\\`\\*jupyter-repl\\[.*\\]\\*"))
 #+END_SRC
 
@@ -6167,21 +6168,38 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 Run =latexmk -pvc= in async shell
 
+
 ****** TODO use aux-dir & output-dir in combination with custom rc file to cp output to base dir
 
 #+BEGIN_SRC emacs-lisp
-(defun malb/run-latexmk (arg)
-  (interactive "p")
-  (let*  ((engine (if arg "-xelatex" ""))
-          (filename (file-name-sans-extension (buffer-file-name)))
-          (output-buffer (format "*LaTeXMK %s*" (file-name-nondirectory (buffer-file-name)))))
-    (ignore-errors
-      (select-frame (make-frame '((malb/is-special . t)
-                                  (unsplittable . t)))))
-    (async-shell-command (format "latexmk -pvc -pdf \"%s\" -interaction=nonstopmode \"%s.tex\""
-                                 engine filename)
-                         output-buffer)
-    (delete-window)))
+;; (defun malb/run-latexmk (arg)
+;;   (interactive "p")
+;;   (let*  ((engine (if arg "-xelatex" ""))
+;;           (filename (file-name-sans-extension (buffer-file-name)))
+;;           (output-buffer (format "*LaTeXMK %s*" (file-name-nondirectory (buffer-file-name)))))
+;;     (ignore-errors
+;;       (select-frame (make-frame '((malb/is-special . t)
+;;                                   (unsplittable . t)))))
+;;     (async-shell-command (format "latexmk -pvc -pdf \"%s\" -interaction=nonstopmode \"%s.tex\""
+;;                                  engine filename)
+;;                          output-buffer)
+;;     (delete-window)))
+
+(fset 'malb/toggle-latexmk
+      (malb/make-toggle-shell "LaTeXMK"
+                              #'(let
+                                    ((process (start-process "latexmk" (format "%s-temp" buffer-name)
+                                                             "latexmk" "-pvc" "-pdfxe"
+                                                             "-interaction=nonstopmode"
+                                                             (format "%s.tex"
+                                                                     (file-name-sans-extension
+                                                                      (buffer-file-name))))))
+                                  (set-process-query-on-exit-flag process nil)
+                                  (switch-to-buffer (format "%s-temp" buffer-name))
+                                  (compilation-mode))
+                              nil t nil))
+
+(key-chord-define-global "LL" #'malb/toggle-latexmk)
 #+END_SRC
 
 ** [#B] Utility Functions
