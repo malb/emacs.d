@@ -1304,7 +1304,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-use-frame-when-more-than-two-windows nil
 
                   helm-display-function #'helm-default-display-buffer
-                  helm-display-buffer-reuse-frame t
                   helm-display-buffer-width 180
                   helm-display-buffer-height (ceiling (/ (alist-get 'height default-frame-alist) 1.61))
                   helm-use-undecorated-frame-option nil
