@@ -222,6 +222,12 @@ Key chords allow to execute actions by pressing one or two keys really fast. Som
 * Window Management
 ** Splitting
 
+Ilist, dired-sidebar, reftex-toc etc.
+
+#+begin_src emacs-lisp
+(defconst malb/side-window-width 40)
+#+end_src
+
 When splitting windows open the previous buffer in it.
 
 #+BEGIN_SRC  emacs-lisp
@@ -243,6 +249,17 @@ When splitting windows open the previous buffer in it.
 (bind-key "C-x 3" 'malb/hsplit-last-buffer)
 #+END_SRC
 
+Treat/tag some side windows/bars as special.
+
+#+begin_src emacs-lisp
+(defun malb/side-windows-no-other ()
+  (dolist (window (window-list))
+    (when (and (eq (window-parameter window 'window-side) 'left)
+               (<= (window-width window) malb/side-window-width))
+      (set-window-parameter window 'no-other-window t)
+      (set-window-parameter window 'no-delete-other-windows t))))
+#+end_src
+
 Don’t split horizontally.
 
 #+BEGIN_SRC emacs-lisp
@@ -254,9 +271,10 @@ Don’t split horizontally.
     ;; DIFF: prefer horizontal split
     (or (and (window-splittable-p window t)
              ;; DIFF: restrict to two windows or two windows + side-window
-             (or  (= (length (window-list)) 1)
-                  (and (= (length (window-list)) 2)
-                       (seq-filter (lambda (x) (<= (window-width x) 40)) (window-list))))
+             ;; (or  (= (length (window-list)) 1)
+             ;;      (and (= (length (window-list)) 2)
+             ;;           (seq-filter (lambda (x) (<= (window-width x) 40)) (window-list))))
+             (= (length (seq-filter (lambda (x) (> (window-width x) malb/side-window-width)) (window-list))) 1)
              ;; Split window horizontally.
              (with-selected-window window
                (split-window-right)))
@@ -295,7 +313,25 @@ Resize windows to accommodate new ones.
 
 #+BEGIN_SRC emacs-lisp
 (use-package zygospore
-  :bind (("C-x 1" . zygospore-toggle-delete-other-windows)))
+  :bind (("C-x 1" . malb/zygospore-toggle-delete-other-windows))
+  :config (progn
+            (defun malb/zygospore-toggle-delete-other-windows ()
+              "Main zygospore func.
+If the current frame has several windows, it will act as `delete-other-windows'.
+If the current frame has one window,
+	and it is the one that was last full-frame'd,
+	and the buffer remained the same,
+it will restore the window configuration to prior to full-framing."
+              (interactive)
+              (if (and (= (length (seq-filter
+                                   (lambda (x)
+                                     (> (window-width x) malb/side-window-width))
+                                   (window-list)))
+                          1)
+                       (equal (selected-window) zygospore-last-full-frame-window)
+                       (equal (current-buffer) zygospore-last-full-frame-buffer))
+                  (zygospore-restore-other-windows)
+                (zygospore-delete-other-window)))))
 #+END_SRC
 
 ** Multiple Window Configurations (Eyebrowse)
@@ -310,6 +346,8 @@ Resize windows to accommodate new ones.
   :config (progn
             (setq eyebrowse-wrap-around t)
             (eyebrowse-mode t)
+
+            (add-hook 'eyebrowse-post-window-switch-hook #'malb/side-windows-no-other)
 
             (defun malb/eyebrowse-new-window-config ()
               "make new eyebrowse config, re-using indices 1 - (1)0"
@@ -8110,7 +8148,7 @@ Show dired histories you have visited.
                  (setq dired-sidebar-theme 'icons
                        dired-sidebar-should-follow-file t
                        dired-sidebar-use-term-integration t
-                       dired-sidebar-width 40
+                       dired-sidebar-width malb/side-window-width
                        dired-sidebar-display-alist '((side . left)
                                                      (slot . -1)
                                                      (window-parameters
