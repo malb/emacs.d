@@ -7204,10 +7204,8 @@ Gnus formatting
 #+begin_src emacs-lisp
 (use-package mu4e-thread-folding
   :defer nil
-  :after (mu4e)
+  :after mu4e
   :quelpa (mu4e-thread-folding :fetcher github :repo "rougier/mu4e-thread-folding")
-  ;; workaround
-  :init (setq nano-color-background (face-attribute 'default :background))
   :bind (:map mu4e-headers-mode-map
               ("<tab>"     . mu4e-headers-toggle-at-point)
               ("<left>"    . mu4e-headers-fold-at-point)
@@ -7215,7 +7213,9 @@ Gnus formatting
               ("<right>"   . mu4e-headers-unfold-at-point)
               ("<S-right>" . mu4e-headers-unfold-all))
   :config (progn
-            (setq mu4e-thread-folding-default-view 'unfolded
+            ;; workaround
+            (setq nano-color-background (face-attribute 'default :background)
+                  mu4e-thread-folding-default-view 'unfolded
                   mu4e-thread-folding-root-unfolded-prefix-string "⯆"
                   mu4e-thread-folding-root-folded-prefix-string "⯈")
             (add-to-list 'mu4e-header-info-custom
