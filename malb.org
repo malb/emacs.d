@@ -6169,38 +6169,43 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 Run =latexmk -pvc= in async shell
 
 
-****** TODO use aux-dir & output-dir in combination with custom rc file to cp output to base dir
 
 #+BEGIN_SRC emacs-lisp
-;; (defun malb/run-latexmk (arg)
-;;   (interactive "p")
-;;   (let*  ((engine (if arg "-xelatex" ""))
-;;           (filename (file-name-sans-extension (buffer-file-name)))
-;;           (output-buffer (format "*LaTeXMK %s*" (file-name-nondirectory (buffer-file-name)))))
-;;     (ignore-errors
-;;       (select-frame (make-frame '((malb/is-special . t)
-;;                                   (unsplittable . t)))))
-;;     (async-shell-command (format "latexmk -pvc -pdf \"%s\" -interaction=nonstopmode \"%s.tex\""
-;;                                  engine filename)
-;;                          output-buffer)
-;;     (delete-window)))
-
-(fset 'malb/toggle-latexmk
-      (malb/make-toggle-shell "LaTeXMK"
-                              #'(let
-                                    ((process (start-process "latexmk" (format "%s-temp" buffer-name)
-                                                             "latexmk" "-pvc" "-pdfxe"
-                                                             "-interaction=nonstopmode"
-                                                             (format "%s.tex"
-                                                                     (file-name-sans-extension
-                                                                      (buffer-file-name))))))
-                                  (set-process-query-on-exit-flag process nil)
-                                  (switch-to-buffer (format "%s-temp" buffer-name))
-                                  (compilation-mode))
-                              nil t nil))
-
-(key-chord-define-global "LL" #'malb/toggle-latexmk)
+(defun malb/toggle-latexmk ()
+  "Run LaTeXMK in continuos mode."
+  (interactive)
+  (let*
+      ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) default-directory))
+       (height (/ (window-total-height) 3))
+       (name (if (projectile-project-p) (projectile-project-name) (car (last (split-string parent "/" t)))))
+       (buffer-name (concat "*" "LaTeXMK" "[" name "|" (file-name-nondirectory (buffer-file-name)) "]" "*"))
+       (window (get-buffer-window buffer-name)))
+    (if (and window (<= (window-height window) (/ (frame-height) 3)))
+        (progn
+          (select-window window)
+          (delete-window))
+      (progn (split-window-vertically (- height))
+             (other-window 1)
+             (if (get-buffer buffer-name)
+                 (progn
+                   (switch-to-buffer buffer-name)
+                   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+               (progn
+                 (let
+                     ((process (start-process "latexmk"
+                                              (format "%s-temp" buffer-name)
+                                              "latexmk" "-pvc" "-pdfxe" "-interaction=nonstopmode"
+                                              (format "%s.tex"
+                                                      (file-name-sans-extension
+                                                       (buffer-file-name))))))
+                   (set-process-query-on-exit-flag process nil)
+                   (switch-to-buffer (format "%s-temp" buffer-name))
+                   (compilation-mode))
+                 (rename-buffer buffer-name)
+                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))))))
 #+END_SRC
+
+****** TODO use aux-dir & output-dir in combination with custom rc file to cp output to base dir
 
 ** [#B] Utility Functions
 
@@ -9692,6 +9697,7 @@ Easily change the text size:
 (malb/set-menu-key "/" #'malb/helm-ag-projects)
 (malb/set-menu-key "o" #'malb/helm-org-ql-agenda-files)
 (malb/set-menu-key "p" #'prodigy)
+(malb/set-menu-key "P" #'malb/toggle-latexmk)
 (malb/set-menu-key "s" #'malb/toggle-sage)
 (malb/set-menu-key "S" #'weechat-switch-buffer)
 (malb/set-menu-key "t" #'helm-tramp)
