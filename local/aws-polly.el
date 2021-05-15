@@ -41,7 +41,7 @@
 
 (defun aws-polly-is-quote (text)
   "Decide if TEXT is a quote."
-  (equal (and (>= (length text) 2) (substring text 0 2)) "  "))
+  (equal (and (>= (length text) 2) (substring text 0 2)) "> "))
 
 ;; Return the first voice matching detected language.
 
@@ -74,6 +74,29 @@
 (defvar aws-polly-character-limit 1500
   "Number of characters accepted by AWS polly.")
 
+(defun aws-polly-pandoc-convert (writer &optional buffer beginning end reader)
+  "Output WRITER formatted string of BUFFER between BEGINNING and END parsed using READER."
+  (let* ((buffer (or buffer (current-buffer)))
+         (pandoc-buffer (get-buffer-create pandoc--output-buffer-name))
+         (begginning (or beginning (point-min)))
+         (end (or end (point-max)))
+         (reader (or reader (cdr (assq major-mode pandoc-major-modes))))
+         (text))
+    (switch-to-buffer pandoc-buffer)
+    (erase-buffer)
+    (switch-to-buffer buffer)
+    (call-process-region beginning end "pandoc" nil pandoc-buffer t
+                         "--read"
+                         reader
+                         "--write"
+                         writer
+                         "--quiet"
+                         "--wrap=none")
+    (switch-to-buffer pandoc-buffer)
+    (setq text (buffer-string))
+    (bury-buffer)
+    text))
+
 (defun aws-polly-plaintextify (beginning end)
   "Call pandoc to convert our buffer to plain text.
 
@@ -85,7 +108,7 @@ Region between BEGINNING and END is converted."
         (text))
     (if reader
         (replace-regexp-in-string "_" ""
-                                  (malb/pandoc-convert "plain" (current-buffer) beginning end reader))
+                                  (aws-polly-pandoc-convert "commonmark" (current-buffer) beginning end reader))
       (buffer-substring beginning end))))
 
 ;; We may want to add some silence between paragraphs.
@@ -95,6 +118,10 @@ Region between BEGINNING and END is converted."
   "Command to make moments of silence."
   :group 'aws-polly
   :type 'string)
+
+(defun aws-polly-text-postprocess (text)
+  "Postprocess TEXT before passing it to polly proper."
+  (replace-regexp-in-string "^> \\(.*\\)" "\\1" text))
 
 (defun aws-polly-make-silence (length output-filename)
   "Write LENGTH seconds of silence to OUTPUT-FILENAME."
@@ -115,7 +142,7 @@ When ARG is given, allow to select the voice first."
          (end (if (not (use-region-p))
                   (save-excursion (forward-paragraph) (point))
                 (region-end)))
-         (texts (split-string-and-unquote (aws-polly-plaintextify beginning end) "\n\n"))
+         (texts (split-string (aws-polly-plaintextify beginning end) "\n\n"))
          (silence (make-temp-file "emacs-aws-polly-silence" nil ".mp3"))
          (files nil)
          (set-voice (if arg (aws-polly-voices-completing-read) nil)))
@@ -126,7 +153,11 @@ When ARG is given, allow to select the voice first."
     (dolist (text texts)
       (let ((voice (if set-voice set-voice (aws-polly-select-voice text)))
             (output-filename (make-temp-file "emacs-aws-polly" nil ".mp3")))
-        (call-process-shell-command (format aws-polly-command voice text output-filename) nil nil nil)
+        (call-process-shell-command
+         (format aws-polly-command
+                 voice
+                 (aws-polly-text-postprocess text) output-filename)
+         nil nil nil)
         (setq files (append files (list output-filename silence)))))
     (dolist (file files)
       (let ((current-prefix-arg nil))
