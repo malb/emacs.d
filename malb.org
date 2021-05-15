@@ -5588,8 +5588,6 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
 *** Spell Checking
 
-- Get a custom dictionary from http://app.aspell.net/create?defaults=en_GB-ise [[https://tecosaur.github.io/emacs-config/config.html#ispell][(source)]]
-
 - Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]]) *Note:* Below, we adapt "en-default" (our default) instead of =nil= (the global default) because otherwise we [[http://endlessparentheses.com/ispell-and-apostrophes.html#comment-2258586606][can’t change dictionaries]].
 
 - Enable/disable company completion from ispell dictionaries ([[https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-company.el][source]])
@@ -5598,13 +5596,13 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 (use-package ispell
   :hook ((message-mode) . malb/company-ispell-setup)
   :config (progn
-            (setq ispell-dictionary "en-custom"
+            (setq ispell-dictionary "en_GB"
                   ispell-silently-savep t)
 
             ;; Tell ispell.el that ’ can be part of a word. ;
             (setq ispell-local-dictionary-alist
-                  '(("en-custom" "[[:alpha:]]" "[^[:alpha:]]"
-                     "['\x2019]" nil ("-d" "en-custom") nil utf-8)))
+                  '(("en_GB" "[[:alpha:]]" "[^[:alpha:]]"
+                     "['\x2019]" nil ("-d" "en_GB") nil utf-8)))
 
             ;; Don't send ’ to the subprocess.
             (defun malb/replace-apostrophe (args)
@@ -5675,14 +5673,14 @@ Automatically pick dictionary.
 (use-package auto-dictionary
   :disabled
   :config (progn
-            (setf (cdr (rassoc "en" adict-dictionary-list)) "en-custom")))
+            (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package guess-language
   :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
-  :config (setq guess-language-langcodes '((en . ("en-custom" "English"))
+  :config (setq guess-language-langcodes '((en . ("en_GB" "English"))
                                            (de . ("de_DE" "German")))
                 guess-language-languages '(en de)))
 #+END_SRC
@@ -5696,7 +5694,7 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
                                                                (concat user-emacs-directory "langtool"))
-                  langtool-default-language "en-GB"
+                  langtool-default-language "en_GB"
                   langtool-disabled-rules '("WHITESPACE_RULE"
                                             "EN_QUOTES"
                                             "DASH_RULE"
