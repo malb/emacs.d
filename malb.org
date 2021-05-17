@@ -6144,7 +6144,14 @@ Run =latexmk -pvc= in async shell
       ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) default-directory))
        (height (/ (window-total-height) 3))
        (name (if (projectile-project-p) (projectile-project-name) (car (last (split-string parent "/" t)))))
-       (buffer-name (concat "*" "LaTeXMK" "[" name "|" (file-name-nondirectory (buffer-file-name)) "]" "*"))
+       (main-file-name (if (boundp 'TeX-master)
+                           (cond
+                            ((stringp TeX-master) (expand-file-name TeX-master) )
+                            ((booleanp TeX-master) (buffer-file-name))
+                            (t (buffer-file-name)))
+                         (progn
+                           (buffer-file-name))))
+       (buffer-name (concat "*" "LaTeXMK" "[" name "|" (file-name-nondirectory main-file-name) "]" "*"))
        (window (get-buffer-window buffer-name)))
     (if (and window (<= (window-height window) (/ (frame-height) 3)))
         (progn
@@ -6157,13 +6164,13 @@ Run =latexmk -pvc= in async shell
                    (switch-to-buffer buffer-name)
                    (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
                (progn
-                 (let
-                     ((process (start-process "latexmk"
+                 (let*
+                     ((default-directory (file-name-directory main-file-name))
+                      (process (start-process "latexmk"
                                               (format "%s-temp" buffer-name)
                                               "latexmk" "-pvc" "-pdfxe" "-interaction=nonstopmode"
                                               (format "%s.tex"
-                                                      (file-name-sans-extension
-                                                       (buffer-file-name))))))
+                                                      (file-name-sans-extension main-file-name)))))
                    (set-process-query-on-exit-flag process nil)
                    (switch-to-buffer (format "%s-temp" buffer-name))
                    (compilation-mode))
