@@ -9484,7 +9484,6 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
 
 (add-hook 'after-make-frame-functions #'malb/fonts)
 (malb/fonts (selected-frame)) ;; initial frame
-
 #+END_SRC
 
 ** SHR (EWW et al)
