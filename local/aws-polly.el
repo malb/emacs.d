@@ -41,7 +41,7 @@
 
 (defun aws-polly-is-quote (text)
   "Decide if TEXT is a quote."
-  (equal (and (>= (length text) 2) (substring text 0 2)) "> "))
+  (equal (and (>= (length text) 2) (substring text 0 2)) "  "))
 
 ;; Return the first voice matching detected language.
 
@@ -108,7 +108,7 @@ Region between BEGINNING and END is converted."
         (text))
     (if reader
         (replace-regexp-in-string "_" ""
-                                  (aws-polly-pandoc-convert "commonmark" (current-buffer) beginning end reader))
+                                  (aws-polly-pandoc-convert "plain" (current-buffer) beginning end reader))
       (buffer-substring beginning end))))
 
 ;; We may want to add some silence between paragraphs.
