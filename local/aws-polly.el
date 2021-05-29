@@ -121,7 +121,7 @@ Region between BEGINNING and END is converted."
 
 (defun aws-polly-text-postprocess (text)
   "Postprocess TEXT before passing it to polly proper."
-  (replace-regexp-in-string "^> \\(.*\\)" "\\1" text))
+  (replace-regexp-in-string "^- \\(.*\\)" "\\1" (replace-regexp-in-string "^> \\(.*\\)" "\\1" text)))
 
 (defun aws-polly-make-silence (length output-filename)
   "Write LENGTH seconds of silence to OUTPUT-FILENAME."
