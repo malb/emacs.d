@@ -9271,6 +9271,14 @@ Using [[https://github.com/doublep/logview][logview]] mode.
             (add-hook 'nov-mode-hook #'turn-on-visual-fill-column-mode)))
 #+END_SRC
 
+** MailRC
+
+#+begin_src emacs-lisp
+(use-package conf-mode
+  :ensure nil
+  :mode (("\\.mailrc" . conf-mode)))
+#+end_src
+
 * Theme & Look
 ** Frame Title
 
