@@ -5804,7 +5804,9 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
 (use-package markdown-mode
   :bind (:map markdown-mode-map
               ("M-<up>" . markdown-move-up)
-              ("M-<down>" . markdown-move-down))
+              ("M-<down>" . markdown-move-down)
+              ("C-<tab>" . outline-cycle)
+              ("M-." .  markdown-do))
   :mode (("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode)
          ("\\.text\\'" . markdown-mode)
@@ -5824,9 +5826,42 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
             (add-hook 'markdown-mode-hook #'outline-minor-mode)
             (add-hook 'markdown-mode-hook #'turn-on-visual-fill-column-mode)
 
-            (bind-key "M-." #'markdown-do markdown-mode-map)
+            ;; https://github.com/jrblevin/markdown-mode/issues/189
+            (defun malb/markdown-footnote-find-all-marks ()
+              \  "Collect all footnote mark."
+              (save-excursion
+                (goto-char (point-min))
+                (cl-loop while (re-search-forward "\\[\\([^]]+\\)\\]\\(?:[^:]\\|\\'\\)" nil t)
+                         collect (match-string-no-properties 1))))
 
-            (bind-key "C-<tab>" #'outline-cycle markdown-mode-map)))
+            (defun malb/markdown-footnote-find-all-texts ()
+              "Collect all footnote text."
+              (save-excursion
+                (goto-char (point-min))
+                (cl-loop while (re-search-forward "^ \\{0,3\\}\\[\\([^]]+\\)\\]:" nil t)
+                         collect
+                         (let ((id (match-string-no-properties 1))
+                               (line (line-number-at-pos))
+                               (content (buffer-substring-no-properties
+                                         (line-beginning-position) (line-end-position))))
+                           (cons id (list :line line :content content))))))
+
+            (defun malb/markdown-footnote-sort ()
+              "Sort footnote text order by appearance."
+              (interactive)
+              (let* ((marks (malb/markdown-footnote-find-all-marks))
+                     (texts (malb/markdown-footnote-find-all-texts))
+                     (new-lines (sort (mapcar (lambda (e) (plist-get (cdr e) :line)) texts) #'<)))
+                (save-excursion
+                  (cl-loop for mark in marks
+                           for new-line in new-lines
+                           when (assoc-default mark texts)
+                           do
+                           (progn
+                             (goto-char (point-min))
+                             (forward-line (1- new-line))
+                             (delete-region (line-beginning-position) (line-end-position))
+                             (insert (plist-get it :content)))))))))
 #+END_SRC
 
 *** Pandoc
