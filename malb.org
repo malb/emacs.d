@@ -2764,6 +2764,7 @@ iCal export is triggered after 600 seconds of inactivity.
             (setq org-icalendar-include-todo t
                   org-icalendar-combined-agenda-file malb/org-mode-ics
                   org-icalendar-categories '(category)
+                  org-icalendar-timezone "Europe/London"
                   org-icalendar-use-scheduled '(todo-start event-if-not-todo)
                   org-icalendar-use-deadline '(todo-due)
                   org-icalendar-with-timestamps 'active)))
