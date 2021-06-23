@@ -1636,7 +1636,8 @@ Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-c
 ** Bookmarks
 
 #+BEGIN_SRC emacs-lisp
-(setq bookmark-save-flag 1)
+(setq bookmark-save-flag 1
+      bookmark-fontify nil)
 #+END_SRC
 
 * IMenu
