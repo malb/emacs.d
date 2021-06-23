@@ -4531,36 +4531,14 @@ mouse-3: go to end")
                                        (t (:background "#859900" :foreground "black")))))
 #+END_SRC
 
-*** Looking Stuff Up (Dash)
+*** Looking Stuff Up (Devdocs)
 
-[[https://github.com/areina/helm-dash][helm-dash]] package uses Dash docsets inside emacs to browse documentation.
+Browse [[https://devdocs.io][devdocs.io]] documents inside Emacs
 
-#+BEGIN_SRC emacs-lisp
-(use-package helm-dash
-  :bind ("C-c h ." . helm-dash-at-point)
-  :config (progn
-            (setq helm-dash-common-docsets '("Python_3"
-                                             "C++"
-                                             "C"
-                                             "Emacs_Lisp"
-                                             "Bash"
-                                             "Docker"
-                                             "Go"
-                                             "Java_SE12"
-                                             "LaTeX"
-                                             "HTML"
-                                             "Markdown"
-                                             "NumPy"
-                                             "Flask"
-                                             "SQLAlchemy"
-                                             "SQLite"
-                                             "Bootstrap_4"
-                                             "Font_Awesome"
-                                             )
-                  helm-dash-browser-func 'eww)))
-#+END_SRC
-
-[[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
+#+begin_src emacs-lisp
+(use-package devdocs-browser
+  :bind ("C-c h ." . devdocs-browser-open))
+#+end_src
 
 *** GNU Global
 
