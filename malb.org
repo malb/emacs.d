@@ -6113,6 +6113,31 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (unbind-key "(" 'cdlatex-mode-map)     ;; smartparens
             (unbind-key "[" 'cdlatex-mode-map)     ;; smartparens
             (unbind-key "C-c ?" 'cdlatex-mode-map) ;; TeX-doc
+
+            (defun malb/cdlatex-sub-superscript ()
+              "Insert ^{} or _{} unless the number of backslashes before point is odd.
+When not in LaTeX math environment, _{} and ^{} will have dollars.
+When pressed twice, make the sub/superscript roman."
+              (interactive)
+              (if (and cdlatex-make-sub-superscript-roman-if-pressed-twice
+                       (equal this-command last-command))
+                  (insert "\\rm ")
+                (if (or (cdlatex-number-of-backslashes-is-odd) ;; Quoted
+                        (not (looking-at "[[:space:]\\\$]")))                      ;; malb: added
+                    (insert (event-basic-type last-command-event))
+                  ;; Check if we are in math mode, if not switch to or only add _ or ^
+                  (if (and (not (texmathp))
+                           (not cdlatex-sub-super-scripts-outside-math-mode))
+                      (insert (event-basic-type last-command-event))
+                    (if (not (texmathp)) (cdlatex-ensure-math))
+                    ;; Insert the normal template.
+                    (insert (event-basic-type last-command-event))
+                    (insert "{}")
+                    (forward-char -1)))))
+
+            (bind-key "^" #'malb/cdlatex-sub-superscript 'cdlatex-mode-map)
+            (bind-key "_" #'malb/cdlatex-sub-superscript 'cdlatex-mode-map)
+
             (setq cdlatex-math-modify-alist '((?a "\\alert" "\\alert" t t nil)
                                               (?m "\\mat" nil t t nil)
                                               (?v "\\vec" nil t t nil))
