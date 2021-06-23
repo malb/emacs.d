@@ -1903,7 +1903,7 @@ Automatically revert buffers.
 
 ** Regexp
 
-Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regular expressions and use [[https://github.com/benma/visual-regexp-steroids.el/][visual-regexp-steroids]] for modern regexps. This makes Emacs regexp actually usable for me.
+Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regular expressions. This makes Emacs regexp actually usable for me.
 
 #+BEGIN_SRC emacs-lisp
 (use-package visual-regexp
@@ -1912,22 +1912,6 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
          ("C-%" . query-replace)
          ("C-S-s" . vr/isearch-forward)
          ("C-S-r" . vr/isearch-backward)))
-
-(use-package pcre2el)
-
-(use-package visual-regexp-steroids
-  :config (setq vr/engine 'pcre2el))
-#+END_SRC
-
-Sometimes visual-regexp bombs out, so we have a function to reset it:
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/reset-visual-regexp ()
-  (interactive)
-  (unload-feature 'visual-regexp t)
-  (unload-feature 'visual-regexp-steroids t)
-  (require 'visual-regexp)
-  (require 'visual-regexp-steroids))
 #+END_SRC
 
 ** Undo
