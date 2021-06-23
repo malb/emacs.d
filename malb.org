@@ -7208,25 +7208,25 @@ Gnus formatting
 
 #+begin_src emacs-lisp
 (use-package mu4e-thread-folding
-  :defer nil
-  :after mu4e
+  :ensure nil
   :quelpa (mu4e-thread-folding :fetcher github :repo "rougier/mu4e-thread-folding")
-  :bind (:map mu4e-headers-mode-map
-              ("<tab>"     . mu4e-headers-toggle-at-point)
-              ("<left>"    . mu4e-headers-fold-at-point)
-              ("<S-left>"  . mu4e-headers-fold-all)
-              ("<right>"   . mu4e-headers-unfold-at-point)
-              ("<S-right>" . mu4e-headers-unfold-all))
-  :config (progn
-            ;; workaround
-            (setq nano-color-background (face-attribute 'default :background)
-                  mu4e-thread-folding-default-view 'unfolded
-                  mu4e-thread-folding-root-unfolded-prefix-string "⯆"
-                  mu4e-thread-folding-root-folded-prefix-string "⯈")
-            (add-to-list 'mu4e-header-info-custom
-                         '(:empty . (:name "Empty"
-                                           :shortname ""
-                                           :function (lambda (msg) "  "))))))
+  :after mu4e
+  :init (progn
+          ;; workaround
+          (setq mu4e-thread-folding-default-view 'unfolded
+                mu4e-thread-folding-root-unfolded-prefix-string "⯆"
+                mu4e-thread-folding-root-folded-prefix-string "⯈")
+
+          (bind-key "<tab>"     #'mu4e-headers-toggle-at-point mu4e-headers-mode-map)
+          (bind-key "<left>"    #'mu4e-headers-fold-at-point   mu4e-headers-mode-map)
+          (bind-key "<S-left>"  #'mu4e-headers-fold-all        mu4e-headers-mode-map)
+          (bind-key "<right>"   #'mu4e-headers-unfold-at-point mu4e-headers-mode-map)
+          (bind-key "<S-right>" #'mu4e-headers-unfold-all      mu4e-headers-mode-map)
+
+          (add-to-list 'mu4e-header-info-custom
+                       '(:empty . (:name "Empty"
+                                         :shortname ""
+                                         :function (lambda (msg) "  "))))))
 #+end_src
 
 ** Actions
