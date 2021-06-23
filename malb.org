@@ -6140,6 +6140,8 @@ Run =latexmk -pvc= in async shell
 (defun malb/toggle-latexmk ()
   "Run LaTeXMK in continuos mode."
   (interactive)
+  (if (not (buffer-file-name))
+      (error (format "Buffer %s is not visiting a file." (buffer-name))))
   (let*
       ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) default-directory))
        (height (/ (window-total-height) 3))
