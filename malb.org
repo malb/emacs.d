@@ -5056,13 +5056,13 @@ It makes sense to highlight indentation in Python.
 
 Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-completion and stuff, it runs [[https://github.com/tkf/emacs-jedi][jedi]] for us. In particular it offers:
 
-|---------+----------------------------------|
-| ~M-.~   | =anaconda-mode-complete=         |
-| ~M-,​~   | =anaconda-mode-find-assignments= |
-| ~M-r~   | =anaconda-mode-find-references=  |
-| ~M-*~   | =xref-pop-marker-stack=                               |
-| ~M-?~   | =anaconda-mode-show-doc=         |
-|---------+----------------------------------|
+|-------+----------------------------------|
+| ~M-.~ | =anaconda-mode-complete=         |
+| ~M-=~ | =anaconda-mode-find-assignments= |
+| ~M-r~ | =anaconda-mode-find-references=  |
+| ~M-,~ | =xref-pop-marker-stack=          |
+| ~M-?~ | =anaconda-mode-show-doc=         |
+|-------+----------------------------------|
 
 Fall back to dumb jump if anaconda fails.
 
