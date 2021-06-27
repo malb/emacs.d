@@ -1372,7 +1372,8 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ring
   :ensure nil
-  :bind (("M-y" . helm-show-kill-ring)))
+  :bind (("C-c j /" . helm-global-mark-ring)
+         ("M-y" . helm-show-kill-ring)))
 #+END_SRC
 
 ** Helm Swoop
