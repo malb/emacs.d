@@ -6540,7 +6540,11 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
   (interactive (list 'interactive))
   (cl-case command
     (interactive (company-begin-backend 'company-bibtex-completion))
-    (prefix (let ((prefixes (company-auctex-prefix "\\\\cite[^[{]*\\(?:\\[[^]]*\\]\\)?{\\([^}]*\\)\\=")))
+    (prefix (let ((prefixes (if (derived-mode-p 'latex-mode)
+                                (company-auctex-prefix "\\\\cite[^[{]*\\(?:\\[[^]]*\\]\\)?{\\([^}]*\\)\\=")
+                              (when (and (derived-mode-p 'org-mode)
+                                         (looking-back "cite:\\([^}]*\\)"))
+                                (match-string-no-properties 1)))))
               (if prefixes
                   (last (split-string prefixes "," t))
                 nil)))
