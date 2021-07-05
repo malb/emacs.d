@@ -227,3 +227,6 @@
 
 (eval-after-load "auth-source"
   '(setq auth-source-save-behavior nil))
+
+(custom-set-variables
+ '(warning-suppress-types '((comp) (:warning))))
