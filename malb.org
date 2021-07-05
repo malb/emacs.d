@@ -6381,7 +6381,7 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
             ;; PDF Filenames
             ;;
 
-            (defun bibtex-completion-find-pdf-in-library (key-or-entry &optional find-additional)
+            (defun malb/bibtex-completion-find-pdf-in-library (key-or-entry &optional find-additional)
               "Searches the directories in `bibtex-completion-library-path'
 for a PDF whose name is composed of the BibTeX key plus
 `bibtex-completion-pdf-extension'.  The path of the first matching
@@ -6418,7 +6418,7 @@ starts with the BibTeX key and ends with
                             (not (member y main-pdf)))))
                   (-flatten (-first 'f-file? main-pdf)))))
 
-            (defun bibtex-completion-add-pdf-to-library (keys)
+            (defun malb/bibtex-completion-add-pdf-to-library (keys)
               "Add a PDF to the library for the first selected entry. The PDF
 can be added either from an open buffer or a file."
               (let* ((key (car keys))
@@ -6439,6 +6439,9 @@ can be added either from an open buffer or a file."
                     (write-file pdf)))
                  (file
                   (copy-file file pdf)))))
+
+            (advice-add #'bibtex-completion-find-pdf-in-library :override #'malb/bibtex-completion-find-pdf-in-library)
+            (advice-add #'bibtex-completion-add-pdf-to-library  :override #'malb/bibtex-completion-add-pdf-to-library)
 
             ;;
             ;; Caching
