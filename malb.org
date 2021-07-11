@@ -8445,7 +8445,8 @@ exports.boxes = [ "INBOX"];
           (when (daemonp)
             (prodigy-start-service (prodigy-find-service "imapnotify"))
             (prodigy-start-service (prodigy-find-service "bitlbee"))
-            (prodigy-start-service (prodigy-find-service "weechat")))))
+            ;; (prodigy-start-service (prodigy-find-service "weechat"))
+            )))
 #+END_SRC
 
 * EMMS
@@ -8519,7 +8520,6 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
 
 #+BEGIN_SRC emacs-lisp
 (use-package weechat
-  :defer nil
   :commands (weechat-connect malb/weechat weechat-switch-buffer)
   :bind (:map weechat-mode-map
               ("M-<up>" .  weechat-previous-input)
@@ -8558,9 +8558,10 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
               (run-at-time 10 nil #'weechat-monitor-all-buffers))
 
             ;; run it on startup
-            (when (daemonp)
-              (run-at-time  60 nil #'weechat-connect "localhost" 9000 nil 'plain)
-              (run-at-time 180 nil #'weechat-monitor-all-buffers))))
+            ;; (when (daemonp)
+            ;;   (run-at-time  60 nil #'weechat-connect "localhost" 9000 nil 'plain)
+            ;;   (run-at-time 180 nil #'weechat-monitor-all-buffers))
+            ))
 #+END_SRC
 
 *** Notes
