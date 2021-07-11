@@ -2721,14 +2721,15 @@ Prettier [[https://github.com/integral-dw/org-superstar-mode/][bullets]] in org-
 #+BEGIN_SRC emacs-lisp
 (use-package org-superstar
   :commands org-superstar-mode
+  :custom ((org-superstar-headline-bullets-list '("●" "▲" "■" "◉" "✶" "○" "○") "prettier bullet list")
+           (org-superstar-prettify-item-bullets nil "disable prettifying items in ordinary lists")
+           (org-superstar-leading-bullet " ⋅" "use a \cdot"))
   :init  (progn
 
            (defun malb/enable-org-bullets ()
              (org-superstar-mode 1))
 
-           (add-hook 'org-mode-hook #'malb/enable-org-bullets)
-           (setq org-superstar-headline-bullets-list '("●" "▲" "■" "◉" "✶" "○" "○")
-                 org-superstar-prettify-item-bullets nil)))
+           (add-hook 'org-mode-hook #'malb/enable-org-bullets)))
 #+END_SRC
 
 ** Export
