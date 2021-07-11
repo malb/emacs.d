@@ -164,7 +164,7 @@ We set =(setq gc-cons-threshold most-positive-fixnum)= in =early-init.el=, after
 
 #+BEGIN_SRC emacs-lisp
 (use-package gcmh
-  :defer nil
+  :demand t
   :config (progn
             (setq gcmh-high-cons-threshold (* 256 1024 1024)
                   gcmh-low-cons-threshold (* 1 1024 1024))
@@ -994,7 +994,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 #+BEGIN_SRC emacs-lisp
 (use-package company
   :bind (("M-/" . company-complete))
-  :defer nil
+  :demand t
   :config (progn
             (setq company-tooltip-limit 20 ; bigger popup window
                   company-idle-delay 0.6   ; delay for popup
