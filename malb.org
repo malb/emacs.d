@@ -6353,13 +6353,18 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
 
 [[https://github.com/tmalsburg/helm-bibtex/raw/master/screenshot.png]] ([[https://github.com/tmalsburg/helm-bibtex/][source]])
 
-
-- We patch =bibtex-completion-find-pdf-in-library= to replace =:= with =_=.
-- We add a cache to speed up loading.
+In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
+- patch =bibtex-completion-find-pdf-in-library= to replace =:= with =_=, e.g. =EPRINT:FooBar21= to =EPRINT_FooBar=; [[https://cryptobib.di.ens.fr/][crypto.bib]] uses those keys.
+- add another layer of caching to speed up loading.
 
 #+BEGIN_SRC emacs-lisp
-(use-package bibtex-completion
-  :defer nil
+(use-package bibtex-completion)
+
+;; my tweaks
+(use-package bibtex-completion-overrides
+  :demand t
+  :ensure nil
+  :after bibtex-completion
   :config (progn
             (setq bibtex-completion-bibliography malb/bibtex-files
                   bibtex-completion-library-path malb/literature-dirs
@@ -6378,107 +6383,16 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
                           "fullcite:${=key=}\n"
                           "\n"))
 
-            ;;
-            ;; PDF Filenames
-            ;;
-
-            (defun malb/bibtex-completion-find-pdf-in-library (key-or-entry &optional find-additional)
-              "Searches the directories in `bibtex-completion-library-path'
-for a PDF whose name is composed of the BibTeX key plus
-`bibtex-completion-pdf-extension'.  The path of the first matching
-PDF is returned.
-
-If FIND-ADDITIONAL is non-nil, the paths of all PDFs whose name
-starts with the BibTeX key and ends with
-`bibtex-completion-pdf-extension' are returned instead."
-              (let* ((key (if (stringp key-or-entry)
-                              key-or-entry
-                            (bibtex-completion-get-value "=key=" key-or-entry)))
-                     (main-pdf (cl-loop
-                                for dir in
-                                (-flatten bibtex-completion-library-path)
-                                append (cl-loop
-                                        for ext in
-                                        (-flatten bibtex-completion-pdf-extension)
-                                        collect (f-join dir (s-concat
-                                                             (s-replace ":" "_" key) ext))))))
-                (if find-additional
-                    (sort               ; move main pdf on top of the list if needed
-                     (cl-loop
-                      for dir in (-flatten bibtex-completion-library-path)
-                      append (directory-files dir t
-                                              (s-concat "^" (regexp-quote (s-replace ":" "_" key))
-                                                        ".*\\("
-                                                        (mapconcat
-                                                         'regexp-quote
-                                                         (-flatten bibtex-completion-pdf-extension)
-                                                         "\\|")
-                                                        "\\)$")))
-                     (lambda (x y)
-                       (and (member x main-pdf)
-                            (not (member y main-pdf)))))
-                  (-flatten (-first 'f-file? main-pdf)))))
-
-            (defun malb/bibtex-completion-add-pdf-to-library (keys)
-              "Add a PDF to the library for the first selected entry. The PDF
-can be added either from an open buffer or a file."
-              (let* ((key (car keys))
-                     (source (char-to-string
-                              (read-char-choice "Add pdf from [b]uffer or [f]ile? " '(?b ?f))))
-                     (buffer (when (string= source "b")
-                               (read-buffer-to-switch "Add pdf buffer: ")))
-                     (file (when (string= source "f")
-                             (expand-file-name (read-file-name "Add pdf file: " nil nil t))))
-                     (path (-flatten (list bibtex-completion-library-path)))
-                     (path (if (cdr path)
-                               (completing-read "Add pdf to: " path nil t)
-                             (car path)))
-                     (pdf (expand-file-name (concat  (s-replace ":" "_" key) ".pdf") path)))
-                (cond
-                 (buffer
-                  (with-current-buffer buffer
-                    (write-file pdf)))
-                 (file
-                  (copy-file file pdf)))))
-
-            (advice-add #'bibtex-completion-find-pdf-in-library :override #'malb/bibtex-completion-find-pdf-in-library)
-            (advice-add #'bibtex-completion-add-pdf-to-library  :override #'malb/bibtex-completion-add-pdf-to-library)
-
-            ;;
-            ;; Caching
-            ;;
-
-            (defvar malb/bibtex-completion-hashes nil)
-
-            (defun malb/bibtex-completion-hashes ()
-              (cons bibtex-completion-bibliography
-                    (mapcar 'cadr bibtex-completion-cache)))
-
-            (defvar malb/bibtex-completion-candidates-cache nil)
-
-            (defun malb/bibtex-completion-candidates-clear-cache ()
-              (setq malb/bibtex-completion-candidates-cache nil
-                    malb/bibtex-completion-hashes nil))
-
-            (defun malb/bibtex-completion-candidates-cache (old-function &rest arguments)
-              "Call `bibtex-completion-candidates` only when files changed."
-
-              (let ((local-hashes (malb/bibtex-completion-hashes)))
-                (when (not (equal local-hashes malb/bibtex-completion-hashes))
-                  (setq malb/bibtex-completion-hashes local-hashes
-                        malb/bibtex-completion-candidates-cache (apply old-function arguments))))
-              malb/bibtex-completion-candidates-cache)
-
-            (advice-add #'bibtex-completion-candidates :around #'malb/bibtex-completion-candidates-cache)
-
             (require 'async)
 
             (if (daemonp)
                 (prog1
                     (async-start `(lambda ()
+                                    (add-to-list 'load-path (expand-file-name "local/" user-emacs-directory))
                                     (package-initialize)
-                                    (require 'bibtex-completion)
+                                    (require 'bibtex-completion-overrides)
                                     ,(async-inject-variables "\\`\\(bibtex-completion\\)")
+
                                     (bibtex-completion-candidates)
 
                                     (list bibtex-completion-cache
