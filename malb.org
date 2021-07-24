@@ -6210,7 +6210,7 @@ When pressed twice, make the sub/superscript roman."
                        (equal this-command last-command))
                   (insert "\\rm ")
                 (if (or (cdlatex-number-of-backslashes-is-odd) ;; Quoted
-                        (not (looking-at "[[:space:]\\\$]")))                      ;; malb: added
+                        (not (looking-at "[[:space:]\\\$]")))   ;; malb: added
                     (insert (event-basic-type last-command-event))
                   ;; Check if we are in math mode, if not switch to or only add _ or ^
                   (if (and (not (texmathp))
