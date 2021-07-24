@@ -2578,6 +2578,44 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
 (setq org-latex-tables-booktabs t)
 #+end_src
 
+Extract org tables as lists of alists.
+
+#+begin_src emacs-lisp
+(defun malb/org-table-to-alist (name)
+  "Return list of alists for org table named NAME under current heading."
+  (save-excursion
+    (save-restriction
+      (org-narrow-to-subtree)
+      (goto-char (point-min))
+
+      (let ( (case-fold-search t))
+        (search-forward (format "+name: %s" name)))
+      (forward-line)
+
+      (unless (org-at-table-p)
+        (user-error "Not at a table"))
+
+      (let ((clean-table (org-table-to-lisp))
+            (ret '())
+            (i 1))
+        (dolist (row clean-table)
+          (if (eq row 'hline)
+              (setq i (+ i 1))
+            (dolist (col row)
+              (setf col (substring-no-properties col)))))
+
+        (while (< i (length clean-table))
+          (add-to-list 'ret
+                       (cl-loop
+                        for j below
+                        (length (nth 0 clean-table))
+                        collect (cons (nth j (nth 0 clean-table ))
+                                      (nth j (nth i clean-table ))))
+                       t)
+          (setq i (+ i 1)))
+        ret))))
+#+end_src
+
 ** Speed Commands
 
 ([[https://raw.githubusercontent.com/jkitchin/scimax/][source]])
@@ -3578,6 +3616,29 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
   :after ob
   :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia")))
 #+END_SRC
+
+*** To String
+
+#+begin_src emacs-lisp
+(defun malb/org-src-to-string (name)
+  "Return content of source block with NAME under current heading."
+  (save-excursion
+    (save-restriction
+      (org-narrow-to-subtree)
+
+      (goto-char (point-min))
+      (let ((case-fold-search t))
+        (search-forward (format "+name: %s" name)))
+      (forward-line)
+      (forward-line)
+
+      (let ((start (point))
+            (case-fold-search t))
+        (search-forward (format "#+end_src"))
+        (forward-line -1)
+        (end-of-line)
+        (buffer-substring-no-properties start (point))))))
+#+end_src
 
 ** Org Download
 
