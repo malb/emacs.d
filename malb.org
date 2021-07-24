@@ -3311,6 +3311,31 @@ In [[file:%s::%s][%s]]:
                                  ":END:")
                       :immediate-finish t
                       :prepend t)
+                     (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01)) :keys "m"
+                      :file malb/work-org
+                      :headline "Admin"
+                      :template ("* MAIL %?"
+                                 "SCHEDULED: %^t"
+                                 ":PROPERTIES:"
+                                 ":CREATED: %U"
+                                 ":BCC:"
+                                 ":END:"
+                                 ""
+                                 "#+name: mm-data"
+                                 "| TO | CC | name |"
+                                 "|----|----|------|"
+                                 "|    |    |      |"
+                                 ""
+                                 "#+name: mm-template"
+                                 "#+begin_src markdown"
+                                 "Hi ${name},",
+                                 ""
+                                 ""
+                                 "Cheers,"
+                                 "Martin"
+                                 "#+end_src"
+                                 "")
+                      :prepend t)
                      (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
                       :file malb/work-org
                       :headline "Admin"
@@ -3396,7 +3421,6 @@ In [[file:%s::%s][%s]]:
                     "")
          :prepend t
          :empty-lines 1)
-
         (,(format "%s\tWeight" (all-the-icons-faicon "tachometer"  :face 'all-the-icons :v-adjust 0.01)) :keys "w"
          :file malb/private-org
          :headline "Weight"
@@ -7647,17 +7671,17 @@ Link to mu4e messages and threads.
 :BCC:       Eve <eve@example.com>
 :END:
 
-Given a table called =data= and a source code block called =template= this function composes e-mails by rendering the =template= using the =data=. Special fields: =TO=, =CC=, =BCC=. The subject is taking from the heading
+Given a table called =data= and a source code block called =template= this function composes e-mails by rendering the =template= using the =data=. Special fields: =TO=, =CC=, =BCC=. The subject is taking from the heading. Inspired by [[https://github.com/jkitchin/scimax/blob/68aaf5f0685a23c3ae60b16613c5bcd20e8a158b/scimax-email.el][scimax-email.el]].
 
 *Example:*
 
-#+name: data
+#+name: mm-data
 | TO                        | CC                            | name  | foo |
 |---------------------------+-------------------------------+-------+-----|
 | Alice <alice@example.com> |                               | Alice |  32 |
 | Bob <bob@example.com>     | Charley <charley@example.com> | Bob   |  42 |
 
-#+name: template
+#+name: mm-template
 #+begin_src markdown
 Hi ${name},
 
@@ -7667,19 +7691,17 @@ Best,
 Martin
 #+end_src
 
-#+RESULTS:
-: malb/org-src-to-string
-
 #+begin_src emacs-lisp
-(defun malb/mail-merge ()
-  (interactive)
+(defun malb/mail-merge (&optional just-send)
+  "Mail merge data table named `data' and template named `template'."
+  (interactive "P")
   (save-excursion
     (save-restriction
       (org-narrow-to-subtree)
       (goto-char (point-min))
 
-      (let ((data (malb/org-table-to-alist "data"))
-            (template (malb/org-src-to-string "template"))
+      (let ((data (malb/org-table-to-alist "mm-data"))
+            (template (malb/org-src-to-string "mm-template"))
             (to  (org-entry-get (point) "TO"))
             (cc  (org-entry-get (point) "CC"))
             (bcc (org-entry-get (point) "BCC"))
@@ -7715,11 +7737,15 @@ Martin
             (message-goto-to)
 
             ;; we assume all e-mails should be sent from the same context
-            (setq context-set-p t)))))))
-#+end_src
+            (setq context-set-p t)
 
-#+RESULTS:
-: malb/mail-merge
+            (when just-send
+              (message-send-and-exit)))))))
+
+  (let ((display-buffer-alist nil))
+    (when (and (nth 2 (org-heading-components)) just-send)
+      (org-todo "DONE"))))
+#+end_src
 
 * Blogging
 
