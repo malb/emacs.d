@@ -6143,8 +6143,7 @@ When pressed twice, make the sub/superscript roman."
                     (insert "{}")
                     (forward-char -1)))))
 
-            (bind-key "^" #'malb/cdlatex-sub-superscript 'cdlatex-mode-map)
-            (bind-key "_" #'malb/cdlatex-sub-superscript 'cdlatex-mode-map)
+            (advice-add #'cdlatex-sub-superscript :override #'malb/cdlatex-sub-superscript)
 
             (setq cdlatex-math-modify-alist '((?a "\\alert" "\\alert" t t nil)
                                               (?m "\\mat" nil t t nil)
