@@ -160,7 +160,7 @@ We have RAM, lots of it.
       kill-ring-max 256)
 #+END_SRC
 
-We set =(setq gc-cons-threshold most-positive-fixnum)= in =early-init.el=, after init files are loded we enable the [[https://github.com/emacsmirror/gcmh][garbage collector magic hack]] with something more sensible.
+We set =(setq gc-cons-threshold most-positive-fixnum)= in =early-init.el=, after init files are loaded we enable the [[https://github.com/emacsmirror/gcmh][garbage collector magic hack]] with something more sensible.
 
 #+BEGIN_SRC emacs-lisp
 (use-package gcmh
@@ -363,7 +363,7 @@ it will restore the window configuration to prior to full-framing."
                       (setq done t))))))))
 #+END_SRC
 
-*** TODO Replace by =tab-bar-mode= ?
+****** TODO Replace with =tab-bar-mode= ?
 
 ** Switching
 
@@ -439,9 +439,10 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
   :config (progn
             (defun malb/winum-assign ()
               (cond
-               ((string-match-p (regexp-quote (buffer-name)) "\\*shell\\[.*\\]\\*") 10)
-               ((string-match-p (regexp-quote (buffer-name)) "\\*eshell\\[.*\\]\\*") 10)
-               ((string-match-p (regexp-quote (buffer-name)) "\\*Sage\\*") 10)
+               ((string-match-p "\\*shell\\[.*\\]\\*"  (buffer-name)) 10)
+               ((string-match-p "\\*vterm\\[.*\\]\\*"  (buffer-name)) 10)
+               ((string-match-p "\\*eshell\\[.*\\]\\*" (buffer-name)) 10)
+               ((string-match-p "\\*Sage\\*" (buffer-name)) 10)
                ((equal major-mode 'imenu-list-major-mode) 8)
                ((equal major-mode 'dired-sidebar-mode) 8)
                ((equal major-mode 'reftex-toc-mode) 8)
@@ -3774,7 +3775,45 @@ The function behaves as follows:
                ,post-exec)))))))
 #+END_SRC
 
-** [#B] Multi-Term
+** Vterm
+
+[[https://github.com/akermu/emacs-libvterm][Vterm]] is an Emacs terminal using [[http://www.leonerd.org.uk/code/libvterm/][libvterm]]
+
+=C-c C-t= enters copy mode, =<enter>= adds selection to kill ring and leaves copy mode.
+
+#+begin_src emacs-lisp
+(use-package vterm
+  :commands (malb/toggle-vterm vterm)
+  :init (setq vterm-module-cmake-args " -DUSE_SYSTEM_LIBVTERM=no")
+  :config (progn
+            (setq vterm-kill-buffer-on-exit t)
+            (bind-key "M-<up>"   #'vterm-send-up   vterm-mode-map)
+            (bind-key "M-<down>" #'vterm-send-down vterm-mode-map)
+            (fset 'malb/toggle-vterm
+                  (malb/make-toggle-shell
+                   "vterm"
+                   '(let ((current-prefix-arg nil)) (vterm))
+                   '(progn
+                      (when (and (boundp 'conda-env-current-name) conda-env-current-name)
+                        (vterm-send-string (format "conda activate %s" conda-env-current-name))
+                        (vterm-send-return))
+                      (vterm-send-string "ls")
+                      (vterm-send-return))
+                   t))
+
+            (defun malb/vterm-send-C-d-advive (orig-function &rest args)
+              (let ((do-kill-frame (and (not (malb/only-frame-p (selected-frame)))
+                                        (= (length (window-list)) 1)))
+                    (buffer  (current-buffer)))
+                (apply orig-function args)
+                (sit-for 0.1)
+                (if (and do-kill-frame (not (buffer-live-p buffer)))
+                    (delete-frame))))
+
+            (advice-add #'vterm-send-C-d :around #'malb/vterm-send-C-d-advive)))
+#+end_src
+
+** COMMENT [#B] Multi-Term
 
 [[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs.
 
@@ -3819,45 +3858,7 @@ The function behaves as follows:
                                           t))))
 #+END_SRC
 
-** Vterm
-
-[[https://github.com/akermu/emacs-libvterm][Vterm]] is an Emacs terminal using [[http://www.leonerd.org.uk/code/libvterm/][libvterm]]
-
-=C-c C-t= enters copy mode, =<enter>= adds selection to kill ring and leaves copy mode.
-
-#+begin_src emacs-lisp
-(use-package vterm
-  :commands (malb/toggle-vterm vterm)
-  :init (setq vterm-module-cmake-args " -DUSE_SYSTEM_LIBVTERM=no")
-  :config (progn
-            (setq vterm-kill-buffer-on-exit t)
-            (bind-key "M-<up>"   #'vterm-send-up   vterm-mode-map)
-            (bind-key "M-<down>" #'vterm-send-down vterm-mode-map)
-            (fset 'malb/toggle-vterm
-                  (malb/make-toggle-shell
-                   "vterm"
-                   '(let ((current-prefix-arg nil)) (vterm))
-                   '(progn
-                      (when (and (boundp 'conda-env-current-name) conda-env-current-name)
-                        (vterm-send-string (format "conda activate %s" conda-env-current-name))
-                        (vterm-send-return))
-                      (vterm-send-string "ls")
-                      (vterm-send-return))
-                   t))
-
-            (defun malb/vterm-send-C-d-advive (orig-function &rest args)
-              (let ((do-kill-frame (and (not (malb/only-frame-p (selected-frame)))
-                                        (= (length (window-list)) 1)))
-                    (buffer  (current-buffer)))
-                (apply orig-function args)
-                (sit-for 0.1)
-                (if (and do-kill-frame (not (buffer-live-p buffer)))
-                    (delete-frame))))
-
-            (advice-add #'vterm-send-C-d :around #'malb/vterm-send-C-d-advive)))
-#+end_src
-
-** [#B] Shell
+** COMMENT [#B] Shell
 
 #+BEGIN_SRC emacs-lisp
 (use-package shell
@@ -4375,7 +4376,7 @@ Save comint history when emacs is killed
 (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
   #+END_SRC
 
-***** Shx
+***** COMMENT Shx
 
 #+BEGIN_QUOTE
 shx or “shell-extras” extends comint-mode in Emacs — https://github.com/riscy/shx-for-emacs/
@@ -6317,7 +6318,7 @@ Run =latexmk -pvc= in async shell
 
 ****** TODO use aux-dir & output-dir in combination with custom rc file to cp output to base dir
 
-** [#B] Utility Functions
+** Utility Functions
 
 ([[https://sriramkswamy.github.io/dotemacs/][source]])
 
@@ -6649,7 +6650,7 @@ A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s
 
 * E-mail (Mu4e)
 
-we use Mu4e:
+We use Mu4e:
 
 #+BEGIN_SRC emacs-lisp
 (setq mail-user-agent 'mu4e-user-agent)
@@ -7671,7 +7672,7 @@ Link to mu4e messages and threads.
 :BCC:       Eve <eve@example.com>
 :END:
 
-Given a table called =data= and a source code block called =template= this function composes e-mails by rendering the =template= using the =data=. Special fields: =TO=, =CC=, =BCC=. The subject is taking from the heading. Inspired by [[https://github.com/jkitchin/scimax/blob/68aaf5f0685a23c3ae60b16613c5bcd20e8a158b/scimax-email.el][scimax-email.el]].
+Given a table called =mm-data= and a source code block called =mm-template= this function composes e-mails by rendering the =mm-template= using the =mm-data=. Special fields: =TO=, =CC=, =BCC=. The subject is taking from the heading. Inspired by [[https://github.com/jkitchin/scimax/blob/68aaf5f0685a23c3ae60b16613c5bcd20e8a158b/scimax-email.el][scimax-email.el]].
 
 *Example:*
 
@@ -7719,8 +7720,6 @@ Martin
                  (bcc (if (assoc "BCC" entry) (cdr (assoc "BCC" entry)) bcc)))
 
             (compose-mail to subject nil nil nil nil nil nil)
-
-            (message "length: %d" (length cc))
 
             (message-goto-body)
             (insert body)
@@ -7791,7 +7790,7 @@ We change the default template to not include the title which is filled in by de
 
 * PDF Viewer
 
-[[https://github.com/politza/pdf-tools][PDF tools]] is a reasonable PDF viewer for Emacs.
+[[https://github.com/politza/pdf-tools][PDF tools]] is a nice PDF viewer for Emacs.
 
 We also add support to extract PDF annotations to a temporary org-mode/markdown buffer, based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]], and calling [[https://github.com/tabulapdf/tabula-java][tabular]] or [[https://en.wikipedia.org/wiki/Pdftotext][pdftotext]].
 
