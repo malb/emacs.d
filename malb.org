@@ -6167,11 +6167,17 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 #+begin_src emacs-lisp
 (use-package cdlatex
+  :custom ((cdlatex-takeover-parenthesis nil)
+           (cdlatex-takeover-dollar nil))
   :config (progn
-            (unbind-key "$" 'cdlatex-mode-map)     ;; smartparens
-            (unbind-key "{" 'cdlatex-mode-map)     ;; smartparens
-            (unbind-key "(" 'cdlatex-mode-map)     ;; smartparens
-            (unbind-key "[" 'cdlatex-mode-map)     ;; smartparens
+            ;; (unbind-key "$" 'cdlatex-mode-map)
+            ;; smartparens
+            ;; (unbind-key "{" 'cdlatex-mode-map)
+            ;; smartparens
+            ;; (unbind-key "(" 'cdlatex-mode-map)
+            ;; smartparens
+            ;; (unbind-key "[" 'cdlatex-mode-map)
+            ;; smartparens
             (unbind-key "C-c ?" 'cdlatex-mode-map) ;; TeX-doc
 
             (defun malb/cdlatex-sub-superscript ()
