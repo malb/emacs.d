@@ -1137,7 +1137,8 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 ([[http://emacs.stackexchange.com/q/21182/8930][source]], [[http://emacs.stackexchange.com/q/7908/8930][source]])
 
 #+BEGIN_SRC emacs-lisp
-(use-package outline-magic)
+(use-package outline-magic
+  :config (unbind-key "<tab>" outline-mode-map))
 
 (defun malb/indent-fold-or-complete (&optional arg)
   (interactive "P")
@@ -1146,28 +1147,27 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
    ((use-region-p)
     (indent-region (region-beginning)
                    (region-end)))
+
+   ;; always fold if we're looking at an org heading
+   ((and (eq major-mode 'org-mode) (org-at-heading-p))
+    (save-excursion (outline-cycle)))
+
    ;; if the next char is space or eol, but prev char not whitespace
    ((and (not (active-minibuffer-window))
          (or (looking-at " ")
              (looking-at "$"))
          (looking-back "[^[:space:]]" nil)
          (not (looking-back "^" nil)))
-
-    (cond (company-mode (company-complete-common))
-          (auto-complete-mode (auto-complete))))
+    (company-complete-common))
 
    ;; no whitespace anywhere
    ((and (not (active-minibuffer-window))
          (looking-at "[^[:space:]]")
          (looking-back "[^[:space:]]" nil)
          (not (looking-back "^" nil)))
-    (cond
-     ((bound-and-true-p cdlatex-mode)
-      (cdlatex-tab))
-     ((bound-and-true-p hs-minor-mode)
-      (save-excursion (end-of-line) (hs-toggle-hiding)))
-     ((bound-and-true-p outline-minor-mode)
-      (save-excursion (outline-cycle)))))
+    (cond ((bound-and-true-p cdlatex-mode) (cdlatex-tab))
+          ((bound-and-true-p hs-minor-mode) (save-excursion (end-of-line) (hs-toggle-hiding)))
+          ((bound-and-true-p outline-minor-mode) (save-excursion (outline-cycle)))))
 
    ;; by default just call whatever was bound
    (t
