@@ -7642,6 +7642,85 @@ Link to mu4e messages and threads.
 
 ****** TODO check if advise can be removed since we’re now checking for major-mode
 
+** Mail Merge
+:PROPERTIES:
+:BCC:       Eve <eve@example.com>
+:END:
+
+Given a table called =data= and a source code block called =template= this function composes e-mails by rendering the =template= using the =data=. Special fields: =TO=, =CC=, =BCC=. The subject is taking from the heading
+
+*Example:*
+
+#+name: data
+| TO                        | CC                            | name  | foo |
+|---------------------------+-------------------------------+-------+-----|
+| Alice <alice@example.com> |                               | Alice |  32 |
+| Bob <bob@example.com>     | Charley <charley@example.com> | Bob   |  42 |
+
+#+name: template
+#+begin_src markdown
+Hi ${name},
+
+Here's a number ${foo}, it's, like, secret.
+
+Best,
+Martin
+#+end_src
+
+#+RESULTS:
+: malb/org-src-to-string
+
+#+begin_src emacs-lisp
+(defun malb/mail-merge ()
+  (interactive)
+  (save-excursion
+    (save-restriction
+      (org-narrow-to-subtree)
+      (goto-char (point-min))
+
+      (let ((data (malb/org-table-to-alist "data"))
+            (template (malb/org-src-to-string "template"))
+            (to  (org-entry-get (point) "TO"))
+            (cc  (org-entry-get (point) "CC"))
+            (bcc (org-entry-get (point) "BCC"))
+            (subject (nth 4 (org-heading-components)))
+            (context-set-p nil))
+
+        (dolist (entry data)
+          (let  ((body (s-format template 'aget entry))
+                 (subject (s-format subject 'aget entry))
+                 (mu4e-compose-context-policy (if context-set-p
+                                                  'ask-if-none
+                                                mu4e-compose-context-policy))
+                 (to (if (assoc "TO" entry) (cdr (assoc "TO" entry)) to))
+                 (cc (if (assoc "CC" entry) (cdr (assoc "CC" entry)) cc))
+                 (bcc (if (assoc "BCC" entry) (cdr (assoc "BCC" entry)) bcc)))
+
+            (compose-mail to subject nil nil nil nil nil nil)
+
+            (message "length: %d" (length cc))
+
+            (message-goto-body)
+            (insert body)
+
+            (when (and cc (> (length cc) 0))
+              (message-goto-cc)
+              (insert cc))
+
+            (when (and bcc (> (length bcc) 0))
+              (message-goto-bcc)
+              (insert bcc))
+
+            ;; move point back to the top
+            (message-goto-to)
+
+            ;; we assume all e-mails should be sent from the same context
+            (setq context-set-p t)))))))
+#+end_src
+
+#+RESULTS:
+: malb/mail-merge
+
 * Blogging
 
 We change the default template to not include the title which is filled in by deft. We also query the user for a date/time for the blog post.
