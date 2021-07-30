@@ -7688,6 +7688,7 @@ Given a table called =mm-data= and a source code block called =mm-template= this
 #+name: mm-data
 | TO                        | CC                            | name  | foo |
 |---------------------------+-------------------------------+-------+-----|
+| <10>                      |                               |       |     |
 | Alice <alice@example.com> |                               | Alice |  32 |
 | Bob <bob@example.com>     | Charley <charley@example.com> | Bob   |  42 |
 
@@ -7728,27 +7729,29 @@ Martin
                  (cc (if (assoc "CC" entry) (cdr (assoc "CC" entry)) cc))
                  (bcc (if (assoc "BCC" entry) (cdr (assoc "BCC" entry)) bcc)))
 
-            (compose-mail to subject nil nil nil nil nil nil)
+            (when (and (> (length to) 0) (string-match-p "@" to))
 
-            (message-goto-body)
-            (insert body)
+              (compose-mail to subject nil nil nil nil nil nil)
 
-            (when (and cc (> (length cc) 0))
-              (message-goto-cc)
-              (insert cc))
+              (message-goto-body)
+              (insert body)
 
-            (when (and bcc (> (length bcc) 0))
-              (message-goto-bcc)
-              (insert bcc))
+              (when (and cc (> (length cc) 0))
+                (message-goto-cc)
+                (insert cc))
 
-            ;; move point back to the top
-            (message-goto-to)
+              (when (and bcc (> (length bcc) 0))
+                (message-goto-bcc)
+                (insert bcc))
 
-            ;; we assume all e-mails should be sent from the same context
-            (setq context-set-p t)
+              ;; move point back to the top
+              (message-goto-to)
 
-            (when just-send
-              (message-send-and-exit)))))))
+              ;; we assume all e-mails should be sent from the same context
+              (setq context-set-p t)
+
+              (when just-send
+                (message-send-and-exit))))))))
 
   (let ((display-buffer-alist nil))
     (when (and (nth 2 (org-heading-components)) just-send)
