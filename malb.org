@@ -6931,6 +6931,8 @@ Extract a pretty-ish list of contacts from an e-mail.
                             addresses))))
 #+END_SRC
 
+****** TODO replace regexp parsing by appropriate library functions
+
 The following is useful in e-mail templates
 
 #+BEGIN_SRC emacs-lisp
@@ -6958,6 +6960,8 @@ The following is useful in e-mail templates
             (push (match-string 1 name) ret))))
       (if ret (string-join (nreverse ret) ", ") ret "there"))))
 #+END_SRC
+
+****** TODO replace regexp parsing by appropriate library functions
 
 A shortcut:
 
