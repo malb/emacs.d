@@ -7034,6 +7034,29 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
 (bind-key "@" #'malb/fullcontact mu4e-view-mode-map)
 #+END_SRC
 
+*** Add MailRC entry
+
+Query the user for an alias and add an entry to =~/.mailrc=.
+
+#+begin_src emacs-lisp
+(defun malb/add-to-mailrc (alias &optional arg)
+  (interactive
+   (list (read-string "alias: ")
+         current-prefix-arg))
+  (let ((addresses))
+    (if (equal major-mode 'mu4e-view-mode)
+        (setq addresses (mapcar
+                         (lambda (a) (format "%s <%s>" (car a) (cdr a)))
+                         (mu4e-message-field (mu4e-message-at-point) :to)))
+      (setq addresses (mail-header-parse-addresses (message-fetch-field "To") t)))
+    (write-region
+     (format "alias %s %s\n" alias
+             (mapconcat (lambda (s) (format "\"%s\"" (string-trim s))) addresses " "))
+     nil
+     (expand-file-name ".mailrc" "~")
+     'append)))
+#+end_src
+
 ** Searching
 
 #+BEGIN_SRC emacs-lisp
