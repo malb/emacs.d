@@ -2632,6 +2632,15 @@ Extract org tables as lists of alists.
 (add-to-list 'org-speed-commands-user (cons "J" 'avy-org-goto-heading-timer))
 #+END_SRC
 
+#+BEGIN_QUOTE
+If you prefer using previous patterns, e.g. <s, you can activate them again by requiring Org Tempo library: ~(require 'org-tempo)~
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-tempo
+  :ensure org)
+#+END_SRC
+
 ** Refiling
 
 Targets include this file and any file contributing to the agenda - up to 9 levels deep
