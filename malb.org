@@ -7074,13 +7074,13 @@ it is to insert the contact.
 "
   (interactive "p")
 
-  (if (not mu4e~contacts)
+  (if (not mu4e~contacts-hash)
       (progn
         ;; request contacts
         (mu4e~request-contacts-maybe)
         (let ((i 0))
           ;; sleep for at most 2 seconds to wait for contacts to be filed
-          (while (and (not mu4e~contacts) (> 2 i))
+          (while (and (not mu4e~contacts-hash) (> 2 i))
             (sleep-for 1)
             (+ i 1)))))
 
@@ -7119,7 +7119,7 @@ it is to insert the contact.
     (helm :sources (helm-build-sync-source "E-mail address candidates"
                      :candidates  (append
                                    ;; mu contacts
-                                   (loop for contact being the hash-key of mu4e~contacts
+                                   (loop for contact being the hash-key of mu4e~contacts-hash
                                          collect (cons contact contact)))
                      :action  (cond ((equal arg 4) (cons (cadr malb/helm-mu-actions)
                                                          (cons (car malb/helm-mu-actions)
