@@ -1022,25 +1022,6 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
             (bind-key "M-."   #'company-show-location company-active-map)))
 #+END_SRC
 
-#+BEGIN_QUOTE
-Company completion backend for [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]].
-
-It provides features that are not available by using company-capf + lsp-mode:
-
-- Support trigger characters. For example typing . will trigger completion for TypeScript.
-- Use completion item's label as completion labels and replace it with its insertText if available.
-- Fetch completion candidates asynchronously (Thanks @sebastiencs).
-- Apply text edits specified by completion candidates after completion.
-- Do not cache the completion candidates if they are incomplete.
-- Expand snippets on completion (requires yasnippet).
-#+END_QUOTE
-
-#+BEGIN_SRC emacs-lisp
-(use-package company-lsp
-  :after (company lsp-mode)
-  :config (push 'company-lsp company-backends))
-#+END_SRC
-
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
 
 #+BEGIN_SRC emacs-lisp
@@ -7215,6 +7196,11 @@ Use ace-link for links as it is compatible with gnus.
 Headers to show in header view.
 
 #+BEGIN_SRC emacs-lisp
+(add-to-list 'mu4e-header-info-custom
+             '(:empty . (:name "Empty"
+                               :shortname ""
+                               :function (lambda (msg) "  "))))
+
 (setq mu4e-headers-fields '((:empty . 2)
                             (:human-date . 12)
                             (:flags . 6)
@@ -7229,6 +7215,8 @@ Headers to show in header view.
   (set-fill-column 84)
   (visual-line-mode 1)
   (visual-fill-column-mode 1))
+
+(add-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook)
 #+END_SRC
 
 Discourage HTML rendering in GNUS:
@@ -7238,33 +7226,6 @@ Discourage HTML rendering in GNUS:
   (add-to-list 'mm-discouraged-alternatives "text/html")
   (add-to-list 'mm-discouraged-alternatives "text/richtext"))
 #+end_src
-
-Toggle between GNUS and traditional MU4E view.
-
-#+BEGIN_SRC emacs-lisp
-;; https://www.reddit.com/r/emacs/comments/ho8lxi/mu4e_office365_meeting_invitations/
-(defun malb/toggle-mu4e-gnus ()
-  (interactive)
-  "Toggle between old mu4e view mode and gnus-view-mode."
-  (if (equal mu4e-view-use-gnus t)
-      (progn
-        (setq mu4e-view-use-gnus nil)
-        (add-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)
-        (remove-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook))
-    (progn
-      (setq mu4e-view-use-gnus t)
-      (add-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook)
-      (remove-hook 'mu4e-view-mode-hook #'malb/mu4e-view-mode-hook)))
-  (remove-overlays)
-  (condition-case nil
-      (mu4e-view-refresh)
-    (error nil)))
-
-(setq mu4e-view-use-gnus t)
-(add-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook)
-
-(bind-key "z" #'malb/toggle-mu4e-gnus mu4e-view-mode-map)
-#+END_SRC
 
 Gnus formatting
 
@@ -7291,12 +7252,7 @@ Gnus formatting
           (bind-key "<left>"    #'mu4e-headers-fold-at-point   mu4e-headers-mode-map)
           (bind-key "<S-left>"  #'mu4e-headers-fold-all        mu4e-headers-mode-map)
           (bind-key "<right>"   #'mu4e-headers-unfold-at-point mu4e-headers-mode-map)
-          (bind-key "<S-right>" #'mu4e-headers-unfold-all      mu4e-headers-mode-map)
-
-          (add-to-list 'mu4e-header-info-custom
-                       '(:empty . (:name "Empty"
-                                         :shortname ""
-                                         :function (lambda (msg) "  "))))))
+          (bind-key "<S-right>" #'mu4e-headers-unfold-all      mu4e-headers-mode-map)))
 #+end_src
 
 ** Actions
