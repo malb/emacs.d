@@ -6731,7 +6731,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-query-fragments
   :config (setq mu4e-query-fragments-list
-                '(("%hidden" . "flag:trashed OR maildir:\"/[Google Mail]/Spam\"")
+                '(("%hidden" . "flag:trashed OR maildir:\"/[Google Mail]/Spam\" OR maildir:\"/[Google Mail]/Bin\"")
                   ("%unread" . "flag:unread AND NOT %hidden  ")
                   ("%today"  . "date:today..now AND NOT %hidden")
                   ("%week"   . "date:7d..now AND NOT %hidden")
@@ -6766,15 +6766,15 @@ Canned queries.
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%today") :name "Today's" :key ?t) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%week")  :name "Last 7 days" :key ?w) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%direct AND %week") :name "Last 7 days (direct)" :key ?W) t)
-
-(add-to-list
- 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand
-                            "%direct AND %week AND NOT (flag:replied OR flag:passed OR flag:trashed OR flag:list)")
-                          :name "Last 7 days (direct, unanswered)"
-                          :key ?R) t)
-
+(add-to-list 'mu4e-bookmarks
+             `(:query ,(mu4e-query-fragments-expand
+                        "%direct AND %week AND NOT (flag:replied OR flag:passed OR flag:list) AND NOT %hidden")
+                      :name "Last 7 days (direct, unanswered)"
+                      :key ?R)
+             t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%sent AND %week") :name "Last 7 days (sent)" :key ?s) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
+(add-to-list 'mu4e-bookmarks '(:query "maildir:\"/research/ches 2022\""  :name "CHES 2022" :key ?C) t)
 #+END_SRC
 
 ** Retrieving
