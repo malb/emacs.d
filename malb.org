@@ -4762,6 +4762,36 @@ Auto-format source code in many languages with one command – [[https://github.
       "sagemath")))
 #+end_src
 
+**** Toggle Shell for Jupyter Kernels
+
+A generator for pop-up Jupyter repls.
+
+#+begin_src emacs-lisp
+(defun malb/make-jupyter-shell (shell-name kernel &optional post-exec)
+  `(lambda ()
+     (interactive)
+     (let* ((height (/ (window-total-height) 3))
+            (buffer-name (format "*jupyter-repl[%s]*" ,shell-name))
+            (window (get-buffer-window buffer-name)))
+       (if (and window (<= (window-height window) (/ (frame-height) 3)))
+           (progn
+             (select-window window)
+             (delete-window))
+         (progn
+           (split-window-vertically (- height))
+           (other-window 1)
+           (if (get-buffer buffer-name)
+               (progn
+                 (switch-to-buffer buffer-name)
+                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+             (progn
+               (jupyter-run-repl ,kernel ,shell-name)
+               (switch-to-buffer buffer-name)
+               (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+               (dolist (cmd ,post-exec)
+                 (insert (concat cmd "\n"))))))))))
+#+end_src
+
 **** Tips
 
 - We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
