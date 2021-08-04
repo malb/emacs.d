@@ -6722,7 +6722,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
         (:maildir "/[Google Mail]/Drafts"    :key ?d)
         (:maildir "/[Google Mail]/Sent Mail" :key ?s)
         (:maildir "/[Google Mail]/Spam"      :key ?j)
-        (:maildir "/[Google Mail]/Bin"       :key ?t)))
+        (:maildir "/[Google Mail]/Bin"       :key ?t)
+        (:maildir "/research/ches 2022"      :key ?c)))
 #+END_SRC
 
 ** Search
@@ -6775,7 +6776,7 @@ Canned queries.
              t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%sent AND %week") :name "Last 7 days (sent)" :key ?s) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
-(add-to-list 'mu4e-bookmarks '(:query "maildir:\"/research/ches 2022\""  :name "CHES 2022" :key ?C) t)
+(add-to-list 'mu4e-bookmarks '(:query "maildir:\"/research/ches 2022\""  :name "CHES 2022" :key ?c) t)
 #+END_SRC
 
 ** Retrieving
@@ -7318,15 +7319,16 @@ Action to search messages involving all correspondents.
 #+BEGIN_SRC emacs-lisp
 (defun malb/find-correspondence (msg)
   "Find messages involving all correspondents."
-  (let ((addresses (append (mapcar (lambda (x) (cdr x))
+  (let ((addresses (append (mapcar (lambda (x) (downcase (cdr x)))
                                    (mu4e-message-field msg :to))
-                           (mapcar (lambda (x) (cdr x))
+                           (mapcar (lambda (x) (downcase (cdr x)))
                                    (mu4e-message-field msg :cc))
-                           (mapcar (lambda (x) (cdr x))
+                           (mapcar (lambda (x) (downcase (cdr x)))
                                    (mu4e-message-field msg :from)))))
     (helm :sources (helm-build-sync-source "Filter candidates:"
                      :candidates (cl-remove-if (lambda (x)
-                                                 (member x (mu4e-personal-addresses))) addresses)
+                                                 (member x (mu4e-personal-addresses)))
+                                               addresses)
                      :after-init-hook (lambda () (with-helm-buffer
                                                    (run-at-time 0.25 nil #'helm-mark-all)))
                      :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
@@ -7336,10 +7338,10 @@ Action to search messages involving all correspondents.
              (mapconcat 'identity addresses " AND ")))))
 
 (add-to-list 'mu4e-view-actions
-             '("Contact 🔍" . malb/find-correspondence) t)
+             '("interaction 🔍" . malb/find-correspondence) t)
 
 (add-to-list 'mu4e-headers-actions
-             '("Contact 🔍" . malb/find-correspondence) t)
+             '("interaction 🔍" . malb/find-correspondence) t)
 #+END_SRC
 
 DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subject regexp" (lambda (msg) …))~ where the lambda is executed whenever both regexps match. Processing does not stop after the first match.
