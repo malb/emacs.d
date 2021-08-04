@@ -1139,6 +1139,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
          (or (looking-at " ")
              (looking-at "$"))
          (looking-back "[^[:space:]]" nil)
+         (not (and (eq major-mode 'org-mode) (looking-back "<[a-z]+" nil)))
          (not (looking-back "^" nil)))
     (company-complete-common))
 
