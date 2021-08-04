@@ -129,6 +129,9 @@
      `(ein:cell-input-area   ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.15)))))
      `(ein:cell-input-prompt ((t (:weight bold :foreground ,s-base00 :inherit (header-line)))))
 
+     `(jupyter-repl-input-prompt  ((t (:foreground ,green :weight bold))))
+     `(jupyter-repl-output-prompt ((t (:foreground ,red   :weight bold))))
+
      `(helm-ff-file-extension ((t ())))
      `(bm-face ((t (:background "#FFE6E4"))))
 
