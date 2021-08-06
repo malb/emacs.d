@@ -892,6 +892,8 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
                 (re-search-forward "^# name: \\(.*?\\)$")
                 (let  ((fn (match-string 1))
                        (dir (downcase (org-entry-get nil "ITEM"))))
+                  (when (not (file-directory-p (concat user-emacs-directory "snippets/" dir)))
+                    (mkdir (file-directory-p (concat user-emacs-directory "snippets/" dir))))
                   (concat user-emacs-directory "snippets/" dir  "/" fn))))))
 #+END_SRC
 
