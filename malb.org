@@ -2770,6 +2770,7 @@ UTF-8 everywhere.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-export-coding-system 'utf-8
+      org-ascii-charset 'utf-8
       org-export-in-background nil
       org-export-use-babel t
       org-export-with-toc nil
