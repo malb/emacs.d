@@ -1827,7 +1827,8 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
             (sp-with-modes '(org-mode)
               (sp-local-pair "(" ")" :actions :rem)
-              (sp-local-pair "[" "]" :actions :rem))
+              (sp-local-pair "[" "]" :actions :rem)
+              (sp-local-pair "/" "/" :actions :rem))
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
