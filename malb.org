@@ -1136,6 +1136,10 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
    ((and (eq major-mode 'org-mode) (org-at-heading-p))
     (save-excursion (outline-cycle)))
 
+   ;; always use table actions in org tables
+   ((and (eq major-mode 'org-mode) (org-table-p))
+    (save-excursion (call-interactively 'orgtbl-tab)))
+
    ;; if the next char is space or eol, but prev char not whitespace
    ((and (not (active-minibuffer-window))
          (or (looking-at " ")
