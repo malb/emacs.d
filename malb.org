@@ -6306,10 +6306,15 @@ When pressed twice, make the sub/superscript roman."
 
             (advice-add #'cdlatex-sub-superscript :override #'malb/cdlatex-sub-superscript)
 
-            (setq cdlatex-math-modify-alist '((?a "\\alert" "\\alert" t t nil)
-                                              (?m "\\mat" nil t t nil)
-                                              (?v "\\vec" nil t t nil))
+            (setq cdlatex-math-modify-alist '((?a "\\alert" "\\alert" t nil nil)
+                                              (?m "\\mat" nil t nil nil)
+                                              (?o "\\operatorname" nil t nil nil)
+                                              (?v "\\vec" nil t nil nil))
                   cdlatex-command-alist '(("ZZ" "Insert \\ZZ" "\\ZZ?"
+                                           cdlatex-position-cursor nil nil t)
+                                          ("QQ" "Insert \\QQ" "\\QQ?"
+                                           cdlatex-position-cursor nil nil t)
+                                          ("RR" "Insert \\RR" "\\RR?"
                                            cdlatex-position-cursor nil nil t)
                                           ("nrm" "Insert ||foo||" "\\lVert{?}\\rVert"
                                            cdlatex-position-cursor nil nil t))
