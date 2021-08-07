@@ -1140,6 +1140,8 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
    ((and (eq major-mode 'org-mode) (org-table-p))
     (save-excursion (call-interactively 'orgtbl-tab)))
 
+   ((and (eq major-mode 'org-mode) org-cdlatex-mode arg) (cdlatex-tab))
+
    ;; if the next char is space or eol, but prev char not whitespace
    ((and (not (active-minibuffer-window))
          (or (looking-at " ")
