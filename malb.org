@@ -1810,38 +1810,47 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                            :beg :end "\\(" "\\)"))
                     (goto-char (if at-beg (1+ :beg-in) :end))))))
 
-            (sp-with-modes
-                '(tex-mode plain-tex-mode latex-mode org-mode)
-              (sp-local-pair "\\(" "\\)"
-                             :unless '(sp-point-before-word-p
-                                       sp-point-before-same-p
-                                       sp-latex-point-after-backslash)
-                             :trigger-wrap "\$"
-                             :trigger "\$"
-                             )
-              (sp-local-pair  "$" "$"
-                              :unless '(sp-point-before-word-p
+            (defun malb/sp-org-special-p (_id action _context)
+              "Return t when point is in a special org environment."
+              (when (eq action 'insert)
+                (when (eq major-mode 'org-mode)
+                  (org-in-block-p '("src" "example")))))
+
+            (let ((bracket-qualifiers '(sp-point-before-word-p sp-point-before-same-p sp-latex-point-after-backslash)))
+              (sp-with-modes '(tex-mode plain-tex-mode latex-mode)
+                (sp-local-pair "\\(" "\\)" :unless bracket-qualifiers
+                               :trigger-wrap "\$" :trigger "\$"
+                               )
+                (sp-local-pair  "$" "$" :unless bracket-qualifiers
+                                :post-handlers '(:add malb/latex-replace-dollar))
+
+                (sp-local-pair "\\[" "\\]" :unless bracket-qualifiers)))
+
+            (let ((bracket-qualifiers '(sp-point-before-word-p
                                         sp-point-before-same-p
-                                        sp-latex-point-after-backslash)
-                              :post-handlers '(:add malb/latex-replace-dollar))
+                                        sp-latex-point-after-backslash
+                                        malb/sp-org-special-p)))
+              (sp-with-modes '(org-mode)
+                (sp-local-pair "\\(" "\\)" :unless bracket-qualifiers
+                               :trigger-wrap "\$"
+                               :trigger "\$"
+                               )
+                (sp-local-pair  "$" "$" :unless bracket-qualifiers
+                                :post-handlers '(:add malb/latex-replace-dollar))
 
-              (sp-local-pair "\\[" "\\]"
-                             :unless '(sp-point-before-word-p
-                                       sp-point-before-same-p
-                                       sp-latex-point-after-backslash))
+                (sp-local-pair "\\[" "\\]" :unless bracket-qualifiers)
 
-              ;; (sp-local-pair "$" nil :actions :rem)
-              (sp-local-pair "=" "=" :actions :rem))
-
-            (sp-with-modes '(org-mode)
-              (sp-local-pair "(" ")" :actions :rem)
-              (sp-local-pair "[" "]" :actions :rem)
-              (sp-local-pair "/" "/" :actions :rem))
+                (sp-local-pair "(" ")" :actions :rem)
+                (sp-local-pair "[" "]" :actions :rem)
+                (sp-local-pair "/" "/" :actions :rem)
+                (sp-local-pair "*" "*" :actions :rem)
+                (sp-local-pair "=" "=" :actions :rem)
+                (sp-local-pair "\"" "\"" :actions :rem)
+                (sp-local-pair "'" "'" :actions :rem)))
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
             (add-to-list 'sp-ignore-modes-list 'markdown-mode)
-            ;; (add-to-list 'sp-ignore-modes-list 'org-mode)
             (add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)
             (add-to-list 'sp-ignore-modes-list 'sage-shell-mode)
             (add-to-list 'sp-ignore-modes-list 'jupyter-repl-mode)))
