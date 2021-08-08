@@ -334,36 +334,46 @@ it will restore the window configuration to prior to full-framing."
                 (zygospore-delete-other-window)))))
 #+END_SRC
 
-** Multiple Window Configurations (Eyebrowse)
+** Tabs
 
-[[https://github.com/wasamasa/eyebrowse][eyebrowse]] is a simple-minded way of managing window configuration.
-
-#+BEGIN_SRC emacs-lisp
-(use-package eyebrowse
-  :diminish eyebrowse-mode
-
-  :init (setq eyebrowse-keymap-prefix (kbd "C-c E"))
+#+begin_src emacs-lisp
+(use-package tab-bar
+  :ensure nil
+  :custom ((tab-bar-mode t "Enable tab-bar-mode")
+           (tab-bar-show nil "But don't show tabs")
+           (tab-bar-new-tab-choice "*scratch*" "Open scratch by default"))
   :config (progn
-            (setq eyebrowse-wrap-around t)
-            (eyebrowse-mode t)
+            ;; https://www.rousette.org.uk/archives/using-the-tab-bar-in-emacs/
+            (defun malb/name-tab-by-project-or-default ()
+              "Return project name if in a project, or default tab-bar name if not.
+The default tab-bar name uses the buffer name."
+              (let ((project-name (projectile-project-name)))
+                (if (string= "-" project-name)
+                    (tab-bar-tab-name-current)
+                  (projectile-project-name))))
+            (setq tab-bar-tab-name-function #'malb/name-tab-by-project-or-default)
 
-            (add-hook 'eyebrowse-post-window-switch-hook #'malb/side-windows-no-other)
 
-            (defun malb/eyebrowse-new-window-config ()
-              "make new eyebrowse config, re-using indices 1 - (1)0"
+            (defun malb/switch-tab (&rest arg)
+              ;; just in case someone decides to pass an argument, helm-omni won't fail.
               (interactive)
-              (let ((done nil))
-                (dotimes (i 10)
-                  ;; start at 1 run till 0
-                  (let ((j (mod (+ i 1) 10)))
-                    (when (and (not done)
-                               (not (eyebrowse--window-config-present-p j)))
-                      (eyebrowse-switch-to-window-config j)
-                      (call-interactively 'eyebrowse-rename-window-config j)
-                      (setq done t))))))))
-#+END_SRC
-
-****** TODO Replace with =tab-bar-mode= ?
+              (let* ((candidates (mapcar (lambda (tab)
+                                           (cdr (assq 'name tab)))
+                                         (tab-bar-tabs)))
+                     (ncandidates (length candidates))
+                     (current-tab (cdr (assq 'name (tab-bar--current-tab-find (tab-bar-tabs))))))
+                (cond ((equal ncandidates 1) t)
+                      ((equal ncandidates 2) (tab-bar-switch-to-tab (if (equal current-tab (car candidates))
+                                                                        (cadr candidates)
+                                                                      (car candidates))))
+                      (t (helm-other-buffer
+                          (append
+                           `(((name . "Tabs")
+                              (candidates . candidates)
+                              (action . (lambda (candidate)
+                                          (tab-bar-switch-to-tab candidate))))))
+                          "*Tabs*")))))))
+#+end_src
 
 ** Switching
 
@@ -737,7 +747,7 @@ Run =old-function= with an empty =display-buffer-alist=
 #+BEGIN_SRC emacs-lisp
 (defhydra malb/hydra-window ()
   "
-^Misc^        ^Split^         ^Buffer^         ^Resize^         ^Eyebrowse^^     ^Center^   ^Jumping^   ^Other^
+^Misc^        ^Split^         ^Buffer^         ^Resize^         ^Tabs     ^^     ^Center^   ^Jumping^   ^Other^
 ^----^--------^-----^---------^------^---------^------^---------^---------^^-----^------^---^-------^---^--------------^
 _←_ ←         _v_ertical      _H_elm-omni      _q_ X←           _[_ \\/ new      _C_enter   _j_ump      _W_ store cfg
 _↓_ ↓         _h_orizontal    _p_revious buf   _w_ X↓           _;_ \\/ ←        _,_ C←     _l_ine      _J_ load cfg
@@ -773,25 +783,25 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
   ("Z" winner-redo)
   ("I" imenu-list-smart-toggle :color blue)
-  ("[" malb/eyebrowse-new-window-config :color blue)
-  (";" (lambda () (interactive) (eyebrowse-prev-window-config nil)) :color red)
-  ("'" (lambda () (interactive) (eyebrowse-next-window-config nil)) :color red)
-  ("]" eyebrowse-close-window-config :color blue)
-  ("!" eyebrowse-rename-window-config :color blue)
+  ("[" tab-new :color blue)
+  (";" tab-next :color red)
+  ("'" tab-previous :color red)
+  ("]" tab-close :color blue)
+  ("!" tab-rename :color blue)
   ("C" visual-fill-column-mode)
   ("," (lambda () (interactive) (set-fill-column (+ fill-column 2)) (visual-fill-column-adjust)) :color red)
   ("." (lambda () (interactive) (set-fill-column (- fill-column 2)) (visual-fill-column-adjust)) :color red)
   ("W" window-configuration-to-register)
   ("J" jump-to-register  :color blue)
-  ("1" eyebrowse-switch-to-window-config-1 :color blue)
-  ("2" eyebrowse-switch-to-window-config-2 :color blue)
-  ("3" eyebrowse-switch-to-window-config-3 :color blue)
-  ("4" eyebrowse-switch-to-window-config-4 :color blue)
-  ("5" eyebrowse-switch-to-window-config-5 :color blue)
-  ("6" eyebrowse-switch-to-window-config-6 :color blue)
-  ("7" eyebrowse-switch-to-window-config-7 :color blue)
-  ("8" eyebrowse-switch-to-window-config-8 :color blue)
-  ("9" eyebrowse-switch-to-window-config-9 :color blue)
+  ("1" (lambda () (interactive)  (tab-bar-select-tab 1)) :color blue)
+  ("2" (lambda () (interactive)  (tab-bar-select-tab 2)) :color blue)
+  ("3" (lambda () (interactive)  (tab-bar-select-tab 3)) :color blue)
+  ("4" (lambda () (interactive)  (tab-bar-select-tab 4)) :color blue)
+  ("5" (lambda () (interactive)  (tab-bar-select-tab 5)) :color blue)
+  ("6" (lambda () (interactive)  (tab-bar-select-tab 6)) :color blue)
+  ("7" (lambda () (interactive)  (tab-bar-select-tab 7)) :color blue)
+  ("8" (lambda () (interactive)  (tab-bar-select-tab 8)) :color blue)
+  ("9" (lambda () (interactive)  (tab-bar-select-tab 9)) :color blue)
   ("SPC" nil)
   ("`" other-window :color blue)
   ("C-`" other-window :color blue))
@@ -1223,12 +1233,12 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
         helm-source-files-in-current-dir
         helm-source-recentf)) ;; list of all open buffers
 
-    `(((name . "Virtual Workspace")
-       (candidates . ,(--map (eyebrowse-format-slot it)
-                             (eyebrowse--get 'window-configs)))
+    `(((name . "Tabs")
+       (candidates . ,(mapcar (lambda (tab)
+                                (cdr (assq 'name tab)))
+                              (tab-bar-tabs)))
        (action . (lambda (candidate)
-                   (eyebrowse-switch-to-window-config
-                    (string-to-number (car (split-string candidate ":"))))))))
+                   (tab-bar-switch-to-tab candidate)))))
 
     '(helm-source-bookmarks)
 
@@ -1279,6 +1289,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
             (setq helm-adaptive-mode t
                   helm-bookmark-show-location t
+                  helm-buffers-maybe-switch-to-tab t
                   helm-buffer-max-length 48
                   helm-display-header-line t
                   helm-ff-skip-boring-files t
@@ -2203,6 +2214,7 @@ This library provides easy project management and navigation. The concept of a p
 
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
+  :after tab-bar
   :bind (("<f5>" . projectile-compile-project)
          ("<f6>" . next-error)
          :map projectile-command-map
@@ -2222,6 +2234,19 @@ This library provides easy project management and navigation. The concept of a p
                                         project-root) t)
                     (and  (string-match (rx-to-string `(: bos "/tmp/" ) t)
                                         project-root) t))))
+
+            (defvar malb/projectile-switch-tab-projects nil)
+
+            (defun malb/projectile-switch-tab (project-to-switch &optional arg)
+              (let ((project-name (projectile-project-name project-to-switch)))
+                (when (member project-name malb/projectile-switch-tab-projects)
+                  (if (member project-name (mapcar (lambda (tab)
+                                                     (cdr (assq 'name tab)))
+                                                   (tab-bar-tabs)))
+                      (tab-bar-switch-to-tab project-name)
+                    (tab-new)))))
+
+            (advice-add #'projectile-switch-project-by-name :before #'malb/projectile-switch-tab)
 
             (setq projectile-make-test-cmd "make check"
                   projectile-ignored-projects malb/projectile-ignored-projects
@@ -9895,8 +9920,8 @@ Easily change the text size:
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
 (malb/set-menu-key "s" #'malb/toggle-sage)
-(malb/set-menu-key "S" #'weechat-switch-buffer)
 (malb/set-menu-key "t" #'helm-tramp)
+(malb/set-menu-key "S" #'malb/switch-tab)
 (malb/set-menu-key "r" #'spray-mode)
 (malb/set-menu-key "z" #'malb/toggle-vterm)
 (malb/set-menu-key "Z" #'malb/ykcd)
