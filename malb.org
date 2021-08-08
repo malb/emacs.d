@@ -9905,7 +9905,6 @@ Easily change the text size:
 (malb/set-menu-key "b" #'helm-bookmarks)
 (malb/set-menu-key "C" #'helm-calcul-expression)
 (malb/set-menu-key "c" #'mu4e-compose-new)
-(malb/set-menu-key "d" "\C-a\C- \C-n\M-w\C-y\C-p") ; duplicate previous line
 (malb/set-menu-key "e" #'malb/toggle-eshell)
 (malb/set-menu-key "i" #'malb/helm-in-buffer)
 (malb/set-menu-key "j" #'avy-goto-char-timer)
