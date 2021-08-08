@@ -1452,7 +1452,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
   :commands (helm-ag helm-do-ag malb/helm-ag-projects malb/helm-ag-literature malb/helm-ag)
-  :ensure-system-package ((ag . silversearcher-ag:)
+  :ensure-system-package ((ag . silversearcher-ag)
                           (rg . ripgrep))
   :config (progn
             (setq helm-ag-base-command "ag --nocolor --nogroup"
