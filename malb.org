@@ -10009,6 +10009,7 @@ Easily change the text size:
 (malb/set-menu-key "r" #'spray-mode)
 (malb/set-menu-key "z" #'malb/toggle-vterm)
 (malb/set-menu-key "Z" #'malb/ykcd)
+(malb/set-menu-key "<f3>" #'ambient/body)
 (malb/set-menu-key "<f4>" #'emms-previous)
 (malb/set-menu-key "<f5>" #'emms-pause)
 (malb/set-menu-key "<f6>" #'emms-next)
