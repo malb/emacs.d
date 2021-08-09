@@ -3594,7 +3594,15 @@ Activate eldoc and show footnotes in minibuffer.
                 (todo todo-type priority title tags contents info)
               "format function for a inlinetasks.
 See `org-latex-format-inlinetask-function' for details."
-              (concat "\\todo[inline]{\\textbf{" todo "}: " title "}\n"))
+              (cond
+               ((and (> (length todo) 0) (> (length contents) 0))
+                (format "\\todo[inline]{\\textbf{%s %s} %s}\n" todo title contents))
+               ((and (= (length todo) 0) (> (length contents) 0))
+                (format "\\todo[inline]{\\textbf{%s} %s}\n" title contents))
+               ((and (> (length todo) 0) (= (length contents) 0))
+                (format "\\todo[inline]{\\textbf{%s} %s}\n" title))
+               ((and (= (length todo) 0) (= (length contents) 0))
+                (format "\\todo[inline]{%s}\n" title))))
             (setq org-latex-format-inlinetask-function #'malb/org-latex-format-inlinetask-function)
             (setq org-inlinetask-min-level 6)))
 #+END_SRC
