@@ -7336,7 +7336,9 @@ Gnus formatting
 (setq gnus-article-date-headers '(original))
 #+end_src
 
-** Threading
+** COMMENT Threading
+
+****** TODO It’s quite slow
 
 [[https://raw.githubusercontent.com/rougier/mu4e-thread-folding/master/screenshot.png]]
 
