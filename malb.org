@@ -6129,7 +6129,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
   :mode "README\\.txt")
 #+END_SRC
 
-** LaTeX
+** LaTeX (AucTeX)
 
 | Command   | Explanation          |
 |-----------+----------------------|
