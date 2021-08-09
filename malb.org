@@ -8733,7 +8733,8 @@ exports.boxes = [ "INBOX"];
             )))
 #+END_SRC
 
-* EMMS
+* Media Players
+** EMMS
 
 #+BEGIN_SRC emacs-lisp
 (use-package emms-setup
@@ -8744,12 +8745,84 @@ exports.boxes = [ "INBOX"];
   :after emms-setup
   :config (progn (emms-standard)
                  (emms-default-players)
-                 (define-emms-simple-player mplayer '(file url)
-                   (regexp-opt '(".ogg" ".mp3" ".wav" ".mpg" ".mpeg" ".wmv" ".wma"
-                                 ".mov" ".avi" ".divx" ".ogm" ".asf" ".mkv" "http://" "mms://"
-                                 ".rm" ".rmvb" ".mp4" ".flac" ".vob" ".m4a" ".flv" ".ogv" ".pls"))
-                   "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")))
+                 ;; (define-emms-simple-player mplayer '(file url)
+                 ;;   (regexp-opt '(".ogg" ".mp3" ".wav" ".mpg" ".mpeg" ".wmv" ".wma"
+                 ;;                 ".mov" ".avi" ".divx" ".ogm" ".asf" ".mkv" "http://" "mms://"
+                 ;;                 ".rm" ".rmvb" ".mp4" ".flac" ".vob" ".m4a" ".flv" ".ogv" ".pls"))
+                 ;;   "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")
+                 ))
 #+END_SRC
+
+
+** Kodi
+
+#+begin_src emacs-lisp
+(use-package kodi
+  :ensure nil
+  :commands ambient/body
+  :ensure-system-package (brightnessctl . brightnessctl)
+  :config (progn
+            ;;  adjust brightenss of external monitor
+            ;; this isn't kodi related but fits with the hydra below
+            (defvar malb/external-brightness-delta 10)
+
+            (defun malb/external-brightness ()
+              (with-temp-buffer
+                (call-process "brightnessctl" nil t nil "g")
+                (string-to-number (string-trim (buffer-substring-no-properties (point-min) (point-max))))))
+
+            (defun malb/external-brightness-up ()
+              (interactive)
+              (let* ((brightness-old (malb/external-brightness))
+                     (brightness-new (+ brightness-old malb/external-brightness-delta)))
+                (call-process "brightnessctl" nil nil nil "s" (format "%d" brightness-new))))
+
+            (defun malb/external-brightness-down ()
+              (interactive)
+              (let* ((brightness-old (malb/external-brightness))
+                     (brightness-new (- brightness-old malb/external-brightness-delta)))
+                (call-process "brightnessctl" nil nil nil "s" (format "%d" brightness-new))))
+
+            (defhydra ambient nil
+              "ambient"
+              ("<up>" kodi-volume-up (concat
+                                      (all-the-icons-faicon "music" :face 'all-the-icons :v-adjust 0.01)
+                                      " "
+                                      (all-the-icons-faicon "volume-up" :face 'all-the-icons :v-adjust 0.01)))
+              ("<down>" kodi-volume-down (concat
+                                          (all-the-icons-faicon "music" :face 'all-the-icons :v-adjust 0.01)
+                                          " "
+                                          (all-the-icons-faicon "volume-down" :face 'all-the-icons :v-adjust 0.01)))
+              ("<left>" kodi-prev (concat
+                                   (all-the-icons-faicon "music" :face 'all-the-icons :v-adjust 0.01)
+                                   " "
+                                   (all-the-icons-faicon "backward" :face 'all-the-icons :v-adjust 0.01))
+               :color blue)
+              ("<right>" kodi-next (concat
+                                    (all-the-icons-faicon "music" :face 'all-the-icons :v-adjust 0.01)
+                                    " "
+                                    (all-the-icons-faicon "forward" :face 'all-the-icons :v-adjust 0.01))
+               :color blue)
+              ("<RET>" kodi-now-playing (concat
+                                         (all-the-icons-faicon "music" :face 'all-the-icons :v-adjust 0.01)
+                                         " "
+                                         (all-the-icons-faicon "info" :face 'all-the-icons :v-adjust 0.01))
+               :color blue)
+              ("SPC" kodi-play-pause (concat
+                                      (all-the-icons-faicon "music" :face 'all-the-icons :v-adjust 0.01)
+                                      " "
+                                      (all-the-icons-faicon "play" :face 'all-the-icons :v-adjust 0.01))
+               :color blue)
+              ("'" malb/external-brightness-up (concat
+                                                (all-the-icons-faicon "desktop" :face 'all-the-icons :v-adjust 0.01)
+                                                " "
+                                                (all-the-icons-faicon "sun-o" :face 'all-the-icons :v-adjust 0.01)))
+              (";" malb/external-brightness-down (concat
+                                                  (all-the-icons-faicon "desktop" :face 'all-the-icons :v-adjust 0.01)
+                                                  " "
+                                                  (all-the-icons-faicon "moon-o" :face 'all-the-icons :v-adjust 0.01)))
+              ("q" nil))))
+#+end_src
 
 * Browsing
 
