@@ -7485,7 +7485,7 @@ This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d
             ": \\(.*\\)$/\\1/Ip'"))))
 #+end_src
 
-** Writing
+** Composing
 
 Don’t break long lines manually.
 
