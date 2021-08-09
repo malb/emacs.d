@@ -5648,9 +5648,6 @@ For some modes we want resp. less wrapping width.
 #+BEGIN_SRC emacs-lisp
 (defun malb/fill-column-32768 ()
   (set-fill-column 32768))
-
-(defun malb/fill-column-72 ()
-  (set-fill-column 72))
 #+END_SRC
 
 Indicate soft wrapped lines.
@@ -6808,6 +6805,10 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
       mu4e-headers-has-child-prefix '("+" . "●"))
 #+END_SRC
 
+#+begin_src emacs-lisp
+(add-to-list 'mu4e-headers-mode-hook #'stripe-buffer-mode)
+#+end_src
+
 ** Folders
 
 #+BEGIN_SRC emacs-lisp
@@ -7314,7 +7315,7 @@ Headers to show in header view.
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
   "View e-mails with width restriction, but wider for HTML."
-  (set-fill-column 84)
+  (set-fill-column 80)
   (visual-line-mode 1)
   (visual-fill-column-mode 1))
 
@@ -7495,10 +7496,9 @@ Don’t break long lines manually.
 (add-hook 'mu4e-compose-mode-hook #'malb/no-hard-newlines)
 #+END_SRC
 
-To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=. Also set e-mail width to 72 characters.
+To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=. Also set e-mail width to 80 characters.
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'mu4e-compose-mode-hook #'malb/fill-column-72)
 (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
 (add-hook 'message-mode-hook #'flyspell-mode)
 (add-hook 'message-mode-hook #'turn-on-orgtbl)
@@ -7733,8 +7733,9 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-compose-frame ()
+  (set-fill-column 80)
   (sleep-for 0.25) ;; this is a HACK
-  (set-frame-size (selected-frame) 80 (alist-get 'height default-frame-alist))
+  (set-frame-size (selected-frame) 82 (alist-get 'height default-frame-alist))
   (sleep-for 0.25) ;; this is a HACK
   (set-frame-parameter nil 'malb/is-special t)
   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
