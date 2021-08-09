@@ -94,6 +94,8 @@
                                                        :inherit (highlight)))))
 
      `(hl-sentence ((t (:background ,yellow-1bg :inherit (highlight)))))
+     `(hl-line ((t (:background ,yellow-1bg :inherit (highlight)))))
+     `(mu4e-header-highlight-face ((t (:background ,yellow-1bg :inherit (highlight)))))
      ;; `(which-func  ((t (:foreground ,green :weight bold))))
      `(stripe-highlight ((t (:background ,s-base2 :extend t))))
 
