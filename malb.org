@@ -9203,6 +9203,25 @@ Store URL as org link
                :protocol "org-store-link"
                :function malb/org-store-link-for-url))
 #+end_src
+* SSH Servers
+
+Create convenience functions to open a shell on my servers and “cd” into them in eshell.
+
+#+begin_src emacs-lisp
+(dolist (server-name malb/server-names)
+  (fset (intern (format "mosh/%s" server-name))
+        (malb/make-toggle-shell
+         (format "*mosh:%s*" server-name)
+         `(progn
+            (let ((vterm-shell (format "mosh %s -- tmux a" ,server-name)))
+              (vterm (format "*mosh:%s*" server-name))))))
+
+  (fset (intern (format "eshell/%s" server-name))
+        `(lambda ()
+           (insert ,(format "cd /ssh:%s:" server-name))
+           (eshell-send-input))))
+#+end_src
+
 * Misc
 ** Settings
 
