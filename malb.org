@@ -2259,7 +2259,8 @@ This library provides easy project management and navigation. The concept of a p
                     (and  (string-match (rx-to-string `(: bos "/tmp/" ) t)
                                         project-root) t))))
 
-            (defvar malb/projectile-switch-tab-projects nil)
+            (if (not (boundp 'malb/projectile-switch-tab-projects))
+                (defvar malb/projectile-switch-tab-projects nil))
 
             (defun malb/projectile-switch-tab (project-to-switch &optional arg)
               (let ((project-name (projectile-project-name project-to-switch)))
