@@ -86,6 +86,11 @@ Check if any regexp matches string, because OR is hard …
 This is really nice. ([[https://github.com/hlissner/doom-emacs/blob/2d2246d7ca5ec084f4bee9a5de14256eb6828837/core/core-lib.el#L584][source]])
 
 #+begin_src emacs-lisp
+(defun malb/enlist (exp)
+  "Return EXP wrapped in a list, or as-is if already a list."
+  (declare (pure t) (side-effect-free t))
+  (if (listp exp) exp (list exp)))
+
 (defmacro malb/defadvice! (symbol arglist &optional docstring &rest body)
   "Define an advice called SYMBOL and add it to PLACES.
 ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
@@ -98,7 +103,7 @@ DOCSTRING and BODY are as in `defun'.
     (setq docstring nil))
   (let (where-alist)
     (while (keywordp (car body))
-      (push `(cons ,(pop body) (doom-enlist ,(pop body)))
+      (push `(cons ,(pop body) (malb/enlist ,(pop body)))
             where-alist))
     `(progn
        (defun ,symbol ,arglist ,docstring ,@body)
