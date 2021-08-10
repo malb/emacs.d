@@ -6404,6 +6404,26 @@ Run =latexmk -pvc= in async shell
 
 ****** TODO use aux-dir & output-dir in combination with custom rc file to cp output to base dir
 
+*** Mathpix
+
+[[https://mathpix.com/][https://mathpix.com/]]
+
+#+begin_src emacs-lisp
+(use-package mathpix
+  :ensure nil
+  :custom ((mathpix-app-id
+            (plist-get
+             (car
+              (auth-source-search :host "mathpix" :max 1 :create nil :require '(:user)))
+             :user))
+           (mathpix-app-key
+            (funcall
+             (plist-get
+              (car
+               (auth-source-search :host "mathpix" :max 1 :create nil :require '(:secret)))
+              :secret)))))
+#+end_src
+
 ** Utility Functions
 
 ([[https://sriramkswamy.github.io/dotemacs/][source]])
