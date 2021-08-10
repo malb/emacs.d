@@ -9414,6 +9414,12 @@ Don’t prompt to save passwords.
 (setq auth-source-save-behavior nil)
 #+end_src
 
+Use ~(copyright-update)~ to update copyright info
+
+#+begin_src emacs-lisp
+(setq copyright-names-regexp "Martin Albrecht\\|Martin R. Albrecht")
+#+end_src
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
