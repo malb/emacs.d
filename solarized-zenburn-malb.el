@@ -16,6 +16,10 @@
      `(markdown-code-face ((t (:background ,(solarized-color-blend "#222222" s-base03 0.2) :inherit nil  :extend t))))
      `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#222222" s-base03 0.2)
                                                        :inherit (highlight)))))
+     `(hl-sentence ((t (:background ,orange-2bg :inherit (highlight)))))
+     `(hl-line ((t (:background ,orange-2bg :inherit (highlight)))))
+     `(mu4e-header-highlight-face ((t (:background ,orange-2bg :inherit (highlight)))))
+
      `(stripe-highlight ((t (:background ,s-base02 :extend t))))
      `(helm-ff-file-extension ((t ())))
      `(flycheck-fringe-error ((,class (:foreground ,(if solarized-emphasize-indicators red-hc red) :weight bold))))
