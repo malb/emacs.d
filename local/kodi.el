@@ -11,7 +11,18 @@
 
 (defvar kodi-hosts nil)
 (defvar kodi-debug nil)
-(defvar kodi-now-playing-fmt "${artist} - ${track}. \"${title}\" on ${album} (${year})")
+(defvar kodi-now-playing-fmt (lambda (now-playing)
+                               (cond
+                                ((and (= (alist-get 'year now-playing) 0)
+                                      (= (alist-get 'track now-playing) 0))
+                                 (s-format "${artist} - \"${title}\" on \"${album}\""
+                                           'aget now-playing))
+                                ((= (alist-get 'year now-playing) 0)
+                                 (s-format "${artist} - ${track}. \"${title}\" on \"${album}\""
+                                           'aget now-playing))
+                                (t
+                                 (s-format "${artist} - ${track}. \"${title}\" on \"${album}\" (${year})"
+                                           'aget now-playing)))))
 (defvar kodi-volume-delta 1)
 
 (defun kodi-register-host (host &rest args)
@@ -120,11 +131,15 @@ Maybe query the user for HOST when INTERACTIVE is set."
   (let ((result (alist-get 'item
                            (kodi-send-command host "Player.GetItem"
                                               "[0,[\"title\",\"artist\",\"year\",\"album\",\"track\"]]"
-                                              (called-interactively-p 'interactive)))))
+                                              (called-interactively-p 'interactive))))
+        now-playing)
     (setf (alist-get 'artist result) (s-join ", " (alist-get 'artist result)))
+    (setq now-playing (if (functionp kodi-now-playing-fmt)
+                          (apply kodi-now-playing-fmt result nil)
+                        (s-format kodi-now-playing-fmt 'aget result)))
     (if (called-interactively-p 'interactive)
-        (message "%s" (s-format kodi-now-playing-fmt 'aget result))
-      (s-format kodi-now-playing-fmt 'aget result))))
+        (message "%s" now-playing)
+      now-playing)))
 
 (defhydra kodi nil
   "Kodi Media Centre"
