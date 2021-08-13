@@ -7201,14 +7201,22 @@ Query the user for an alias and add an entry to =~/.mailrc=.
   (let ((addresses))
     (if (equal major-mode 'mu4e-view-mode)
         (setq addresses (mapcar
-                         (lambda (a) (format "%s <%s>" (car a) (cdr a)))
+                         (lambda (a)
+                           (if (car a)
+                               (format "%s <%s>" (car a) (cdr a))
+                             (format "%s" (cdr a))))
                          (mu4e-message-field (mu4e-message-at-point) :to)))
       (setq addresses (or
                        (mail-header-parse-addresses (message-fetch-field "Bcc") t)
                        (mail-header-parse-addresses (message-fetch-field "To") t))))
     (write-region
      (format "alias %s %s\n" alias
-             (mapconcat (lambda (s) (format "\"%s\"" (string-trim s))) addresses " "))
+             (mapconcat (lambda (s)
+                          (if (string-match-p "<" s)
+                              (format "\"%s\"" (replace-regexp-in-string "\"" ""
+                                                                         (string-trim s)))
+                            s))
+                        addresses " "))
      nil
      (expand-file-name ".mailrc" "~")
      'append)))
