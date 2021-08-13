@@ -7376,6 +7376,14 @@ Use ace-link for links as it is compatible with gnus.
 (bind-key "g" #'ace-link mu4e-view-mode-map)
 #+END_SRC
 
+Dropping =[mouse-1]= otherwise I end up with links being clicked twice.
+
+#+begin_src emacs-lisp
+(setq mu4e-view-active-urls-keymap
+      '(keymap (M-return . mu4e~view-browse-url-from-binding)
+               (down-mouse-1 . mu4e~view-browse-url-from-binding)))
+#+end_src
+
 Headers to show in header view.
 
 #+BEGIN_SRC emacs-lisp
