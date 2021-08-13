@@ -3652,7 +3652,7 @@ See `org-latex-format-inlinetask-function' for details."
                ((and (= (length todo) 0) (> (length contents) 0))
                 (format "\\todo[inline]{\\textbf{%s} %s}\n" title contents))
                ((and (> (length todo) 0) (= (length contents) 0))
-                (format "\\todo[inline]{\\textbf{%s} %s}\n" title))
+                (format "\\todo[inline]{\\textbf{%s} %s}\n" todo title))
                ((and (= (length todo) 0) (= (length contents) 0))
                 (format "\\todo[inline]{%s}\n" title))))
             (setq org-latex-format-inlinetask-function #'malb/org-latex-format-inlinetask-function)
