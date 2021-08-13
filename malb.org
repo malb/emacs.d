@@ -2267,16 +2267,28 @@ This library provides easy project management and navigation. The concept of a p
             (if (not (boundp 'malb/projectile-switch-tab-projects))
                 (defvar malb/projectile-switch-tab-projects nil))
 
-            (defun malb/projectile-switch-tab (project-to-switch &optional arg)
-              (let ((project-name (projectile-project-name project-to-switch)))
-                (when (member project-name malb/projectile-switch-tab-projects)
-                  (if (member project-name (mapcar (lambda (tab)
-                                                     (cdr (assq 'name tab)))
-                                                   (tab-bar-tabs)))
-                      (tab-bar-switch-to-tab project-name)
-                    (tab-new)))))
+            (malb/defadvice! malb/projectile-switch-tab (project-to-switch &optional arg)
+              "Switch to new tab if project is in `malb/projectile-switch-tab-projects'."
+              :before 'projectile-switch-project-by-name
+              (let* ((project-name (projectile-project-name project-to-switch))
+                     (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-projects))
+                                             project-name)))
+                (when (assoc project-name malb/projectile-switch-tab-projects)
+                  (if (member project-short-name (mapcar (lambda (tab)
+                                                           (cdr (assq 'name tab)))
+                                                         (tab-bar-tabs)))
+                      (tab-bar-switch-to-tab project-short-name)
+                    (progn
+                      (tab-new)
+                      (tab-rename project-short-name))))))
 
-            (advice-add #'projectile-switch-project-by-name :before #'malb/projectile-switch-tab)
+            (malb/defadvice! malb/projectile-kill-tab ()
+              "Kill tab too if it's not the first."
+              :after 'projectile-kill-buffers
+              (when (and (> (tab-bar--current-tab-index) 0)
+                         (rassoc (alist-get 'name (tab-bar--current-tab))
+                                 malb/projectile-switch-tab-projects))
+                (tab-bar-close-tab nil 1)))
 
             (setq projectile-make-test-cmd "make check"
                   projectile-ignored-projects malb/projectile-ignored-projects
