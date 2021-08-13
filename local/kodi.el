@@ -12,17 +12,15 @@
 (defvar kodi-hosts nil)
 (defvar kodi-debug nil)
 (defvar kodi-now-playing-fmt (lambda (now-playing)
-                               (cond
-                                ((and (= (alist-get 'year now-playing) 0)
-                                      (= (alist-get 'track now-playing) 0))
-                                 (s-format "${artist} - \"${title}\" on \"${album}\""
-                                           'aget now-playing))
-                                ((= (alist-get 'year now-playing) 0)
-                                 (s-format "${artist} - ${track}. \"${title}\" on \"${album}\""
-                                           'aget now-playing))
-                                (t
-                                 (s-format "${artist} - ${track}. \"${title}\" on \"${album}\" (${year})"
-                                           'aget now-playing)))))
+                               (concat (propertize (alist-get 'artist now-playing))
+                                       " - "
+                                       (when (> (alist-get 'track now-playing) 0)
+                                         (format "%d. " (alist-get 'track now-playing)))
+                                       (propertize (alist-get 'title now-playing) 'face 'bold)
+                                       " on "
+                                       (propertize (alist-get 'album now-playing) 'face 'italic)
+                                       (when (> (alist-get 'year now-playing) 0)
+                                         (format " (%d)" (alist-get 'year now-playing))))))
 (defvar kodi-volume-delta 1)
 
 (defun kodi-register-host (host &rest args)
