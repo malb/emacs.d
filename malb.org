@@ -3066,7 +3066,7 @@ We skip all Babel processing when exporting to iCal.
                                        "[DEFAULT-PACKAGES]\n"
                                        "[PACKAGES]\n"
                                        "\\usepackage{fontspec}\n"
-                                       "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}\n"
+                                       "\\usepackage[a4paper,includeheadfoot,margin=3cm]{geometry}\n"
                                        "\\usepackage[hang,flushmargin]{footmisc}\n"
                                        "\\parskip 1em\n"
                                        "\\parindent 0pt\n"
