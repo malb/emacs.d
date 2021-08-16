@@ -6696,7 +6696,13 @@ We add an option to search for the paper’s title online.
                       (helm-add-action-to-source "Insert BibTeX key" 'helm-bibtex-insert-key
                                                  helm-source-bibtex 0)
                       (helm-add-action-to-source "Find online" 'helm-malb/bibtex-completion-google-this
-                                                 helm-source-bibtex)))))
+                                                 helm-source-bibtex)))
+
+            (malb/defadvice! malb/helm-case-fold-search (fn &optional args)
+              "Ignore case when searching BibTeX."
+              :around 'helm-bibtex-with-local-bibliography
+              (let ((helm-case-fold-search t))
+                (apply fn args)))))
 #+END_SRC
 
 A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
