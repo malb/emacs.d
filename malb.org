@@ -6394,7 +6394,8 @@ When pressed twice, make the sub/superscript roman."
                                            cdlatex-position-cursor nil nil t)
                                           ("nrm" "Insert ||foo||" "\\lVert{?}\\rVert"
                                            cdlatex-position-cursor nil nil t))
-                  cdlatex-math-symbol-alist '( ( ?a  ("\\alpha" "\\alert{?}"))))))
+                  cdlatex-math-symbol-alist '(( ?a  ("\\alpha" "\\alert{?}"))
+                                              ( ?Z  ("\\ZZ"))))))
 #+end_src
 
 *** LaTeXMK
