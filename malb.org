@@ -2916,7 +2916,7 @@ iCal export is triggered after 600 seconds of inactivity.
 (add-hook 'after-save-hook 'malb/ox-export-after-save-hook)
 #+END_SRC
 
-We skip all babel processing when exporting to iCal.
+We skip all Babel processing when exporting to iCal.
 
 #+begin_src emacs-lisp
 (malb/defadvice! malb/org-icalendar-no-babel (fn &rest args)
