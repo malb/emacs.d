@@ -1090,6 +1090,17 @@ For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We
             (defun malb/enforce-case-sensitive (orig-function &rest arguments)
               (let ((completion-ignore-case nil))
                 (apply orig-function arguments)))
+
+            (setq math-symbol-list-extended
+                  (remove '("mathrel" "\\coloneq" 8788 "≔") math-symbol-list-extended))``
+
+            (add-to-list 'math-symbol-list-extended '("mathrel" "\\coloneqq" 8788 "≔"))
+
+            (setq company-math--symbols
+                  (delete-dups
+                   (append (company-math--make-candidates math-symbol-list-basic company-math-symbol-prefix)
+                           (company-math--make-candidates math-symbol-list-extended company-math-symbol-prefix))))
+
             (advice-add #'company-math-symbols-latex :around #'malb/enforce-case-sensitive)
             (advice-add #'company-math-symbols-unicode :around #'malb/enforce-case-sensitive)))
 
@@ -2554,6 +2565,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-pretty-entities nil
       org-image-actual-width '(800))
 #+END_SRC
+
+#+begin_src emacs-lisp
+(setq org-entities-user '(("coloneqq" "\\coloneqq" t ":=" ":=" ":=" "≔")))
+#+end_src
 
 ** ToDo Keywords & Scheduling
 
