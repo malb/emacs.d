@@ -2468,6 +2468,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
          ("C-c ;" . nil)) ;; I keep pressing it by accident, clumsy me
   :mode ("\\.org$" . org-mode)
   :blackout (orgstruct-mode orgtbl-mode)
+  :custom ((org-export-backends '(md odt latex icalendar html ascii)))
   :config (progn
             (unbind-key "C-c [" org-mode-map)
             (bind-key "M-/"   #'company-complete-common org-mode-map)))
