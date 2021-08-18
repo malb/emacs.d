@@ -6226,6 +6226,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               ("M-<up>" . outline-move-subtree-up)
               ("M-<down>" . outline-move-subtree-down)
               ("C-c h ." . TeX-doc))
+  :custom ((texmathp-tex-commands '(("pcvstack" env-on) ("pchstack" env-on))))
   :config (progn
             (add-hook 'LaTeX-mode-hook #'turn-on-visual-line-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-flyspell)
@@ -6253,7 +6254,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                '("corollary" LaTeX-env-label)
                '("definition" LaTeX-env-label)
                '("example" LaTeX-env-label)
-               '("proposition" LaTeX-env-label)))
+               '("proposition" LaTeX-env-label)
+               '("pcvstack" LaTeX-env-label)
+               '("pchstack" LaTeX-env-label)))
 
             (defun malb/latex-add-font-lock ()
               (font-latex-add-keywords '(("malb" "*[{")
@@ -6302,8 +6305,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (font-lock-add-keywords
              'latex-mode
              `((,(rx "\\" (or (any ",.!;")
-                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
-                                  symbol-end)))
+                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
+                                   symbol-end)))
                 0 'malb/unimportant-latex-face prepend)) 'end)
 
             (setq TeX-auto-save t
