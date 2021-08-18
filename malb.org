@@ -9175,23 +9175,26 @@ then enter the text in that file's own buffer.
 
 * Emacs from Elsewhere
 
-[[https://chrome.google.com/webstore/detail/edit-with-emacs/ljobjlafonikaiipfkggjbhkghgicgoh?hl=en][Emacs from Chrome]]
+[[https://github.com/tecosaur/emacs-everywhere][Emacs Everywhere]]
 
-#+BEGIN_SRC emacs-lisp
-(use-package edit-server ;; use emacs-everywhere
-  :disabled t
+[[https://user-images.githubusercontent.com/20903656/107152385-814f2c00-69a2-11eb-978f-b3e78067b3f3.gif]]
+
+#+begin_src emacs-lisp
+(use-package emacs-everywhere
+  :after hide-mode-line-mode
   :config (progn
-            (edit-server-start)
-            (setq edit-server-new-frame-alist `((name . "Edit Firefox with Emacs")
-                                                (width . 120)
-                                                (height . ,(ceiling (/ (alist-get 'height default-frame-alist) 1.61)))
-                                                (minibuffer . t)
-                                                (internal-border-width . 16)
-                                                (skip-taskbar . t)
-                                                (unsplittable . t)
-                                                (menu-bar-lines . nil))
-                  edit-server-default-major-mode 'markdown-mode)))
-#+END_SRC
+            (setq emacs-everywhere-frame-parameters  `((name . "emacs-everywhere")
+                                                       (minibuffer . nil)
+                                                       (internal-border-width . 16)
+                                                       (skip-taskbar . t)
+                                                       (unsplittable . t)
+                                                       (menu-bar-lines . nil)
+                                                       (width . 120)
+                                                       (height . 25)
+                                                       (alpha . 0.95)
+                                                       (buffer-predicate . (lambda (x) nil))))
+            (add-hook 'emacs-everywhere-mode-hook #'hide-mode-line-mode)))
+#+end_src
 
 [[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
 
@@ -9201,26 +9204,6 @@ then enter the text in that file's own buffer.
          ("C-c i o" . grab-x-link-firefox-insert-org-link)
          ("C-c i m" . grab-x-link-firefox-insert-markdown-link)))
 #+END_SRC
-
-
-#+begin_src emacs-lisp
-(use-package emacs-everywhere
-  :after hide-mode-line-mode
-  :quelpa (emacs-everywhere :fetcher github :repo "tecosaur/emacs-everywhere")
-  :config (progn
-            (setq emacs-everywhere-frame-parameters  `((name . "emacs-everywhere")
-                                                       (minibuffer . nil)
-                                                       (internal-border-width . 16)
-                                                       (skip-taskbar . t)
-                                                       (unsplittable . t)
-                                                       (menu-bar-lines . nil)
-                                                       (width . 120)
-                                                       (height . ,(ceiling (/ (alist-get 'height default-frame-alist) 1.61)))
-                                                       (alpha . 0.95)
-                                                       (buffer-predicate . (lambda (x) nil))))
-            (add-hook 'emacs-everywhere-mode-hook #'hide-mode-line-mode)))
-#+end_src
-
 
 ** Org-protocol entpoints for bookmarklets
 
