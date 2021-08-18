@@ -2465,7 +2465,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          :map org-mode-map
-         ("C-c ;" . nil))               ;; I keep pressing it by accident, clumsy me
+         ("C-c ;" . nil)) ;; I keep pressing it by accident, clumsy me
   :mode ("\\.org$" . org-mode)
   :blackout (orgstruct-mode orgtbl-mode)
   :config (progn
