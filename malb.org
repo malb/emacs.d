@@ -929,7 +929,7 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
             (defun malb/yas-dir-f-oh ()
               (save-excursion
                 (re-search-forward "^# name: \\(.*?\\)$")
-                (let  ((fn (match-string 1))
+                (let  ((fn (s-replace " " "-" (match-string 1)))
                        (dir (downcase (org-entry-get nil "ITEM"))))
                   (when (not (file-directory-p (concat user-emacs-directory "snippets/" dir)))
                     (mkdir (file-directory-p (concat user-emacs-directory "snippets/" dir))))
