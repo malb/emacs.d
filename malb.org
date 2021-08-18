@@ -6881,6 +6881,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-index-cleanup t
                  mu4e-view-show-addresses t
                  mu4e-headers-precise-alignment t
+                 mu4e-compose-complete-only-after nil
                  mu4e-index-lazy-check nil
                  mu4e-headers-auto-update nil))
 #+END_SRC
@@ -7080,6 +7081,10 @@ Canonicalise contacts as they appear from mu4e.
                                (seq "do-not-reply" (zero-or-more char) "@")
                                (seq "bounce-" (one-or-more char) "@")))
                       contact)
+      nil)
+     ((seq-some (lambda (invalid-address)
+                  (s-contains-p  (downcase invalid-address) (downcase contact)))
+                malb/invalid-email-addresses)
       nil)
      ((string-match-p full-email-regex contact)
       (let* ((email (downcase (replace-regexp-in-string full-email-regex "\\2" contact)))
