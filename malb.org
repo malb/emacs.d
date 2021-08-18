@@ -3233,6 +3233,14 @@ The tag =:ignore:= ignores a headline when exporting, section content is exporte
   :config (ox-extras-activate '(ignore-headlines)))
 #+END_SRC
 
+*** GitHub Flavoured Markdown
+
+Emacs Everywhere wants this (optionally).
+
+#+begin_src emacs-lisp
+(use-package ox-gfm)
+#+end_src
+
 ** Capture
 
 If we are in a project we might add a TODO entry to the appropriate entry in =projects.org=.
