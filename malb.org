@@ -1901,6 +1901,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                 (sp-local-pair "*" "*" :actions :rem)
                 (sp-local-pair "=" "=" :actions :rem)
                 (sp-local-pair "\"" "\"" :actions :rem)
+                (sp-local-pair "~" "~" :actions :rem)
                 (sp-local-pair "'" "'" :actions :rem)))
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
