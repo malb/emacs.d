@@ -2939,16 +2939,6 @@ iCal export is triggered after 600 seconds of inactivity.
 (add-hook 'after-save-hook 'malb/ox-export-after-save-hook)
 #+END_SRC
 
-We skip all Babel processing when exporting to iCal.
-
-#+begin_src emacs-lisp
-(malb/defadvice! malb/org-icalendar-no-babel (fn &rest args)
-  "Skip babel when doing ical export"
-  :around 'org-icalendar-combine-agenda-files
-  (let ((org-export-use-babel nil))
-    (apply fn args)))
-#+end_src
-
 *** LaTeX
 
 - Use [[http://www.xelatex.org][XeLaTeX]] because UTF-8 and fonts.
