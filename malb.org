@@ -8882,20 +8882,20 @@ exports.boxes = [ "INBOX"];
 
             (defun malb/external-brightness ()
               (with-temp-buffer
-                (call-process "brightnessctl" nil t nil "g")
+                (call-process "brightnessctl" nil t nil "-d" "ddcci3" "g")
                 (string-to-number (string-trim (buffer-substring-no-properties (point-min) (point-max))))))
 
             (defun malb/external-brightness-up ()
               (interactive)
               (let* ((brightness-old (malb/external-brightness))
                      (brightness-new (+ brightness-old malb/external-brightness-delta)))
-                (call-process "brightnessctl" nil nil nil "s" (format "%d" brightness-new))))
+                (call-process "brightnessctl" nil nil nil "-d" "ddcci3" "s" (format "%d" brightness-new))))
 
             (defun malb/external-brightness-down ()
               (interactive)
               (let* ((brightness-old (malb/external-brightness))
                      (brightness-new (- brightness-old malb/external-brightness-delta)))
-                (call-process "brightnessctl" nil nil nil "s" (format "%d" brightness-new))))
+                (call-process "brightnessctl" nil nil nil "-d" "ddcci3" "s" (format "%d" brightness-new))))
 
             (defhydra ambient nil
               "ambient"
