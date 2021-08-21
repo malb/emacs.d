@@ -8785,6 +8785,7 @@ function getStdout(cmd) {
 exports.host = "imap.gmail.com";
 exports.port = 993;
 exports.tls = true;
+exports.tlsOptions = { servername: "imap.gmail.com" };
 exports.username = "martinralbrecht@gmail.com";
 exports.password = // whatever needs doing
 exports.onNewMail = "mbsync googlemail-minimal";
