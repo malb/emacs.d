@@ -2574,7 +2574,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 #+END_SRC
 
 #+begin_src emacs-lisp
-(setq org-entities-user '(("coloneqq" "\\coloneqq" t ":=" ":=" ":=" "≔")))
+(setq org-entities-user '(("coloneqq" "\\coloneqq" t ":=" ":=" ":=" "≔")
+                          ("deg" "\\deg" t "deg" "deg" "deg" "deg")))
 #+end_src
 
 ** ToDo Keywords & Scheduling
