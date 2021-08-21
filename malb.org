@@ -910,8 +910,6 @@ You can call ~yas-decribe-tables~ to see currently defined snippets, I usually j
 
 We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/yasnippet/issues/669][source]])
 
-=malb/yas-dir-f-oh= is used to tangle =snippets.org=
-
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
   :blackout yas-minor-mode
@@ -923,16 +921,7 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
               (when (and yas-minor-mode (null (yas--get-snippet-tables)))
                 (yas-minor-mode -1)))
 
-            (add-hook 'yas-minor-mode-hook #'malb/disable-yas-if-no-snippets)
-
-            (defun malb/yas-dir-f-oh ()
-              (save-excursion
-                (re-search-forward "^# name: \\(.*?\\)$")
-                (let  ((fn (s-replace " " "-" (match-string 1)))
-                       (dir (downcase (org-entry-get nil "ITEM"))))
-                  (when (not (file-directory-p (concat user-emacs-directory "snippets/" dir)))
-                    (mkdir (file-directory-p (concat user-emacs-directory "snippets/" dir))))
-                  (concat user-emacs-directory "snippets/" dir  "/" fn))))))
+            (add-hook 'yas-minor-mode-hook #'malb/disable-yas-if-no-snippets)))
 #+END_SRC
 
 The official yasnippet snippet collection
