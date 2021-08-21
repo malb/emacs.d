@@ -2112,11 +2112,12 @@ https://github.com/cute-jumper/embrace.el
              ("=" "=" nil org-mode)
              ("_" "_" nil org-mode)
              ("\\(" "\\)" "$" org-mode)
+             ("\\[" "\\]" "£" org-mode)
              ("#+begin_quote\n" "#+end_quote\n" "q" org-mode)
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
              ("#+begin_center \n" "\n#+end_center" "c" org-mode)
-             ))
+             ("#+begin_latex \n" "\n#+end_latex" "l" org-mode)))
   (add-hook 'org-mode-hook 'wrap-region-mode))
 #+END_SRC
 
