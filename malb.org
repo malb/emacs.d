@@ -1584,10 +1584,13 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
               (push-mark)
 
-              (let ((current-prefix-arg nil))
-                (cond
-                 ((equal arg 4) (call-interactively #'helm-org-ql-agenda-files nil))
-                 (t (helm-org-agenda-files-headings)))))
+              (let ((original-frame-list (frame-list))
+                    (current-prefix-arg nil))
+                (cl-letf (((symbol-function 'frame-list)
+                           (lambda () (reverse original-frame-list))))
+                  (cond
+                   ((equal arg 4) (call-interactively #'helm-org-ql-agenda-files nil))
+                   (t (helm-org-agenda-files-headings))))))
 
 
             (add-to-list 'helm-commands-using-frame 'helm-org-ql)
