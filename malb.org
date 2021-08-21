@@ -369,8 +369,7 @@ it will restore the window configuration to prior to full-framing."
 (use-package tab-bar
   :ensure nil
   :custom ((tab-bar-mode t "Enable tab-bar-mode")
-           (tab-bar-show nil "But don't show tabs")
-           (tab-bar-new-tab-choice "*scratch*" "Open scratch by default"))
+           (tab-bar-show nil "But don't show tabs"))
   :config (progn
             ;; https://www.rousette.org.uk/archives/using-the-tab-bar-in-emacs/
             (defun malb/name-tab-by-project-or-default ()
