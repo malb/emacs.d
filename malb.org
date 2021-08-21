@@ -1090,11 +1090,11 @@ For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We
               (let ((completion-ignore-case nil))
                 (apply orig-function arguments)))
 
+            (require 'math-symbol-lists)
             (setq math-symbol-list-extended
-                  (remove '("mathrel" "\\coloneq" 8788 "≔") math-symbol-list-extended))``
+                  (remove '("mathrel" "\\coloneq" 8788 "≔") math-symbol-list-extended))
 
-            (add-to-list 'math-symbol-list-extended '("mathrel" "\\coloneqq" 8788 "≔"))
-
+            (push '("mathrel" "\\coloneqq" 8788 "≔") math-symbol-list-extended)
             (setq company-math--symbols
                   (delete-dups
                    (append (company-math--make-candidates math-symbol-list-basic company-math-symbol-prefix)
