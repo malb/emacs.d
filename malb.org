@@ -742,13 +742,6 @@ Run =old-function= with an empty =display-buffer-alist=
     (apply old-function arguments)))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(defun malb/make-frame-advice (old-function &rest arguments)
-  (with-selected-frame (make-frame)
-    (apply old-function arguments)
-    (dedicated-mode)))
-#+END_SRC
-
 ** Dedicated Mode
 
 ([[https://github.com/jwiegley/dot-emacs/blob/master/site-lisp/dedicated.el][source]])
