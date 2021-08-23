@@ -73,8 +73,9 @@
   `((custom-theme-set-faces
      theme-name
      ;; steal org style from Leuven
-     `(org-checkbox ((t (:weight bold :box (:line-width 1 :color nil :style (quote pressed-button))
-                                 :foreground "white" :background "light gray"))))
+     `(org-checkbox ((t (:weight bold :foreground ,base0
+                                 :box (:line-width 1 :color nil :style (quote pressed-button))
+                                 :background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(org-done     ((t (:weight bold :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#8BB300" :background "#F0F0F0"))))
      `(org-scheduled-previously ((t (:foreground ,orange))))
      `(org-tag ((t (:weight normal :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#9A9FA4"))))
