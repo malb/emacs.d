@@ -2110,7 +2110,7 @@ https://github.com/cute-jumper/embrace.el
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
              ("#+begin_center \n" "\n#+end_center" "c" org-mode)
-             ("#+begin_latex \n" "\n#+end_latex" "l" org-mode)))
+             ("#+begin_export latex\n" "\n#+end_export" "l" org-mode)))
   (add-hook 'org-mode-hook 'wrap-region-mode))
 #+END_SRC
 
