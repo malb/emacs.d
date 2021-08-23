@@ -8893,22 +8893,32 @@ exports.boxes = [ "INBOX"];
             ;; this isn't kodi related but fits with the hydra below
             (defvar malb/external-brightness-delta 10)
 
-            (defun malb/external-brightness ()
+            (defun malb/external-brightness-device ()
               (with-temp-buffer
-                (call-process "brightnessctl" nil t nil "-d" "ddcci3" "g")
-                (string-to-number (string-trim (buffer-substring-no-properties (point-min) (point-max))))))
+                (call-process "brightnessctl" nil t nil "-l" "-m")
+                (goto-char (point-min))
+                (re-search-forward "^\\(ddcci[0-9]\\),backlight" nil :noerror)
+                (match-string 1)))
+
+            (defun malb/external-brightness ()
+              (let ((device (malb/external-brightness-device)))
+                (with-temp-buffer
+                  (call-process "brightnessctl" nil t nil "-d" devive "g")
+                  (string-to-number (string-trim (buffer-substring-no-properties (point-min) (point-max)))))))
 
             (defun malb/external-brightness-up ()
               (interactive)
-              (let* ((brightness-old (malb/external-brightness))
-                     (brightness-new (+ brightness-old malb/external-brightness-delta)))
-                (call-process "brightnessctl" nil nil nil "-d" "ddcci3" "s" (format "%d" brightness-new))))
+              (let ((device (malb/external-brightness-device)))
+                (let* ((brightness-old (malb/external-brightness))
+                       (brightness-new (+ brightness-old malb/external-brightness-delta)))
+                  (call-process "brightnessctl" nil nil nil "-d" "ddcci2" "s" (format "%d" brightness-new)))))
 
             (defun malb/external-brightness-down ()
               (interactive)
-              (let* ((brightness-old (malb/external-brightness))
-                     (brightness-new (- brightness-old malb/external-brightness-delta)))
-                (call-process "brightnessctl" nil nil nil "-d" "ddcci3" "s" (format "%d" brightness-new))))
+              (let ((device (malb/external-brightness-device)))
+                (let* ((brightness-old (malb/external-brightness))
+                       (brightness-new (- brightness-old malb/external-brightness-delta)))
+                  (call-process "brightnessctl" nil nil nil "-d" "ddcci2" "s" (format "%d" brightness-new)))))
 
             (defhydra ambient nil
               "ambient"
