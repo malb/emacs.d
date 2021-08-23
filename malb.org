@@ -1360,7 +1360,15 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (add-to-list 'helm-boring-file-regexp-list "texput\\.log" t)
 
             ;; see https://github.com/emacs-helm/helm/commit/1de1701c73b15a86e99ab1c5c53bd0e8659d8ede
-            (assq-delete-all 'find-file helm-completing-read-handlers-alist)))
+            (assq-delete-all 'find-file helm-completing-read-handlers-alist)
+
+            (defun malb/back-to-current-frame-advice (old-function &rest arguments)
+              (let* ((current-frame (selected-frame))
+                     (current-frame-list (frame-list)))
+                (cl-letf (((symbol-function 'frame-list)
+                           (lambda () (cons current-frame
+                                            (remove current-frame current-frame-list)))))
+                  (apply old-function arguments))))))
 #+END_SRC
 
 Actions for attaching files to e-mails and for sending them with [[https://transfer.sh/][transfer.sh]].
@@ -1565,6 +1573,8 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                      (call-interactively #'helm-semantic-or-imenu))))
 
             (add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
+            (advice-add #'helm-org-in-buffer-headings :around #'malb/back-to-current-frame-advice)
+
             (add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)
             (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)))
 #+end_src
@@ -1577,14 +1587,12 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
               (push-mark)
 
-              (let ((original-frame-list (frame-list))
-                    (current-prefix-arg nil))
-                (cl-letf (((symbol-function 'frame-list)
-                           (lambda () (reverse original-frame-list))))
-                  (cond
-                   ((equal arg 4) (call-interactively #'helm-org-ql-agenda-files nil))
-                   (t (helm-org-agenda-files-headings))))))
+              (let ((current-prefix-arg nil))
+                (cond
+                 ((equal arg 4) (call-interactively #'helm-org-ql-agenda-files nil))
+                 (t (helm-org-agenda-files-headings)))))
 
+            (advice-add #'helm-org-agenda-files-headings :around #'malb/back-to-current-frame-advice)
 
             (add-to-list 'helm-commands-using-frame 'helm-org-ql)
             (add-to-list 'helm-commands-using-frame 'helm-org-ql-agenda-files)))

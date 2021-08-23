@@ -21,10 +21,19 @@
   stringstyle={\color{darkgray}}, frame=single, basicstyle=\tt\scriptsize\relax,
   inputencoding=utf8, literate={…}{{\ldots}}1, belowskip=0.0em,}
 
+\IfFontExistsTF{XCharter}{
 \setmainfont[Scale=0.98]{XCharter}
+}
+{}
+
+\IfFontExistsTF{Cousine}{
 \setmonofont[BoldFont={Cousine Bold},ItalicFont={Cousine Italic},BoldItalicFont={Cousine Bold Italic},Scale=0.90]{Cousine}
+}{}
+
 \linespread{1.04}
 
+\IfFileExists{unicodesymbols.sty}{
 \RequirePackage{unicodesymbols} % after metropolis which loads fontspec
+}{}
 
 % \usepackage{unicode-math}
