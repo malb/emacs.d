@@ -1573,7 +1573,10 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                      (call-interactively #'helm-semantic-or-imenu))))
 
             (add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
+            ;; TODO advice malb/helm-in-buffer
             (advice-add #'helm-org-in-buffer-headings :around #'malb/back-to-current-frame-advice)
+            (advice-add #'helm-lsp-workspace-symbol :around #'malb/back-to-current-frame-advice)
+            (advice-add #'helm-semantic-or-imenu :around #'malb/back-to-current-frame-advice)
 
             (add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)
             (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)))
