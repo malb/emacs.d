@@ -8903,22 +8903,24 @@ exports.boxes = [ "INBOX"];
             (defun malb/external-brightness ()
               (let ((device (malb/external-brightness-device)))
                 (with-temp-buffer
-                  (call-process "brightnessctl" nil t nil "-d" devive "g")
+                  (call-process "brightnessctl" nil t nil "-d" device "g")
                   (string-to-number (string-trim (buffer-substring-no-properties (point-min) (point-max)))))))
 
             (defun malb/external-brightness-up ()
               (interactive)
               (let ((device (malb/external-brightness-device)))
                 (let* ((brightness-old (malb/external-brightness))
-                       (brightness-new (+ brightness-old malb/external-brightness-delta)))
-                  (call-process "brightnessctl" nil nil nil "-d" "ddcci2" "s" (format "%d" brightness-new)))))
+                       (brightness-new (min (+ brightness-old malb/external-brightness-delta) 100)))
+                  (call-process "brightnessctl" nil nil nil "-d" device "s" (format "%d" brightness-new))
+                  (message "brightness %d" (malb/external-brightness)))))
 
             (defun malb/external-brightness-down ()
               (interactive)
               (let ((device (malb/external-brightness-device)))
                 (let* ((brightness-old (malb/external-brightness))
-                       (brightness-new (- brightness-old malb/external-brightness-delta)))
-                  (call-process "brightnessctl" nil nil nil "-d" "ddcci2" "s" (format "%d" brightness-new)))))
+                       (brightness-new (max (- brightness-old malb/external-brightness-delta) 0)))
+                  (call-process "brightnessctl" nil nil nil "-d" device "s" (format "%d" brightness-new))
+                  (message "brightness %d" (malb/external-brightness)))))
 
             (defhydra ambient nil
               "ambient"
