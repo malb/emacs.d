@@ -67,6 +67,7 @@ Maybe query the user for HOST when INTERACTIVE is set."
          (host (kodi-host-helper host interactive))
          (url (kodi-url host))
          (url-request-method "POST")
+         (url-request-noninteractive t)
          (url-request-extra-headers
           `(("Content-Type" . "application/json")
             ("Authorization" . ,(kodi-auth-string host))))
@@ -113,7 +114,8 @@ Maybe query the user for HOST when INTERACTIVE is set."
   (let* ((host (kodi-host-helper host (called-interactively-p 'interactive)))
          (old-volume (kodi-get-volume host))
          (new-volume (+ old-volume kodi-volume-delta)))
-    (kodi-send-command host "Application.SetVolume" (format "[%d]" new-volume) nil)))
+    (kodi-send-command host "Application.SetVolume" (format "[%d]" new-volume) nil)
+    (message "volume %d" (kodi-get-volume))))
 
 (defun kodi-volume-down (&optional host)
   "Decrement volume on HOST by `kodi-volume-delta'."
@@ -121,7 +123,8 @@ Maybe query the user for HOST when INTERACTIVE is set."
   (let* ((host (kodi-host-helper host (called-interactively-p 'interactive)))
          (old-volume (kodi-get-volume host))
          (new-volume (- old-volume kodi-volume-delta)))
-    (kodi-send-command host "Application.SetVolume" (format "[%d]" new-volume) nil)))
+    (kodi-send-command host "Application.SetVolume" (format "[%d]" new-volume) nil)
+    (message "volume %d" (kodi-get-volume))))
 
 (defun kodi-now-playing (&optional host)
   "Return currently playing song on HOST formatted according to `kodi-now-playing-fmt'."
