@@ -1568,7 +1568,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
               (cond ((eq major-mode 'org-mode)
                      (call-interactively #'helm-org-in-buffer-headings))
                     ((bound-and-true-p lsp-mode)
-                     (call-interactively #'helm-lsp-workspace-symbol))
+                     (call-interactively #'lsp-ivy-workspace-symbol))
                     (t
                      (call-interactively #'helm-semantic-or-imenu))))
 
@@ -2945,7 +2945,6 @@ iCal export is triggered after 600 seconds of inactivity.
 (use-package ox-latex
   :ensure nil
   :config (progn
-
             (add-to-list 'org-latex-packages-alist '("" "listings"))
             (add-to-list 'org-latex-packages-alist '("" "xcolor"))
             (add-to-list 'org-latex-packages-alist '("" "amssymb"))
@@ -4983,9 +4982,13 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :after (projectile)
   :commands lsp
   :bind (:map lsp-mode-map
-         ("M-r" . lsp-find-references))
+              ("M-r" . lsp-find-references))
   :config (progn (setq lsp-eldoc-render-all nil
                        lsp-prefer-flymake nil)
+                 (defun malb/read-process-output-max ()
+                   ;; https://github.com/hlissner/doom-emacs/issues/2589
+                   (setq-local read-process-output-max (* 1024 1024)))
+                 (add-hook 'lsp-after-open-hook #'malb/read-process-output-max)
                  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
 #+END_SRC
 
@@ -5008,43 +5011,44 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-lsp
+;; https://github.com/emacs-lsp/helm-lsp/issues/19
+;; (use-package helm-lsp
+;;   :config (progn
+;;             (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+;;             (add-to-list 'helm-commands-using-frame #'helm-lsp-workspace-symbol)
+;;             (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbo)))
+
+(use-package lsp-ivy
   :config (progn
-            (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
-            (add-to-list 'helm-commands-using-frame #'helm-lsp-workspace-symbol)
-            (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbo)))
+            (define-key lsp-mode-map [remap xref-find-apropos] #'lsp-ivy-workspace-symbol)))
 #+END_SRC
 
 ** C/C++ Development
 
 #+BEGIN_SRC emacs-lisp
 (use-package cc-mode
+  :bind (:map c-mode-base-map
+              ("M-<up>" . drag-stuff-up)
+              ("M-<down>" . drag-stuff-down)
+              ("<home>"  .  malb/beginning-of-line-dwim))
   :config (progn
             (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
             (add-hook 'c-mode-common-hook #'hs-minor-mode)
             (add-hook 'c-mode-common-hook 'display-line-numbers-mode)
-            (bind-key "<home>"  #'malb/beginning-of-line-dwim c-mode-base-map)
             (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+END_SRC
 
 *** Language Server Protocol (LSP)
 
-#+BEGIN_QUOTE
-C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting – https://github.com/MaskRay/ccls
-#+END_QUOTE
-
 #+BEGIN_SRC emacs-lisp
-(use-package ccls
-  :init (progn
-          (defun malb/ccls-enable ()
-            (condition-case nil
-                (if (buffer-file-name)
-                    (lsp))
-              (user-error nil)))
+(defun malb/lsp-enable ()
+  (condition-case nil
+      (if (buffer-file-name)
+          (lsp))
+    (user-error nil)))
 
-          (add-hook 'c-mode-hook #'malb/ccls-enable)
-          (add-hook 'c++-mode-hook #'malb/ccls-enable)
-          ))
+(add-hook 'c-mode-hook #'malb/lsp-enable)
+(add-hook 'c++-mode-hook #'malb/lsp-enable)
 #+END_SRC
 
 *** Font Lock
