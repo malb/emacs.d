@@ -2956,7 +2956,19 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("" "units"))
             (add-to-list 'org-latex-packages-alist '("" "xspace"))
             (add-to-list 'org-latex-packages-alist '("capitalize" "cleveref"))
-            (add-to-list 'org-latex-packages-alist '("notions,operators,sets,keys,ff,adversary,primitives,complexity,asymptotics,lambda,landau,advantage" "cryptocode"))
+            (add-to-list 'org-latex-packages-alist (list (s-join "," '("notions"
+                                                                       "operators"
+                                                                       "sets"
+                                                                       "keys"
+                                                                       "ff"
+                                                                       "adversary"
+                                                                       "primitives"
+                                                                       "complexity"
+                                                                       "asymptotics"
+                                                                       "lambda"
+                                                                       "landau"
+                                                                       "advantage"))
+                                                         "cryptocode"))
             (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
             (add-to-list 'org-latex-packages-alist '("" "microtype"))
             (add-to-list 'org-latex-packages-alist '("" "booktabs"))
@@ -2981,10 +2993,11 @@ iCal export is triggered after 600 seconds of inactivity.
                                                        "urlcolor=gray\n"
                                                        "}\n"))
 
-            (setq malb/org-latex-default (with-temp-buffer
-                                           (insert-file-contents
-                                            (expand-file-name "article-header.tex" user-emacs-directory))
-                                           (buffer-string)))
+            (defun malb/org-latex-default ()
+              (with-temp-buffer
+                (insert-file-contents
+                 (expand-file-name "article-header.tex" user-emacs-directory))
+                (buffer-string)))
 
             (defun malb/set-org-latex-class (name lines hierarchies)
               (let* ((lines (s-join "\n" lines))
@@ -2998,7 +3011,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\usepackage{fontspec}"
                                         "[DEFAULT-PACKAGES]"
                                         "[PACKAGES]"
-                                        ,malb/org-latex-default
+                                        ,(malb/org-latex-default)
                                         "\\usepackage{ifxetex}"
                                         "\\ifxetex"
                                         " \\renewcommand{\\textls}[2][5]{%"
@@ -3022,7 +3035,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\usepackage{fontspec}"
                                         "[DEFAULT-PACKAGES]"
                                         "[PACKAGES]"
-                                        ,malb/org-latex-default
+                                        ,(malb/org-latex-default)
                                         "\\usepackage{ifxetex}"
                                         "\\ifxetex"
                                         " \\renewcommand{\\textls}[2][5]{%"
@@ -3047,7 +3060,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\usepackage{fontspec}"
                                         "[DEFAULT-PACKAGES]"
                                         "[PACKAGES]"
-                                        ,malb/org-latex-default
+                                        ,(malb/org-latex-default)
                                         "[EXTRA]")
                                       '(("\\section{%s}" . "\\section*{%s}")
                                         ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -3064,7 +3077,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\parskip 1em"
                                         "\\parindent 0pt"
                                         "\\linespread{1.25}"
-                                        ,malb/org-latex-default
+                                        ,(malb/org-latex-default)
                                         "[EXTRA]")
                                       '(("\\chapter{%s}" . "\\chapter*{%s}")
                                         ("\\section{%s}" . "\\section*{%s}")
@@ -3084,13 +3097,36 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\usepackage[hang,flushmargin]{footmisc}"
                                         "\\parskip 1em"
                                         "\\parindent 0pt"
-                                        ,malb/org-latex-default
+                                        ,(malb/org-latex-default)
                                         "[EXTRA]")
                                       '(("\\section{%s}" . "\\section*{%s}")
                                         ("\\subsection{%s}" . "\\subsection*{%s}")
                                         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                                         ("\\paragraph{%s}" . "\\paragraph*{%s}")
                                         ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+            (malb/set-org-latex-class "plain-article"
+                                      `("\\documentclass[11pt]{article}")
+                                      '(("\\section{%s}" . "\\section*{%s}")
+                                        ("\\subsection{%s}" . "\\subsection*{%s}")
+                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+            (malb/set-org-latex-class "plain-report"
+                                      `("\\documentclass[11pt]{report}")
+                                      '(("\\part{%s}" . "\\part*{%s}")
+                                        ("\\chapter{%s}" . "\\chapter*{%s}")
+                                        ("\\section{%s}" . "\\section*{%s}")
+                                        ("\\subsection{%s}" . "\\subsection*{%s}")
+                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+            (malb/set-org-latex-class "plain-book"
+                                      `("\\documentclass[11pt]{book}")
+                                      '(("\\part{%s}" . "\\part*{%s}")
+                                        ("\\chapter{%s}" . "\\chapter*{%s}")
+                                        ("\\section{%s}" . "\\section*{%s}")
+                                        ("\\subsection{%s}" . "\\subsection*{%s}")
+                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+
             ;; backward compatibility
             (add-to-list 'org-latex-classes (cons "org-article" (cdr (assoc "article" org-latex-classes))))))
 
