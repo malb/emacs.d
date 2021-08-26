@@ -5492,7 +5492,12 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (conda-env-initialize-eshell)
             (conda-env-autoactivate-mode t)
             (setq conda-env-home-directory (expand-file-name "~/.conda/")
-                  conda-message-on-environment-switch nil)))
+                  conda-message-on-environment-switch nil)
+            (malb/defadvice! conda-no-more-nil (fn name)
+              "Don't throw an error if there's no conda env"
+              :around #'conda-env-name-to-dir
+              (if name
+                  (fn name)))))
 #+end_src
 
 ** Sage
