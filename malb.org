@@ -7639,16 +7639,8 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 Don’t add an empty line when quoting e-mail ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-(require 'nnheader)
-
-(defun malb/message-insert-citation-line ()
-  "Insert a simple citation line."
-  (when message-reply-headers
-    (newline)
-    (insert (mail-header-from message-reply-headers) " writes:")
-    (newline)))
-
-(setq message-citation-line-function #'malb/message-insert-citation-line)
+(require 'message)
+(setq message-citation-line-function #'message-insert-formatted-citation-line)
 #+END_SRC
 
 Various shortcuts to jump to/create headers.
