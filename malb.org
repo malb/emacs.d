@@ -1568,7 +1568,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
               (cond ((eq major-mode 'org-mode)
                      (call-interactively #'helm-org-in-buffer-headings))
                     ((bound-and-true-p lsp-mode)
-                     (call-interactively #'lsp-ivy-workspace-symbol))
+                     (call-interactively #'helm-lsp-workspace-symbol))
                     (t
                      (call-interactively #'helm-semantic-or-imenu))))
 
@@ -5012,15 +5012,15 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 #+BEGIN_SRC emacs-lisp
 ;; https://github.com/emacs-lsp/helm-lsp/issues/19
-;; (use-package helm-lsp
-;;   :config (progn
-;;             (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
-;;             (add-to-list 'helm-commands-using-frame #'helm-lsp-workspace-symbol)
-;;             (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbo)))
-
-(use-package lsp-ivy
+(use-package helm-lsp
   :config (progn
-            (define-key lsp-mode-map [remap xref-find-apropos] #'lsp-ivy-workspace-symbol)))
+            (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+            (add-to-list 'helm-commands-using-frame #'helm-lsp-workspace-symbol)
+            (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbo)))
+
+;; (use-package lsp-ivy
+;;   :config (progn
+;;             (define-key lsp-mode-map [remap xref-find-apropos] #'lsp-ivy-workspace-symbol)))
 #+END_SRC
 
 ** C/C++ Development
