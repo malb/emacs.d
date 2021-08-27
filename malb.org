@@ -7681,10 +7681,20 @@ To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/ma
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
 #+END_SRC
 
-Don’t add an empty line when quoting e-mail ([[https://lists.gnu.org/archive/html/info-gnus-english/2010-04/msg00019.html][source]])
+Don’t add an empty line after “On bla” line but add one before.
 
 #+BEGIN_SRC emacs-lisp
 (require 'message)
+
+(malb/defadvice! malb/message-insert-formatted-citation-line (fn &rest args)
+  :around 'message-insert-formatted-citation-line
+  (insert "\n")
+  (insert (with-temp-buffer
+            (apply fn args)
+            (goto-char (- (point-max) 1))
+            (delete-char 1)
+            (buffer-substring-no-properties (point-min) (point-max)))))
+
 (setq message-citation-line-function #'message-insert-formatted-citation-line)
 #+END_SRC
 
