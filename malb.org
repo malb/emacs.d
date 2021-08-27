@@ -5497,7 +5497,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
               "Don't throw an error if there's no conda env"
               :around #'conda-env-name-to-dir
               (if name
-                  (fn name)))))
+                  (apply fn (list name))))))
 #+end_src
 
 ** Sage
