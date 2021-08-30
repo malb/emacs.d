@@ -2260,7 +2260,7 @@ This library provides easy project management and navigation. The concept of a p
   :bind (("<f5>" . projectile-compile-project)
          ("<f6>" . next-error)
          :map projectile-command-map
-         ("I" . #'malb/projectile-ipython))
+         ("#" . #'malb/projectile-repl))
   :init  (setq projectile-keymap-prefix (kbd "C-c p"))
   :config (progn
             (use-package magit :ensure t)
@@ -2276,6 +2276,13 @@ This library provides easy project management and navigation. The concept of a p
                                         project-root) t)
                     (and  (string-match (rx-to-string `(: bos "/tmp/" ) t)
                                         project-root) t))))
+
+            (defun malb/projectile-repl ()
+              (interactive)
+              (let ((default-directory (projectile-project-root)))
+                (if (boundp 'malb/projectile-repl)
+                    (funcall malb/projectile-repl)
+                  (malb/toggle-eshell))))
 
             (if (not (boundp 'malb/projectile-switch-tab-projects))
                 (defvar malb/projectile-switch-tab-projects nil))
@@ -3901,7 +3908,7 @@ The function behaves as follows:
 - `post-exec` is run after the shell is created.
 - `enter-exec` is called before anything else (to set virtualenvs etc)
 "
-  `(lambda (arg)
+  `(lambda (&optional arg)
      (interactive "P")
      ,enter-exec
      (let* ((parent (if (buffer-file-name)
@@ -4935,11 +4942,18 @@ Auto-format source code in many languages with one command – [[https://github.
 A generator for pop-up Jupyter repls.
 
 #+begin_src emacs-lisp
-(defun malb/make-jupyter-shell (shell-name kernel &optional post-exec)
-  `(lambda ()
-     (interactive)
+(defun malb/make-jupyter-shell (shell-name kernel &optional post-exec per-project)
+  `(lambda (&optional arg)
+     (interactive "P")
      (let* ((height (/ (window-total-height) 3))
-            (buffer-name (format "*jupyter-repl[%s]*" ,shell-name))
+            (name (if (and (not arg) ,per-project)
+                      (format "%s,%s"
+                              ,shell-name
+                              (if (projectile-project-p)
+                                  (projectile-project-name)
+                                (car (last (split-string parent "/" t)))))
+                    ,shell-name))
+            (buffer-name (format "*jupyter-repl[%s]*" name))
             (window (get-buffer-window buffer-name)))
        (if (and window (<= (window-height window) (/ (frame-height) 3)))
            (progn
@@ -4953,7 +4967,7 @@ A generator for pop-up Jupyter repls.
                  (switch-to-buffer buffer-name)
                  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
              (progn
-               (jupyter-run-repl ,kernel ,shell-name)
+               (jupyter-run-repl ,kernel name)
                (switch-to-buffer buffer-name)
                (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
                (dolist (cmd ,post-exec)
