@@ -2497,7 +2497,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (setq org-enforce-todo-dependencies nil   ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
-      org-catch-invisible-edits 'show-and-error
+      org-catch-invisible-edits 'smart
       org-adapt-indentation nil         ; Non-nil means adapt indentation to outline node level.
       org-tags-column -120
       org-startup-folded 'fold
@@ -2509,7 +2509,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-special-ctrl-k t                 ; special keys for killing a headline
       org-edit-src-content-indentation 0   ; don't indent source code
       org-src-preserve-indentation t       ; preserve indentation in code
-      org-src-window-setup 'current-window ; when hitting C-c '
+      org-src-window-setup 'plain ; when hitting C-c '
       org-reverse-note-order t
       org-footnote-auto-adjust t          ; renumber footnotes automagically
       org-confirm-elisp-link-function nil ;
@@ -2520,9 +2520,9 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-M-RET-may-split-line '((default . t) (headline . nil))
       org-blank-before-new-entry (quote ((heading . auto)
                                          (plain-list-item . nil)))
-      org-yank-adjusted-subtrees nil
+      org-yank-adjusted-subtrees t
       org-treat-S-cursor-todo-selection-as-state-change nil
-      org-show-context-detail '((agenda . lineage) ;; instead of "local"
+      org-show-context-detail '((agenda . canonical) ;; instead of "local"
                                 (bookmark-jump . lineage)
                                 (isearch . lineage)
                                 (default . ancestors))
