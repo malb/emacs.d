@@ -5959,7 +5959,7 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
                                                                (concat user-emacs-directory "langtool"))
-                  langtool-default-language "en_GB"
+                  langtool-default-language "en-GB"
                   langtool-disabled-rules '("WHITESPACE_RULE"
                                             "EN_QUOTES"
                                             "DASH_RULE"
