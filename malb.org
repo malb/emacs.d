@@ -1165,7 +1165,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 
    ;; always fold if we're looking at an org heading
    ((and (eq major-mode 'org-mode) (org-at-heading-p))
-    (save-excursion (outline-cycle)))
+    (save-excursion (org-cycle)))
 
    ;; always use table actions in org tables
    ((and (eq major-mode 'org-mode) (org-table-p))
