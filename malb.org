@@ -6149,7 +6149,7 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
 
             ;; https://github.com/jrblevin/markdown-mode/issues/189
             (defun malb/markdown-footnote-find-all-marks ()
-              \  "Collect all footnote mark."
+              "Collect all footnote mark."
               (save-excursion
                 (goto-char (point-min))
                 (cl-loop while (re-search-forward "\\[\\([^]]+\\)\\]\\(?:[^:]\\|\\'\\)" nil t)
