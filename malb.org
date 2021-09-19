@@ -2617,6 +2617,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
               "MAIL"
               "LOAD"
               "PLAY"
+              "NEXT"
               "PAY(P)"
               "BOOK(B)"
               "|" "DONE")))
