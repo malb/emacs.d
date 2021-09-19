@@ -3844,6 +3844,12 @@ This extension facilitates moving images from point A (e.g. an image inside your
 (use-package org-chef)
 #+end_src
 
+** Org Wikiinfo
+
+#+begin_src emacs-lisp
+(use-package wikinforg)
+#+end_src
+
 ** Tips
 
 *** Agenda commands
