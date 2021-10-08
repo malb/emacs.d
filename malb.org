@@ -10110,6 +10110,19 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
 (malb/fonts (selected-frame)) ;; initial frame
 #+END_SRC
 
+#+begin_src emacs-lisp
+(defvar malb/fonts-loaded nil)
+
+(defun malb/load-fonts (frame)
+  (when (not malb/fonts-loaded)
+    (set-fontset-font t 'emoji (font-spec :famility "NotoEmoji Nerd Font") nil 'prepend)
+    (setq malb/fonts-loaded t)))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'malb/load-fonts)
+  (malb/load-fonts (selected-frame)))
+#+end_src
+
 ** SHR (EWW et al)
 
 #+begin_quote
