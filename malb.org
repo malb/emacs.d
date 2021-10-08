@@ -7936,7 +7936,7 @@ Put attachments at end of my writing ([[http://mbork.pl/2015-11-28_Fixing_mml-at
     (save-restriction
       (widen)
       (goto-char (point-min))
-      (let ((point (re-search-forward "^.*writes:$" nil t)))
+      (let ((point (re-search-forward "^.*wrote:$" nil t)))
         (if point
             (progn
               (goto-char point)
