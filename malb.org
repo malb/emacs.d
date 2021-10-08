@@ -2482,6 +2482,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
             (bind-key "M-/"   #'company-complete-common org-mode-map)))
 #+END_SRC
 
+#+begin_src emacs-lisp
+(use-package org-contrib)
+#+end_src
+
 ** Files
 
 #+BEGIN_SRC emacs-lisp
@@ -2719,14 +2723,14 @@ Extract org tables as lists of alists.
 ([[https://raw.githubusercontent.com/jkitchin/scimax/][source]])
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-speed-commands-user (cons "m" 'org-mark-subtree)) ;; Mark a subtree
-(add-to-list 'org-speed-commands-user (cons "S" 'widen)) ;; Widen
-(add-to-list 'org-speed-commands-user (cons "k" (lambda () ;; kill a subtree
+(add-to-list 'org-speed-commands (cons "m" 'org-mark-subtree)) ;; Mark a subtree
+(add-to-list 'org-speed-commands (cons "S" 'widen)) ;; Widen
+(add-to-list 'org-speed-commands (cons "k" (lambda () ;; kill a subtree
                                                   (org-mark-subtree)
                                                   (kill-region
                                                    (region-beginning)
                                                    (region-end)))))
-(add-to-list 'org-speed-commands-user (cons "J" 'avy-org-goto-heading-timer))
+(add-to-list 'org-speed-commands (cons "J" 'avy-org-goto-heading-timer))
 #+END_SRC
 
 #+BEGIN_QUOTE
@@ -3137,7 +3141,7 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-classes (cons "org-article" (cdr (assoc "article" org-latex-classes))))))
 
 (use-package ox-koma-letter
-  :ensure org-plus-contrib
+  :ensure org
   :after ox-latex
   :config (progn (malb/set-org-latex-class "letter" `("\\documentclass{scrlttr2}\n"
                                                       "\\usepackage{fontspec}\n"
