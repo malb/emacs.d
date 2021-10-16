@@ -6375,8 +6375,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (font-lock-add-keywords
              'latex-mode
              `((,(rx "\\" (or (any ",.!;")
-                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
-                                   symbol-end)))
+                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
+                                  symbol-end)))
                 0 'malb/unimportant-latex-face prepend)) 'end)
 
             (setq TeX-auto-save t
