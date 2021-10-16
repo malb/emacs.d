@@ -5549,15 +5549,21 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
 
             (fset 'malb/toggle-sage
                   (malb/make-toggle-shell "*Sage*"
-                                          '(progn
-                                             (conda-env-deactivate)
-                                             (sage-shell:run-sage "sage --simple-prompt"))
+                                          '(sage-shell:run-sage "sage")
                                           nil
                                           nil))
 
             (advice-add 'sage-shell:send-eof :around  #'malb/kill-buffer)
-            (advice-add 'sage-shell:run-sage :before (lambda (cmd)
-                                                       (conda-env-deactivate)))
+
+            (malb/defadvice! malb/clean-sagemath (fn &rest args)
+              "Run sage outside current conda env."
+              :around #'sage-shell:run-sage
+              (let ((prev-env-path conda-env-current-path))
+                (conda-env-deactivate)
+                (unwind-protect
+                    (apply fn args)
+                  (when prev-env-path
+                    (conda-env-activate-path prev-env-path)))))
 
             (bind-key "C-<up>" #'comint-previous-matching-input-from-input sage-shell-mode-map)
             (bind-key "C-<down>" #'comint-next-matching-input-from-input sage-shell-mode-map)
