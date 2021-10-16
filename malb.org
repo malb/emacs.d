@@ -6349,7 +6349,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                          ("lcnamecrefs"   "{")
                                          ("labelcref"     "{")
                                          ("labelcpageref" "{")
-                                         ("label"         "[{"))
+                                         ("label"         "[{")
+                                         ("citet"         "*[{")
+                                         ("citep"         "*[{"))
                                        'reference))
 
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
