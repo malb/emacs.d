@@ -375,11 +375,15 @@ it will restore the window configuration to prior to full-framing."
               "Return project name if in a project, or default tab-bar name if not.
 The default tab-bar name uses the buffer name."
               (let ((project-name (projectile-project-name)))
-                (if (string= "-" project-name)
+                (if (or (= (let ((tab-bar-tab-name-function #'tab-bar-tab-name-current))
+                             (if (tab-bar--current-tab-index)
+                                 (tab-bar--current-tab-index)
+                               0))
+                           0)
+                        (string= "-" project-name))
                     (tab-bar-tab-name-current)
                   (projectile-project-name))))
             (setq tab-bar-tab-name-function #'malb/name-tab-by-project-or-default)
-
 
             (defun malb/switch-tab (&rest arg)
               ;; just in case someone decides to pass an argument, helm-omni won't fail.
