@@ -5557,7 +5557,7 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
 
             (fset 'malb/toggle-sage
                   (malb/make-toggle-shell "*Sage*"
-                                          '(sage-shell:run-sage "sage")
+                                          '(sage-shell:run-sage "sage --simple-prompt")
                                           nil
                                           nil))
 
