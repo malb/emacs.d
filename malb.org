@@ -7030,7 +7030,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-query-fragments
   :config (setq mu4e-query-fragments-list
-                '(("%hidden" . "flag:trashed OR maildir:\"/[Google Mail]/Spam\" OR maildir:\"/[Google Mail]/Bin\"")
+                `(("%hidden" . "flag:trashed OR maildir:\"/[Google Mail]/Spam\" OR maildir:\"/[Google Mail]/Bin\"")
                   ("%unread" . "flag:unread AND NOT %hidden  ")
                   ("%today"  . "date:today..now AND NOT %hidden")
                   ("%week"   . "date:7d..now AND NOT %hidden")
@@ -7038,8 +7038,12 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%inbox"  . "(maildir:\"/royal holloway\" OR maildir:/INBOX) AND NOT %hidden")
                   ("%sent"   . "(maildir:\"/[Google Mail]/Sent Mail\" OR maildir:\"/royal holloway/sent\")")
                   ("%direct" . "%inbox AND NOT flag:list AND (to:martinralbrecht@* OR to:martin.albrecht@*)")
-                  ("%doc"    . "mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M AND NOT %hidden")
-                  ("%bulk"   . "(flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists) AND NOT %hidden"))))
+                  ("%doc"    . ,(concat "mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M "
+                                        "AND NOT %hidden"))
+                  ("%bulk"   . "(flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists) AND NOT %hidden")
+                  ("%fromme"  . ,(concat "("
+                                         (s-join " OR " (mapcar (lambda (arg) (format "from:%s" arg)) malb/user-mail-addresses))
+                                         ")")))))
 #+END_SRC
 
 #+begin_quote
