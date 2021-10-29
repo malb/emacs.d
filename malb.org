@@ -5718,13 +5718,6 @@ Code manipulation:
 (add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
 #+END_SRC
 
-*** Hy
-
-#+BEGIN_SRC emacs-lisp
-(use-package hy-mode
-  :mode "\\.hy\\'"
-  :hook (hy-mode . lispy-mode))
-#+END_SRC
 
 ** Web
 
