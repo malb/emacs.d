@@ -526,8 +526,10 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\`\\*Backtrace\\*\\'"
                              "\\`\\*Messages\\*\\'"
                              "\\`\\*Calendar\\*\\'"
+                             "\\`\\*Go-Translate\\*\\'"
                              "\\`\\*mscdb\\*\\'"
                              "\\`\\*lexic\\*\\'"
+                             "\\`\\*Async Shell Command\\*\\'"
                              "\\`\\*LaTeXMK\\[.*\\]\\*"
                              "\\`\\*jupyter-repl\\[.*\\]\\*"))
 #+END_SRC
