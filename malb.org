@@ -7356,7 +7356,7 @@ Query the user for an alias and add an entry to =~/.mailrc=.
      'append)))
 #+end_src
 
-** Searching
+*** Searching
 
 #+BEGIN_SRC emacs-lisp
 (unbind-key "s" mu4e-main-mode-map)
