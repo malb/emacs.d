@@ -3799,7 +3799,8 @@ Working with source code in org-mode.
 
             (add-to-list 'org-latex-listings-langs '(jupyter-python "python"))
 
-            (setq org-confirm-babel-evaluate nil
+            (setq org-babel-min-lines-for-block-output 4
+                  org-confirm-babel-evaluate nil
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
 
