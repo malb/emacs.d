@@ -5297,7 +5297,9 @@ I often restart Python processes (Cython development), so let’s bind a key for
               ("C-<tab>" . bicycle-cycle)
               ("<backtab>" . bicycle-cycle-global)
               :map inferior-python-mode-map
-              ("C-c C-r" . pyvenv-restart-python))
+              ("C-c C-r" . pyvenv-restart-python)
+              :map python-docstring-mode-map
+              ("M-q" . fill-paragraph))
   :hook (python-mode . outline-minor-mode)
   :config (progn
             (setq-default python-indent 4
