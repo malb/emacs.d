@@ -566,16 +566,20 @@ In case we just want to kill the bottom window, set a shortcut do to this.
   "Promote disposable window to real window."
   (interactive)
   (if (not (eq major-mode 'vterm-mode))
-      (dolist (window (window-at-side-list))
+      (dolist (window (window-at-side-list nil 'bottom))
         (let ((buffer (window-buffer window))
               (display-buffer-alist nil))
-          (delete-window window)
-          (display-buffer buffer)))
+          ;; hack: only promote windows that don't touch the top, this is to leave side windows alone
+          (when (not (member window (window-at-side-list nil 'top)))
+            (delete-window window)
+            (display-buffer buffer))))
     (progn
       (let* ((window (get-buffer-window))
              (buffer (window-buffer window)))
-        (delete-window window)
-        (switch-to-buffer-other-frame buffer)))))
+        ;; hack: only promote windows that don't touch the top, this is to leave side windows alone
+        (when (not (member window (window-at-side-list nil 'top)))
+          (delete-window window)
+          (switch-to-buffer-other-frame buffer))))))
 
 (key-chord-define-global "qq" #'malb/quit-bottom-disposable-windows)
 (key-chord-define-global "qw" #'malb/promote-disposable-window-or-to-frame)

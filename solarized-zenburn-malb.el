@@ -20,6 +20,9 @@
      `(hl-line ((t (:background ,orange-2bg :inherit (highlight)))))
      `(mu4e-header-highlight-face ((t (:background ,orange-2bg :inherit (highlight)))))
 
+     `(show-paren-match     ((,class (:foreground unspecified :background ,cyan-1bg :inherit (highlight) :extend t))))
+     `(show-paren-mismatch  ((,class (:foreground ,base02 :background ,red :weight ,s-maybe-bold))))
+
      `(stripe-highlight ((t (:background ,s-base02 :extend t))))
      `(helm-ff-file-extension ((t ())))
      `(flycheck-fringe-error ((,class (:foreground ,(if solarized-emphasize-indicators red-hc red) :weight bold))))

@@ -103,12 +103,15 @@
      ;; `(sp-wrap-overlay-opening-pair ((t (:foreground ,green))))
      ;; `(sp-wrap-overlay-closing-pair ((t (:foreground ,orange))))
 
+     `(show-paren-match     ((,class (:foreground unspecified :background ,cyan-1bg :inherit (highlight) :extend t))))
+     `(show-paren-mismatch  ((,class (:foreground ,base02 :background ,red :weight ,s-maybe-bold))))
+
      ;; steal spacemacs flycheck style
-     `(flycheck-error   ((t (:underline (:color "#dc322f" :style line)))))
+     `(flycheck-error   ((t (:underline (:color ,red :style line)))))
      `(flycheck-warning ((t (:underline (:color "#b58900" :style line)))))
      `(flycheck-info    ((t (:underline (:color "#268bd2" :style line)))))
      `(flycheck-fringe-warning ((t (:weight bold :foreground "#DEB542" :background ,s-base3))))
-     `(flycheck-fringe-error   ((t (:weight bold :foreground "#dc322f" :background ,s-base3))))
+     `(flycheck-fringe-error   ((t (:weight bold :foreground ,red :background ,s-base3))))
      `(flycheck-fringe-info    ((t (:weight bold :foreground "#69B7F0" :background ,s-base3))))
 
      `(eshell-git-prompt-powerline-dir-face ((t (:foreground ,s-base3 :background ,blue))))
