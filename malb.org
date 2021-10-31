@@ -5731,7 +5731,6 @@ Code manipulation:
 #+END_SRC
 
 #+begin_src emacs-lisp
-(global-set-key [remap eval-last-sexp] #'pp-eval-last-sexp)
 (global-set-key [remap eval-expression] #'pp-eval-expression)
 #+end_src
 
