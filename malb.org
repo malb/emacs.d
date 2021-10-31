@@ -1925,8 +1925,13 @@ Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing 
 Use the built-in ~show-paren-mode~ to highlight matching parentheses.
 
 #+BEGIN_SRC emacs-lisp
-(setq show-paren-delay 0.2)
-(show-paren-mode 1)
+(use-package paren
+  :ensure nil
+  :custom ((show-paren-style 'expression)
+           (show-paren-when-point-in-periphery t)
+           (show-paren-when-point-inside-paren t)
+           (show-paren-delay 0.2))
+  :config (show-paren-mode 1))
 #+END_SRC
 
 * Editing
