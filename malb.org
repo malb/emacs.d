@@ -5274,6 +5274,14 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format 
 Go Projectile is a set of Go language related add-ons for the Emacs Projectile mode. — https://github.com/dougm/go-projectile
 #+END_QUOTE
 
+** Rust
+
+The Interwebs seems to hold that [[https://github.com/brotzeit/rustic][rustic]] is the way to go.
+
+#+begin_src emacs-lisp
+(use-package rustic)
+#+end_src
+
 ** Python
 
 We use the “onetwo” style to fill docstrings in Python, i.e.:
