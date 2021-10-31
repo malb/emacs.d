@@ -6066,23 +6066,37 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 
 *** Translating
 
-[[https://github.com/atykhonov/google-translate][google-translate]]
+# [[https://github.com/atykhonov/google-translate][google-translate]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package google-translate
-  :after google-translate-tk
-  :bind ("C-c w t" . google-translate-smooth-translate)
-  :init (progn
-          (setq google-translate-translation-directions-alist
-                '(("de" . "en") ("en" . "de")))))
+;; (use-package google-translate
+;;   :after google-translate-tk
+;;   :bind ("C-c w t" . google-translate-smooth-translate)
+;;   :init (progn
+;;           (setq google-translate-translation-directions-alist
+;;                 '(("de" . "en") ("en" . "de")))))
 
-;; https://github.com/atykhonov/google-translate/issues/137#issuecomment-723938431
-(use-package google-translate-tk
-  :ensure nil
-  :config (defun google-translate--search-tkk ()
-            "Search TKK."
-            (list 430675 2721866130)))
+;; ;; https://github.com/atykhonov/google-translate/issues/137#issuecomment-723938431
+;; (use-package google-translate-tk
+;;   :ensure nil
+;;   :config (defun google-translate--search-tkk ()
+;;             "Search TKK."
+;;             (list 430675 2721866130)))
 #+END_SRC
+
+[[https://github.com/lorniu/go-translate][go-translate]]
+
+#+begin_src emacs-lisp
+(use-package go-translate
+  :bind ("C-c w t" . gts-do-translate)
+  :config (progn
+            (setq gts-translate-list '(("de" "en")
+                                       ("en" "de"))
+                  gts-default-translator (gts-translator
+                                          :picker (gts-prompt-picker)
+                                          :engines (list (gts-bing-engine) (gts-google-engine))
+                                          :render (gts-buffer-render)))))
+#+end_src
 
 ** Taking Notes (Deft)
 
