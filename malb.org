@@ -386,7 +386,7 @@ The default tab-bar name uses the buffer name."
             (setq tab-bar-tab-name-function #'malb/name-tab-by-project-or-default)
 
             (defun malb/switch-tab (&rest arg)
-              ;; just in case someone decides to pass an argument, helm-omni won't fail.
+              ;; just in case someone decides to pass an argument
               (interactive)
               (let* ((candidates (mapcar (lambda (tab)
                                            (cdr (assq 'name tab)))
