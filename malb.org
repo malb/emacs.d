@@ -1935,7 +1935,7 @@ Use the built-in ~show-paren-mode~ to highlight matching parentheses.
 (use-package paren
   :ensure nil
   :custom ((show-paren-style 'expression)
-           (show-paren-when-point-in-periphery t)
+           (show-paren-when-point-in-periphery nil)
            (show-paren-when-point-inside-paren t)
            (show-paren-delay 0.2))
   :config (show-paren-mode 1))
