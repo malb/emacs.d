@@ -1259,34 +1259,35 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
   (unless helm-source-buffers-list
     (setq helm-source-buffers-list
           (helm-make-source "Buffers" 'helm-source-buffers)))
-  (helm-other-buffer
-   (append
+  (let ((helm-display-function #'helm-display-buffer-in-own-frame))
+    (helm-other-buffer
+     (append
 
-    (if (projectile-project-p)
-        '(helm-source-projectile-buffers-list
+      (if (projectile-project-p)
+          '(helm-source-projectile-buffers-list
+            helm-source-files-in-current-dir
+            helm-source-projectile-recentf-list)
+        '(helm-source-buffers-list
           helm-source-files-in-current-dir
-          helm-source-projectile-recentf-list)
-      '(helm-source-buffers-list
-        helm-source-files-in-current-dir
-        helm-source-recentf)) ;; list of all open buffers
+          helm-source-recentf)) ;; list of all open buffers
 
-    `(((name . "Tabs")
-       (candidates . ,(mapcar (lambda (tab)
-                                (cdr (assq 'name tab)))
-                              (tab-bar-tabs)))
-       (action . (lambda (candidate)
-                   (tab-bar-switch-to-tab candidate)))))
+      `(((name . "Tabs")
+         (candidates . ,(mapcar (lambda (tab)
+                                  (cdr (assq 'name tab)))
+                                (tab-bar-tabs)))
+         (action . (lambda (candidate)
+                     (tab-bar-switch-to-tab candidate)))))
 
-    '(helm-source-bookmarks)
+      '(helm-source-bookmarks)
 
-    (when (projectile-project-p)
-      '(helm-source-buffers-list
-        helm-source-recentf))
+      (when (projectile-project-p)
+        '(helm-source-buffers-list
+          helm-source-recentf))
 
-    '(helm-source-buffer-not-found) ;; ask to create a buffer otherwise
-    )
+      '(helm-source-buffer-not-found) ;; ask to create a buffer otherwise
+      )
 
-   "*Helm all the things*"))
+     "*Helm all the things*")))
 #+END_SRC
 
 Use helm for switching buffers, opening files, calling interactive functions.
