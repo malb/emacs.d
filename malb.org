@@ -7594,30 +7594,6 @@ Gnus formatting
 (setq gnus-article-date-headers '(original))
 #+end_src
 
-** COMMENT Threading
-
-****** TODO It’s quite slow
-
-[[https://raw.githubusercontent.com/rougier/mu4e-thread-folding/master/screenshot.png]]
-
-#+begin_src emacs-lisp
-(use-package mu4e-thread-folding
-  :ensure nil
-  :quelpa (mu4e-thread-folding :fetcher github :repo "rougier/mu4e-thread-folding")
-  :after mu4e
-  :init (progn
-          ;; workaround
-          (setq mu4e-thread-folding-default-view 'unfolded
-                mu4e-thread-folding-root-unfolded-prefix-string "⯆"
-                mu4e-thread-folding-root-folded-prefix-string "⯈")
-
-          (bind-key "<tab>"     #'mu4e-headers-toggle-at-point mu4e-headers-mode-map)
-          (bind-key "<left>"    #'mu4e-headers-fold-at-point   mu4e-headers-mode-map)
-          (bind-key "<S-left>"  #'mu4e-headers-fold-all        mu4e-headers-mode-map)
-          (bind-key "<right>"   #'mu4e-headers-unfold-at-point mu4e-headers-mode-map)
-          (bind-key "<S-right>" #'mu4e-headers-unfold-all      mu4e-headers-mode-map)))
-#+end_src
-
 ** Actions
 
 Action to view e-mails in external browser.
