@@ -1376,6 +1376,8 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             ;; see https://github.com/emacs-helm/helm/commit/1de1701c73b15a86e99ab1c5c53bd0e8659d8ede
             (assq-delete-all 'find-file helm-completing-read-handlers-alist)
 
+            (add-to-list 'helm-commands-using-frame #'helm-bookmarks)
+
             (defun malb/back-to-current-frame-advice (old-function &rest arguments)
               (let* ((current-frame (selected-frame))
                      (current-frame-list (frame-list)))
@@ -2287,6 +2289,8 @@ This library provides easy project management and navigation. The concept of a p
             (use-package magit :ensure t)
             (require 'helm-projectile)
             (helm-projectile-on)
+
+            (add-to-list 'helm-commands-using-frame #'helm-projectile-switch-project)
 
             (setq projectile-indexing-method 'hybrid)
             (defun malb/projectile-ignore-projects (project-root)
