@@ -7975,7 +7975,15 @@ Attachments are mostly handled using the helm baloo interface, but sometimes we 
               (push (buffer-name buffer) buffers))))
         (nreverse buffers)))
 
-    (setq gnus-dired-mail-mode 'mu4e-user-agent)))
+    (setq gnus-dired-mail-mode 'mu4e-user-agent)
+
+    (defun malb/attach-current-buffer ()
+      "Attack the file visited by the current buffer to an e-mail."
+      (interactive)
+      (if (buffer-file-name)
+          (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
+            (gnus-dired-attach (list (buffer-file-name))))
+        (error "Buffer is not visiting a file")))))
 #+END_SRC
 
 Put attachments at end of my writing ([[http://mbork.pl/2015-11-28_Fixing_mml-attach-file_using_advice][source]])
