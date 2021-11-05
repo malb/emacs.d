@@ -5318,9 +5318,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
               ("C-<tab>" . bicycle-cycle)
               ("<backtab>" . bicycle-cycle-global)
               :map inferior-python-mode-map
-              ("C-c C-r" . pyvenv-restart-python)
-              :map python-docstring-mode-map
-              ("M-q" . fill-paragraph))
+              ("C-c C-r" . pyvenv-restart-python))
   :hook (python-mode . outline-minor-mode)
   :config (progn
             (setq-default python-indent 4
@@ -5345,6 +5343,12 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
             (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")))
 #+END_SRC
+
+#+begin_src emacs-lisp
+(use-package python-docstring
+  :bind (:map python-docstring-mode-map
+             ("M-q" . fill-paragraph)))
+#+end_src
 
 Create an iPython based toggle shell (consider using jupyter here)
 
