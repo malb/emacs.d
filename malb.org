@@ -815,7 +815,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
   ("Z" winner-redo)
   ("I" imenu-list-smart-toggle :color blue)
-  ("[" tab-new :color blue)
+  ("[" (lambda () (interactive) (tab-new) (call-interactively #'tab-rename)) :color blue)
   (";" tab-next :color red)
   ("'" tab-previous :color red)
   ("]" tab-close :color blue)
