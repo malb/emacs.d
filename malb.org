@@ -7216,7 +7216,8 @@ Canonicalise contacts as they appear from mu4e.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/mu4e-contact-rewrite-function (contact)
-  (let ((full-email-regex "\"?\\(.*?\\)\"? <\\(.*?\\)>"))
+  (let ((heuristic-email-regex "\\([^ \\.]*+\\)\\.\\([^ \\.]*+\\)@\\(.*?\\)")
+        (full-email-regex "\"?\\(.*?\\)\"? <\\(.*?\\)>"))
     (cond
      ((string-match-p (rx  (or (seq "no" (zero-or-one "-") "reply")
                                (seq "replyto-" (one-or-more char) "@plus.google.com")
@@ -7236,10 +7237,34 @@ Canonicalise contacts as they appear from mu4e.
         (if (equal (downcase name) email)
             email
           (format "%s <%s>" (malb/canonicalise-contact-name email name) email))))
+     ((string-match heuristic-email-regex contact)
+      (progn
+        (let* ((email (downcase contact))
+               (firstname (upcase-initials (match-string 1 contact)))
+               (lastname (upcase-initials (match-string 2 contact))))
+          (if (> (length firstname) 1)
+              (format "%s %s <%s>" firstname lastname email)
+            contact))))
      (t contact))))
 
 (setq mu4e-contact-process-function #'malb/mu4e-contact-rewrite-function)
 #+END_SRC
+
+Some tests, these should all return the same value.
+
+#+begin_src emacs-lisp :tangle no :results drawer
+(list
+ (malb/mu4e-contact-rewrite-function "Alice Smith <alice.smith@corp.com>")
+ (malb/mu4e-contact-rewrite-function "Smith, Alice <alice.smith@corp.com>")
+ (malb/mu4e-contact-rewrite-function "'Alice smith' <alice.smith@corp.com>")
+ (malb/mu4e-contact-rewrite-function "Alice SMITH <alice.smith@corp.com>")
+ (malb/mu4e-contact-rewrite-function "alice.smith@corp.com"))
+#+end_src
+
+#+RESULTS:
+:results:
+(Alice Smith <alice.smith@corp.com> Alice Smith <alice.smith@corp.com> Alice Smith <alice.smith@corp.com> Alice Smith <alice.smith@corp.com> Alice Smith <alice.smith@corp.com>)
+:end:
 
 Extract a pretty-ish list of contacts from an e-mail.
 
