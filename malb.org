@@ -7180,6 +7180,8 @@ A table of canonical names for people who cannot seem to fix their headers …
     (if candidate
         candidate
       (progn
+        ;; deal with "'Foo Bar'"
+        (setq name (replace-regexp-in-string "'\\(.*?\\)'" "\\1" name))
         ;; deal with YELL’d last names
         (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name))
         ;; Foo, Bar becomes Bar Foo
