@@ -6334,6 +6334,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 #+BEGIN_SRC emacs-lisp
 (use-package rst
+  :bind (:map rst-mode-map
+              ("M-<up>" . drag-stuff-up)
+              ("M-<down>" . drag-stuff-down))
   :commands rst-mode-hook
   :mode "README\\.txt")
 #+END_SRC
