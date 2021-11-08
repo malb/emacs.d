@@ -2331,8 +2331,10 @@ This library provides easy project management and navigation. The concept of a p
               "Kill tab too if it's not the first."
               :after 'projectile-kill-buffers
               (when (and (> (tab-bar--current-tab-index) 0)
-                         (rassoc (alist-get 'name (tab-bar--current-tab))
-                                 malb/projectile-switch-tab-projects))
+                         (or (assoc (alist-get 'name (tab-bar--current-tab))
+                                    malb/projectile-switch-tab-projects)
+                             (rassoc (alist-get 'name (tab-bar--current-tab))
+                                     malb/projectile-switch-tab-projects)))
                 (tab-bar-close-tab nil 1)))
 
             (setq projectile-make-test-cmd "make check"
