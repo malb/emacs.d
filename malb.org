@@ -744,6 +744,12 @@ Main dispatch function:
 (add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
 #+END_SRC
 
+([[https://emacs.stackexchange.com/questions/64279/pop-to-buffer-in-other-frame-if-file-is-already-visited/69270#69270][source]])
+
+#+begin_src emacs-lisp
+(setq display-buffer-base-action '(display-buffer-reuse-window (reusable-frames . visible)))
+#+end_src
+
 Run =old-function= with an empty =display-buffer-alist=
 
 #+BEGIN_SRC emacs-lisp
