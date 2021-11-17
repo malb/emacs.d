@@ -9118,7 +9118,7 @@ exports.boxes = [ "INBOX"];
               (with-temp-buffer
                 (call-process "brightnessctl" nil t nil "-l" "-m")
                 (goto-char (point-min))
-                (re-search-forward "^\\(ddcci[0-9]\\),backlight" nil :noerror)
+                (re-search-forward "^\\(ddcci[0-9]+\\),backlight" nil :noerror)
                 (match-string 1)))
 
             (defun malb/external-brightness ()
