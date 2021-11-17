@@ -2598,6 +2598,19 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
 #+END_SRC
 
+#+begin_src emacs-lisp
+(setq org-agenda-custom-commands
+      '(("n" "Agenda and all TODOs"
+         ((agenda "")
+          (alltodo "")))
+        ("f" "Focused agenda"
+         ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
+          (agenda "")
+          (alltodo "")))))
+#+end_src
+
 ** Look
 
 #+BEGIN_SRC emacs-lisp
