@@ -6351,6 +6351,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               ("M-<up>" . drag-stuff-up)
               ("M-<down>" . drag-stuff-down))
   :commands rst-mode-hook
+  :hook (rst-mode . adaptive-wrap-prefix-mode)
   :mode "README\\.txt")
 #+END_SRC
 
