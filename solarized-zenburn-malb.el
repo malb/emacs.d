@@ -20,6 +20,10 @@
      `(hl-line ((t (:background ,orange-2bg :inherit (highlight)))))
      `(mu4e-header-highlight-face ((t (:background ,orange-2bg :inherit (highlight)))))
 
+     `(jupyter-repl-input-prompt ((t (:foreground ,green :weight bold))))
+     `(jupyter-repl-output-prompt ((t (:foreground ,red :weight bold))))
+     `(jupyter-repl-traceback ((t (:background ,red-1bg))))
+
      `(show-paren-match     ((,class (:foreground unspecified :background ,cyan-1bg :inherit (highlight) :extend t))))
      `(show-paren-mismatch  ((,class (:foreground ,base02 :background ,red :weight ,s-maybe-bold))))
 
