@@ -9056,15 +9056,6 @@ exports.boxes = [ "INBOX"];
             :tags '(web))
 
           (prodigy-define-service
-            :name "sage-devel"
-            :cwd (expand-file-name "sage/notebooks" malb/projects-dir)
-            :command "sage-jupyter.sh"
-            :port 8888
-            :stop-signal 'sigkill
-            :kill-process-buffer-on-stop t
-            :tags '(development))
-
-          (prodigy-define-service
             :name "bitlbee"
             :cwd (expand-file-name "~/Software/docker-bitlbee")
             :command "docker-compose"
