@@ -4323,17 +4323,17 @@ When nth is set, it will copy the nth previous command."
                   eshell-plain-echo-behavior t)))
 #+END_SRC
 
-Plan 9 Smart Shell
+*** Plan 9 Smart Shell
 
 ([[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][source]])
-
 
 #+BEGIN_SRC emacs-lisp
 (use-package em-smart
   :ensure nil
-  :config (setq eshell-where-to-jump 'begin
-                eshell-review-quick-commands nil
-                eshell-smart-space-goes-to-end t))
+  :custom ((eshell-where-to-jump 'begin)
+           (eshell-review-quick-commands 'not-even-short-output)
+           (eshell-smart-space-goes-to-end t))
+  :config (add-hook 'eshell-mode-hook #'eshell-smart-initialize))
 #+END_SRC
 
 *** Git prompt
