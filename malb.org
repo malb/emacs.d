@@ -4336,7 +4336,7 @@ When nth is set, it will copy the nth previous command."
   :config (add-hook 'eshell-mode-hook #'eshell-smart-initialize))
 #+END_SRC
 
-*** Git prompt
+*** Git Prompt
 
 #+BEGIN_SRC emacs-lisp
 (use-package eshell-git-prompt
