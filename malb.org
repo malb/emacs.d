@@ -3951,7 +3951,7 @@ We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/m
 
 ** Toggle Shells
 
- Open various shells at point, close with =x= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]] and from ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]).
+Open various shells at point, close with =x= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]] and from ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]).
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/make-toggle-shell (shell-name shell-cmd &optional post-exec per-project enter-exec)
