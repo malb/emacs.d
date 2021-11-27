@@ -7648,6 +7648,173 @@ Gnus formatting
 (setq gnus-article-date-headers '(original))
 #+end_src
 
+** Attachments
+
+#+begin_src emacs-lisp
+(setq mu4e-attachment-dir (expand-file-name "incoming" malb/sync-dir))
+(setq-default mu4e-save-multiple-attachments-without-asking t)
+#+end_src
+
+Put attachments at end of my writing ([[http://mbork.pl/2015-11-28_Fixing_mml-attach-file_using_advice][source]])
+
+#+begin_src emacs-lisp
+(defun malb/mml-attach-file--go-to-eob (orig-fun &rest args)
+  "Go to the end of my message before attaching files."
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-min))
+      (let ((point (re-search-forward "^.*wrote:$" nil t)))
+        (if point
+            (progn
+              (goto-char point)
+              (previous-line))
+          (goto-char (point-max))))
+      (newline)
+      (apply orig-fun args))))
+
+(advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
+#+end_src
+
+*** Attach from Dired buffers and of the current buffer
+
+Attachments are mostly handled using the helm baloo interface, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+
+(use-package gnus-dired
+  :ensure nil
+  :after mu4e
+  :config
+  (progn
+    ;; make the `gnus-dired-mail-buffers' function also work on
+    ;; message-mode derived modes, such as mu4e-compose-mode
+    (defun gnus-dired-mail-buffers ()
+      "Return a list of active message buffers."
+      (let (buffers)
+        (save-current-buffer
+          (dolist (buffer (buffer-list t))
+            (set-buffer buffer)
+            (when (and (derived-mode-p 'message-mode)
+                       (null message-sent-message-via))
+              (push (buffer-name buffer) buffers))))
+        (nreverse buffers)))
+
+    (setq gnus-dired-mail-mode 'mu4e-user-agent)
+
+    (defun malb/attach-current-buffer ()
+      "Attack the file visited by the current buffer to an e-mail."
+      (interactive)
+      (if (buffer-file-name)
+          (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
+            (gnus-dired-attach (list (buffer-file-name))))
+        (error "Buffer is not visiting a file")))))
+#+END_SRC
+
+*** Form filling
+
+Automate standard “form filling“ workflow
+
+1. save attachment
+2. edit attachment
+3. reply
+4. attach attachment
+
+#+begin_src emacs-lisp
+(defun malb/mu4e-form-turnaround (&optional msg)
+  (interactive)
+  ;; 3. reply
+  (mu4e-compose-reply)
+  (sleep-for 0.25)
+
+  (dolist (part (mu4e~view-gather-mime-parts))
+    ;; spreadsheets and word documents
+    (let* ((mimetypes '("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+           (mimetype (caar (cddr part)))
+           (filename (cdr (assoc 'filename (assoc "attachment" (cdr part)))))
+           (path (concat "/tmp/" filename)))
+      (when (member mimetype mimetypes)
+        ;; 1. save
+        (mm-save-part-to-file (cdr part) path)
+        ;; 4. attach
+        (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
+          (gnus-dired-attach (list path)))
+        ;; 2. edit
+        (helm-open-file-with-default-tool path))))
+
+  ;; gnus-dired-attach moves point, annoyingly
+  (dolist (buf (gnus-dired-mail-buffers))
+    (with-current-buffer buf
+      (mu4e-compose-goto-top))))
+#+end_src
+
+*** Save all
+
+Save all attachments at once ([[https://github.com/sje30/emacs/blob/master/mu4e-view-save-all-attachments.el][source]])
+
+#+begin_src emacs-lisp
+(defun malb/mu4e-view-save-all-attachments (&optional msg)
+  "Save all MIME parts from current mu4e gnus view buffer."
+  (interactive "P")
+  (cl-assert (and (eq major-mode 'mu4e-view-mode)
+                  (derived-mode-p 'gnus-article-mode)))
+  (let* ((msg (or msg (mu4e-message-at-point)))
+         (id (replace-regexp-in-string "[^A-Z0-9]+" "-" (downcase (mu4e-message-field msg :subject))))
+         (attachdir (concat (read-directory-name "Save to directory: ")
+                            "/" id))
+	     (parts (mu4e~view-gather-mime-parts))
+         (handles '())
+         (files '())
+         dir)
+    (mkdir attachdir t)
+    (dolist (part parts)
+      (let ((fname (or
+		            (cdr (assoc 'filename (assoc "attachment" (cdr part))))
+                    (seq-find #'stringp
+                              (mapcar (lambda (item) (cdr (assoc 'name item)))
+                                      (seq-filter 'listp (cdr part)))))))
+        (when fname
+          (push `(,fname . ,(cdr part)) handles)
+          (push fname files))))
+    (if files
+        (progn
+          (setq dir attachdir)
+          (cl-loop for (f . h) in handles
+                   when (member f files)
+                   do (mm-save-part-to-file h
+					                        (malb/next-free
+					                         (expand-file-name f dir)))))
+      (mu4e-message "No attached files found"))))
+
+(defun malb/next-free (file)
+  "Return name of next unique 'free' FILE.
+If /tmp/foo.txt and /tmp/foo-1.txt exist, when this is called
+with /tmp/foo.txt, return /tmp/foo-2.txt. This is not very
+efficient if there are a large number of files already in the
+directory with the same base name, as it simply starts searching
+from 1 each time until it finds a gap. An alternative might be to
+do a wildcard search for all the filenames, extract the highest
+number and then increment it."
+  ;; base case is easy; does file exist already?
+  (if (not  (file-exists-p file))
+      file
+    ;; othwerwise need to iterate through f-1.pdf
+    ;; f-2.pdf, f-3.pdf ... until we no longer find a file.
+    (let ((prefix (file-name-sans-extension file))
+	      (suffix (file-name-extension file))
+	      (looking t)
+	      (n 0)
+	      (f)
+	      )
+      (while looking
+	    (setq n (1+ n))
+	    (setq f (concat prefix "-" (number-to-string n) "." suffix))
+	    (setq looking (file-exists-p f)))
+      f)))
+#+end_src
+
 ** Actions
 
 Action to view e-mails in external browser.
@@ -7742,6 +7909,10 @@ return the filename."
 #+BEGIN_SRC emacs-lisp
 (delete '("view as pdf" . mu4e-action-view-as-pdf) mu4e-view-actions)
 #+END_SRC
+
+#+begin_src emacs-lisp
+(add-to-list 'mu4e-view-actions '("Save all attachments" . malb/mu4e-view-save-all-attachments) t)
+#+end_src
 
 Action to search messages by/to sender.
 
@@ -7985,68 +8156,6 @@ message from the wrong account"
                             names)))))
 
 (bind-key "C-c C-i" #'malb/mu4e-cycle-contexts mu4e-compose-mode-map)
-#+END_SRC
-
-** Attachments
-
-#+BEGIN_SRC emacs-lisp
-(setq mu4e-attachment-dir (expand-file-name "incoming" malb/sync-dir))
-(setq-default mu4e-save-multiple-attachments-without-asking t)
-#+END_SRC
-
-Attachments are mostly handled using the helm baloo interface, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
-
-(use-package gnus-dired
-  :ensure nil
-  :after mu4e
-  :config
-  (progn
-    ;; make the `gnus-dired-mail-buffers' function also work on
-    ;; message-mode derived modes, such as mu4e-compose-mode
-    (defun gnus-dired-mail-buffers ()
-      "Return a list of active message buffers."
-      (let (buffers)
-        (save-current-buffer
-          (dolist (buffer (buffer-list t))
-            (set-buffer buffer)
-            (when (and (derived-mode-p 'message-mode)
-                       (null message-sent-message-via))
-              (push (buffer-name buffer) buffers))))
-        (nreverse buffers)))
-
-    (setq gnus-dired-mail-mode 'mu4e-user-agent)
-
-    (defun malb/attach-current-buffer ()
-      "Attack the file visited by the current buffer to an e-mail."
-      (interactive)
-      (if (buffer-file-name)
-          (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
-            (gnus-dired-attach (list (buffer-file-name))))
-        (error "Buffer is not visiting a file")))))
-#+END_SRC
-
-Put attachments at end of my writing ([[http://mbork.pl/2015-11-28_Fixing_mml-attach-file_using_advice][source]])
-
-#+BEGIN_SRC emacs-lisp
-(defun malb/mml-attach-file--go-to-eob (orig-fun &rest args)
-  "Go to the end of my message before attaching files."
-  (save-excursion
-    (save-restriction
-      (widen)
-      (goto-char (point-min))
-      (let ((point (re-search-forward "^.*wrote:$" nil t)))
-        (if point
-            (progn
-              (goto-char point)
-              (previous-line))
-          (goto-char (point-max))))
-      (newline)
-      (apply orig-fun args))))
-
-(advice-add 'mml-attach-file :around #'malb/mml-attach-file--go-to-eob)
 #+END_SRC
 
 ** Window Management
