@@ -3947,6 +3947,7 @@ We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/m
 
 #+BEGIN_SRC emacs-lisp
 (setenv "PAGER" "cat")
+(setq shell-file-name "/bin/zsh")
 #+END_SRC
 
 ** Toggle Shells
@@ -4009,10 +4010,12 @@ The function behaves as follows:
 (use-package vterm
   :commands (malb/toggle-vterm vterm)
   :init (setq vterm-module-cmake-args " -DUSE_SYSTEM_LIBVTERM=no")
+  :bind (:map vterm-mode-map
+              ("M-<up>"   . vterm-send-up)
+              ("M-<down>" . vterm-send-down))
   :config (progn
-            (setq vterm-kill-buffer-on-exit t)
-            (bind-key "M-<up>"   #'vterm-send-up   vterm-mode-map)
-            (bind-key "M-<down>" #'vterm-send-down vterm-mode-map)
+            (setq vterm-kill-buffer-on-exit t
+                  vterm-shell "/bin/zsh")
             (fset 'malb/toggle-vterm
                   (malb/make-toggle-shell
                    "vterm"
