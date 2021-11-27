@@ -10280,6 +10280,8 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/fonts (frame)
+  (set-face-font 'default malb/font)
+  (set-face-font 'fixed-pitch malb/font)
   (with-selected-frame frame
     (setq face-font-rescale-alist nil)
     (when (string-match "Cousine" (alist-get 'font default-frame-alist))
