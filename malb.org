@@ -5438,6 +5438,51 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
   :hook (python-mode . sphinx-doc-mode))
 #+END_SRC
 
+Tweak sphinx-doc to fit my preferences
+
+#+begin_src diff
+(defun sphinx-doc-doc->str (ds)
+  "Convert a doc object DS into string representation."
+  (s-join
+   "\n"
+   (-filter
+    (lambda (x) (not (equal x nil)))
++    ;; malb: put summary on first proper line
++    (list (s-format "\"\"\"$0\n" 'elt (list (sphinx-doc-doc-summary ds)))
+-    (list (s-format "\"\"\"\n$0\n" 'elt (list (sphinx-doc-doc-summary ds)))
+          (when (and (sphinx-doc-doc-before-fields ds)
+                     (not (string= (sphinx-doc-doc-before-fields ds) "")))
+            (concat (sphinx-doc-doc-before-fields ds) "\n"))
+          (s-join "\n" (mapcar #'sphinx-doc-field->str
+                               (sphinx-doc-doc-fields ds)))
+          ""
+          (when (and (sphinx-doc-doc-after-fields ds)
+                     (not (string= (sphinx-doc-doc-after-fields ds) "")))
+            (sphinx-doc-doc-after-fields ds))
+          "\"\"\""))))
+
+(defun sphinx-doc-parse (docstr indent)
+  "Parse docstring DOCSTR into it's equivalent doc object.
+INDENT is the current indentation level of the Python function."
+  (let* ((lines (mapcar (lambda (line)
+                          (s-chop-prefix (make-string indent 32) line))
+                        (split-string docstr "\n")))
++         ;; malb: don't eat summary if on first proper line
++         (lines (if (string-equal (car lines) "") (cdr lines) lines))
+         (paras (sphinx-doc-lines->paras lines))
+         (field-para? #'(lambda (p) (s-starts-with? ":" (car p))))
+         (comment? #'(lambda (p) (not (funcall field-para? p)))))
+    (progn
+      (make-sphinx-doc-doc
+       :summary (caar paras)
+       :before-fields (sphinx-doc-paras->str
+                       (-take-while comment? (cdr paras)))
+       :after-fields (sphinx-doc-paras->str
+                      (cdr (-drop-while comment? (cdr paras))))
+       :fields (sphinx-doc-parse-fields
+                (car (-filter field-para? paras)))))))
+#+end_src
+
 *** Cython
 
 #+BEGIN_SRC emacs-lisp
