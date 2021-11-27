@@ -4596,8 +4596,9 @@ Make flycheck prettier based on what spacemacs does.
             (bind-key "C-c f p" #'flycheck-previous-error flycheck-mode-map)
             (bind-key "C-c f l" #'flycheck-list-errors flycheck-mode-map)
 
-            (setq flycheck-check-syntax-automatically '(save mode-enabled))
-            (setq flycheck-standard-error-navigation nil)
+            (setq flycheck-check-syntax-automatically '(save mode-enabled)
+                  flycheck-standard-error-navigation nil
+                  flycheck-flake8-maximum-line-length 120)
 
             (when (fboundp 'define-fringe-bitmap)
               (define-fringe-bitmap 'my-flycheck-fringe-indicator
