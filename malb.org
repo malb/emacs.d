@@ -7463,13 +7463,13 @@ it is to insert the contact.
 "
   (interactive "p")
 
-  (if (not mu4e~contacts-hash)
+  (if (not mu4e--contacts-hash)
       (progn
         ;; request contacts
         (mu4e~request-contacts-maybe)
         (let ((i 0))
           ;; sleep for at most 2 seconds to wait for contacts to be filed
-          (while (and (not mu4e~contacts-hash) (> 2 i))
+          (while (and (not mu4e--contacts-hash) (> 2 i))
             (sleep-for 1)
             (+ i 1)))))
 
@@ -7507,9 +7507,16 @@ it is to insert the contact.
 
     (helm :sources (helm-build-sync-source "E-mail address candidates"
                      :candidates  (append
+                                   ;; aliases
+                                   (cl-loop for alias across mail-abbrevs
+                                            if (symbol-value
+                                                (intern-soft (format "%s" alias) mail-abbrevs))
+                                            collect  (cons (format "%s" alias)
+                                                           (symbol-value
+                                                            (intern-soft (format "%s" alias) mail-abbrevs))))
                                    ;; mu contacts
-                                   (loop for contact being the hash-key of mu4e~contacts-hash
-                                         collect (cons contact contact)))
+                                   (cl-loop for contact being the hash-key of mu4e--contacts-hash
+                                            collect (cons contact contact)))
                      :action  (cond ((equal arg 4) (cons (cadr malb/helm-mu-actions)
                                                          (cons (car malb/helm-mu-actions)
                                                                (cddr  malb/helm-mu-actions))))
@@ -8133,7 +8140,7 @@ message from the wrong account"
              (mu4e-context-switch
               t
               (mu4e-context-name  ; throws an error if no context found:
-               (mu4e~context-ask-user
+               (mu4e--context-ask-user
                 "Attempt to send via mismatching context! Send after switching to: "))))
             (t (signal 'quit nil))))))
 
