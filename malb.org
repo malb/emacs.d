@@ -7545,7 +7545,7 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
             (fset 'mu4e-main-mode-map mu4e-main-mode-map) ;; this seems to have been forgotten in mu4e
 
-            (dolist (mode-map '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map))
+            (dolist (mode-map '(mu4e-main-mode-map mu4e-headers-mode-map mu4e-view-mode-map mu4e-search-minor-mode-map))
               (unbind-key "s" mode-map)
               (bind-key "ss" #'mu4e-query-fragments-search mode-map)
               (bind-key "sm" #'mu4e-query-fragments-search mode-map)
