@@ -4990,6 +4990,24 @@ A generator for pop-up Jupyter repls.
 
 - It also works over Tramp
 
+*** Tree Sitter
+
+#+begin_src emacs-lisp
+(use-package tree-sitter
+  :config (global-tree-sitter-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package tree-sitter-langs
+  :config (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package combobulate
+  :hook ((python-mode . combobulate-mode))
+  :load-path "local/combobulate")
+#+end_src
+
 *** Language Server Protocol (LSP)
 
 #+BEGIN_QUOTE
