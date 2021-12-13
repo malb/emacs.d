@@ -3396,33 +3396,46 @@ In [[file:%s::%s][%s]]:
 
 *Template Expansions*
 
-- =%[file]= Insert the contents of the file given by file.
-- =%(sexp)= Evaluate Elisp sexp and replace with the result. For convenience, =%:keyword= (see below) placeholders within the expression will be expanded prior to this. The sexp must return a string.
-- =%<...>= The result of format-time-string on the … format specification.
-- =%t= Timestamp, date only.
-- =%T= Timestamp, with date and time.
-- =%u, %U= Like the above, but inactive timestamps.
-- =%i= Initial content, the region when capture is called while the region is active. The entire text will be indented like =%i= itself.
-- =%a= Annotation, normally the link created with ~org-store-link~.
-- =%A= Like =%a=, but prompt for the description part.
-- =%l= Like =%a=, but only insert the literal link.
-- =%c= Current kill ring head.
-- =%x= Content of the X clipboard.
-- =%K= Link to the currently clocked task.
-- =%k= Title of the currently clocked task.
-- =%n= User name (taken from user-full-name).
-- =%f= File visited by current buffer when org-capture was called.
-- =%F= Full path of the file or directory visited by current buffer.
-- =%:keyword= Specific information for certain link types, see below.
-- =%^g= Prompt for tags, with completion on tags in target file.
-- =%^G= Prompt for tags, with completion all tags in all agenda files.
-- =%^t= Like %t, but prompt for date. Similarly =%^T=, =%^u=, =%^U=. You may define a prompt like =%^{Birthday}t=.
-- =%^L= Like %^C, but insert as link.
-- =%^C= Interactive selection of which kill or clip to use.
-- =%^{prop}p= Prompt the user for a value for property prop.
-- =%^{prompt}= prompt the user for a string and replace this sequence with it. You may specify a default value and a completion table with =%^{prompt|default|completion2|completion3...}=. The arrow keys access a prompt-specific history.
-- =%\n= Insert the text entered at the nth =%^{prompt}=, where n is a number, starting from 1.
-- =%?= After completing the template, position cursor here.
+| Item                                    | Description                                                                 |
+|-----------------------------------------+-----------------------------------------------------------------------------|
+| =%[file]=                               | Insert the contents of the file given by file.                              |
+| =%(sexp)=                               | Evaluate Elisp sexp and replace with the result.                            |
+| =%<...>=                                | The result of format-time-string on the … format specification.             |
+| =%t=                                    | Timestamp, date only.                                                       |
+| =%T=                                    | Timestamp, with date and time.                                              |
+| =%u, %U=                                | Like the above, but inactive timestamps.                                    |
+| =%i=                                    | Initial content, the region when capture is called while the region active. |
+| =%a=                                    | Annotation, normally the link created with ~org-store-link~.                |
+| =%A=                                    | Like =%a=, but prompt for the description part.                             |
+| =%l=                                    | Like =%a=, but only insert the literal link.                                |
+| =%c=                                    | Current kill ring head.                                                     |
+| =%x=                                    | Content of the X clipboard.                                                 |
+| =%K=                                    | Link to the currently clocked task.                                         |
+| =%k=                                    | Title of the currently clocked task.                                        |
+| =%n=                                    | User name (taken from user-full-name).                                      |
+| =%f=                                    | File visited by current buffer when org-capture was called.                 |
+| =%F=                                    | Full path of the file or directory visited by current buffer.               |
+| =%:keyword=                             | Specific information for certain link types, see below.                     |
+| =%^g=                                   | Prompt for tags, with completion on tags in target file.                    |
+| =%^G=                                   | Prompt for tags, with completion all tags in all agenda files.              |
+| =%^t=                                   | Like %t, but prompt for date. Similarly =%^T=, =%^u=, =%^U=.                |
+|                                         | You may define a prompt like =%^{Birthday}t=.                               |
+| =%^L=                                   | Like %^C, but insert as link.                                               |
+| =%^C=                                   | Interactive selection of which kill or clip to use.                         |
+| =%^{prop}p=                             | Prompt the user for a value for property prop.                              |
+| =%^{prompt}=                            | prompt the user for a string and replace this sequence with it.             |
+| =%\n=                                   | Insert the text entered at the nth =%^{prompt}=, where n ≥ 1 is a number.   |
+| =%?=                                    | After completing the template, position cursor here.                        |
+|-----------------------------------------+-----------------------------------------------------------------------------|
+| *Mu4e*                                  |                                                                             |
+|-----------------------------------------+-----------------------------------------------------------------------------|
+| =%:date=, =%:date-timestamp=            | date, org timestamps                                                        |
+| =%:from=, =%:fromname=, =%:fromaddress= | sender, name/address                                                        |
+| =%:to=, =%:toname=, =%:toaddress=       | recipient, name/address                                                     |
+| =%:maildir=                             | maildir for the message                                                     |
+| =%:message-id=                          | message-id                                                                  |
+| =%:path=                                | file system path                                                            |
+| =%:subject=                             | message subject                                                             |
 
 #+BEGIN_SRC emacs-lisp
 (use-package doct)
