@@ -3517,13 +3517,13 @@ In [[file:%s::%s][%s]]:
                                  ":CREATED: %U"
                                  ":END:"
                                  ""
-                                 "See %a by %:fromname")
+                                 "See %a by %:from")
                       :immediate-finish nil
                       :prepend t)
                      (,(format "%s\tOffice Task" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "o"
                       :file malb/work-org
                       :headline "Admin"
-                      :template ("* TODO %a (%:fromname) %^{tag|:@office:|:@train:}email:"
+                      :template ("* TODO %a (%:from) %^{tag|:@office:|:@train:}email:"
                                  "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
                                  "                             (thu (org-read-date nil t \"Thu\")))"
                                  "                         (if (time-less-p tue thu)"
@@ -6479,7 +6479,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             (font-lock-add-keywords
              'latex-mode
-             `((,(rx "\\" (or (any ",.!;")
+             `((,(rx "\\" (or (any ",.!;@")
                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
                                   symbol-end)))
                 0 'malb/unimportant-latex-face prepend)) 'end)
@@ -7601,21 +7601,19 @@ Use =<TAB>= to preview messages and =q= to close previews.
 (defun malb/preview-message ()
   (interactive)
   (mu4e-headers-view-message)
-  (sleep-for 0.1) ;; this is a HACK
+  (sleep-for 0.2) ;; this is a HACK
   (select-window (previous-window)))
 
 ;; based on (mu4e-select-other-view)
 (defun malb/close-message-view ()
   (interactive)
-  (let* ((other-buf
-	   (cond
-	     ((eq major-mode 'mu4e-headers-mode)
-	       (mu4e-get-view-buffer))
-	     ((eq major-mode 'mu4e-view-mode)
-	       (mu4e-get-headers-buffer))))
-	  (other-win (and other-buf (get-buffer-window other-buf))))
+  (let* ((other-buf (cond ((eq major-mode 'mu4e-headers-mode)
+                           (mu4e-get-view-buffer))
+	                      ((eq major-mode 'mu4e-view-mode)
+	                       (mu4e-get-headers-buffer))))
+	     (other-win (and other-buf (get-buffer-window other-buf))))
     (if (window-live-p other-win)
-      (progn
+        (progn
           (select-window other-win)
           (sleep-for 0.1)
           (mu4e~view-quit-buffer))
@@ -10338,6 +10336,7 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Asana Math") 0.7) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Symbols") 0.7) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.7) t))
+
     (when (string-match "Noto Sans Mono" (alist-get 'font default-frame-alist))
 
       (set-fontset-font "fontset-default" #x22c5 "DejaVu Sans Mono") ;; otherwise ⋅ is too narrow
@@ -10347,7 +10346,7 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "file-icons") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "github-octicons") 0.75) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.95) t)
-      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Serif CJK TC") 0.95) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Serif CJK TC") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.9) t)
       ;; (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Material Icons") 0.75) t)
       )))
