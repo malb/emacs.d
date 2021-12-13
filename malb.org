@@ -10181,6 +10181,11 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
               '(objed-state misc-info persp-name battery grip irc mu4e
                             gnus github debug lsp minor-modes input-method
                             indent-info buffer-encoding major-mode process vcs checker))
+
+            (doom-modeline-def-modeline 'pdf
+              '(bar workspace-name window-number matches buffer-info pdf-pages)
+              '(misc-info major-mode process vcs))
+
             (if (bound-and-true-p imenu-list-mode-line-format)
                 (setq imenu-list-mode-line-format
                       '((:eval
