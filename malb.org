@@ -3790,28 +3790,16 @@ See `org-latex-format-inlinetask-function' for details."
 
 ** Functions
 
-([[http://emacs.stackexchange.com/a/10712/115][source]])
+The equivalent of a TeX-Master. To use add ~eval: (add-hook 'after-save-hook #'malb/org-export-to-latex-main nil t)~ and ~malb.org-main: foo.org~ as file local variables.
 
-#+BEGIN_SRC emacs-lisp
-(defun malb/org-delete-link ()
-  "Replace an org link of the format [[LINK][DESCRIPTION]] with DESCRIPTION.
-If the link is of the format [[LINK]], delete the whole org link.
-In both the cases, save the LINK to the kill-ring.
-Execute this command while the point is on or after the hyper-linked org link."
-  (interactive)
-  (when (derived-mode-p 'org-mode)
-    (let ((search-invisible t) start end)
-      (save-excursion
-        (when (re-search-backward "\\[\\[" nil :noerror)
-          (when (re-search-forward "\\[\\[\\(.*?\\)\\(\\]\\[.*?\\)*\\]\\]"
-                                   nil :noerror)
-            (setq start (match-beginning 0))
-            (setq end   (match-end 0))
-            (kill-new (match-string-no-properties 1)) ; Save link to kill-ring
-            (goto-char start)
-            (re-search-forward "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" end)
-            (replace-match "\\2")))))))
-#+END_SRC
+#+begin_src emacs-lisp
+(defun malb/org-export-to-latex-main ()
+  (when (eq major-mode 'org-mode)
+    (if (boundp #'malb/org-main)
+        (with-current-buffer malb/org-main
+          (org-latex-export-to-latex))
+      (org-latex-export-to-latex))))
+#+end_src
 
 ** Org Babel
 
@@ -6137,33 +6125,33 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 # [[https://github.com/atykhonov/google-translate][google-translate]]
 
 #+BEGIN_SRC emacs-lisp
-;; (use-package google-translate
-;;   :after google-translate-tk
-;;   :bind ("C-c w t" . google-translate-smooth-translate)
-;;   :init (progn
-;;           (setq google-translate-translation-directions-alist
-;;                 '(("de" . "en") ("en" . "de")))))
+(use-package google-translate
+  :after google-translate-tk
+  :bind ("C-c w t" . google-translate-smooth-translate)
+  :init (progn
+          (setq google-translate-translation-directions-alist
+                '(("de" . "en") ("en" . "de")))))
 
-;; ;; https://github.com/atykhonov/google-translate/issues/137#issuecomment-723938431
-;; (use-package google-translate-tk
-;;   :ensure nil
-;;   :config (defun google-translate--search-tkk ()
-;;             "Search TKK."
-;;             (list 430675 2721866130)))
+;; https://github.com/atykhonov/google-translate/issues/137#issuecomment-723938431
+(use-package google-translate-tk
+  :ensure nil
+  :config (defun google-translate--search-tkk ()
+            "Search TKK."
+            (list 430675 2721866130)))
 #+END_SRC
 
 [[https://github.com/lorniu/go-translate][go-translate]]
 
 #+begin_src emacs-lisp
-(use-package go-translate
-  :bind ("C-c w t" . gts-do-translate)
-  :config (progn
-            (setq gts-translate-list '(("de" "en")
-                                       ("en" "de"))
-                  gts-default-translator (gts-translator
-                                          :picker (gts-prompt-picker)
-                                          :engines (list (gts-bing-engine) (gts-google-engine))
-                                          :render (gts-buffer-render)))))
+;; (use-package go-translate
+;;   :bind ("C-c w t" . gts-do-translate)
+;;   :config (progn
+;;             (setq gts-translate-list '(("de" "en")
+;;                                        ("en" "de"))
+;;                   gts-default-translator (gts-translator
+;;                                           :picker (gts-prompt-picker)
+;;                                           :engines (list (gts-bing-engine) (gts-google-engine))
+;;                                           :render (gts-buffer-render)))))
 #+end_src
 
 ** Taking Notes (Deft)
@@ -6977,7 +6965,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 
 (use-package oc-biblatex
   :ensure nil
-  :config (setq org-cite-biblatex-options)
+  :config (setq org-cite-biblatex-options "backend=bibtex")
   :after oc)
 #+end_src
 
@@ -9240,7 +9228,7 @@ exports.boxes = [ "INBOX"];
           ;; start some services
           (when (daemonp)
             (prodigy-start-service (prodigy-find-service "imapnotify"))
-            (prodigy-start-service (prodigy-find-service "bitlbee"))
+            ;; (prodigy-start-service (prodigy-find-service "bitlbee"))
             ;; (prodigy-start-service (prodigy-find-service "weechat"))
             )))
 #+END_SRC
