@@ -3461,7 +3461,7 @@ In [[file:%s::%s][%s]]:
                                 "%i")
                      :file malb/inbox-org)
                     (,(format "%s\tTask in Context" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "c"
-                     :template ("* TODO %?:"
+                     :template ("* TODO %?"
                                 ":PROPERTIES:"
                                 ":CREATED: %U"
                                 ":END:"
