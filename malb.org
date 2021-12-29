@@ -6099,7 +6099,7 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
 #+BEGIN_SRC emacs-lisp
 (use-package powerthesaurus
-  :bind ("C-c w p" . powerthesaurus-lookup-word-dwim))
+  :bind ("C-c w p" . powerthesaurus-lookup-dwim))
 #+END_SRC
 
 *** Dictionary
