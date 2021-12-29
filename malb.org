@@ -6830,6 +6830,10 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
   :ensure nil
   :after bibtex-completion
   :config (progn
+
+            (setf (alist-get 'org-mode bibtex-completion-format-citation-functions)
+                  #'bibtex-completion-format-citation-cite)
+
             (setq bibtex-completion-bibliography malb/bibtex-files
                   bibtex-completion-library-path malb/literature-dirs
                   bibtex-completion-notes-path malb/literature-notes-file
@@ -6963,6 +6967,20 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
             (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))))
   #+END_SRC
 
+*** Org Cite
+
+#+begin_src emacs-lisp
+(use-package oc
+  :ensure nil
+  :after org
+  :config (setq org-cite-global-bibliography malb/bibtex-files))
+
+(use-package oc-biblatex
+  :ensure nil
+  :config (setq org-cite-biblatex-options)
+  :after oc)
+#+end_src
+
 *** Org Ref
 
 #+BEGIN_QUOTE
@@ -6974,11 +6992,6 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
   :after org
   :defer 2
   :config (progn
-            (setq org-ref-default-bibliography malb/bibtex-files
-                  org-ref-bibliography-notes malb/literature-notes-file
-                  org-ref-pdf-directory malb/literature-dirs
-                  org-ref-show-broken-links nil
-                  org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
             (bind-key "<f2> ;" #'org-ref-bibtex-hydra/body bibtex-mode-map)))
 #+END_SRC
 
