@@ -3792,8 +3792,13 @@ The equivalent of a TeX-Master. To use add ~eval: (add-hook 'after-save-hook #'m
 (defun malb/org-export-to-latex-main ()
   (when (eq major-mode 'org-mode)
     (if (boundp #'malb/org-main)
-        (with-current-buffer malb/org-main
-          (org-latex-export-to-latex))
+        (cond ((stringp malb/org-main)
+               (with-current-buffer malb/org-main
+                 (org-latex-export-to-latex)))
+              ((listp malb/org-main)
+               (dolist (buffer malb/org-main)
+                 (with-current-buffer buffer
+                   (org-latex-export-to-latex)))))
       (org-latex-export-to-latex))))
 #+end_src
 
