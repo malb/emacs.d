@@ -2315,6 +2315,8 @@ This library provides easy project management and navigation. The concept of a p
             (malb/defadvice! malb/projectile-switch-tab (project-to-switch &optional arg)
               "Switch to new tab if project is in `malb/projectile-switch-tab-projects'."
               :before 'projectile-switch-project-by-name
+              :before 'helm-projectile-vc
+              :before 'helm-projectile-switch-to-shell
               (let* ((project-name (projectile-project-name project-to-switch))
                      (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-projects))
                                              project-name)))
