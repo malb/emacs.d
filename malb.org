@@ -397,13 +397,16 @@ The default tab-bar name uses the buffer name."
                       ((equal ncandidates 2) (tab-bar-switch-to-tab (if (equal current-tab (car candidates))
                                                                         (cadr candidates)
                                                                       (car candidates))))
-                      (t (helm-other-buffer
+                      (t ;; (tab-switcher)
+                       (let ((helm-display-function #'helm-display-buffer-in-own-frame))
+                         (helm-other-buffer
                           (append
                            `(((name . "Tabs")
                               (candidates . candidates)
                               (action . (lambda (candidate)
                                           (tab-bar-switch-to-tab candidate))))))
-                          "*Tabs*")))))))
+                          "*Tabs*"))
+                       ))))))
 #+end_src
 
 ** Switching
