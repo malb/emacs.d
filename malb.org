@@ -7499,7 +7499,7 @@ it is to insert the contact.
   (if (not mu4e--contacts-hash)
       (progn
         ;; request contacts
-        (mu4e~request-contacts-maybe)
+        (mu4e--request-contacts-maybe)
         (let ((i 0))
           ;; sleep for at most 2 seconds to wait for contacts to be filed
           (while (and (not mu4e--contacts-hash) (> 2 i))
