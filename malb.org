@@ -2628,7 +2628,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-startup-with-latex-preview nil
       org-preview-latex-default-process 'imagemagick
       org-pretty-entities nil
-      org-image-actual-width '(800))
+      org-image-actual-width 800)
 #+END_SRC
 
 #+begin_src emacs-lisp
