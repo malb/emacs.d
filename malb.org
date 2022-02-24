@@ -3800,8 +3800,9 @@ The equivalent of a TeX-Master. To use add ~eval: (add-hook 'after-save-hook #'m
                  (org-latex-export-to-latex)))
               ((listp malb/org-main)
                (dolist (buffer malb/org-main)
-                 (with-current-buffer buffer
-                   (org-latex-export-to-latex)))))
+                 (when (get-buffer buffer)
+                   (with-current-buffer buffer
+                     (org-latex-export-to-latex))))))
       (org-latex-export-to-latex))))
 #+end_src
 
