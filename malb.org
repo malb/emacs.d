@@ -536,7 +536,8 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\`\\*LaTeXMK\\[.*\\]\\*"
                              "\\`\\*jupyter-error\\*\\'"
                              "\\`\\*jupyter-traceback\\*\\'"
-                             "\\`\\*jupyter-repl\\[.*\\]\\*\\'"))
+                             "\\`\\*jupyter-repl\\[.*\\]\\*\\'"
+                             "\\`\\*tzc-times\\*\\'"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -9676,6 +9677,22 @@ Create convenience functions to open a shell on my servers and “cd” into the
         `(lambda ()
            (insert ,(format "cd /ssh:%s:" server-name))
            (eshell-send-input))))
+#+end_src
+
+* Timezones
+
+#+begin_src emacs-lisp
+(use-package tzc
+  :config (setq tzc-favourite-time-zones '("Europe/London")))
+#+end_src
+
+* Messages Mode
+
+#+begin_src emacs-lisp
+(use-package simple
+  :ensure nil
+  :bind (:map messages-buffer-mode-map
+              ("/" . isearch-backward)))
 #+end_src
 
 * Misc
