@@ -2307,10 +2307,8 @@ This library provides easy project management and navigation. The concept of a p
               (progn
                 (or (file-remote-p project-root)
                     ;; don't litter project list with cryptobib subprojects
-                    (and  (string-match (rx-to-string `(: "cryptobib/" eos) t)
-                                        project-root) t)
-                    (and  (string-match (rx-to-string `(: bos "/tmp/" ) t)
-                                        project-root) t))))
+                    (and  (string-match (rx-to-string `(: "cryptobib/" eos) t) project-root) t)
+                    (and  (string-match (rx-to-string `(: bos "/tmp/" ) t) project-root) t))))
 
             (defun malb/projectile-repl ()
               (interactive)
