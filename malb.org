@@ -385,24 +385,30 @@ The default tab-bar name uses the buffer name."
                   (projectile-project-name))))
             (setq tab-bar-tab-name-function #'malb/name-tab-by-project-or-default)
 
+            (malb/defadvice! malb/switch-tab-1 (&rest arguments)
+              "Switch to new tab 1."
+              :before 'malb/deft
+              :before 'org-agenda
+              (tab-bar-select-tab 1))
+
             (defun malb/switch-tab (&rest arg)
               ;; just in case someone decides to pass an argument
               (interactive)
-              (let* ((candidates (mapcar (lambda (tab)
-                                           (cdr (assq 'name tab)))
-                                         (tab-bar-tabs)))
-                     (ncandidates (length candidates))
+              (let* ((tabs (mapcar (lambda (tab)
+                                     (cdr (assq 'name tab)))
+                                   (tab-bar-tabs)))
+                     (ntabs (length tabs))
                      (current-tab (cdr (assq 'name (tab-bar--current-tab-find (tab-bar-tabs))))))
-                (cond ((equal ncandidates 1) t)
-                      ((equal ncandidates 2) (tab-bar-switch-to-tab (if (equal current-tab (car candidates))
-                                                                        (cadr candidates)
-                                                                      (car candidates))))
+                (cond ((equal ntabs 1) t)
+                      ((equal ntabs 2) (tab-bar-switch-to-tab (if (equal current-tab (car tabs))
+                                                                        (cadr tabs)
+                                                                      (car tabs))))
                       (t ;; (tab-switcher)
                        (let ((helm-display-function #'helm-display-buffer-in-own-frame))
                          (helm-other-buffer
                           (append
                            `(((name . "Tabs")
-                              (candidates . candidates)
+                              (candidates . tabs)
                               (action . (lambda (candidate)
                                           (tab-bar-switch-to-tab candidate))))))
                           "*Tabs*"))
