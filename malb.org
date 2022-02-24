@@ -8181,6 +8181,14 @@ message from the wrong account"
                 "Attempt to send via mismatching context! Send after switching to: "))))
             (t (signal 'quit nil))))))
 
+
+(malb/defadvice! malb/message-generate-date (&rest args)
+  "Always generate date before sending"
+  :before 'message-send
+  (save-restriction
+    (message-narrow-to-headers)
+    (message-remove-header "Date")))
+
 (add-hook 'message-send-hook #'malb/message-send-check-context)
 #+END_SRC
 
