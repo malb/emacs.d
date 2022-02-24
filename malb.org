@@ -2328,14 +2328,15 @@ This library provides easy project management and navigation. The concept of a p
               (let* ((project-name (projectile-project-name project-to-switch))
                      (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-projects))
                                              project-name)))
-                (when (assoc project-name malb/projectile-switch-tab-projects)
-                  (if (member project-short-name (mapcar (lambda (tab)
-                                                           (cdr (assq 'name tab)))
-                                                         (tab-bar-tabs)))
-                      (tab-bar-switch-to-tab project-short-name)
-                    (progn
-                      (tab-new)
-                      (tab-rename project-short-name))))))
+                (if (assoc project-name malb/projectile-switch-tab-projects)
+                    (if (member project-short-name (mapcar (lambda (tab)
+                                                             (cdr (assq 'name tab)))
+                                                           (tab-bar-tabs)))
+                        (tab-bar-switch-to-tab project-short-name)
+                      (progn
+                        (tab-new)
+                        (tab-rename project-short-name)))
+                  (tab-bar-select-tab 1))))
 
             (malb/defadvice! malb/projectile-kill-tab ()
               "Kill tab too if it's not the first."
