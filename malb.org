@@ -5039,10 +5039,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
               ("M-r" . lsp-find-references))
   :config (progn (setq lsp-eldoc-render-all nil
                        lsp-prefer-flymake nil)
-                 (defun malb/read-process-output-max ()
-                   ;; https://github.com/hlissner/doom-emacs/issues/2589
-                   (setq-local read-process-output-max (* 1024 1024)))
-                 (add-hook 'lsp-after-open-hook #'malb/read-process-output-max)
+
+                 (setq read-process-output-max (* 1024 1024))
                  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
 #+END_SRC
 
