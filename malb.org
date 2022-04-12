@@ -7895,7 +7895,7 @@ return the filename."
       (insert (concat "<strong>To</strong>: "
                       (malb/mu4e~action-header-to-html msg :to) "</br>"))
       (insert (concat "<strong>Date</strong>: "
-                      (format-time-string mu4e-view-date-format (mu4e-message-field msg :date)) "</br>"))
+                      (format-time-string mu4e-date-format-long (mu4e-message-field msg :date)) "</br>"))
       (insert (concat "<strong>Subject</strong>: " (mu4e-message-field msg :subject) "</p>"))
       (insert (or html (concat "<pre>" txt "</pre>")))
       (write-file tmpfile)
