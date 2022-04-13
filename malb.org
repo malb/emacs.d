@@ -1202,9 +1202,15 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
     (save-excursion (call-interactively 'orgtbl-tab)))
 
    ;; leave the math env
-   ((and (eq major-mode 'org-mode) org-cdlatex-mode (or (looking-at "\\\\)")
-                                                        (looking-at "\\]")))
+   ((and (eq major-mode 'org-mode)
+         (texmathp)
+         (bound-and-true-p org-cdlatex-mode)
+         ;; (or (looking-at "\\\\)")
+         ;;     (looking-at "\\]")
+         ;;     (looking-at "}"))
+         )
     (cdlatex-tab))
+
    ;; arg triggers cdlatex
    ((and (eq major-mode 'org-mode) org-cdlatex-mode arg) (cdlatex-tab))
 
@@ -6552,7 +6558,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 #+begin_src emacs-lisp
 (use-package cdlatex
   :custom ((cdlatex-takeover-parenthesis nil)
-           (cdlatex-takeover-dollar nil))
+           (cdlatex-takeover-dollar nil)
+           (cdlatex-simplify-sub-super-scripts nil))
   :config (progn
             ;; (unbind-key "$" 'cdlatex-mode-map)
             ;; smartparens
@@ -6600,7 +6607,10 @@ When pressed twice, make the sub/superscript roman."
                                           ("nrm" "Insert ||foo||" "\\lVert{?}\\rVert"
                                            cdlatex-position-cursor nil nil t))
                   cdlatex-math-symbol-alist '(( ?a  ("\\alpha" "\\alert{?}"))
-                                              ( ?Z  ("\\ZZ"))))))
+                                              ( ?q  ("\\theta" "\\vartheta" "\\bmod q"))
+                                              ( ?R  ("\\ring" "\\ring_q"))
+                                              ( ?Z  ("\\ZZ"))
+                                              ( ?=  ("\\equiv" "\\Leftrightarrow" "\\Longleftrightarrow"))))))
 #+end_src
 
 *** LaTeXMK
