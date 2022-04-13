@@ -10518,6 +10518,30 @@ Set higher contrast.
 (setq shr-color-visible-luminance-min 80)
 #+END_SRC
 
+([[https://github.com/alphapapa/unpackaged.el/blob/3b46f9c0e0195d78df8c4ca6e1953b69539e2844/unpackaged.el][source]])
+
+#+begin_src emacs-lisp
+(defun malb/imenu-eww-headings ()
+  "Return alist of HTML headings in current EWW buffer for Imenu.
+Suitable for `imenu-create-index-function'."
+  (let ((faces '(shr-h1 shr-h2 shr-h3 shr-h4 shr-h5 shr-h6 shr-heading)))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (goto-char (point-min))
+        (cl-loop for next-pos = (next-single-property-change (point) 'face)
+                 while next-pos
+                 do (goto-char next-pos)
+                 for face = (get-text-property (point) 'face)
+                 when (cl-typecase face
+                        (list (cl-intersection face faces))
+                        (symbol (member face faces)))
+                 collect (cons (buffer-substring (point-at-bol) (point-at-eol)) (point))
+                 and do (forward-line 1))))))
+
+(add-hook 'eww-mode-hook (lambda () (setq-local imenu-create-index-function #'malb/imenu-eww-headings)))
+#+end_src
+
 ** Rainbow Mode
 
 Colourise colours or names in buffers ([[http://git.savannah.gnu.org/cgit/emacs/elpa.git/tree/packages/rainbow-mode][source]])
