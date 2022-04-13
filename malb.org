@@ -5913,6 +5913,7 @@ Indicate soft wrapped lines.
                   (memq (face-at-point) '(markdown-code-face))))
 
             (add-to-list 'typo-disable-electricity-functions #'malb/typo-in-src-block)
+            (add-to-list 'typo-disable-electricity-functions #'texmathp)
 
             (add-hook 'org-mode-hook #'typo-mode)))
 #+END_SRC
