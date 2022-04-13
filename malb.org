@@ -2327,14 +2327,15 @@ This library provides easy project management and navigation. The concept of a p
             (if (not (boundp 'malb/projectile-switch-tab-projects))
                 (defvar malb/projectile-switch-tab-projects nil))
 
-            (malb/defadvice! malb/projectile-switch-tab (project-to-switch &optional arg)
+            (malb/defadvice! malb/projectile-switch-tab (old-function project-to-switch &rest args)
               "Switch to new tab if project is in `malb/projectile-switch-tab-projects'."
-              :before 'projectile-switch-project-by-name
-              :before 'helm-projectile-vc
-              :before 'helm-projectile-switch-to-shell
+              :around 'projectile-switch-project-by-name
+              :around 'helm-projectile-vc
+              :around 'helm-projectile-switch-to-shell
               (let* ((project-name (projectile-project-name project-to-switch))
                      (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-projects))
-                                             project-name)))
+                                             project-name))
+                     (tab-created nil))
                 (if (assoc project-name malb/projectile-switch-tab-projects)
                     (if (member project-short-name (mapcar (lambda (tab)
                                                              (cdr (assq 'name tab)))
@@ -2342,8 +2343,15 @@ This library provides easy project management and navigation. The concept of a p
                         (tab-bar-switch-to-tab project-short-name)
                       (progn
                         (tab-new)
+                        (setq tab-created t)
                         (tab-rename project-short-name)))
-                  (tab-bar-select-tab 1))))
+                  (tab-bar-select-tab 1))
+
+                (apply old-function (push project-to-switch args))
+
+                (when tab-created
+                  (delete-other-windows))
+                ))
 
             (malb/defadvice! malb/projectile-kill-tab ()
               "Kill tab too if it's not the first."
