@@ -6427,6 +6427,10 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-hook 'LaTeX-mode-hook #'turn-on-visual-fill-column-mode)
             (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)
+            (add-hook 'LaTeX-mode-hook #'prettify-symbols-mode)
+
+            ;; somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
+            (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
