@@ -6436,14 +6436,13 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
   :config (progn
             (add-hook 'LaTeX-mode-hook #'turn-on-visual-line-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-flyspell)
-            ;; (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
             (add-hook 'LaTeX-mode-hook #'turn-on-visual-fill-column-mode)
             (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
             (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)
             (add-hook 'LaTeX-mode-hook #'prettify-symbols-mode)
 
-            ;; somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
+            ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
             (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
@@ -6474,7 +6473,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                          ("anonymous" "{{")
                                          ("fullversion" "{{"))
                                        'function)
-              ;; dunno why cleveref.el isn't loaded
+              ;; TODO dunno why cleveref.el isn't loaded
               (font-latex-add-keywords '(("cref"          "*{")
                                          ("Cref"          "*{")
                                          ("crefrange"     "*{{")
