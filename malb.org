@@ -2353,6 +2353,20 @@ This library provides easy project management and navigation. The concept of a p
                   (delete-other-windows))
                 ))
 
+            (defun malb/close-remote-tabs (tab single)
+              (let ((tab-name (alist-get 'name tab)))
+                (when (string-prefix-p "@" tab-name)
+
+                  (tramp-cleanup-this-connection)
+
+                  (dolist (buffer (tramp-list-remote-buffers))
+                    (when (and  (s-contains-p (substring tab-name 1)
+                                              (with-current-buffer buffer default-directory))
+                                (bufferp (get-buffer buffer)))
+                      (kill-buffer buffer))))))
+
+            (add-to-list 'tab-bar-tab-pre-close-functions #'malb/close-remote-tabs)
+
             (malb/defadvice! malb/projectile-kill-tab ()
               "Kill tab too if it's not the first."
               :after 'projectile-kill-buffers
@@ -8984,7 +8998,45 @@ Show dired histories you have visited.
 (use-package helm-tramp
   :after (helm tramp)
   :config (progn
-            (add-to-list 'helm-commands-using-frame 'helm-tramp)))
+            (add-to-list 'helm-commands-using-frame 'helm-tramp)
+
+            (malb/defadvice! malb/switch-tab-by-remote (orig-function path)
+              "Remote hosts get their own tab."
+              :around 'helm-tramp-open
+              :around 'helm-tramp-open-shell
+              (let ((tab-created nil)
+                    (tab-name (concat "@" (tramp-file-name-host (tramp-dissect-file-name path)))))
+                (if (member tab-name (mapcar (lambda (tab) (cdr (assq 'name tab)))
+                                             (tab-bar-tabs)))
+                    (tab-bar-switch-to-tab tab-name)
+                  (progn
+                    (tab-new)
+                    (setq tab-created t)
+                    (tab-rename tab-name)))
+
+                (apply orig-function (list path))
+
+                (when tab-created
+                  (delete-other-windows))))
+
+
+            (defun helm-tramp-open-vterm (path)
+              "Open Vterm on remote"
+              (let ((server-name (tramp-file-name-host (tramp-dissect-file-name path))))
+                (funcall (malb/make-toggle-shell
+                          (format "*mosh:%s*" server-name)
+                          `(progn
+                             (let ((vterm-shell (format "mosh %s -- tmux a" ,server-name)))
+                               (vterm (format "*mosh:%s*" server-name))))))))
+
+            (setq helm-tramp--source
+                  (helm-build-sync-source "Tramp"
+                    :candidates #'helm-tramp--candidates
+                    :volatile t
+                    :action (helm-make-actions
+                             "Tramp" #'helm-tramp-open
+                             "Term"  #'helm-tramp-open-vterm
+                             "Shell" #'helm-tramp-open-shell)))))
 #+END_SRC
 
 #+BEGIN_QUOTE
