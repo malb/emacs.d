@@ -9596,7 +9596,7 @@ then enter the text in that file's own buffer.
 
 ,#+end_src
 
-,#+begin_src jupyter-python
+,#+begin_src python
 
 ,#+end_src
 
