@@ -2648,7 +2648,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 #+begin_src emacs-lisp
 (setq org-entities-user '(("coloneqq" "\\coloneqq" t ":=" ":=" ":=" "≔")
-                          ("deg" "\\deg" t "deg" "deg" "deg" "deg")))
+                          ("deg" "\\deg" t "deg" "deg" "deg" "deg")
+                          ("ZZ" "\\ZZ" t "ZZ" "ZZ" "ZZ" "ℤ")))
 #+end_src
 
 ** ToDo Keywords & Scheduling
@@ -6498,9 +6499,10 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (font-lock-add-keywords
              'latex-mode
              `((,(rx "\\" (or (any ",.!;@")
-                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
-                                  symbol-end)))
-                0 'malb/unimportant-latex-face prepend)) 'end)
+                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
+                                   symbol-end)))
+                0 'malb/unimportant-latex-face prepend))
+             'end)
 
             (setq TeX-auto-save t
                   TeX-parse-self t
@@ -6613,12 +6615,15 @@ When pressed twice, make the sub/superscript roman."
                                            cdlatex-position-cursor nil nil t)
                                           ("RR" "Insert \\RR" "\\RR?"
                                            cdlatex-position-cursor nil nil t)
+                                          ("Rq" "Insert \\ring_{q}" "\\ring_{q}?"
+                                           cdlatex-position-cursor nil nil t)
                                           ("nrm" "Insert ||foo||" "\\lVert{?}\\rVert"
                                            cdlatex-position-cursor nil nil t))
                   cdlatex-math-symbol-alist '(( ?a  ("\\alpha" "\\alert{?}"))
-                                              ( ?q  ("\\theta" "\\vartheta" "\\bmod q"))
+                                              ( ?c  ("\\circ"                 ""                "\\cos"))
                                               ( ?R  ("\\ring" "\\ring_q"))
                                               ( ?Z  ("\\ZZ"))
+                                              ( ?!  ("\\neq" "\\neg"))
                                               ( ?=  ("\\equiv" "\\Leftrightarrow" "\\Longleftrightarrow"))))))
 #+end_src
 
@@ -6632,8 +6637,6 @@ When pressed twice, make the sub/superscript roman."
 #+END_SRC
 
 Run =latexmk -pvc= in async shell
-
-
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/toggle-latexmk ()
