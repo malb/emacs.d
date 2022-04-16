@@ -10246,6 +10246,10 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
               '(bar workspace-name window-number matches buffer-info pdf-pages)
               '(misc-info major-mode process vcs))
 
+            (doom-modeline-def-modeline 'project
+              '(bar workspace-name window-number modals buffer-default-directory)
+              '(misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process))
+
             (if (bound-and-true-p imenu-list-mode-line-format)
                 (setq imenu-list-mode-line-format
                       '((:eval
