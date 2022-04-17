@@ -1202,9 +1202,9 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
     (save-excursion (call-interactively 'orgtbl-tab)))
 
    ;; leave the math env
-   ((and (eq major-mode 'org-mode)
+   ((and (or (and (eq major-mode 'org-mode) (bound-and-true-p org-cdlatex-mode))
+             (and (eq major-mode 'latex-mode) (bound-and-true-p cdlatex-mode)))
          (texmathp)
-         (bound-and-true-p org-cdlatex-mode)
          ;; (or (looking-at "\\\\)")
          ;;     (looking-at "\\]")
          ;;     (looking-at "}"))
@@ -1212,7 +1212,10 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
     (cdlatex-tab))
 
    ;; arg triggers cdlatex
-   ((and (eq major-mode 'org-mode) org-cdlatex-mode arg) (cdlatex-tab))
+   ((or
+     (and (eq major-mode 'org-mode) (bound-and-true-p org-cdlatex-mode) arg)
+     (and (eq major-mode 'latex-mode) (bound-and-true-p cdlatex-mode) arg))
+    (cdlatex-tab))
 
    ;; if the next char is space or eol, but prev char not whitespace
    ((and (not (active-minibuffer-window))
@@ -2659,6 +2662,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-pretty-entities nil
       org-image-actual-width 800)
 #+END_SRC
+
+Pretty print some maths:
 
 #+begin_src emacs-lisp
 (setq org-entities-user '(("coloneqq" "\\coloneqq" t ":=" ":=" ":=" "≔")
@@ -6445,6 +6450,12 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
             (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
 
+            ;; :- vs :=
+            (setq tex--prettify-symbols-alist
+                  (remove '("\\coloneq" . ?≔) tex--prettify-symbols-alist))
+
+            (push '("\\coloneqq" . ?≔) tex--prettify-symbols-alist)
+
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
 
@@ -6583,20 +6594,14 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 *** CDLaTeX
 
+We do fast mathematics entry using a mix of [[https://github.com/cdominik/cdlatex][CDLaTeX]] and YaSnippet (for stuff like ~!=~).
+
 #+begin_src emacs-lisp
 (use-package cdlatex
   :custom ((cdlatex-takeover-parenthesis nil)
            (cdlatex-takeover-dollar nil)
            (cdlatex-simplify-sub-super-scripts nil))
   :config (progn
-            ;; (unbind-key "$" 'cdlatex-mode-map)
-            ;; smartparens
-            ;; (unbind-key "{" 'cdlatex-mode-map)
-            ;; smartparens
-            ;; (unbind-key "(" 'cdlatex-mode-map)
-            ;; smartparens
-            ;; (unbind-key "[" 'cdlatex-mode-map)
-            ;; smartparens
             (unbind-key "C-c ?" 'cdlatex-mode-map) ;; TeX-doc
 
             (defun malb/cdlatex-sub-superscript ()
@@ -6626,21 +6631,16 @@ When pressed twice, make the sub/superscript roman."
                                               (?m "\\mat" nil t nil nil)
                                               (?o "\\operatorname" nil t nil nil)
                                               (?v "\\vec" nil t nil nil))
-                  cdlatex-command-alist '(("ZZ" "Insert \\ZZ" "\\ZZ?"
-                                           cdlatex-position-cursor nil nil t)
-                                          ("QQ" "Insert \\QQ" "\\QQ?"
-                                           cdlatex-position-cursor nil nil t)
-                                          ("RR" "Insert \\RR" "\\RR?"
-                                           cdlatex-position-cursor nil nil t)
-                                          ("Rq" "Insert \\ring_{q}" "\\ring_{q}?"
-                                           cdlatex-position-cursor nil nil t)
-                                          ("nrm" "Insert ||foo||" "\\lVert{?}\\rVert"
-                                           cdlatex-position-cursor nil nil t))
+                  cdlatex-command-alist
+                  '(("ZZ"  	"\\ZZ" 		"\\ZZ?" 				cdlatex-position-cursor nil nil t)
+                    ("QQ"  	"\\QQ" 		"\\QQ?" 				cdlatex-position-cursor nil nil t)
+                    ("RR"  	"\\RR" 		"\\RR?" 				cdlatex-position-cursor nil nil t)
+                    ("OO"  	"\\mathcal{O}()" "\\mathcal{O}\\left({?}\\right)" cdlatex-position-cursor nil nil t)
+                    ("Rq"  	"\\ring_q" "\\ring_q?" 	  	cdlatex-position-cursor nil nil t)
+                    ("nrm" 	"||x||" 	"\\lVert{?}\\rVert" 	cdlatex-position-cursor nil nil t))
                   cdlatex-math-symbol-alist '(( ?a  ("\\alpha" "\\alert{?}"))
-                                              ( ?c  ("\\circ"                 ""                "\\cos"))
+                                              ( ?c  ("\\circ"  "" "\\cos"))
                                               ( ?R  ("\\ring" "\\ring_q"))
-                                              ( ?Z  ("\\ZZ"))
-                                              ( ?!  ("\\neq" "\\neg"))
                                               ( ?=  ("\\equiv" "\\Leftrightarrow" "\\Longleftrightarrow"))))))
 #+end_src
 
