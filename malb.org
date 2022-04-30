@@ -3989,6 +3989,38 @@ This extension facilitates moving images from point A (e.g. an image inside your
 (use-package wikinforg)
 #+end_src
 
+** Org Dsq
+
+Org interface to to [[https://github.com/multiprocessio/dsq][dsq]].
+
+[[https://fritzgrabo.com/posts/introducing-ob-dsq/][introduction]]
+
+#+begin_src emacs-lisp
+(use-package ob-dsq
+  :config (add-to-list 'org-latex-listings-langs '(dsq "sql")))
+#+end_src
+
+*Example*
+
+#+name: dsq-example
+| name   | value |
+|--------+-------|
+| Foo    |    10 |
+| Bar    |    20 |
+| Foobar |    30 |
+
+#+begin_src dsq :input dsq-example
+SELECT tab.name from {} tab WHERE tab.value >= 20
+#+end_src
+
+#+RESULTS:
+| name   |
+|--------|
+| Bar    |
+| Foobar |
+
+This also works for =.json=, =.csv= and =.xsls= file.
+
 ** Tips
 
 *** Agenda commands
