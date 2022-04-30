@@ -153,6 +153,17 @@
 \setlength{\emergencystretch}{3em}            %% prevent overfull lines
 \setcounter{secnumdepth}{0}                   %%
 
+%%%
+%%% Maths
+%%%
+
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\GH}{GH}
+\renewcommand{\vec}[1]{\ensuremath{\mathbf{#1}}\xspace}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\providecommand{\mat}[1]{\ensuremath{\vec{#1}}\xspace}
+\providecommand{\ring}[0]{\ensuremath{\mathcal{R}}\xspace}
+
 %%% Local Variables:
 %%% mode: latex
 %%% End:
