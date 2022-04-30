@@ -6521,6 +6521,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)
             (add-hook 'LaTeX-mode-hook #'prettify-symbols-mode)
 
+            (require 'tex-mode)
             ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
             (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
 
@@ -6553,6 +6554,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                '("pchstack" LaTeX-env-label)))
 
             (defun malb/latex-add-font-lock ()
+              (font-latex-add-keywords '(("mat" "{")
+                                         ("vec" "{"))
+                                       'bold-command)
               (font-latex-add-keywords '(("malb" "*[{")
                                          ("todo" "*[{")
                                          ("anonymous" "{{")
@@ -6711,7 +6715,7 @@ When pressed twice, make the sub/superscript roman."
                     ("RR"  	"\\RR" 		"\\RR?" 				cdlatex-position-cursor nil nil t)
                     ("OO"  	"\\mathcal{O}()" "\\mathcal{O}\\left({?}\\right)" cdlatex-position-cursor nil nil t)
                     ("Rq"  	"\\ring_q" "\\ring_q?" 	  	cdlatex-position-cursor nil nil t)
-                    ("nrm" 	"||x||" 	"\\lVert{?}\\rVert" 	cdlatex-position-cursor nil nil t))
+                    ("nrm" 	"||x||" 	"\\|?\\|" 	cdlatex-position-cursor nil nil t))
                   cdlatex-math-symbol-alist '(( ?a  ("\\alpha" "\\alert{?}"))
                                               ( ?c  ("\\circ"  "" "\\cos"))
                                               ( ?R  ("\\ring" "\\ring_q"))
