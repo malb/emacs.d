@@ -13,6 +13,7 @@
 
 We assume that the following variables are defined:
 
+- ~malb/startup-quick~ – disable some stuff to speed up startup
 - ~malb/documents-dir~ - documents
 - ~malb/inbox-org~ - this is where I store tasks
 - ~malb/work-org~ - this is where I store tasks
@@ -6895,7 +6896,7 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
 
             (require 'async)
 
-            (if (daemonp)
+            (if (and (not malb/startup-quick) (daemonp))
                 (prog1
                     (async-start `(lambda ()
                                     (add-to-list 'load-path (expand-file-name "local/" user-emacs-directory))
@@ -9340,7 +9341,7 @@ exports.boxes = [ "INBOX"];
             :tags '(chat))
 
           ;; start some services
-          (when (daemonp)
+          (when (and (daemonp) (not malb/startup-quick))
             (prodigy-start-service (prodigy-find-service "imapnotify"))
             ;; (prodigy-start-service (prodigy-find-service "bitlbee"))
             ;; (prodigy-start-service (prodigy-find-service "weechat"))
