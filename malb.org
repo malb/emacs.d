@@ -3297,16 +3297,18 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-export-filter-strike-through-functions 'malb/beamer-strikethrough)
             (add-to-list 'org-export-filter-code-functions 'malb/beamer-code)
 
-            (add-to-list 'org-latex-classes
-                         (list "mbeamer"
-                               (concat  "\\documentclass[presentation,smaller]{beamer}\n"
-                                        (with-temp-buffer
-                                          (insert-file-contents
-                                           (expand-file-name "talk-header.tex" user-emacs-directory))
-                                          (buffer-string)))
-                               '("\\section{%s}" . "\\section*{%s}")
-                               '("\\subsection{%s}" . "\\subsection*{%s}")
-                               '("\\subsubsection{%s}" . "\\subsubsection*{%s}")))))
+            (malb/set-org-latex-class "beamer"
+                                      `("\\documentclass[presentation,smaller]{beamer}\n"
+                                        ,(with-temp-buffer
+                                           (insert-file-contents
+                                            (expand-file-name "talk-header.tex" user-emacs-directory))
+                                           (buffer-string)))
+                                      '(("\\section{%s}" . "\\section*{%s}")
+                                        ("\\subsection{%s}" . "\\subsection*{%s}")
+                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+
+            ;; backward compatibility
+            (add-to-list 'org-latex-classes (cons "mbeamer" (cdr (assoc "beamer" org-latex-classes))))))
 #+END_SRC
 
 *** ODT
