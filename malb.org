@@ -8326,7 +8326,7 @@ message from the wrong account"
   (interactive)
   (when mu4e-contexts
     (let* ((names (mapcar #'mu4e-context-name mu4e-contexts))
-           (currentname (ignore-errors (mu4e-context-name mu4e~context-current))))
+           (currentname (ignore-errors (mu4e-context-name mu4e--context-current))))
       (mu4e-context-switch t
                            (nth
                             (mod (if currentname
