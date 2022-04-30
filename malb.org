@@ -6237,10 +6237,20 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
           (defun malb/blog ()
             (interactive)
+            (if (tab-bar--tab-index-by-name "blog")
+                (tab-bar-switch-to-tab "blog")
+              (progn
+                (tab-bar-new-tab)
+                (tab-bar-rename-tab "blog")))
             (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir)))
 
           (defun malb/deft ()
             (interactive)
+            (if (tab-bar--tab-index-by-name "deft")
+                (tab-bar-switch-to-tab "deft")
+              (progn
+                (tab-bar-new-tab)
+                (tab-bar-rename-tab "deft")))
             (malb/deft-in-dir malb/deft-directory))
 
           ;; https://github.com/jrblevin/deft/issues/100
