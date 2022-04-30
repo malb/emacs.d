@@ -9575,7 +9575,7 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
             (unbind-key "C-c C-@" tracking-mode-map)))
 #+END_SRC
 
-** Weechat
+** COMMENT Weechat
 
 Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/the-kenny/weechat.el][weechat.el]] to get [[https://matrix.org/docs/projects/client/weechat-matrix/][matrix]], [[https://github.com/wee-slack/wee-slack][slack]] and [[https://github.com/mbologna/docker-bitlbee][skype]].
 
