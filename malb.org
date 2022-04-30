@@ -5900,10 +5900,6 @@ Code manipulation:
 (add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
 #+END_SRC
 
-#+begin_src emacs-lisp
-(global-set-key [remap eval-expression] #'pp-eval-expression)
-#+end_src
-
 ** Web
 
 [[http://web-mode.org/web-mode.png?v=5]]
