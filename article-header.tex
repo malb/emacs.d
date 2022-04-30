@@ -22,7 +22,16 @@
 
 
 \newcommand{\malb}[2][inline]{\todo[#1]{\textbf{malb:} #2}\xspace}
-\lstdefinelanguage{Sage}[]{Python}{morekeywords={True,False,sage,cdef,cpdef,ctypedef,self},sensitive=true}
+
+\lstdefinelanguage{Sage}[]{Python}{
+   morekeywords={True,False,sage,cdef,cpdef,ctypedef,self},
+   sensitive=true
+}
+
+\lstdefinelanguage{diff}{
+  morecomment=[f][\color{black}\textbf]{+\ },
+  morecomment=[f][\color{darkgray}]{-\ },
+}
 
 \lstset{showtabs=False,
         showspaces=False,
