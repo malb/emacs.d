@@ -2101,7 +2101,36 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 (use-package expand-region
   :after (org)
   :bind ("C-\\" . er/expand-region)
-  :init (setq expand-region-fast-keys-enabled nil))
+  :init (setq expand-region-fast-keys-enabled nil)
+  :config (progn
+            (defun malb/mark-org-LaTeX-math ()
+              "Mark current math environment in org-mode."
+              (interactive)
+              (when (texmathp)
+                (let* ((pos (save-excursion
+                              (+ (re-search-backward texmathp-onoff-regexp) 1))))
+                  (re-search-forward texmathp-onoff-regexp)
+                  (set-mark pos)
+                  (exchange-point-and-mark))))
+
+            (defun malb/mark-org-inside-LaTeX-math ()
+              "Mark current math environment in org-mode."
+              (interactive)
+              (when (texmathp)
+                (let* ((pos (save-excursion (re-search-backward texmathp-onoff-regexp)
+                                            (re-search-forward texmathp-onoff-regexp))))
+                  (re-search-forward texmathp-onoff-regexp)
+                  (re-search-backward texmathp-onoff-regexp)
+                  (forward-char)
+                  (set-mark pos)
+                  (exchange-point-and-mark))))
+
+            (defun malb/add-org-mode-expansions ()
+              (make-variable-buffer-local 'er/try-expand-list)
+              (setq er/try-expand-list (append
+                                        er/try-expand-list
+                                        '(malb/mark-org-inside-LaTeX-math malb/mark-org-LaTeX-math))))
+            (add-hook 'org-mode-hook #'malb/add-org-mode-expansions)))
 #+END_SRC
 
 Alternatively, consider
