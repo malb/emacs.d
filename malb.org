@@ -3882,6 +3882,10 @@ The equivalent of a TeX-Master. To use add ~eval: (add-hook 'after-save-hook #'m
 (defun malb/org-koma-letter-export-to-latex-main ()
   (when (eq major-mode 'org-mode)
     (org-koma-letter-export-to-latex)))
+
+(defun malb/org-koma-letter-export-to-beamer-main ()
+  (when (eq major-mode 'org-mode)
+    (org-koma-letter-export-to-latex)))
 #+end_src
 
 ** Org Babel
