@@ -9328,8 +9328,17 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 
 #+BEGIN_SRC emacs-lisp
 (use-package gist
-  :commands (gist-list gist-buffer)
+  :commands (gist-list gist-buffer malb/update-gist)
   :config (progn
+
+            (defun malb/update-gist ()
+              "For after-save-hooks"
+              (let ((bf-string (buffer-string)))
+                (save-window-excursion (gist-fetch gist-id)
+                                       (erase-buffer)
+                                       (insert bf-string)
+                                       (gist-mode-edit-buffer))))
+
             (setq gist-ask-for-description t)))
 #+END_SRC
 
