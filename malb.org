@@ -402,18 +402,19 @@ The default tab-bar name uses the buffer name."
                      (current-tab (cdr (assq 'name (tab-bar--current-tab-find (tab-bar-tabs))))))
                 (cond ((equal ntabs 1) t)
                       ((equal ntabs 2) (tab-bar-switch-to-tab (if (equal current-tab (car tabs))
-                                                                        (cadr tabs)
-                                                                      (car tabs))))
-                      (t ;; (tab-switcher)
-                       (let ((helm-display-function #'helm-display-buffer-in-own-frame))
-                         (helm-other-buffer
-                          (append
-                           `(((name . "Tabs")
-                              (candidates . tabs)
-                              (action . (lambda (candidate)
-                                          (tab-bar-switch-to-tab candidate))))))
-                          "*Tabs*"))
-                       ))))))
+                                                                  (cadr tabs)
+                                                                (car tabs))))
+                      (t (tab-switcher)
+                         ;; (let ((helm-display-function #'helm-display-buffer-in-own-frame))
+                         ;;   (helm-other-buffer
+                         ;;    (append
+                         ;;     `((name . "Tabs")
+                         ;;       (candidates . tabs)
+                         ;;       (action . (lambda (candidate)
+                         ;;                   (interactive)
+                         ;;                   (tab-bar-switch-to-tab candidate)))))
+                         ;;    "*Tabs*"))
+                         ))))))
 #+end_src
 
 ** Switching
