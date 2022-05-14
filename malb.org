@@ -1,5 +1,6 @@
 #+TITLE: My Emacs Config
 #+STARTUP: overview indent
+#+CATEGORY: IT
 #+TYP_TODO: TRY(y) TEST(t) IMPLEMENT(i) TODO(o) | DONE(d)
 #+PROPERTY: header-args :tangle malb.el
 
@@ -1711,7 +1712,7 @@ Don’t include boring or remote stuff in list of recently visited files.
 Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
 
 #+BEGIN_SRC emacs-lisp
-(setq history-length 128
+(setq history-length 1024
       history-delete-duplicates t
       savehist-save-minibuffer-history t
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
@@ -1769,6 +1770,7 @@ Make sure to auto automatically rescan for imenu change.
 
 #+BEGIN_SRC emacs-lisp
 (use-package imenu-list
+  :after latex
   :init (progn
           ;; https://github.com/dsedivec/dot-emacs-d/blob/ddc3fec6a2a884ce4adf730a2eb255dab97834b7/recipes/imenu-list-in-side-buffer.el
           (defun malb/imenu-list-install-display-buffer ()
@@ -1809,7 +1811,35 @@ Make sure to auto automatically rescan for imenu change.
                   imenu-list-auto-resize nil
                   imenu-list-focus-after-activation nil
                   imenu-list-after-jump-hook nil)
-            (malb/imenu-list-install-display-buffer)))
+
+            (malb/imenu-list-install-display-buffer)
+
+            (malb/defadvice! malb/LaTeX-imenu-create-index-function (old-function &rest args)
+              "Postprocess AucTeX's imenu list."
+              :around 'LaTeX-imenu-create-index-function
+              (let* ((input-list (apply old-function args))
+                     (output-list '()))
+                (while input-list
+                  (let* ((entry (car input-list))
+                         (tail  (cdr input-list))
+                         (label (car entry))
+                         (marker (cdr entry))
+                         (prefix-len))
+                    (string-match "^ *" label)
+                    (setq prefix-len (match-end 0))
+                    (when (not (s-equals-p label "document"))
+                      (if (<= prefix-len 2)
+                          (progn
+                            (add-to-list 'output-list (cons (s-trim label) '()) t)
+                            (setf (cdar (last output-list))
+                                  (append (cdar (last output-list))
+                                          (list (cons "<go to>" marker)))))
+                        (setf (cdar (last output-list))
+                              (append (cdar (last output-list))
+                                      (list (cons (substring label (/ (+ prefix-len 4) 2)) marker))))))
+
+                    (setq input-list tail)))
+                output-list))))
 #+END_SRC
 
 * Parenthesis
@@ -1941,6 +1971,12 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                 (sp-local-pair "\"" "\"" :actions :rem)
                 (sp-local-pair "~" "~" :actions :rem)
                 (sp-local-pair "'" "'" :actions :rem)))
+
+            (let ((bracket-qualifiers '(sp-point-before-word-p
+                                        sp-point-before-same-p)))
+              (sp-with-modes '(python-mode)
+                (sp-local-pair  "(" ")" :unless bracket-qualifiers)
+                (sp-local-pair  "[" "]" :unless bracket-qualifiers)))
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
@@ -2702,6 +2738,28 @@ Pretty print some maths:
 (setq org-entities-user '(("coloneqq" "\\coloneqq" t ":=" ":=" ":=" "≔")
                           ("deg" "\\deg" t "deg" "deg" "deg" "deg")
                           ("ZZ" "\\ZZ" t "ZZ" "ZZ" "ZZ" "ℤ")))
+#+end_src
+
+Icons for org agenda categories ([[https://github.com/egregius313/org-agenda-category-icons][source]]):
+
+#+begin_src emacs-lisp
+(use-package org-agenda-category-icons
+  :ensure nil
+  :custom ((org-agenda-prefix-format '((agenda . " %i  %?-12t% s")
+                                       (todo . " %i  ")
+                                       (tags . " %i  ")
+                                       (search . " %i  "))))
+  :config (org-agenda-category-icons!
+           :material
+           (work Work)
+           (person Personal)
+           (local_library Critique)
+           (flight Travel)
+           (system_update IT)
+           (inbox Inbox)
+           (mood "Fun Stuff")
+           :faicon
+           (university Research)))
 #+end_src
 
 ** ToDo Keywords & Scheduling
@@ -5037,6 +5095,16 @@ Auto-format source code in many languages with one command – [[https://github.
           '(unbind-key "C-c h" jupyter-org-interaction-mode-map))
   :config (progn
 
+            (defun malb/jupyter-company-completion ()
+              (setq-local company-backends
+                          '((:separate company-files
+                                       company-math-symbols-unicode
+                                       company-yasnippet
+                                       company-capf
+                                       ))))
+
+            (add-hook 'jupyter-repl-mode-hook #'malb/jupyter-company-completion)
+
             ;; =C-d= should kill the repl (and kernel) when pressed at end of buffer.
             (defun malb/delchar-or-maybe-eof (arg)
               (interactive "p")
@@ -5720,6 +5788,18 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
            (sage-shell:set-ipython-version-on-startup nil)
            (sage-shell:check-ipython-version-on-startup nil))
   :config (progn
+
+            (defun malb/sage-shell-company-completion ()
+              (setq-local company-backends
+                          '((:separate company-files
+                                       company-math-symbols-unicode
+                                       company-yasnippet
+                                       company-capf
+                                       ))))
+
+            (add-hook 'sage-shell-mode-hook #'malb/sage-shell-company-completion)
+
+
             (add-hook 'sage-shell:sage-mode-hook #'eldoc-mode)
             (add-hook 'sage-shell-mode-hook #'eldoc-mode)
             (add-hook 'sage-shell-after-prompt-hook #'sage-shell-view-mode)
@@ -6495,9 +6575,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
 #+BEGIN_SRC emacs-lisp
 (use-package tex
-  :commands LaTeX-mode-hook
   :ensure auctex
-  :defer t
   :bind (:map LaTeX-mode-map
               ("C-<tab>" . outline-cycle)
               ("M-." . malb/latex-jump)
@@ -6792,6 +6870,27 @@ Run =latexmk -pvc= in async shell
               (car
                (auth-source-search :host "mathpix" :max 1 :create nil :require '(:secret)))
               :secret)))))
+#+end_src
+
+*** Math Delimiters
+
+#+begin_src emacs-lisp
+(use-package math-delimiters
+  :commands (math-delimiters-no-dollars)
+  :ensure nil
+  :config (progn
+            (setq math-delimiters-compressed-display-math nil)
+
+            (malb/defadvice! malb/math-delimiters-no-dollars (old-function &rest args)
+              :around 'math-delimiters-no-dollars
+              (interactive)
+              (save-restriction
+                (when (region-active-p)
+                  (narrow-to-region (caar (region-bounds)) (cdar (region-bounds))))
+                (apply old-function args)))
+            )
+  :bind (:map TeX-mode-map ("$" . math-delimiters-insert)
+         :map org-mode-map ("$" . math-delimiters-insert)))
 #+end_src
 
 ** Utility Functions
@@ -7632,7 +7731,8 @@ it is to insert the contact.
             (sleep-for 1)
             (+ i 1)))))
 
-  (let ((malb/helm-mu-actions
+  (let ((helm-case-fold-search t)
+        (malb/helm-mu-actions
          '(("Insert" . (lambda (x)
                          (insert (mapconcat 'identity
                                             (helm-marked-candidates) ","))))
@@ -8188,12 +8288,11 @@ Don’t break long lines manually.
 (add-hook 'mu4e-compose-mode-hook #'malb/no-hard-newlines)
 #+END_SRC
 
-To use a bit of org-mode’s magic as well by pulling in [[http://orgmode.org/manual/Orgtbl-mode.html][orgtbl-mode]]. We also enable footnotes, to add a footnote try =C-c ! a=. Also set e-mail width to 80 characters.
+We also enable footnotes, to add a footnote try =C-c ! a=. Also set e-mail width to 80 characters.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
 (add-hook 'message-mode-hook #'flyspell-mode)
-(add-hook 'message-mode-hook #'turn-on-orgtbl)
 (add-hook 'message-mode-hook #'typo-mode)
 
 ;; TODO this isn’t as nice as it could be
@@ -9327,7 +9426,8 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
   :config (progn
 
             (defun malb/update-gist ()
-              "For after-save-hooks"
+              "Push to gist-id given as local variable `gist-id'."
+              (interactive)
               (let ((bf-string (buffer-string)))
                 (save-window-excursion (gist-fetch gist-id)
                                        (erase-buffer)
@@ -10593,7 +10693,9 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
 
 #+BEGIN_SRC emacs-lisp
 (use-package shr
-  :ensure nil)
+  :ensure nil
+  :config (setq shr-use-fonts nil
+                shr-use-colors nil))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
