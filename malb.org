@@ -2745,10 +2745,10 @@ Icons for org agenda categories ([[https://github.com/egregius313/org-agenda-cat
 #+begin_src emacs-lisp
 (use-package org-agenda-category-icons
   :ensure nil
-  :custom ((org-agenda-prefix-format '((agenda . " %i  %?-12t% s")
-                                       (todo . " %i  ")
-                                       (tags . " %i  ")
-                                       (search . " %i  "))))
+  :custom ((org-agenda-prefix-format '((agenda . "%i	%?-12t% s")
+                                       (todo . "%i	")
+                                       (tags . "%i	")
+                                       (search . "%i	"))))
   :config (org-agenda-category-icons!
            :material
            (work Work)
@@ -10672,7 +10672,8 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       ;; (set-fontset-font "fontset-default" #x22c5 "DejaVu Sans Mono")
       ;; otherwise ⋅ is too narrow
 
-      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.8) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.75) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Material Icons") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "all-the-icons") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "file-icons") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "github-octicons") 0.75) t)
