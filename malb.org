@@ -10728,7 +10728,8 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "github-octicons") 0.75) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.95) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Serif CJK TC") 0.85) t)
-      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.9) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Symbols") 0.7) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.85) t)
       )))
 
 (add-hook 'after-make-frame-functions #'malb/fonts)
