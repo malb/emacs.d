@@ -2686,7 +2686,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Agenda
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-tags-column -122
+(setq org-agenda-tags-column -132
       org-agenda-include-diary nil
       org-agenda-dim-blocked-tasks t
       org-agenda-default-appointment-duration 60
@@ -2696,7 +2696,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-agenda-ignore-properties '(effort appt category)
       org-agenda-window-setup 'current-window  ; Current window gets agenda
       org-agenda-sticky t                      ; Use sticky agenda's so they persist
-      org-agenda-compact-blocks t              ; Compact the block agenda view
+      org-agenda-compact-blocks nil            ; Don't compact the block agenda view
+      org-agenda-block-separator 32            ; empty line
       org-agenda-span 14                       ; span 14 days of agenda
       org-agenda-start-on-weekday 1            ; start on Monday
       )
@@ -2706,15 +2707,14 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 #+begin_src emacs-lisp
 (setq org-agenda-custom-commands
-      '(("n" "Agenda and all TODOs"
-         ((agenda "")
-          (alltodo "")))
-        ("f" "Focused agenda"
+      '(("n" "Main agenda"
          ((tags "PRIORITY=\"A\""
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "High-priority unfinished tasks:")))
-          (agenda "")
-          (alltodo "")))))
+                 (org-agenda-overriding-header "PRIORITIES\n")))
+          (agenda ""
+                  ((org-agenda-overriding-header "AGENDA\n")))
+          (alltodo ""
+                   ((org-agenda-overriding-header "TODOs\n")))))))
 #+end_src
 
 ** Look
