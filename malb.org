@@ -5173,6 +5173,16 @@ Auto-format source code in many languages with one command – [[https://github.
       "sagemath")))
 #+end_src
 
+**** Workaround
+
+([[https://github.com/nnicandro/emacs-jupyter/issues/366][source]])
+
+#+begin_src emacs-lisp
+(defun malb/display-ansi-colors ()
+  (ansi-color-apply-on-region (point-min) (point-max)))
+(add-hook 'org-babel-after-execute-hook #'malb/display-ansi-colors)
+#+end_src
+
 **** Toggle Shell for Jupyter Kernels
 
 A generator for pop-up Jupyter repls.
