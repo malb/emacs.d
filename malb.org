@@ -10326,7 +10326,9 @@ Generate new random URLs for some commonly used online services.
       (kill-new url)
       (insert url))
     url))
+#+end_src
 
+#+begin_src emacs-lisp
 (defun malb/new-jitsi-url (&optional prefix)
   (interactive)
   (let ((url (concat "https://meet.jit.si/"
