@@ -3081,23 +3081,22 @@ Archive with some order in target file preserved. ([[https://gist.github.com/edg
 
 ** Bullets
 
-Prettier [[https://github.com/integral-dw/org-superstar-mode/][bullets]] in org-mode.
+I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-superstar replacement.
 
-[[https://raw.githubusercontent.com/integral-dw/org-superstar-mode/master/sample_image.png]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-superstar
-  :commands org-superstar-mode
-  :custom ((org-superstar-headline-bullets-list '("●" "▲" "■" "◉" "○" "○") "prettier bullet list")
-           (org-superstar-prettify-item-bullets nil "disable prettifying items in ordinary lists")
-           (org-superstar-leading-bullet " ⋅" "use a \cdot"))
-  :init  (progn
-
-           (defun malb/enable-org-bullets ()
-             (org-superstar-mode 1))
-
-           (add-hook 'org-mode-hook #'malb/enable-org-bullets)))
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package org-modern
+  :custom ((org-modern-block nil "Don't stylise blocks")
+           (org-modern-priority nil "Don't stylise priorities")
+           (org-modern-tag nil "Don't stylise tags")
+           (org-modern-timestamp nil "Don't stylisee timestamps")
+           (org-modern-todo nil "Don't stylise TODOs")
+           (org-modern-checkbox nil "Don't stylise checkboxes")
+           (org-modern-hide-stars 'leading "Hide leading stars")
+           (org-hide-leading-stars nil "Doesn't belong here but should agree with the above.")
+           (org-modern-keyword nil "I want to see #+")
+           (org-modern-star ["●" " ▲" "  ■" "   ◉" "    ○" "     ○"]))
+  :config (add-hook 'org-mode-hook #'org-modern-mode))
+#+end_src
 
 ** Export
 
