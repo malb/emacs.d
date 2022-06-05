@@ -76,10 +76,10 @@
      `(org-checkbox ((t (:weight bold :foreground ,base0
                                  :box (:line-width 1 :color nil :style (quote pressed-button))
                                  :background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
-     `(org-done     ((t (:weight bold :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#8BB300" :background "#F0F0F0"))))
      `(org-scheduled-previously ((t (:foreground ,orange))))
      `(org-tag ((t (:weight normal :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#9A9FA4"))))
      `(org-todo ((t (:weight bold :box (:line-width 1 :color "#D8ABA7" :style nil) :foreground ,orange :background "#FFE6E4"))))
+     `(org-done     ((t (:weight bold :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#8BB300" :background "#F0F0F0"))))
      `(org-block-begin-line ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line) :extend t))))
      `(org-block-end-line   ((t (:slant normal :foreground ,s-base00 :background ,s-base2 :inherit (org-meta-line) :extend t))))
      `(org-block ((t (:foreground ,s-base00 :background ,(solarized-color-blend "#cccccc" s-base3 0.2) :extend t))))
@@ -97,6 +97,7 @@
      `(hl-sentence ((t (:background ,yellow-1bg :inherit (highlight)))))
      `(hl-line ((t (:background ,yellow-1bg :inherit (highlight)))))
      `(mu4e-header-highlight-face ((t (:background ,yellow-1bg :inherit (highlight)))))
+     `(mu4e-related-face ((t (:foreground ,base00))))
      ;; `(which-func  ((t (:foreground ,green :weight bold))))
      `(stripe-highlight ((t (:background ,s-base2 :extend t))))
 
