@@ -8296,7 +8296,7 @@ DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subj
 (setq malb/mu4e-dwim-actions nil)
 
 (defun malb/mu4e-dwim-action (msg)
-  (let  ((from (cdr (car (mu4e-message-field msg :from))))
+  (let  ((from (plist-get (car (mu4e-message-field msg :from)) :email))
          (subject (mu4e-message-field msg :subject))
          (triggered nil))
     (dolist (action malb/mu4e-dwim-actions)
