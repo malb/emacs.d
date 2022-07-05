@@ -5231,6 +5231,12 @@ A generator for pop-up Jupyter repls.
 
 - It also works over Tramp
 
+- Reload kernels
+
+  #+begin_src emacs-lisp :tangle no
+(jupyter-available-kernelspecs t)
+  #+end_src
+
 *** Tree Sitter
 
 #+begin_src emacs-lisp
