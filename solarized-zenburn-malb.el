@@ -34,6 +34,7 @@
      `(flycheck-fringe-info ((,class (:foreground ,(if solarized-emphasize-indicators blue-hc base01) :weight bold))))
      `(mu4e-thread-folding-child-face         ((t (:background "#3a3a3a" :extend t))))
      `(mu4e-thread-folding-root-unfolded-face ((t (:background "#444444" :extend t))))
+     `(mu4e-related-face ((t (:foreground ,s-base2))))
      `(jupyter-repl-input-prompt  ((t (:foreground ,green :weight bold))))
      `(jupyter-repl-output-prompt ((t (:foreground ,red   :weight bold)))))
 
