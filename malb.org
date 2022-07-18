@@ -2725,20 +2725,14 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
   (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
 
   (setq org-agenda-custom-commands
-        '(
-          ("n" "Agenda and all TODOs"
-           ((agenda "")
-            (alltodo "")))
-          ;; ("M" "Custom"
-          ;;  ((tags-todo "PRIORITY=\"A\""
-          ;;              ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-          ;;               (org-agenda-overriding-header "PRIORITIES\n")))
-          ;;   ;; (agenda ""
-          ;;   ;;         ((org-agenda-overriding-header "AGENDA\n")))
-          ;;   ;; (alltodo ""
-          ;;   ;;          ((org-agenda-overriding-header "TODOs\n")))
-          ;;   ))
-          ))
+        '(("n" "Agenda and all TODOs"
+           ((org-ql-block '(priority "A")
+                          ((org-ql-block-header "PRIORITIES\n")))
+            (agenda "" ((org-agenda-overriding-header "AGENDA\n")))
+            (org-ql-block '(and (not (priority "A"))
+                                (todo))
+                          ((org-ql-block-header "TODOs\n")))))))
+
   (setq org-agenda-prefix-format '((agenda . " %i	%?-12t% s")
                                    (todo . " %i	")
                                    (tags . " %i	")
