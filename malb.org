@@ -1595,6 +1595,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
 #+begin_src emacs-lisp
 (use-package helm-org
+  :after org-agenda
   :config (progn
             (setq helm-org-headings-fontify t)
 
@@ -1618,11 +1619,15 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
             (advice-add #'helm-semantic-or-imenu :around #'malb/back-to-current-frame-advice)
 
             (add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)
-            (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)))
+            (add-to-list 'helm-commands-using-frame 'helm-org-agenda-files-headings)
+
+            (add-to-list 'helm-completing-read-handlers-alist '(org-capture . helm-org-completing-read-tags))
+            (add-to-list 'helm-completing-read-handlers-alist '(org-set-tags . helm-org-completing-read-tags))))
 #+end_src
 
 #+begin_src emacs-lisp
 (use-package helm-org-ql
+  :after helm-org
   :config (progn
             (defun malb/helm-org-ql-agenda-files (arg)
               (interactive "p")
@@ -1963,6 +1968,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                 (sp-local-pair "\\[" "\\]" :unless bracket-qualifiers)
 
                 (sp-local-pair "_" "_" :actions :rem)
+                (sp-local-pair "\"" "\"" :actions :rem)
                 (sp-local-pair "(" ")" :actions :rem)
                 (sp-local-pair "[" "]" :actions :rem)
                 (sp-local-pair "/" "/" :actions :rem)
@@ -2068,7 +2074,6 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
   :bind (("C-_" . undo-fu-only-undo)
          ("M-_" . undo-fu-only-redo)))
 #+END_SRC
-
 
 ** Multiple Cursors
 
@@ -2602,6 +2607,14 @@ Generate gitignore files
   :defer t)
 #+END_SRC
 
+** Git Annex
+
+Dired additions for git-annex.
+
+#+begin_src emacs-lisp
+(use-package git-annex)
+#+end_src
+
 * Org-mode all the things!
 
 See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to [[http://orgmode.org/][org-mode]].
@@ -2613,13 +2626,12 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          :map org-mode-map
-         ("C-c ;" . nil)) ;; I keep pressing it by accident, clumsy me
+         ("C-c [" . nil)
+         ("C-c ;" . nil)
+         ("M-/" . company-complete-common)) ;; I keep pressing it by accident, clumsy me
   :mode ("\\.org$" . org-mode)
-  :blackout (orgstruct-mode orgtbl-mode)
-  :custom ((org-export-backends '(md odt latex icalendar html ascii)))
-  :config (progn
-            (unbind-key "C-c [" org-mode-map)
-            (bind-key "M-/"   #'company-complete-common org-mode-map)))
+  :blackout (orgtbl-mode)
+  :custom ((org-export-backends '(md odt latex icalendar html ascii))))
 #+END_SRC
 
 #+begin_src emacs-lisp
@@ -2655,7 +2667,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-src-window-setup 'plain ; when hitting C-c '
       org-reverse-note-order t
       org-footnote-auto-adjust t          ; renumber footnotes automagically
-      org-confirm-elisp-link-function nil ;
+      org-link-elisp-confirm-function nil ;
       org-hidden-keywords nil
       org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
       org-list-allow-alphabetical t
@@ -2685,42 +2697,122 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 ** Agenda
 
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-tags-column -132
-      org-agenda-include-diary nil
-      org-agenda-dim-blocked-tasks t
-      org-agenda-default-appointment-duration 60
-      org-agenda-skip-additional-timestamps-same-entry nil
-      org-agenda-skip-timestamp-if-deadline-is-shown t
-      org-agenda-skip-deadline-prewarning-if-scheduled t
-      org-agenda-ignore-properties '(effort appt category)
-      org-agenda-window-setup 'current-window  ; Current window gets agenda
-      org-agenda-sticky t                      ; Use sticky agenda's so they persist
-      org-agenda-compact-blocks nil            ; Don't compact the block agenda view
-      org-agenda-block-separator 32            ; empty line
-      org-agenda-span 14                       ; span 14 days of agenda
-      org-agenda-start-on-weekday 1            ; start on Monday
-      )
-
-(add-hook 'org-agenda-finalize-hook 'hl-line-mode)
-#+END_SRC
-
 #+begin_src emacs-lisp
-(setq org-agenda-custom-commands
-      '(("n" "Main agenda"
-         ((tags "PRIORITY=\"A\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                 (org-agenda-overriding-header "PRIORITIES\n")))
-          (agenda ""
-                  ((org-agenda-overriding-header "AGENDA\n")))
-          (alltodo ""
-                   ((org-agenda-overriding-header "TODOs\n")))))))
+(use-package org-agenda
+  :ensure nil
+  :defer nil
+  :after org
+  :bind (("C-c a" . org-agenda)
+         :map org-agenda-keymap
+         ("C-_" . org-agenda-undo))
+  :config
+  (setq org-agenda-tags-column -132
+        org-agenda-include-diary nil
+        org-agenda-dim-blocked-tasks t
+        org-agenda-default-appointment-duration 60
+        org-agenda-skip-additional-timestamps-same-entry nil
+        org-agenda-skip-timestamp-if-deadline-is-shown t
+        org-agenda-skip-deadline-prewarning-if-scheduled t
+        ;; org-agenda-ignore-properties '(effort appt category)
+        org-agenda-window-setup 'current-window ; Current window gets agenda
+        org-agenda-sticky t                     ; Use sticky agenda's so they persist
+        org-agenda-compact-blocks nil           ; Don't compact the block agenda view
+        org-agenda-block-separator 32           ; empty line
+        org-agenda-span 14                      ; span 14 days of agenda
+        org-agenda-start-on-weekday 1           ; start on Monday
+        )
+
+  (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
+
+  (setq org-agenda-custom-commands
+        '(
+          ("n" "Agenda and all TODOs"
+           ((agenda "")
+            (alltodo "")))
+          ;; ("M" "Custom"
+          ;;  ((tags-todo "PRIORITY=\"A\""
+          ;;              ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+          ;;               (org-agenda-overriding-header "PRIORITIES\n")))
+          ;;   ;; (agenda ""
+          ;;   ;;         ((org-agenda-overriding-header "AGENDA\n")))
+          ;;   ;; (alltodo ""
+          ;;   ;;          ((org-agenda-overriding-header "TODOs\n")))
+          ;;   ))
+          ))
+  (setq org-agenda-prefix-format '((agenda . " %i	%?-12t% s")
+                                   (todo . " %i	")
+                                   (tags . " %i	")
+                                   (search . " %i	")))
+
+  (setq org-agenda-category-icon-alist
+        `(("\\`Research\\'"
+           (#("" 0 1 (rear-nonsticky t display (raise 0.0)
+                                      font-lock-face
+                                      (:family "FontAwesome" :height 1.0)
+                                      face
+                                      (:family "FontAwesome" :height 1.0))))
+           nil nil :ascent center)
+          ("\\`Fun Stuff\\'"
+           (#("" 0 1 (rear-nonsticky t display (raise 0.0)
+                                      font-lock-face
+                                      (:family "Material Icons" :height 1.0)
+                                      face
+                                      (:family "Material Icons" :height 1.0))))
+           nil nil :ascent center)
+          ("\\`Inbox\\'"
+           (#("" 0 1 (rear-nonsticky t display
+                                      (raise 0.0)
+                                      font-lock-face
+                                      (:family "Material Icons" :height 1.0)
+                                      face
+                                      (:family "Material Icons" :height 1.0))))
+           nil nil :ascent center)
+          ("\\`IT\\'"
+           (#("" 0 1 (rear-nonsticky t display
+                                      (raise 0.0)
+                                      font-lock-face
+                                      (:family "Material Icons" :height 1.0)
+                                      face
+                                      (:family "Material Icons" :height 1.0))))
+           nil nil :ascent center)
+          ("\\`Travel\\'"
+           (#("" 0 1 (rear-nonsticky t display
+                                      (raise 0.0)
+                                      font-lock-face
+                                      (:family "Material Icons" :height 1.0)
+                                      face
+                                      (:family "Material Icons" :height 1.0))))
+           nil nil :ascent center)
+          ("\\`Critique\\'"
+           (#("" 0 1 (rear-nonsticky t display
+                                      (raise 0.0)
+                                      font-lock-face
+                                      (:family "Material Icons" :height 1.0)
+                                      face
+                                      (:family "Material Icons" :height 1.0))))
+           nil nil :ascent center)
+          ("\\`Personal\\'"
+           (#("" 0 1 (rear-nonsticky t display
+                                      (raise 0.0)
+                                      font-lock-face
+                                      (:family "Material Icons" :height 1.0)
+                                      face
+                                      (:family "Material Icons" :height 1.0))))
+           nil nil :ascent center)
+          ("\\`Work\\'"
+           (#("" 0 1 (rear-nonsticky t display
+                                      (raise 0.0)
+                                      font-lock-face
+                                      (:family "Material Icons" :height 1.0)
+                                      face
+                                      (:family "Material Icons" :height 1.0))))
+           nil nil :ascent center))))
 #+end_src
 
 ** Look
 
 #+BEGIN_SRC emacs-lisp
-(setq org-hide-mphasis-markers nil      ; don’t hide markers for like *foo*
+(setq org-hide-emphasis-markers nil      ; don’t hide markers for like *foo*
       ;; org-ellipsis " ••• "
       org-ellipsis " ▼ "
       org-highlight-latex-and-related nil
@@ -2740,76 +2832,6 @@ Pretty print some maths:
                           ("ZZ" "\\ZZ" t "ZZ" "ZZ" "ZZ" "ℤ")))
 #+end_src
 
-#+begin_src emacs-lisp
-(setq org-agenda-prefix-format '((agenda . "%i	%?-12t% s")
-                                 (todo . "%i	")
-                                 (tags . "%i	")
-                                 (search . "%i	")))
-
-(setq org-agenda-category-icon-alist
-      '(("\\`Research\\'"
-         (#("" 0 1 (rear-nonsticky t display (raise 0.0)
-                                    font-lock-face
-                                    (:family "FontAwesome" :height 1.0)
-                                    face
-                                    (:family "FontAwesome" :height 1.0))))
-         nil nil :ascent center)
-        ("\\`Fun Stuff\\'"
-         (#("" 0 1 (rear-nonsticky t display (raise 0.0)
-                                    font-lock-face
-                                    (:family "Material Icons" :height 1.0)
-                                    face
-                                    (:family "Material Icons" :height 1.0))))
-         nil nil :ascent center)
-        ("\\`Inbox\\'"
-         (#("" 0 1 (rear-nonsticky t display
-                                    (raise 0.0)
-                                    font-lock-face
-                                    (:family "Material Icons" :height 1.0)
-                                    face
-                                    (:family "Material Icons" :height 1.0))))
-         nil nil :ascent center)
-        ("\\`IT\\'"
-         (#("" 0 1 (rear-nonsticky t display
-                                    (raise 0.0)
-                                    font-lock-face
-                                    (:family "Material Icons" :height 1.0)
-                                    face
-                                    (:family "Material Icons" :height 1.0))))
-         nil nil :ascent center)
-        ("\\`Travel\\'"
-         (#("" 0 1 (rear-nonsticky t display
-                                    (raise 0.0)
-                                    font-lock-face
-                                    (:family "Material Icons" :height 1.0)
-                                    face
-                                    (:family "Material Icons" :height 1.0))))
-         nil nil :ascent center)
-        ("\\`Critique\\'"
-         (#("" 0 1 (rear-nonsticky t display
-                                    (raise 0.0)
-                                    font-lock-face
-                                    (:family "Material Icons" :height 1.0)
-                                    face
-                                    (:family "Material Icons" :height 1.0))))
-         nil nil :ascent center)
-        ("\\`Personal\\'"
-         (#("" 0 1 (rear-nonsticky t display
-                                    (raise 0.0)
-                                    font-lock-face
-                                    (:family "Material Icons" :height 1.0)
-                                    face
-                                    (:family "Material Icons" :height 1.0))))
-         nil nil :ascent center)
-        ("\\`Work\\'"
-         (#("" 0 1 (rear-nonsticky t display
-                                    (raise 0.0)
-                                    font-lock-face
-                                    (:family "Material Icons" :height 1.0)
-                                    face
-                                    (:family "Material Icons" :height 1.0))))
-         nil nil :ascent center)))
-#+end_src
 
 ** ToDo Keywords & Scheduling
 
@@ -3261,6 +3283,16 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}"
                                         "\\usepackage{fontspec}"
                                         "\\fi"
+                                        "\\lstset{showstringspaces=false,"
+                                          "aboveskip=0.75em,"
+                                          "basicstyle=\footnotesize\ttfamily,"
+                                          "keywordstyle=\bfseries\\color{gray!40!black},"
+                                          "commentstyle=\\itshape\\color{gray!140!black},"
+                                          "identifierstyle=\\color{gray!40!black},"
+                                          "stringstyle=\\color{gray},"
+                                          "backgroundcolor=\\color{gray!190!black},"
+                                          "frame=none,"
+                                          "xleftmargin=\\parindent}"
                                         "[EXTRA]")
                                       '(("\\chapter{%s}" . "\\chapter*{%s}")
                                         ("\\section{%s}" . "\\section*{%s}")
@@ -3285,6 +3317,16 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}"
                                         "\\usepackage{fontspec}"
                                         "\\fi"
+                                        "\\lstset{showstringspaces=false,"
+                                          "aboveskip=0.75em,"
+                                          "basicstyle=\footnotesize\ttfamily,"
+                                          "keywordstyle=\bfseries\\color{gray!40!black},"
+                                          "commentstyle=\\itshape\\color{gray!140!black},"
+                                          "identifierstyle=\\color{gray!40!black},"
+                                          "stringstyle=\\color{gray},"
+                                          "backgroundcolor=\\color{gray!190!black},"
+                                          "frame=none,"
+                                          "xleftmargin=\\parindent}"
                                         "[EXTRA]")
                                       '(("\\part{%s}" . "\\part*{%s}")
                                         ("\\chapter{%s}" . "\\chapter*{%s}")
@@ -3298,6 +3340,28 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "[DEFAULT-PACKAGES]"
                                         "[PACKAGES]"
                                         ,(malb/org-latex-default)
+                                        "\\usepackage{ifxetex}"
+                                        "\\ifxetex"
+                                        " \\renewcommand{\\textls}[2][5]{%"
+                                        " \\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup"
+                                        "}"
+                                        "\\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}"
+                                        "\\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}"
+                                        "\\renewcommand{\\allcaps}[1]{\\textls[15]{\\MakeTextUppercase{#1}}}"
+                                        "\\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}"
+                                        "\\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}"
+                                        "\\usepackage{fontspec}"
+                                        "\\fi"
+                                        "\\lstset{showstringspaces=false,"
+                                          "aboveskip=0.75em,"
+                                          "basicstyle=\\footnotesize\\ttfamily,"
+                                          "keywordstyle=\\bfseries\\color{gray!40!black},"
+                                          "commentstyle=\\itshape\\color{gray!140!black},"
+                                          "identifierstyle=\\color{gray!40!black},"
+                                          "stringstyle=\\color{gray},"
+                                          "backgroundcolor=\\color{gray!190!black},"
+                                          "frame=none,"
+                                          "}"
                                         "[EXTRA]")
                                       '(("\\section{%s}" . "\\section*{%s}")
                                         ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -3693,13 +3757,15 @@ In [[file:%s::%s][%s]]:
                      (,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
                       :file malb/work-org
                       :headline "Admin"
-                      :template ("* %^{type|TODO|REPLY|READ} %? %^G:email:"
+                      :template ("* %^{type|TODO|REPLY|READ|REVIEW} %? %:fromname :email:"
                                  "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
                                  ":PROPERTIES:"
                                  ":CREATED: %U"
                                  ":END:"
                                  ""
-                                 "See %a by %:from")
+                                 "%i"
+                                 ""
+                                 "See %a by %:fromname")
                       :immediate-finish nil
                       :prepend t)
                      (,(format "%s\tOffice Task" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "o"
@@ -4306,7 +4372,7 @@ The function behaves as follows:
                                           t))))
 #+END_SRC
 
-** COMMENT [#B] Shell
+** Shell
 
 #+BEGIN_SRC emacs-lisp
 (use-package shell
@@ -5832,13 +5898,20 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (conda-env-initialize-interactive-shells)
             (conda-env-initialize-eshell)
             (conda-env-autoactivate-mode t)
+
             (setq conda-env-home-directory (expand-file-name "~/.conda/")
                   conda-message-on-environment-switch nil)
+
             (malb/defadvice! conda-no-more-nil (fn name)
               "Don't throw an error if there's no conda env"
               :around #'conda-env-name-to-dir
               (if name
-                  (apply fn (list name))))))
+                  (apply fn (list name))))
+
+            (malb/defadvice! conda-shut-up (fn params)
+              :around #'conda-env-activate-path
+              (cl-letf (((symbol-function 'message) (lambda (msg &rest args)) nil))
+                (apply fn (list params))))))
 #+end_src
 
 ** Sage
@@ -10347,6 +10420,33 @@ Generate new random URLs for some commonly used online services.
     url))
 #+end_src
 
+4 + 3
+
+#+begin_src emacs-lisp
+(defun malb/calc-eval-region (beg end)
+  "Calculate the region and display the result in the echo area.
+If i is pressed after, insert the result at the end of region. If r is pressed replace the text with the result"
+  (interactive
+   (if (use-region-p)
+       (list (region-beginning) (region-end))
+     (list (point-at-bol) (point-at-eol))))
+  (let* ((expr (buffer-substring-no-properties beg end))
+         (result (calc-eval expr))
+         (my-beg beg)
+         (my-end end) map)
+    (message "%s = %s" expr result)
+    (when (not (listp result))
+      (setq map (make-sparse-keymap))
+      (define-key map "i" (lambda () (interactive)
+                            (goto-char my-end)
+                            (insert " = " result)))
+      (define-key map "r" (lambda () (interactive)
+                            (kill-region my-beg my-end)
+                            (goto-char my-beg)
+                            (insert result)))
+      (set-transient-map map))))
+#+end_src
+
 ** Clickable URLs
 
 Make links in comments and string clickable
@@ -10947,7 +11047,7 @@ Easily change the text size:
 (malb/set-menu-key "a" #'aws-polly-region)
 (malb/set-menu-key "B" #'malb/helm-mu-contacts)
 (malb/set-menu-key "b" #'helm-bookmarks)
-(malb/set-menu-key "C" #'helm-calcul-expression)
+(malb/set-menu-key "C" #'malb/calc-eval-region)
 (malb/set-menu-key "c" #'mu4e-compose-new)
 (malb/set-menu-key "e" #'malb/toggle-eshell)
 (malb/set-menu-key "i" #'malb/helm-in-buffer)

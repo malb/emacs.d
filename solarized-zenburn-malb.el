@@ -24,6 +24,9 @@
      `(jupyter-repl-output-prompt ((t (:foreground ,red :weight bold))))
      `(jupyter-repl-traceback ((t (:background ,red-1bg))))
 
+     `(git-annex-dired-annexed-available ((t (:foreground ,green :weight bold))))
+     `(git-annex-dired-annexed-unavailable ((t (:foreground ,red :weight bold))))
+
      `(show-paren-match     ((,class (:foreground unspecified :background ,cyan-1bg :inherit (highlight) :extend t))))
      `(show-paren-mismatch  ((,class (:foreground ,base02 :background ,red :weight ,s-maybe-bold))))
 

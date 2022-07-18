@@ -123,6 +123,9 @@
      `(jupyter-repl-output-prompt ((t (:foreground ,red :weight bold))))
      `(jupyter-repl-traceback ((t (:background ,yellow-1bg))))
 
+     `(git-annex-dired-annexed-available ((t (:foreground ,green :weight bold))))
+     `(git-annex-dired-annexed-unavailable ((t (:foreground ,red :weight bold))))
+
      `(dired-subtree-depth-1-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(dired-subtree-depth-2-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(dired-subtree-depth-3-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
