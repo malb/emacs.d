@@ -2737,8 +2737,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                           ((org-ql-block-header "TODOs\n")))
             (org-ql-block '(and (tags "entertainment")
                                 (todo))
-                          ((org-ql-block-header "FUN STUFF\n")))
-            ))))
+                          ((org-ql-block-header "FUN STUFF\n")))))))
 
   (setq org-agenda-prefix-format '((agenda . " %i	%?-12t% s")
                                    (todo . " %i	")
