@@ -2727,7 +2727,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
   (setq org-agenda-custom-commands
         '(("n" "Agenda and all TODOs"
-           ((org-ql-block '(priority "A")
+           ((org-ql-block '(and (priority "A")
+                                (todo))
                           ((org-ql-block-header "PRIORITIES\n")))
             (agenda "" ((org-agenda-overriding-header "AGENDA\n")))
             (org-ql-block '(and (not (priority "A"))
