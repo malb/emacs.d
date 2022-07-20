@@ -8231,27 +8231,25 @@ Action to save e-mail to PDF.
 #+begin_src emacs-lisp
 ;;  from mu4e-view-old.el
 (defun malb/mu4e~write-body-to-html (msg)
-  "Write MSG's body (either html or text) to a temporary file;
+  "Write MSG's body to a temporary file;
 return the filename."
-  (let* ((html (mu4e-message-field msg :body-html))
-         (txt (mu4e-message-field msg :body-txt))
+  (let* (;; (html (mu4e-message-field msg :body-html))
+         (txt (mu4e-view-message-text msg))
          (tmpfile (mu4e-make-temp-file "html"))
          (attachments (cl-remove-if (lambda (part)
                                       (or (null (plist-get part :attachment))
                                           (null (plist-get part :cid))))
                                     (mu4e-message-field msg :parts))))
-    (unless (or html txt)
-      (mu4e-error "No body part for this message"))
     (with-temp-buffer
       (insert "<head><meta charset=\"UTF-8\"></head>\n")
-      (insert (concat "<p><strong>From</strong>: "
-                      (malb/mu4e~action-header-to-html msg :from) "</br>"))
-      (insert (concat "<strong>To</strong>: "
-                      (malb/mu4e~action-header-to-html msg :to) "</br>"))
-      (insert (concat "<strong>Date</strong>: "
-                      (format-time-string mu4e-date-format-long (mu4e-message-field msg :date)) "</br>"))
-      (insert (concat "<strong>Subject</strong>: " (mu4e-message-field msg :subject) "</p>"))
-      (insert (or html (concat "<pre>" txt "</pre>")))
+      ;; (insert (concat "<p><strong>From</strong>: "
+      ;;                 (malb/mu4e~action-header-to-html msg :from) "</br>"))
+      ;; (insert (concat "<strong>To</strong>: "
+      ;;                 (malb/mu4e~action-header-to-html msg :to) "</br>"))
+      ;; (insert (concat "<strong>Date</strong>: "
+      ;;                 (format-time-string mu4e-date-format-long (mu4e-message-field msg :date)) "</br>"))
+      ;; (insert (concat "<strong>Subject</strong>: " (mu4e-message-field msg :subject) "</p>"))
+      (insert (concat "<pre>" txt "</pre>"))
       (write-file tmpfile)
       ;; rewrite attachment urls
       (mapc (lambda (attachment)
