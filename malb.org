@@ -10592,6 +10592,21 @@ Using [[https://github.com/doublep/logview][logview]] mode.
   :mode (("\\.mailrc" . conf-mode)))
 #+end_src
 
+** HotCRP Reviews
+
+#+begin_src emacs-lisp
+(use-package hotcrp-mode
+  :ensure nil
+  :mode (("-reviews\\.txt" . hotcrp-mode))
+  :hook ((hotcrp-mode . visual-fill-column-mode)
+         (hotcrp-mode . flyspell-mode))
+  :config (progn
+            (defun malb/be-american ()
+              (ispell-change-dictionary "american"))
+            ;; Her Majesty's English de-anonymises me
+            (add-hook 'hotcrp-mode-hook #'malb/be-american)))
+#+end_src
+
 * Theme & Look
 ** Frame Title
 
