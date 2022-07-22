@@ -3800,7 +3800,7 @@ In [[file:%s::%s][%s]]:
                                  ""
                                  "#+name: mm-template"
                                  "#+begin_src markdown"
-                                 "Hi ${name},",
+                                 "Hi {{ name }},",
                                  ""
                                  ""
                                  "Cheers,"
@@ -8654,6 +8654,12 @@ Link to mu4e messages and threads.
 
 Given a table called =mm-data= and a source code block called =mm-template= this function composes e-mails by rendering the =mm-template= using the =mm-data=. Special fields: =TO=, =CC=, =BCC=. The subject is taking from the heading. Inspired by [[https://github.com/jkitchin/scimax/blob/68aaf5f0685a23c3ae60b16613c5bcd20e8a158b/scimax-email.el][scimax-email.el]].
 
+Uses [[https://github.com/clarete/templatel][templatel]] for … templates.
+
+#+begin_src emacs-lisp
+(use-package templatel)
+#+end_src
+
 *Example:*
 
 #+name: mm-data
@@ -8663,11 +8669,14 @@ Given a table called =mm-data= and a source code block called =mm-template= this
 | Alice <alice@example.com> |                               | Alice |  32 |
 | Bob <bob@example.com>     | Charley <charley@example.com> | Bob   |  42 |
 
+
 #+name: mm-template
 #+begin_src markdown
-Hi ${name},
+Hi {{ name }},
 
-Here's a number ${foo}, it's, like, secret.
+Here's a number {{ foo }}, it's, like, secret.
+
+{% if foo == "42" %}Whoah, it is 42.{% else %}It is, however, not 42.{% endif %}
 
 Best,
 Martin
@@ -8691,8 +8700,8 @@ Martin
             (context-set-p nil))
 
         (dolist (entry data)
-          (let  ((body (s-format template 'aget entry))
-                 (subject (s-format subject 'aget entry))
+          (let  ((body (templatel-render-string template entry))
+                 (subject (templatel-render-string subject entry))
                  (mu4e-compose-context-policy (if context-set-p
                                                   'ask-if-none
                                                 mu4e-compose-context-policy))
