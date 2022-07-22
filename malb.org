@@ -8243,63 +8243,36 @@ Action to save e-mail to PDF.
 (defun malb/mu4e~write-body-to-html (msg)
   "Write MSG's body to a temporary file;
 return the filename."
-  (let* (;; (html (mu4e-message-field msg :body-html))
-         (txt (mu4e-view-message-text msg))
-         (tmpfile (mu4e-make-temp-file "html"))
-         (attachments (cl-remove-if (lambda (part)
-                                      (or (null (plist-get part :attachment))
-                                          (null (plist-get part :cid))))
-                                    (mu4e-message-field msg :parts))))
+  (let* ((browse-url-browser-function (lambda (url &optional _rest)))
+         (tmpfile (mu4e-make-temp-file "html")))
+
     (with-temp-buffer
-      (insert "<head><meta charset=\"UTF-8\"></head>\n")
-      ;; (insert (concat "<p><strong>From</strong>: "
-      ;;                 (malb/mu4e~action-header-to-html msg :from) "</br>"))
-      ;; (insert (concat "<strong>To</strong>: "
-      ;;                 (malb/mu4e~action-header-to-html msg :to) "</br>"))
-      ;; (insert (concat "<strong>Date</strong>: "
-      ;;                 (format-time-string mu4e-date-format-long (mu4e-message-field msg :date)) "</br>"))
-      ;; (insert (concat "<strong>Subject</strong>: " (mu4e-message-field msg :subject) "</p>"))
-      (insert (concat "<pre>" txt "</pre>"))
-      (write-file tmpfile)
-      ;; rewrite attachment urls
-      (mapc (lambda (attachment)
-              (goto-char (point-min))
-              (while (re-search-forward (format "src=\"cid:%s\""
-                                                (plist-get attachment :cid)) nil t)
-                (if (plist-get attachment :temp)
-                    (replace-match (format "src=\"%s\""
-                                           (plist-get attachment :temp)))
-                  (replace-match (format "src=\"%s%s\"" temporary-file-directory
-                                         (plist-get attachment :name)))
-                  (let ((tmp-attachment-name
-                         (format "%s%s" temporary-file-directory
-                                 (plist-get attachment :name))))
-                    (mu4e~proc-extract 'save (mu4e-message-field msg :docid)
-                                       (plist-get attachment :index)
-                                       mu4e-decryption-policy tmp-attachment-name)
-                    (mu4e-remove-file-later tmp-attachment-name)))))
-            attachments)
-      (save-buffer)
-      tmpfile)))
-
-(defun malb/mu4e~action-header-to-html (msg field)
-  "Convert the FIELD of MSG to an HTML string."
-  (mapconcat
-   (lambda(c)
-     (let* ((name (when (car c)
-                    (replace-regexp-in-string "[[:cntrl:]]" "" (car c))))
-            (email (when (cdr c)
-                     (replace-regexp-in-string "[[:cntrl:]]" "" (cdr c))))
-            (addr (if mu4e-view-show-addresses
-                      (if name (format "%s <%s>" name email) email)
-                    (or name email))) ;; name may be nil
-            ;; Escape HTML entities
-            (addr (replace-regexp-in-string "&" "&amp;" addr))
-            (addr (replace-regexp-in-string "<" "&lt;" addr))
-            (addr (replace-regexp-in-string ">" "&gt;" addr)))
-       addr))
-   (mu4e-message-field msg field) ", "))
-
+      (insert-file-contents-literally
+       (mu4e-message-readable-path msg) nil nil nil t)
+      (run-hooks 'gnus-article-decode-hook)
+      (let ((header (cl-loop for field in '("from" "to" "cc" "date" "subject")
+			                 when (message-fetch-field field)
+			                 concat (format "<b>%s</b> : %s<br/>"
+                                            (capitalize field)
+                                            (htmlize-escape-or-link it))))
+            (gnus-visible-headers "Z")
+	        (parts (mm-dissect-buffer t t)))
+        (message "HEADER: %s" header)
+        ;; If singlepart, enforce a list.
+        (when (and (bufferp (car parts))
+		           (stringp (car (mm-handle-type parts))))
+	      (setq parts (list parts)))
+        (article-hide-headers)
+        (insert header)
+        (unless (gnus-article-browse-html-parts parts nil)
+          (progn ;; fall back to plain
+            (message "here")
+            (erase-buffer)
+            (insert "<head><meta charset=\"UTF-8\"></head>\n")
+            (insert (concat "<pre>" (mu4e-view-message-text msg) "</pre>"))))
+        (mm-destroy-parts parts)
+        (write-file tmpfile)
+        tmpfile))))
 
 (defun malb/mu4e-action-save-to-pdf (msg)
   (let* ((date (mu4e-message-field msg :date))
