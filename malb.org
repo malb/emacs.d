@@ -7584,23 +7584,27 @@ A table of canonical names for people who cannot seem to fix their headers …
 
 #+BEGIN_SRC emacs-lisp
 (defun malb/canonicalise-contact-name (email  &optional name nick)
-  ""
+  "Try to extract a firstname lastname pair from whatever is written in an email"
   (let* ((name (or name ""))
          (case-fold-search nil)
          ;; look up email address and use entry if found
-         (candidate (if nick (caddr (assoc (downcase email) malb/mu4e-name-replacements))
-                      (cadr (assoc (downcase email) malb/mu4e-name-replacements)))))
-    (if candidate
-        candidate
-      (progn
-        ;; deal with "'Foo Bar'"
-        (setq name (replace-regexp-in-string "'\\(.*?\\)'" "\\1" name))
-        ;; deal with YELL’d last names
-        (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name))
-        ;; Foo, Bar becomes Bar Foo
-        (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
-        ;; foo bar becomes Foo Bar
-        (setq name (capitalize name))))))
+         (candidate-in-db (if nick (caddr (assoc (downcase email) malb/mu4e-name-replacements))
+                            (cadr (assoc (downcase email) malb/mu4e-name-replacements)))))
+    (cond (candidate-in-db candidate-in-db) ;; we found something
+          ((s-ends-with-p "ethz.ch" email)  ;; ETH Zurich  like to do "Lastname Firstname"
+           (replace-regexp-in-string "^\\(.*\\) \\(.*\\)" "\\2 \\1" name))
+          ((and (s-blank-p name) (string-match-p "^\\(.*\\)\\.\\(.*\\)@.*" email)) ;; firstname.lanstname@corp.com
+           (upcase-initials (replace-regexp-in-string "^\\(.*\\)\\.\\(.*\\)@.*" "\\1 \\2" email)))
+          (t ;; if all else fails let's use some heuristics
+           (progn
+             ;; deal with "'Foo Bar'"
+             (setq name (replace-regexp-in-string "'\\(.*?\\)'" "\\1" name))
+             ;; deal with YELL’d last names
+             (setq name (replace-regexp-in-string "^\\(\\<[[:upper:]]+\\>\\) \\(.*\\)" "\\2 \\1" name))
+             ;; Foo, Bar becomes Bar Foo
+             (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
+             ;; foo bar becomes Foo Bar
+             (setq name (capitalize name)))))))
 #+END_SRC
 
 A function to add new replacements.
@@ -7632,6 +7636,7 @@ Canonicalise contacts as they appear from mu4e.
   (let ((heuristic-email-regex "\\([^ \\.]*+\\)\\.\\([^ \\.]*+\\)@\\(.*?\\)")
         (full-email-regex "\"?\\(.*?\\)\"? <\\(.*?\\)>"))
     (cond
+     ;; ignore a bunch
      ((string-match-p (rx  (or (seq "no" (zero-or-one "-") "reply")
                                (seq "replyto-" (one-or-more char) "@plus.google.com")
                                (seq "@" (one-or-more char) ".twitter.com")
@@ -7639,17 +7644,22 @@ Canonicalise contacts as they appear from mu4e.
                                (seq "bounce-" (one-or-more char) "@")))
                       contact)
       nil)
+     ;; ignore a bunch of invalid addresses
      ((seq-some (lambda (invalid-address)
                   (s-contains-p  (downcase invalid-address) (downcase contact)))
                 malb/invalid-email-addresses)
       nil)
+     ;; full "Name <e-mail>"
      ((string-match-p full-email-regex contact)
       (let* ((email (downcase (replace-regexp-in-string full-email-regex "\\2" contact)))
              (name  (replace-regexp-in-string full-email-regex "\\1" contact))
              (case-fold-search t))
-        (if (equal (downcase name) email)
-            email
-          (format "%s <%s>" (malb/canonicalise-contact-name email name) email))))
+        (format "%s <%s>"
+                (malb/canonicalise-contact-name email
+                                                (if (equal (downcase name) email)
+                                                    "" name))
+                email)))
+     ;; just "e@mail" (could potentially be removed since `malb/canonicalise-contact-name' handles it?
      ((string-match heuristic-email-regex contact)
       (progn
         (let* ((email (downcase contact))
