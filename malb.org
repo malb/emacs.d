@@ -8880,8 +8880,8 @@ need region."
                 (switch-to-buffer target-buffer)
                 (org-mode)
                 (erase-buffer)
-                (insert (format "#+TITLE: Notes for %s\n" source-buffer-name))
-                (insert (format "#+STARTUP: indent\n\n"))
+                (insert (format "#+title: Notes for %s\n" source-buffer-name))
+                (insert (format "#+startup: indent\n\n"))
                 (insert (format "source: [[%s][%s]]\n\n" source-file-name source-buffer))
                 (mapc
                  (lambda (annot) ;; traverse all annotations
@@ -8904,9 +8904,9 @@ need region."
 
                          (when highlighted-text
                            (insert (if compact (format ": “%s” " highlighted-text)
-                                     (concat "\n\n#+BEGIN_QUOTE\n"
+                                     (concat "\n\n#+begin_quote\n"
                                              highlighted-text
-                                             "\n#+END_QUOTE"))))
+                                             "\n#+end_quote"))))
                          (if (> (length note) 0)
                              (insert (if compact (format " %s\n" note)
                                        (format "\n\n%s\n\n" note)))
