@@ -1,4 +1,4 @@
-;;; helm-googler.el --- Emacs Helm Interface for quick Google searches (googler)
+;;; helm-ddgr.el --- Emacs Helm Interface for quick DuckDuckGo searches (ddgr)
 
 ;; Copyright (C) 2014-2018, Steckerhalter
 ;; Copyright (C) 2019 Martin Albrecht
@@ -24,7 +24,7 @@
 
 ;;; Commentary:
 
-;; Emacs Helm Interface for quick Google searches (using googler). Based on helm-google.
+;; Emacs Helm Interface for quick DuckDuckGo searches (using ddgr). Based on helm-google.
 
 ;;; Code:
 
@@ -33,44 +33,44 @@
 (require 'json)
 (require 'org)
 
-(defgroup helm-googler '()
-  "Customization group for `helm-googler'."
+(defgroup helm-ddgr '()
+  "Customization group for `helm-ddgr'."
   :group 'convenience
   :group 'comm)
 
-(defcustom helm-googler-actions
+(defcustom helm-ddgr-actions
   '(("Browse URL" . browse-url)
     ("Browse URL with EWW" . (lambda (candidate)
                                (eww-browse-url candidate)))
     ("Org Store Link" . (lambda (candidate)
                           (push (list candidate candidate) org-stored-links))))
-  "List of actions for helm-googler sources."
-  :group 'helm-googler
+  "List of actions for helm-ddgr sources."
+  :group 'helm-ddgr
   :type '(alist :key-type string :value-type function))
 
-(defcustom helm-googler-binary "googler"
-  "Googler binary."
+(defcustom helm-ddgr-binary "ddgr"
+  "Ddgr binary."
   :type 'string)
 
-(defcustom helm-googler-idle-delay 0.5
+(defcustom helm-ddgr-idle-delay 0.5
   "Time to wait when idle until query is made."
   :type 'integer
-  :group 'helm-googler)
+  :group 'helm-ddgr)
 
-(defvar helm-googler-input-history nil)
-(defvar helm-googler-pending-query nil)
+(defvar helm-ddgr-input-history nil)
+(defvar helm-ddgr-pending-query nil)
 
-(defun helm-googler--search (text)
+(defun helm-ddgr--search (text)
   "Fetch the response buffer for input TEXT and parse it as a plist."
   (with-temp-buffer
-    (call-process-shell-command (format "%s --json %s" helm-googler-binary
+    (call-process-shell-command (format "%s --json %s" helm-ddgr-binary
                                         (shell-quote-argument text)) nil t)
     (goto-char (point-min))
     (let ((json-object-type 'plist))
       (json-read))))
 
-(defun helm-googler-search ()
-  (let* ((results (helm-googler--search helm-pattern)))
+(defun helm-ddgr-search ()
+  (let* ((results (helm-ddgr--search helm-pattern)))
     (mapcar (lambda (result)
               (cons
                (concat
@@ -83,27 +83,27 @@
             results)))
 
 ;;;###autoload
-(defun helm-googler (&optional search-term)
+(defun helm-ddgr (&optional search-term)
   "Web search interface for Emacs."
   (interactive)
   (let ((input (or search-term (when (use-region-p)
                                  (buffer-substring-no-properties
                                   (region-beginning)
                                   (region-end))))))
-    (helm :sources `((name . "Googler")
-                     (action . helm-googler-actions)
-                     (candidates . helm-googler-search)
+    (helm :sources `((name . "Ddgr")
+                     (action . helm-ddgr-actions)
+                     (candidates . helm-ddgr-search)
                      (requires-pattern)
                      (nohighlight)
                      (multiline)
                      (match . identity)
                      (volatile))
-          :prompt "Google: "
+          :prompt "DuckDuckGo: "
           :input input
-          :input-idle-delay helm-googler-idle-delay
-          :buffer "*helm googler*"
-          :history 'helm-googler-input-history)))
+          :input-idle-delay helm-ddgr-idle-delay
+          :buffer "*helm ddgr*"
+          :history 'helm-ddgr-input-history)))
 
-(provide 'helm-googler)
+(provide 'helm-ddgr)
 
-;;; helm-googler.el ends here
+;;; helm-ddgr.el ends here

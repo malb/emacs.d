@@ -1648,13 +1648,13 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
 ** Helm & Google
 
-[[./local/helm-googler.el][helm-googler]] for doing [[https://github.com/jarun/googler][googler]] based Google searches.
+[[./local/helm-ddgr.el][helm-ddgr]] for doing [[https://github.com/jarun/ddgr][ddgr]] based DuckDuckGo searches.
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-googler
+(use-package helm-ddgr
   :ensure nil
   :after helm
-  :bind ("C-c h g" . helm-googler))
+  :bind ("C-c h g" . helm-ddgr))
 #+END_SRC
 
 ** Helm XRef
