@@ -6988,8 +6988,6 @@ Run =latexmk -pvc= in async shell
                  (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))))))
 #+END_SRC
 
-****** TODO use aux-dir & output-dir in combination with custom rc file to cp output to base dir
-
 *** Mathpix
 
 [[https://mathpix.com/][https://mathpix.com/]]
