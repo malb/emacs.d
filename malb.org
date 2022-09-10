@@ -2414,22 +2414,30 @@ This library provides easy project management and navigation. The concept of a p
                      (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-projects))
                                              project-name))
                      (tab-created nil))
-                (if (assoc project-name malb/projectile-switch-tab-projects)
-                    (if (member project-short-name (mapcar (lambda (tab)
-                                                             (cdr (assq 'name tab)))
-                                                           (tab-bar-tabs)))
-                        (tab-bar-switch-to-tab project-short-name)
-                      (progn
-                        (tab-new)
-                        (setq tab-created t)
-                        (tab-rename project-short-name)))
+
+                (cond
+                 ;; if tab exists
+                 ((member project-short-name (mapcar (lambda (tab) (cdr (assq 'name tab)))
+                                                     (tab-bar-tabs)))
+                  (tab-bar-switch-to-tab project-short-name))
+
+                 ;; in list and no tab exists
+                 ((assoc project-name malb/projectile-switch-tab-projects)
+                  (progn
+                    (tab-new)
+                    (setq tab-created t)
+                    (tab-rename project-short-name)))
+
+                 ;; this is a protected name
+                 ((or (assoc (malb/name-tab-by-project-or-default) malb/projectile-switch-tab-projects)
+                      (rassoc (malb/name-tab-by-project-or-default) malb/projectile-switch-tab-projects))
                   (tab-bar-select-tab 1))
+                 (t nil))
 
                 (apply old-function (push project-to-switch args))
 
                 (when tab-created
-                  (delete-other-windows))
-                ))
+                  (delete-other-windows))))
 
             (defun malb/close-remote-tabs (tab single)
               (let ((tab-name (alist-get 'name tab)))
