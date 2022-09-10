@@ -4509,7 +4509,13 @@ When `exit' from shell buffer."
             ;; -----------
 
             (defun malb/eshell-minor-modes ()
-              (smartparens-mode t))
+              (smartparens-mode t)
+              (let ((bracket-qualifiers '(sp-point-before-word-p
+                                          sp-point-before-same-p)))
+                (sp-with-modes '(eshell-mode)
+                  (sp-local-pair "\"" "\"" :unless bracket-qualifiers)
+                  (sp-local-pair  "(" ")"  :unless bracket-qualifiers)
+                  (sp-local-pair  "[" "]"  :unless bracket-qualifiers))))
 
             (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
 
