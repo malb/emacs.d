@@ -7217,6 +7217,31 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
 
             (require 'async)
 
+            (defvar malb/bibtex-completion-get-value-replacements  '((".*\\url{\\(.*?\\)" . "\\1")
+                                                                     ("{\\\\'e}" . "é")
+                                                                     ("~" . " ")))
+
+            (malb/defadvice! malb/bibtex-completion-get-value (old-function &rest args)
+              :around 'bibtex-completion-get-value
+              (let ((st (apply old-function args)))
+                (when st
+                  (dolist (rep malb/bibtex-completion-get-value-replacements)
+                    (setq st (replace-regexp-in-string (car rep) (cdr rep) st))))
+                st))
+
+            (malb/defadvice! malb/bibtex-completion-apa-format-reference (old-function key)
+              :around 'bibtex-completion-apa-format-reference
+              (let ((entry (bibtex-completion-get-entry key)))
+                (cond ((s-equals-p (downcase (bibtex-completion-get-value "=type=" entry)) "misc")
+                       (replace-regexp-in-string
+                        "\\([.?!]\\)\\." "\\1"
+                        (s-format
+                         "${author} (${year}). ${title}. ${howpublished}. ${note}"
+                         'bibtex-completion-apa-get-value entry)))
+                      (t
+                       (apply old-function (list key))))))
+
+
             (if (and (not malb/startup-quick) (daemonp))
                 (prog1
                     (async-start `(lambda ()
