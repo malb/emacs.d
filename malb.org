@@ -2630,7 +2630,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 *Note:* Ideally, we’d want to put all org-mode stuff into one big =:config= blog, but that makes it harder to read/explain.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
@@ -2641,7 +2641,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
   :mode ("\\.org$" . org-mode)
   :blackout (orgtbl-mode)
   :custom ((org-export-backends '(md odt latex icalendar html ascii))))
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package org-contrib)
@@ -3109,13 +3109,14 @@ Archive with some order in target file preserved. ([[https://gist.github.com/edg
   :ensure nil)
 #+END_SRC
 
-** Bullets
+** Pretty
 
 I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-superstar replacement.
 
 #+begin_src emacs-lisp
 (use-package org-modern
-  :custom ((org-modern-block nil "Don't stylise blocks")
+  :custom ((org-modern-block-fringe nil "Don't stylise blocks")
+           (org-modern-block-name nil "Don't stylise blocks")
            (org-modern-priority nil "Don't stylise priorities")
            (org-modern-tag nil "Don't stylise tags")
            (org-modern-timestamp nil "Don't stylisee timestamps")
@@ -3294,8 +3295,8 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\fi"
                                         "\\lstset{showstringspaces=false,"
                                           "aboveskip=0.75em,"
-                                          "basicstyle=\footnotesize\ttfamily,"
-                                          "keywordstyle=\bfseries\\color{gray!40!black},"
+                                          "basicstyle=\\footnotesize\ttfamily,"
+                                          "keywordstyle=\\bfseries\\color{gray!40!black},"
                                           "commentstyle=\\itshape\\color{gray!140!black},"
                                           "identifierstyle=\\color{gray!40!black},"
                                           "stringstyle=\\color{gray},"
@@ -3328,8 +3329,8 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\fi"
                                         "\\lstset{showstringspaces=false,"
                                           "aboveskip=0.75em,"
-                                          "basicstyle=\footnotesize\ttfamily,"
-                                          "keywordstyle=\bfseries\\color{gray!40!black},"
+                                          "basicstyle=\\footnotesize\ttfamily,"
+                                          "keywordstyle=\\bfseries\\color{gray!40!black},"
                                           "commentstyle=\\itshape\\color{gray!140!black},"
                                           "identifierstyle=\\color{gray!40!black},"
                                           "stringstyle=\\color{gray},"
@@ -6467,18 +6468,10 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 
 #+BEGIN_SRC emacs-lisp
 (use-package google-translate
-  :after google-translate-tk
   :bind ("C-c w t" . google-translate-smooth-translate)
   :init (progn
           (setq google-translate-translation-directions-alist
                 '(("de" . "en") ("en" . "de")))))
-
-;; https://github.com/atykhonov/google-translate/issues/137#issuecomment-723938431
-(use-package google-translate-tk
-  :ensure nil
-  :config (defun google-translate--search-tkk ()
-            "Search TKK."
-            (list 430675 2721866130)))
 #+END_SRC
 
 [[https://github.com/lorniu/go-translate][go-translate]]
@@ -7219,6 +7212,7 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
 
             (defvar malb/bibtex-completion-get-value-replacements  '((".*\\url{\\(.*?\\)" . "\\1")
                                                                      ("{\\\\'e}" . "é")
+                                                                     ("{\\\\`e}" . "è")
                                                                      ("~" . " ")))
 
             (malb/defadvice! malb/bibtex-completion-get-value (old-function &rest args)
@@ -9647,6 +9641,8 @@ exports.boxes = [ "INBOX"];
 
           (prodigy-define-service
             :name "imapnotify"
+            ;; :command "goimapnotify"
+            ;; :args (list "-conf" (expand-file-name ".config/imapnotify/gmail.conf" (getenv "HOME")))
             :command "imapnotify"
             :args (list "-c" (expand-file-name ".config/imapnotify.gmail.js" (getenv "HOME")))
             :tags '(email)
@@ -10719,8 +10715,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
                         (:eval (buffer-name imenu-list--displayed-buffer))
                         " "
                         (:eval
-                         (doom-modeline-segment--matches)))))
-            (add-hook 'mu4e-compose-mode-hook #'doom-modeline-set-minimal-modeline))
+                         (doom-modeline-segment--matches))))) )
   :custom (doom-modeline-project-detection 'projectile))
 #+END_SRC
 
