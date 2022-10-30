@@ -3115,8 +3115,7 @@ I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-
 
 #+begin_src emacs-lisp
 (use-package org-modern
-  :custom ((org-modern-block-fringe nil "Don't stylise blocks")
-           (org-modern-block-name nil "Don't stylise blocks")
+  :custom ((org-modern-block-name nil "Don't stylise blocks")
            (org-modern-priority nil "Don't stylise priorities")
            (org-modern-tag nil "Don't stylise tags")
            (org-modern-timestamp nil "Don't stylisee timestamps")
@@ -7211,7 +7210,9 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
             (require 'async)
 
             (defvar malb/bibtex-completion-get-value-replacements  '((".*\\url{\\(.*?\\)" . "\\1")
+                                                                     ("{\\\\'a}" . "á")
                                                                      ("{\\\\'e}" . "é")
+                                                                     ("{\\\\`a}" . "à")
                                                                      ("{\\\\`e}" . "è")
                                                                      ("~" . " ")))
 
@@ -7271,7 +7272,7 @@ We add an option to search for the paper’s title online.
                 (let* ((key (if (stringp key-or-entry)
                                 key-or-entry
                               (bibtex-completion-get-value "=key=" key-or-entry))))
-                  (helm-googler (replace-regexp-in-string
+                  (helm-ddgr (replace-regexp-in-string
                                  "{\\|}" ""
                                  (bibtex-completion-get-value
                                   "title"
@@ -9327,6 +9328,7 @@ Show dired histories you have visited.
   :ensure nil
   :config (progn
             (setq tramp-use-ssh-controlmaster-options nil
+                  remote-file-name-inhibit-locks t
                   tramp-verbose 1
                   vc-ignore-dir-regexp (format "%s\\|%s"
                                                vc-ignore-dir-regexp
@@ -10254,9 +10256,9 @@ Try the repeated popping up to 10 times. ARGS is passed through."
 
 Diminish =abbrev-mode=
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (blackout 'abbrev-mode)
-#+END_SRC
+#+end_src
 
 #+BEGIN_QUOTE
 
