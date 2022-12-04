@@ -2607,15 +2607,6 @@ functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... 
 (use-package git-auto-commit-mode)
 #+END_SRC
 
-** [#B] Gitignore
-
-Generate gitignore files
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-gitignore
-  :defer t)
-#+END_SRC
-
 ** Git Annex
 
 Dired additions for git-annex.
