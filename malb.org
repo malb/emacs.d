@@ -7470,7 +7470,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-headers-precise-alignment t
                  mu4e-compose-complete-only-after nil
                  mu4e-index-lazy-check nil
-                 mu4e-headers-auto-update nil))
+                 mu4e-headers-auto-update nil
+                 mu4e-org-link-query-in-headers-mode t))
 #+END_SRC
 
 #+begin_src emacs-lisp
@@ -10117,6 +10118,7 @@ Store URL as org link
                :protocol "org-store-link"
                :function malb/org-store-link-for-url))
 #+end_src
+
 * SSH Servers
 
 Create convenience functions to open a shell on my servers and “cd” into them in eshell.
