@@ -7851,10 +7851,10 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
 #+BEGIN_SRC emacs-lisp
 (defun malb/fullcontact ()
   (interactive)
-  (let* ((email (replace-regexp-in-string "<\\(.*?\\)>" "\\1" (thing-at-point 'email)))
+  (let* ((email (replace-regexp-in-string "<?\\(.*?\\)>?" "\\1" (thing-at-point 'email)))
          (path (expand-file-name "fullcontact.py" user-emacs-directory)))
     (if email
-        (let ((msg (shell-command-to-string (format "PYTHONIOENCODING=utf8 python %s -e %s" path email))))
+        (let ((msg (shell-command-to-string (format "PYTHONIOENCODING=utf8 python3 %s -e %s" path email))))
           (message "%s" msg)))))
 
 (bind-key "@" #'malb/fullcontact mu4e-view-mode-map)
