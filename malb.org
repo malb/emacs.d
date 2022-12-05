@@ -10031,25 +10031,17 @@ then enter the text in that file's own buffer.
 
 * Emacs from Elsewhere
 
-[[https://github.com/tecosaur/emacs-everywhere][Emacs Everywhere]]
-
-[[https://user-images.githubusercontent.com/20903656/107152385-814f2c00-69a2-11eb-978f-b3e78067b3f3.gif]]
+[[https://github.com/alpha22jp/atomic-chrome][atomic-chrome]]
 
 #+begin_src emacs-lisp
-(use-package emacs-everywhere
-  :after hide-mode-line-mode
+(use-package atomic-chrome
   :config (progn
-            (setq emacs-everywhere-frame-parameters  `((name . "emacs-everywhere")
-                                                       (minibuffer . nil)
-                                                       (internal-border-width . 16)
-                                                       (skip-taskbar . t)
-                                                       (unsplittable . t)
-                                                       (menu-bar-lines . nil)
-                                                       (width . 120)
-                                                       (height . 25)
-                                                       (alpha . 0.95)
-                                                       (buffer-predicate . (lambda (x) nil))))
-            (add-hook 'emacs-everywhere-mode-hook #'hide-mode-line-mode)))
+            (setq atomic-chrome-buffer-open-style 'frame
+                  atomic-chrome-default-major-mode 'markdown-mode
+                  atomic-chrome-buffer-frame-width 160
+                  atomic-chrome-buffer-frame-height 25)
+
+            (atomic-chrome-start-server)))
 #+end_src
 
 [[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
