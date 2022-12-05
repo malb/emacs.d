@@ -2254,13 +2254,17 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
   "Toggles between moving point to the first non-whitespace character, and
   the start of the line."
   (interactive)
-  (let ((start-position (point)))
-    ;; Move to the first non-whitespace character.
-    (back-to-indentation)
 
-    ;; If we haven't moved position, go to start of the line.
-    (when (= (point) start-position)
-      (move-beginning-of-line nil))))
+  (if (and (eq major-mode 'org-mode)
+           (org-at-heading-or-item-p))
+      (org-beginning-of-line)
+    (let ((start-position (point)))
+      ;; Move to the first non-whitespace character.
+      (back-to-indentation)
+
+      ;; If we haven't moved position, go to start of the line.
+      (when (= (point) start-position)
+        (move-beginning-of-line nil)))))
 
 (bind-key "C-a" #'malb/beginning-of-line-dwim)
 (bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
