@@ -7509,17 +7509,18 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 ** Folders
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-drafts-folder "/[Google Mail]/Drafts"
-      mu4e-sent-folder   "/[Google Mail]/Sent Mail"
-      mu4e-trash-folder  "/[Google Mail]/Bin")
+(setq mu4e-drafts-folder "/gmail/[Google Mail]/Drafts"
+      mu4e-sent-folder   "/gmail/[Google Mail]/Sent Mail"
+      mu4e-trash-folder  "/gmail/[Google Mail]/Bin")
 
 (setq mu4e-maildir-shortcuts
-      '((:maildir "/Inbox"                   :key ?i)
-        (:maildir "/[Google Mail]/Drafts"    :key ?d)
-        (:maildir "/[Google Mail]/Sent Mail" :key ?s)
-        (:maildir "/[Google Mail]/Spam"      :key ?j)
-        (:maildir "/[Google Mail]/Bin"       :key ?t)
-        (:maildir "/research/ches 2022"      :key ?c)))
+      '((:maildir "/gmail/INBOX"    :key ?G)
+        (:maildir "/gmail/sandbox"    :key ?S)
+        (:maildir "/kcl/INBOX"    :key ?K)
+        (:maildir "/gmail/[Google Mail]/Drafts"    :key ?d)
+        (:maildir "/gmail/[Google Mail]/Sent Mail" :key ?s)
+        (:maildir "/gmail/[Google Mail]/Spam"      :key ?j)
+        (:maildir "/gmail/[Google Mail]/Bin"       :key ?t)))
 #+END_SRC
 
 ** Search
@@ -7529,19 +7530,44 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-query-fragments
   :config (setq mu4e-query-fragments-list
-                `(("%hidden" . "flag:trashed OR maildir:\"/[Google Mail]/Spam\" OR maildir:\"/[Google Mail]/Bin\"")
+                `(("%hidden" . ,(s-join " OR "
+                                        '("flag:trashed"
+                                          "maildir:\"/gmail/[Google Mail]/Spam\""
+                                          "maildir:\"/gmail/[Google Mail]/Bin\""
+                                          "maildir:\"/kcl/Deleted Items\""
+                                          "maildir:\"/kcl/Junk Email\"")))
                   ("%unread" . "flag:unread AND NOT %hidden  ")
                   ("%today"  . "date:today..now AND NOT %hidden")
                   ("%week"   . "date:7d..now AND NOT %hidden")
                   ("%month"  . "date:31d..now AND NOT %hidden")
-                  ("%inbox"  . "(maildir:\"/royal holloway\" OR maildir:/INBOX) AND NOT %hidden")
-                  ("%sent"   . "(maildir:\"/[Google Mail]/Sent Mail\" OR maildir:\"/royal holloway/sent\")")
-                  ("%direct" . "%inbox AND NOT flag:list AND (to:martinralbrecht@* OR to:martin.albrecht@*)")
-                  ("%doc"    . ,(concat "mime:application/* AND NOT (mime:application/pgp* or mime:application/ics) AND size:5k..1024M "
+                  ("%inbox"  . ,(concat "(" (s-join " OR "
+                                                    '("maildir:/gmail/INBOX"
+                                                      "maildir:/gmail/sandbox"
+                                                      "maildir:/kcl/INBOX")
+                                                    )
+                                        ")"
                                         "AND NOT %hidden"))
-                  ("%bulk"   . "(flag:list OR from:trac@sagemath.org OR maildir:/bulk OR maildir:/research/.lists) AND NOT %hidden")
+                  ("%sent"   . ,(concat "(" (s-join " OR "
+                                                    '("maildir:\"/gmail/[Google Mail]/Sent Mail\""
+                                                      "maildir:\"/gmail/royal holloway/sent\""
+                                                      "maildir:\"/kcl/Sent Items\""
+                                                      "maildir:\"/gmail/sandbox/sent\""))
+                                        ")"))
+                  ("%direct" . "%inbox AND NOT flag:list AND (to:martinralbrecht@* OR to:martin.albrecht@*)")
+                  ("%doc"    . ,(concat "mime:application/* "
+                                        "AND NOT (mime:application/pgp* or mime:application/ics) "
+                                        "AND size:5k..1024M "
+                                        "AND NOT %hidden"))
+                  ("%bulk"   . ,(concat "(" "flag:list "
+                                        "OR from:trac@sagemath.org "
+                                        "OR maildir:/bulk "
+                                        "OR maildir:/research/.lists) "
+                                        "AND NOT %hidden"
+                                        ")"))
                   ("%fromme"  . ,(concat "("
-                                         (s-join " OR " (mapcar (lambda (arg) (format "from:%s" arg)) malb/user-mail-addresses))
+                                         (s-join " OR " (mapcar (lambda (arg)
+                                                                  (format "from:%s" arg))
+                                                                malb/user-mail-addresses))
                                          ")")))))
 #+END_SRC
 
@@ -7561,6 +7587,7 @@ Canned queries.
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-bookmarks nil)               ; clear out
 
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%inbox") :name "Inbox" :key ?i) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%unread") :name "Unread messages" :key ?u) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%unread AND %bulk") :name "Unread (bulk)" :key ?l) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%direct") :name "Direct" :key ?d) t)
@@ -7576,13 +7603,12 @@ Canned queries.
              t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%sent AND %week") :name "Last 7 days (sent)" :key ?s) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
-(add-to-list 'mu4e-bookmarks '(:query "maildir:\"/research/ches 2022\""  :name "CHES 2022" :key ?c) t)
 #+END_SRC
 
 ** Retrieving
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync googlemail-default"
+(setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync all"
       mu4e-update-interval nil)
 #+END_SRC
 
