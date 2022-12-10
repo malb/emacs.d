@@ -3126,7 +3126,6 @@ I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-
            (org-modern-checkbox nil "Don't stylise checkboxes")
            (org-modern-hide-stars nil "Don't hide leading stars using org-modern")
            (org-hide-leading-stars t "Hide leading stars using org")
-           (org-hide-leading-stars nil "Doesn't belong here but should agree with the above.")
            (org-modern-keyword nil "I want to see #+")
            (org-modern-list nil "Don't stylise lists")
            (org-modern-table nil "I can't see the cursor otherwise")
