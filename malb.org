@@ -4633,14 +4633,14 @@ When nth is set, it will copy the nth previous command."
 
 ([[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package em-smart
   :ensure nil
-  :custom ((eshell-where-to-jump 'begin)
+  :custom ((eshell-where-to-jump 'end)
            (eshell-review-quick-commands 'not-even-short-output)
            (eshell-smart-space-goes-to-end t))
   :config (add-hook 'eshell-mode-hook #'eshell-smart-initialize))
-#+END_SRC
+#+end_src
 
 *** Git Prompt
 
