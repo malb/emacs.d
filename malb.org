@@ -4497,6 +4497,19 @@ When `exit' from shell buffer."
             (defalias 'eshell/emacs 'find-file)
             (defalias 'eshell/less  'view-file)
 
+            (defun eshell/fd (pattern &optional path)
+              (let ((default-directory (file-name-as-directory (or path default-directory)))
+                    (helm-display-function #'helm-display-buffer-in-own-frame))
+                (helm :sources 'helm-source-findutils
+                      :buffer "*helm find*"
+                      :input pattern
+                      :ff-transformer-show-only-basename nil
+                      :case-fold-search helm-file-name-case-fold-search)))
+
+            (defun eshell/ag (pattern &optional path)
+              (let ((helm-display-function #'helm-display-buffer-in-own-frame))
+                (helm-do-ag (file-name-as-directory (or path default-directory)) nil pattern)))
+
             (defun eshell/clear ()
               "Clear the eshell buffer."
               (let ((inhibit-read-only t))
