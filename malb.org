@@ -4657,7 +4657,7 @@ Cat directly into a buffer (select with =C-c M-b=)
 cat mylog.log >> #<buffer *scratch*>
 #+END_SRC
 
-** Zsh History
+** ZSH History
 
 #+BEGIN_SRC emacs-lisp
 (defvar malb/helm-c-source-zsh-history
