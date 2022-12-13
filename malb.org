@@ -9686,7 +9686,7 @@ exports.tls = true;
 exports.tlsOptions = { servername: "imap.gmail.com" };
 exports.username = "martinralbrecht@gmail.com";
 exports.password = // whatever needs doing
-exports.onNewMail = "mbsync googlemail-minimal";
+exports.onNewMail = "mbsync googlemail-default";
 exports.onNewMailPost = "emacsclient  -e '(mu4e-update-index)'";
 exports.boxes = [ "INBOX"];
 #+END_SRC
