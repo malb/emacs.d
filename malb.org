@@ -4484,6 +4484,14 @@ When `exit' from shell buffer."
                      (message command)
                      (shell-command-to-string command)))))
 
+            (defun eshell/conda (command &rest args)
+              (pcase command
+                ("activate"   (progn (conda-env-activate (car args))))
+                ("deactivate" (progn (conda-env-deactivate)))
+                (_ (let ((command (s-join " " (append (list "conda" command) args))))
+                     (message command)
+                     (shell-command-to-string command)))))
+
             ;; mapped to 'x' in eshell
             (defun eshell/x ()
               (delete-window)
