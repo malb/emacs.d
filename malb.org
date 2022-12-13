@@ -4642,7 +4642,7 @@ When nth is set, it will copy the nth previous command."
                   eshell-plain-echo-behavior t)))
 #+END_SRC
 
-*** Plan 9 Smart Shell
+*** COMMENT Plan 9 Smart Shell
 
 ([[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][source]])
 
