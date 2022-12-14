@@ -3526,7 +3526,8 @@ iCal export is triggered after 600 seconds of inactivity.
   :ensure nil
   :init (progn
           (setq org-odt-styles-file
-                (expand-file-name "org-export-template.ott" user-emacs-directory))))
+                (expand-file-name "org-export-template.ott" user-emacs-directory)
+                org-odt-preferred-output-format "docx")))
 #+END_SRC
 
 Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/6baa1e42ad4d7353e125][source]])
