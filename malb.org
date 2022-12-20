@@ -1987,6 +1987,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
             (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
             (add-to-list 'sp-ignore-modes-list 'markdown-mode)
+            (add-to-list 'sp-ignore-modes-list 'hotcrp-mode)
             (add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)
             (add-to-list 'sp-ignore-modes-list 'sage-shell-mode)
             (add-to-list 'sp-ignore-modes-list 'jupyter-repl-mode)))
@@ -10808,6 +10809,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
   :ensure nil
   :mode (("-reviews\\.txt" . hotcrp-mode))
   :hook ((hotcrp-mode . visual-fill-column-mode)
+         (hotcrp-mode . adaptive-wrap-prefix-mode)
          (hotcrp-mode . flyspell-mode))
   :config (progn
             (defun malb/be-american ()
