@@ -2428,8 +2428,10 @@ This library provides easy project management and navigation. The concept of a p
                     (funcall malb/projectile-repl)
                   (malb/toggle-eshell))))
 
-            (if (not (boundp 'malb/projectile-switch-tab-projects))
-                (defvar malb/projectile-switch-tab-projects nil))
+            (when (not (boundp 'malb/projectile-switch-tab-project-names))
+              (defvar malb/projectile-switch-tab-project-names nil))
+            (when (not (boundp 'malb/projectile-switch-tab-project-deny-list))
+              (defvar malb/projectile-switch-tab-project-deny-list nil))
 
             (malb/defadvice! malb/projectile-switch-tab (old-function project-to-switch &rest args)
               "Switch to new tab if project is in `malb/projectile-switch-tab-projects'."
@@ -2437,7 +2439,7 @@ This library provides easy project management and navigation. The concept of a p
               :around 'helm-projectile-vc
               :around 'helm-projectile-switch-to-shell
               (let* ((project-name (projectile-project-name project-to-switch))
-                     (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-projects))
+                     (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-project-names))
                                              project-name))
                      (tab-created nil))
 
@@ -2447,16 +2449,15 @@ This library provides easy project management and navigation. The concept of a p
                                                      (tab-bar-tabs)))
                   (tab-bar-switch-to-tab project-short-name))
 
-                 ;; in list and no tab exists
-                 ((assoc project-name malb/projectile-switch-tab-projects)
+                 ;; not in deny list and no tab exists
+                 ((not (assoc project-name malb/projectile-switch-tab-project-deny-list))
                   (progn
                     (tab-new)
                     (setq tab-created t)
                     (tab-rename project-short-name)))
 
-                 ;; this is a protected name
-                 ((or (assoc (malb/name-tab-by-project-or-default) malb/projectile-switch-tab-projects)
-                      (rassoc (malb/name-tab-by-project-or-default) malb/projectile-switch-tab-projects))
+                 ;; this is in the deny list
+                 ((assoc project-name malb/projectile-switch-tab-project-deny-list)
                   (tab-bar-select-tab 1))
                  (t nil))
 
@@ -2482,11 +2483,7 @@ This library provides easy project management and navigation. The concept of a p
             (malb/defadvice! malb/projectile-kill-tab ()
               "Kill tab too if it's not the first."
               :after 'projectile-kill-buffers
-              (when (and (> (tab-bar--current-tab-index) 0)
-                         (or (assoc (alist-get 'name (tab-bar--current-tab))
-                                    malb/projectile-switch-tab-projects)
-                             (rassoc (alist-get 'name (tab-bar--current-tab))
-                                     malb/projectile-switch-tab-projects)))
+              (when (> (tab-bar--current-tab-index) 0)
                 (tab-bar-close-tab nil 1)))
 
             (setq projectile-make-test-cmd "make check"
