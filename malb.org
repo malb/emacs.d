@@ -3890,10 +3890,7 @@ In [[file:%s::%s][%s]]:
          :file (lambda () (expand-file-name "journal.org"
                                             malb/org-files-dir))
          :datetree t
-         :template ("* work"
-                    "%?"
-                    "* critique"
-                    ""))
+         :template ,malb/journal-template)
         (,(format "%s\tMeeting" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "m"
          :file malb/inbox-org
          ;; :headline "Meetings"
