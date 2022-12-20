@@ -1324,7 +1324,7 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
 
 Use helm for switching buffers, opening files, calling interactive functions.
 
-The default ~C-x c~ is quite close to =C-x C-c=, which quits Emacs. Changed to =C-c h=. We must set =C-c h= globally, because we cannot change =helm-command-prefix-key= once =helm-config= is loaded. ([[https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el][source]])
+The default ~C-x c~ is quite close to =C-x C-c=, which quits Emacs. Changed to =C-c h=. We must set =C-c h= globally, because we cannot change =helm-command-prefix-key= once =helm-autoloads= is loaded. ([[https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el][source]])
 
 We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC= et al.).
 
