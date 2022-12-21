@@ -7,9 +7,9 @@
 
 * Header
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;;; init.el --- personal emacs config file -*- lexical-binding: t ; eval: (read-only-mode 1)-*-
-#+END_SRC
+#+end_src
 
 * Assumptions & Init
 
@@ -35,17 +35,17 @@ We assume that the following variables are defined:
 
 We collect our own customisations in the =malb= group.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defgroup malb nil
   "malb's personal config"
   :group 'convenience)
-#+END_SRC
+#+end_src
 
 * TLS
 
 Enable TLS cert checking ([[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (let ((trustfile (replace-regexp-in-string
                   "\\\\" "/" (replace-regexp-in-string
                               "\n" "" (shell-command-to-string "python -m certifi")))))
@@ -70,13 +70,13 @@ Enable TLS cert checking ([[https://glyph.twistedmatrix.com/2015/11/editor-malwa
 ;;                      bad-hosts))
 ;;     (url-retrieve "https://badssl.com"
 ;;                   (lambda (retrieved) t))))
-#+END_SRC
+#+end_src
 
 * Utilities
 
 Check if any regexp matches string, because OR is hard …
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/regexp-match-p (regexps string)
   (and string
        (catch 'matched
@@ -84,7 +84,7 @@ Check if any regexp matches string, because OR is hard …
            (dolist (regexp regexps)
              (when (string-match regexp string)
                (throw 'matched t)))))))
-#+END_SRC
+#+end_src
 
 This is really nice. ([[https://github.com/hlissner/doom-emacs/blob/2d2246d7ca5ec084f4bee9a5de14256eb6828837/core/core-lib.el#L584][source]])
 
@@ -119,7 +119,7 @@ DOCSTRING and BODY are as in `defun'.
 
 Configure package repositories.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/"))
@@ -129,18 +129,18 @@ Configure package repositories.
                                    ("melpa-stable" . 25)
                                    ("org" . 20))
       package-menu-hide-low-priority nil)
-#+END_SRC
+#+end_src
 
 Get the package manager going.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (if (< emacs-major-version 27)
     (package-initialize))
-#+END_SRC
+#+end_src
 
 Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our configuration readable.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package)
@@ -152,7 +152,7 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 (setq use-package-compute-statistics t
       use-package-verbose t
       use-package-always-ensure t)
-#+END_SRC
+#+end_src
 
 [[https://github.com/Bruce-Connor/paradox/][Paradox]] is a better package list
 
@@ -165,34 +165,34 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
   - =f c= clear filter
 - Hit =h= to see all keys
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package paradox
   :commands (paradox-upgrade-packages paradox-list-packages)
   :config (setq paradox-execute-asynchronously t
                 paradox-github-token malb/paradox-github-token
                 paradox-automatically-star t))
-#+END_SRC
+#+end_src
 
 [[https://github.com/quelpa/quelpa][Quelpa]] to install packages directly from source.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package quelpa)
 (use-package quelpa-use-package)
-#+END_SRC
+#+end_src
 
 * Memory
 
 We have RAM, lots of it.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq global-mark-ring-max 256
       mark-ring-max 256
       kill-ring-max 256)
-#+END_SRC
+#+end_src
 
 We set =(setq gc-cons-threshold most-positive-fixnum)= in =early-init.el=, after init files are loaded we enable the [[https://github.com/emacsmirror/gcmh][garbage collector magic hack]] with something more sensible.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package gcmh
   :demand t
   :config (progn
@@ -202,50 +202,50 @@ We set =(setq gc-cons-threshold most-positive-fixnum)= in =early-init.el=, after
               (setq gc-cons-threshold (* 256 1024 1024))
               (gcmh-mode 1))
             (add-hook 'emacs-startup-hook #'malb/enable-gcmh)))
-#+END_SRC
+#+end_src
 
 * Clean Mode Line
 
 Use [[https://github.com/raxod502/blackout][blackout]] to remove mentions of minor modes from the mode-line as we’re using a quite few of them and don’t want to waste the real estate. Most diminishing is done by the ~:blackout~ parameter to =use-package=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package blackout)
-#+END_SRC
+#+end_src
 
 * Paths
 
 [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package exec-path-from-shell
   :config (progn (exec-path-from-shell-initialize)
                  (exec-path-from-shell-copy-env "GOPATH")))
-#+END_SRC
+#+end_src
 
 * Keyboard Shortcuts
 
 We use ~Super~ (in our case: ~CapsLock~) as a menu of sorts:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (define-prefix-command 'f2-global-map)
 (bind-key "<f2>" #'f2-global-map)
 
 (defun malb/set-menu-key (char func)
   (bind-key (concat "s-" char) func)
   (bind-key char func f2-global-map))
-#+END_SRC
+#+end_src
 
 ** Key Chords
 
 Key chords allow to execute actions by pressing one or two keys really fast. Sometimes we might want to use those. However, mostly, we don’t as the slight delay they introduce (to check if a key chord should be executed or the text inserted) is annoying.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package key-chord
   :config (progn
             (setq key-chord-one-key-delay 0.2
                   key-chord-two-keys-delay 0.1)
             (key-chord-mode 1)))
-#+END_SRC
+#+end_src
 
 *Note:* =key-chord= can slow down typing but it works e.g. in =vterm= buffers which is quite handy.
 
@@ -260,7 +260,7 @@ Ilist, dired-sidebar, reftex-toc etc.
 
 When splitting windows open the previous buffer in it.
 
-#+BEGIN_SRC  emacs-lisp
+#+begin_src  emacs-lisp
 (defun malb/vsplit-last-buffer ()
   "Split the window vertically and display the previous buffer."
   (interactive)
@@ -277,7 +277,7 @@ When splitting windows open the previous buffer in it.
 
 (bind-key "C-x 2" 'malb/vsplit-last-buffer)
 (bind-key "C-x 3" 'malb/hsplit-last-buffer)
-#+END_SRC
+#+end_src
 
 Treat/tag some side windows/bars as special.
 
@@ -292,7 +292,7 @@ Treat/tag some side windows/bars as special.
 
 Don’t split horizontally.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq split-width-threshold 70
       split-height-threshold nil)
 
@@ -323,25 +323,25 @@ Don’t split horizontally.
                    (split-window-below))))))))
 
 (setq split-window-preferred-function #'malb/split-window-sensibly)
-#+END_SRC
+#+end_src
 
 Resize windows to accommodate new ones.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq window-combination-resize t)
-#+END_SRC
+#+end_src
 
 ** Restoring Configurations
 
 [[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows to “undo” (and “redo”) changes in the window configuration.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (winner-mode 1)
-#+END_SRC
+#+end_src
 
 [[https://github.com/louiskottmann/zygospore.el][zygospore]] lets you revert =C-x 1= =(delete-other-window)= by pressing =C-x 1= again.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package zygospore
   :bind (("C-x 1" . malb/zygospore-toggle-delete-other-windows))
   :config (progn
@@ -362,7 +362,7 @@ it will restore the window configuration to prior to full-framing."
                        (equal (current-buffer) zygospore-last-full-frame-buffer))
                   (zygospore-restore-other-windows)
                 (zygospore-delete-other-window)))))
-#+END_SRC
+#+end_src
 
 ** Tabs
 
@@ -427,7 +427,7 @@ The default tab-bar name uses the buffer name."
 
 [[http://oremacs.com/download/ace-window.gif]] ([[http://oremacs.com/download/ace-window.gif][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ace-window
   :commands ace-window
   :bind (("M-o" . ace-window)
@@ -455,26 +455,26 @@ The default tab-bar name uses the buffer name."
               (let ((aw-dispatch-when-more-than 3)
                     (aw-scope 'frame))
                 (ace-window arg)))))
-#+END_SRC
+#+end_src
 
 *** Back and Forth
 
 Quickly jump back and forth between buffers ([[http://www.emacswiki.org/emacs/SwitchingBuffers#toc4][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/switch-to-previous-buffer ()
   "Switch to previously open buffer.
 
 Repeated invocations toggle between the two most recently open buffers."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
-#+END_SRC
+#+end_src
 
 *** Window Numbering
 
 Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package winum
   :init (setq winum-keymap
               (let ((map (make-sparse-keymap)))
@@ -511,13 +511,13 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
                   winum-ignored-buffers             '(" *which-key*"))
 
             (winum-mode)))
-#+END_SRC
+#+end_src
 
 ** Special Windows
 
 Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 height.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/popup-windows '("\\`\\*compilation\\*\\'"
                              "\\`\\*helm flycheck\\*\\'"
                              "\\`\\*Flycheck errors\\*\\'"
@@ -548,9 +548,9 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\`\\*jupyter-traceback\\*\\'"
                              "\\`\\*jupyter-repl\\[.*\\]\\*\\'"
                              "\\`\\*tzc-times\\*\\'"))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ; (setq display-buffer-alist nil)
 (dolist (name malb/popup-windows)
   (add-to-list 'display-buffer-alist
@@ -564,13 +564,13 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                   (no-other-window . t)
                   (no-delete-other-windows . t))
                  (window-height   . 0.3))) t)
-#+END_SRC
+#+end_src
 
 ** Closing/Promoting Pop-up-style Windows
 
 In case we just want to kill the bottom window, set a shortcut do to this.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/quit-bottom-disposable-windows ()
   "Quit disposable windows of the current frame."
   (interactive)
@@ -599,13 +599,13 @@ In case we just want to kill the bottom window, set a shortcut do to this.
 
 (key-chord-define-global "qq" #'malb/quit-bottom-disposable-windows)
 (key-chord-define-global "qw" #'malb/promote-disposable-window-or-to-frame)
-#+END_SRC
+#+end_src
 
 ** Compilation Window
 
 If there was no error the window closes automatically.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/compilation-exit-autoclose (status code msg)
   ;; If M-x compile exists with a 0
   (when (and (eq status 'exit) (zerop code))
@@ -620,13 +620,13 @@ If there was no error the window closes automatically.
   (cons msg code))
 
 (setq compilation-exit-message-function #'malb/compilation-exit-autoclose)
-#+END_SRC
+#+end_src
 
 If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the compilation buffer scrolls automatically to follow the output. If the value is ~first-error~, scrolling stops when the first error appears, leaving point at that error. For any other non-nil value, scrolling continues until there is no more output.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq compilation-scroll-output 'first-error)
-#+END_SRC
+#+end_src
 
 ** Dispatch Buffers to Frames
 
@@ -634,10 +634,10 @@ Separate mu4e windows from others ([[https://stackoverflow.com/questions/1834678
 
 Mu4e buffers start with =*mu4e-=:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/mu4e-buffer-regexps '("\\`\\*mu4e-.*\\*")
   "Buffer names of mu4e buffers.")
-#+END_SRC
+#+end_src
 
 
 #+begin_src emacs-lisp
@@ -665,14 +665,14 @@ Mu4e buffers start with =*mu4e-=:
 
 But we allow helm buffers in the mu4e frame, e.g. to pick attachments.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/mu4e-buffer-allowed-regexps (append malb/popup-windows '("\\`\\*helm.*\\*\\'"))
   "Buffer names allowed in mu4e frame.")
-#+END_SRC
+#+end_src
 
 Get frame by name or return passed frame.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/get-frame (frame)
   "Return a frame, if any, named FRAME (a frame or a string).
 If none, return nil.
@@ -692,11 +692,11 @@ If FRAME is a frame, it is returned."
              nil))
           (t
            (error "Arg neither a string nor a frame: `%s'" frame)))))
-#+END_SRC
+#+end_src
 
 Find a frame which isn’t the =mu4e= frame or create a fresh one.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/switch-to-mu4e ()
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
@@ -706,11 +706,11 @@ Find a frame which isn’t the =mu4e= frame or create a fresh one.
     (if other-frame
         (select-frame-set-input-focus other-frame)
       (malb/mail))))
-#+END_SRC
+#+end_src
 
 Find a frame not named =mu4e= if there is any, make one otherwise.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/switch-away-from-mu4e ()
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
@@ -720,11 +720,11 @@ Find a frame not named =mu4e= if there is any, make one otherwise.
     (if other-frame
         (select-frame-set-input-focus other-frame)
       (select-frame-set-input-focus  (make-frame)))))
-#+END_SRC
+#+end_src
 
 Main dispatch function:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/frame-dispatch (buffer alist)
   "Assigning buffers to frames."
   ;; (message (format "dispatching %s" (buffer-name buffer)))
@@ -752,11 +752,11 @@ Main dispatch function:
    ;; just hand back control to diplay-buffer-alist
    (t nil))
   nil)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'display-buffer-alist '(".*" (malb/frame-dispatch)) t)
-#+END_SRC
+#+end_src
 
 ([[https://emacs.stackexchange.com/questions/64279/pop-to-buffer-in-other-frame-if-file-is-already-visited/69270#69270][source]])
 
@@ -766,18 +766,18 @@ Main dispatch function:
 
 Run =old-function= with an empty =display-buffer-alist=
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/clean-display-buffer-alist-advice (old-function &rest arguments)
   "Call old-function with an empty display-buffers-alist"
   (let ((display-buffer-alist nil))
     (apply old-function arguments)))
-#+END_SRC
+#+end_src
 
 ** Dedicated Mode
 
 ([[https://github.com/jwiegley/dot-emacs/blob/master/site-lisp/dedicated.el][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar dedicated-mode nil
   "Mode variable for dedicated minor mode.")
 
@@ -792,11 +792,11 @@ Run =old-function= with an empty =display-buffer-alist=
       (setq minor-mode-alist
 	    (cons '(dedicated-mode " D")
 		  minor-mode-alist))))
-#+END_SRC
+#+end_src
 
 ** Window Management Hydra
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defhydra malb/hydra-window ()
   "
 ^Misc^        ^Split^         ^Buffer^         ^Resize^         ^Tabs     ^^     ^Center^   ^Jumping^   ^Other^
@@ -859,7 +859,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("C-`" other-window :color blue))
 
 (key-chord-define-global "\\x" #'malb/hydra-window/body)
-#+END_SRC
+#+end_src
 
 ** Next/Previous Buffer
 
@@ -878,14 +878,14 @@ _SPC_ cancel  _D_lt other     _s_wap
 
 See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mode~ which inspired [[https://github.com/abo-abo/avy][avy]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package avy
   :bind (("C-c C-<SPC>" . avy-goto-char-timer)
          ("C-c j j" . avy-goto-char-timer)
          ("M-g g" . avy-goto-line))
   :config (progn
             (setq avy-background t)))
-#+END_SRC
+#+end_src
 
 ** Links
 
@@ -893,21 +893,21 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or =org-mode= or =eww-mode= or =compilation-mode= buffer, you can tab through the links to select the one you want. This is an O(N) operation, where the N is the amount of links. This package turns this into an O(1) operation, or at least O(log(N)) if you manage to squeeze thousands of links in one screen. It does so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/ace-link][source]])
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ace-link
   :config (ace-link-setup-default))
-#+END_SRC
+#+end_src
 
 ** Edit Points
 
 Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit points ([[http://pragmaticemacs.com/emacs/move-through-edit-points/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package goto-chg
   :config (setq glc-default-span 32)
   :bind (("C-c j ," . goto-last-change)
          ("C-c j ." . goto-last-change-reverse)))
-#+END_SRC
+#+end_src
 
 *Tip* =C-u 0 C-c j ,= description of the change at a particular stop on your tour
 
@@ -915,12 +915,12 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 
 ([[http://pragmaticemacs.com/emacs/use-visible-bookmarks-to-quickly-jump-around-a-file/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package bm
   :bind (("C-c j b ." . bm-next)
          ("C-c j b ," . bm-previous)
          ("C-c j b SPC" . bm-toggle)))
-#+END_SRC
+#+end_src
 
 * Snippets
 ** YaSnippet
@@ -935,7 +935,7 @@ You can call ~yas-decribe-tables~ to see currently defined snippets, I usually j
 
 We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/yasnippet/issues/669][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package yasnippet
   :blackout yas-minor-mode
   :config (progn
@@ -947,13 +947,13 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
                 (yas-minor-mode -1)))
 
             (add-hook 'yas-minor-mode-hook #'malb/disable-yas-if-no-snippets)))
-#+END_SRC
+#+end_src
 
 The official yasnippet snippet collection
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package yasnippet-snippets)
-#+END_SRC
+#+end_src
 
 *** Auto YASnippet
 
@@ -961,17 +961,17 @@ The official yasnippet snippet collection
 [[https://github.com/abo-abo/auto-yasnippet][auto-yasnippet]] is a hybrid of keyboard macros and yasnippet. You create the snippet on the go, usually to be used just in the one place. It's fast, because you're not leaving the current buffer, and all you do is enter the code you'd enter anyway, just placing ~ where you'd like yasnippet fields and mirrors to be.
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package auto-yasnippet
   :bind (("C-c y c" . aya-create)
          ("C-c y e" . aya-expand)))
-#+END_SRC
+#+end_src
 
 *** Auto Insert
 
 We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/blob/master/core/core-autoinsert.el][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/auto-insert-snippet (key &optional mode)
   "Auto insert a snippet of yasnippet into new file."
   (interactive)
@@ -985,22 +985,22 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
                    (if template (yas--template-content template) nil))))
     (when (and is-yasnippet-on snippet)
       (yas-expand-snippet snippet))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package autoinsert
   :after yasnippet
   :config (progn
             (setq auto-insert-query nil ; Don't prompt before insertion
                   auto-insert-alist '()) ; Tabula rasa
             (auto-insert-mode 1)))
-#+END_SRC
+#+end_src
 
 *** Helm YaSnippet
 
 [[https://github.com/emacs-jp/helm-c-yasnippet][helm-c-yasnippet]] for selecting snippets with helm. However, long-form snippets are mostly handled by [[https://github.com/Kungsgeten/yankpad][yankpad]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-c-yasnippet
   :after (helm yasnippet)
   :commands (helm-yas-complete)
@@ -1008,7 +1008,7 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
               ("C-c h y" .  helm-yas-complete))
   :config (progn
             (setq helm-yas-space-match-any-greedy t)))
-#+END_SRC
+#+end_src
 
 ** Yankpad
 
@@ -1016,7 +1016,7 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
 Let’s say that you have text snippets that you want to paste, but that yasnippet or skeleton is a bit too much when you do not need a shortcut/abbrev for your snippet. You like org-mode, so why not write your snippets there? Introducing the yankpad: — ([[https://github.com/Kungsgeten/yankpad/blob/master/README.org][source]])
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package yankpad
   :after (helm yasnippet projectile)
   :init (setq yankpad-file (expand-file-name "yankpad.org" malb/org-files-dir))
@@ -1038,7 +1038,7 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
               (if (member major-mode malb/disable-yankpad-major-modes)
                   nil
                 (apply old-function args)))))
-#+END_SRC
+#+end_src
 
 * Auto Completion (Company)
 
@@ -1046,7 +1046,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
 [[https://company-mode.github.io/images/company-elisp.png]] ([[https://company-mode.github.io/images/company-elisp.png][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package company
   :bind (("M-/" . company-complete))
   :demand t
@@ -1074,29 +1074,29 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
             (bind-key "<tab>" #'company-complete company-active-map)
             (bind-key "M-?"   #'company-show-doc-buffer company-active-map)
             (bind-key "M-."   #'company-show-location company-active-map)))
-#+END_SRC
+#+end_src
 
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package company-quickhelp
   :config (company-quickhelp-mode 1))
-#+END_SRC
+#+end_src
 
 ** Python
 
 For Python use [[https://github.com/proofit404/company-anaconda][company-anaconda]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package company-anaconda
   :config (add-to-list 'company-backends #'company-anaconda))
-#+END_SRC
+#+end_src
 
 ** LaTeX
 
 For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We also allow unicode symbols via [[https://github.com/vspinu/company-math][company-math]], hence we manage what to add when carefully below.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package company-math
   :config (progn
             ;; mu4e might disable it for address completion
@@ -1124,14 +1124,14 @@ For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We
                          '(company-math-symbols-latex
                            company-auctex-macros
                            company-auctex-environments))))
-#+END_SRC
+#+end_src
 
 [[https://github.com/TheBB/company-reftex][company-refex]] is used for \LaTeX labels.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package company-reftex
    :config (add-to-list 'company-backends #'company-reftex-labels))
-#+END_SRC
+#+end_src
 
 BibTeX is handled by Helm BibTeX below.
 
@@ -1139,11 +1139,11 @@ BibTeX is handled by Helm BibTeX below.
 
 Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =pcomplete= which is then used by =company-capf=
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package fish-completion
   :config (progn
             (global-fish-completion-mode)))
-#+END_SRC
+#+end_src
 
 ** Company and YaSnippet Integration
 
@@ -1151,7 +1151,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 
 *Note:* Do this at the very end.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/company-mode/enable-yas t
   "Enable yasnippet for all backends.")
 
@@ -1168,7 +1168,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
         (mapcar #'malb/company-mode/backend-with-yas company-backends)))
 
 (add-hook 'emacs-startup-hook #'malb/activate-yasnippet-completion)
-#+END_SRC
+#+end_src
 
 * Tab DWIM
 
@@ -1183,7 +1183,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 
 ([[http://emacs.stackexchange.com/q/21182/8930][source]], [[http://emacs.stackexchange.com/q/7908/8930][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package outline-magic
   :config (unbind-key "<tab>" outline-mode-map))
 
@@ -1249,11 +1249,11 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
         (call-interactively fn))))))
 
 (bind-key "<tab>" #'malb/indent-fold-or-complete)
-#+END_SRC
+#+end_src
 
 Sometimes, you just want to fold.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/toggle-fold ()
   (interactive)
   (cond ((eq major-mode 'org-mode)
@@ -1268,7 +1268,7 @@ Sometimes, you just want to fold.
            (outline-cycle)))))
 
 (bind-key "C-<tab>" #'malb/toggle-fold)
-#+END_SRC
+#+end_src
 
 * Helm
 
@@ -1284,7 +1284,7 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
 
 *Tip:* Use =@foo= to search for content =foo= in buffers when in =helm-omni=. Use =*lisp= to search for buffers in ~lisp-mode~. Use =*!list= to search for buffers not in ~lisp-mode~.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/helm-omni (&rest arg)
   ;; just in case someone decides to pass an argument, helm-omni won't fail.
   (interactive)
@@ -1320,7 +1320,7 @@ Don’t use the vanilla =helm-buffers= command for =C-x C-b= but combine many so
       )
 
      "*Helm all the things*")))
-#+END_SRC
+#+end_src
 
 Use helm for switching buffers, opening files, calling interactive functions.
 
@@ -1328,7 +1328,7 @@ The default ~C-x c~ is quite close to =C-x C-c=, which quits Emacs. Changed to =
 
 We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC= et al.).
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm
   :blackout helm-mode
   :bind (("M-x"       . helm-M-x)
@@ -1414,11 +1414,11 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                            (lambda () (cons current-frame
                                             (remove current-frame current-frame-list)))))
                   (apply old-function arguments))))))
-#+END_SRC
+#+end_src
 
 Actions for attaching files to e-mails and for sending them with [[https://transfer.sh/][transfer.sh]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-utils
   :ensure nil
   :after transfer-sh
@@ -1444,18 +1444,18 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
               (interactive)
               (with-helm-alive-p
                 (helm-exit-and-execute-action 'malb/helm-transfer-sh-files)))))
-#+END_SRC
+#+end_src
 
 ** Helm Ring
 
 =helm-ring= makes the kill ring actually useful, let’s use it.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-ring
   :ensure nil
   :bind (("C-c j /" . helm-global-mark-ring)
          ("M-y" . helm-show-kill-ring)))
-#+END_SRC
+#+end_src
 
 ** Helm Swoop
 
@@ -1465,7 +1465,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
 *Tip*: You can edit =helm-swoop= buffers by pressing =C-c C-e=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-swoop
   :bind (("C-c o" . helm-multi-swoop-org)
          ("C-s"   . malb/swoop-or-search))
@@ -1518,7 +1518,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
             (bind-key "C-s"   #'malb/helm-swoop-C-s helm-swoop-map)
             (bind-key "C-r"   #'helm-previous-line helm-multi-swoop-map)
             (bind-key "C-s"   #'malb/helm-swoop-C-s helm-multi-swoop-map)))
-#+END_SRC
+#+end_src
 
 ** Helm Ag
 
@@ -1528,7 +1528,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
 *Note:* You can switch to edit mode with =C-c C-e=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-ag
   :commands (helm-ag helm-do-ag malb/helm-ag-projects malb/helm-ag-literature malb/helm-ag)
   :ensure-system-package ((ag . silversearcher-ag)
@@ -1563,19 +1563,19 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
               "run helm-ag in projects directory"
               (interactive)
               (malb/helm-ag (file-name-as-directory (car malb/literature-dirs))))))
-#+END_SRC
+#+end_src
 
 ** Helm Descbinds
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-descbinds
   :bind ("C-h b" . helm-descbinds)
   :init (fset 'describe-bindings 'helm-descbinds))
-#+END_SRC
+#+end_src
 
 ** Helm Locate
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-locate
   :ensure nil
   :after (helm helm-utils)
@@ -1587,7 +1587,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
             (add-to-list 'helm-commands-using-frame 'helm-locate)
             (helm-add-action-to-source "Attach to E-mail" #'malb/helm-mml-attach-files helm-source-locate)
             (helm-add-action-to-source "Transfer.sh"      #'malb/helm-transfer-sh-files helm-source-locate)))
-#+END_SRC
+#+end_src
 
 ** Helm Org
 
@@ -1649,33 +1649,33 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
 [[./local/helm-ddgr.el][helm-ddgr]] for doing [[https://github.com/jarun/ddgr][ddgr]] based DuckDuckGo searches.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-ddgr
   :ensure nil
   :after helm
   :bind ("C-c h g" . helm-ddgr))
-#+END_SRC
+#+end_src
 
 ** Helm XRef
 
 [[https://github.com/brotzeit/helm-xref][Helm interface for xref results]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-xref)
-#+END_SRC
+#+end_src
 
 ** Helm KDE Desktop Search with Baloo
 
 [[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below, we implement a tiny helm interface for it.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-baloo
   :ensure nil
   :ensure-system-package ((baloosearch . baloo-kf5))
   :config (progn
             (add-to-list 'helm-commands-using-frame 'helm-baloo-no-directory)
             (add-to-list 'helm-commands-using-frame 'helm-baloo-in-directory)))
-#+END_SRC
+#+end_src
 
 ** Tips
 
@@ -1690,7 +1690,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
 Don’t include boring or remote stuff in list of recently visited files.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package recentf
   :after helm
   :config  (progn
@@ -1704,46 +1704,46 @@ Don’t include boring or remote stuff in list of recently visited files.
                                          "/scp:"))
              (cl-loop for ext in helm-boring-file-regexp-list
                       do (add-to-list 'recentf-exclude ext t))))
-#+END_SRC
+#+end_src
 
 ** Saveplace
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (save-place-mode 1)
-#+END_SRC
+#+end_src
 
 ** Commands
 
 Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq history-length 1024
       history-delete-duplicates t
       savehist-save-minibuffer-history t
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
 (savehist-mode t)
-#+END_SRC
+#+end_src
 
 
 ** Bookmarks
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq bookmark-save-flag 1
       bookmark-fontify nil
       bookmark-set-fringe-mark nil)
-#+END_SRC
+#+end_src
 
 * IMenu
 
 Make sure to auto automatically rescan for imenu change.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (set-default 'imenu-auto-rescan t)
-#+END_SRC
+#+end_src
 
 [[https://github.com/vspinu/imenu-anywhere][IMenu items for all buffers]] with the same major mode as the current one.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package imenu-anywhere
   :config (progn
             (defun malb/imenu-anywhere (arg)
@@ -1769,11 +1769,11 @@ Make sure to auto automatically rescan for imenu change.
 
                (t (call-interactively #'helm-imenu-anywhere))))
             (add-to-list 'helm-commands-using-frame 'helm-imenu-anywhere)))
-#+END_SRC
+#+end_src
 
 [[https://github.com/bmag/imenu-list][imenu-list]] can be useful, =C-x t i=
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package imenu-list
   :after latex
   :init (progn
@@ -1845,7 +1845,7 @@ Make sure to auto automatically rescan for imenu change.
 
                     (setq input-list tail)))
                 output-list))))
-#+END_SRC
+#+end_src
 
 * Parenthesis
 
@@ -1853,7 +1853,7 @@ See [[https://ebzzry.github.io/emacs-pairs.html][here]] for an introduction to [
 
 Some of the config below is stolen from hlissner’s [[https://github.com/hlissner/.emacs.d/blob/master/core/core-editor.el][emacs.d]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package smartparens
   :blackout smartparens-mode
   :config (progn
@@ -1991,18 +1991,18 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)
             (add-to-list 'sp-ignore-modes-list 'sage-shell-mode)
             (add-to-list 'sp-ignore-modes-list 'jupyter-repl-mode)))
-#+END_SRC
+#+end_src
 
 Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing delimiter]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package syntactic-close
   :bind ("C-)" . syntactic-close))
-#+END_SRC
+#+end_src
 
 Use the built-in ~show-paren-mode~ to highlight matching parentheses.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package paren
   :ensure nil
   :custom ((show-paren-style 'expression)
@@ -2010,14 +2010,14 @@ Use the built-in ~show-paren-mode~ to highlight matching parentheses.
            (show-paren-when-point-inside-paren t)
            (show-paren-delay 0.2))
   :config (show-paren-mode 1))
-#+END_SRC
+#+end_src
 
 * Editing
 ** Dragging Lines Around
 
 ([[https://github.com/rejeep/drag-stuff.el][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package drag-stuff
   :blackout drag-stuff-mode
   :config (progn
@@ -2028,45 +2028,45 @@ Use the built-in ~show-paren-mode~ to highlight matching parentheses.
               ("SPC" nil)
               ("q" nil))
             (bind-key "C-c d" #'malb/hydra-drag-stuff/body)))
-#+END_SRC
+#+end_src
 
 ** Reverting Buffers
 
 Automatically revert buffers.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq global-auto-revert-non-file-buffers t
       global-auto-revert-ignore-modes '(pdf-view-mode)
       auto-revert-verbose nil)
 
 (global-auto-revert-mode 1)
-#+END_SRC
+#+end_src
 
 ** Save Buffer when Loosing Focus
 
 [[https://github.com/Vifon/focus-autosave-mode.el][Automatically loosing focus]] can be dangerous, so only enable on per project basis, e.g.
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no
 ((markdown-mode . ((eval . (focus-autosave-local-mode 1)))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package focus-autosave-mode
   :blackout (focus-autosave-local-mode . " "))
-#+END_SRC
+#+end_src
 
 ** Regexp
 
 Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regular expressions. This makes Emacs regexp actually usable for me.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package visual-regexp
   :bind (("C-c m" . vr/mc-mark)
          ("M-%" . vr/query-replace)
          ("C-%" . query-replace)
          ("C-S-s" . vr/isearch-forward)
          ("C-S-r" . vr/isearch-backward)))
-#+END_SRC
+#+end_src
 
 ([[http://howardism.org/Technical/Emacs/eshell-why.html][source]])
 
@@ -2092,11 +2092,11 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
 
 ** Undo
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package undo-fu
   :bind (("C-_" . undo-fu-only-undo)
          ("M-_" . undo-fu-only-redo)))
-#+END_SRC
+#+end_src
 
 ** Multiple Cursors
 
@@ -2110,7 +2110,7 @@ Also see [[http://emacsrocks.com/e13.html][Emacs Rocks #13]], which is on ~multi
 
 Commands are bound to =C-x m …=
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package multiple-cursors
   :config (progn
             (defun malb/mc-typo-mode ()
@@ -2143,11 +2143,11 @@ Commands are bound to =C-x m …=
               ("q" nil))
 
             (bind-key "C-x m" #'malb/hydra-multiple-cursors/body)))
-#+END_SRC
+#+end_src
 
 ** Recursively Narrow
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package recursive-narrow
   :config (progn
             (defun malb/recursive-narrow-dwim-org ()
@@ -2158,13 +2158,13 @@ Commands are bound to =C-x m …=
             (add-hook 'recursive-narrow-dwim-functions 'malb/recursive-narrow-dwim-org))
   :bind (("C-x n w" . recursive-widen)
          ("C-x n n" . recursive-narrow-or-widen-dwim)))
-#+END_SRC
+#+end_src
 
 ** Expand Region
 
 See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https://github.com/magnars/expand-region.el][expand-region]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package expand-region
   :after (org)
   :bind ("C-\\" . er/expand-region)
@@ -2198,7 +2198,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                                         er/try-expand-list
                                         '(malb/mark-org-inside-LaTeX-math malb/mark-org-LaTeX-math))))
             (add-hook 'org-mode-hook #'malb/add-org-mode-expansions)))
-#+END_SRC
+#+end_src
 
 Alternatively, consider
 
@@ -2214,7 +2214,7 @@ Alternatively, consider
 
 https://github.com/cute-jumper/embrace.el
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package embrace
   :config (progn
 
@@ -2230,7 +2230,7 @@ https://github.com/cute-jumper/embrace.el
             (add-hook 'org-mode-hook #'embrace-org-mode-hook)
             (add-hook 'LaTeX-mode-hook #'malb/embrace-latex-mode-hook)
             (add-hook 'org-mode-hook #'malb/embrace-latex-mode-hook)))
-#+END_SRC
+#+end_src
 
 ** Wrap Region
 
@@ -2238,7 +2238,7 @@ https://github.com/cute-jumper/embrace.el
 
 ([[http://pragmaticemacs.com/emacs/wrap-text-in-custom-characters/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package wrap-region
   :blackout wrap-region-mode
   :config (wrap-region-add-wrappers
@@ -2255,23 +2255,23 @@ https://github.com/cute-jumper/embrace.el
              ("#+begin_center \n" "\n#+end_center" "c" org-mode)
              ("#+begin_export latex\n" "\n#+end_export" "l" org-mode)))
   (add-hook 'org-mode-hook 'wrap-region-mode))
-#+END_SRC
+#+end_src
 
 ** Folding
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package bicycle
   :after outline
   :bind (:map outline-minor-mode-map
               ([C-tab] . bicycle-cycle)
               ([S-tab] . bicycle-cycle-global)))
-#+END_SRC
+#+end_src
 
 ** Beginning of …
 
 A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/beginning-of-line-dwim ()
   "Toggles between moving point to the first non-whitespace character, and
   the start of the line."
@@ -2290,18 +2290,18 @@ A better ~C-a~. ([[http://www.wilfred.me.uk/.emacs.d/init.html][source]])
 
 (bind-key "C-a" #'malb/beginning-of-line-dwim)
 (bind-key "<home>"  #'malb/beginning-of-line-dwim lisp-mode-map)
-#+END_SRC
+#+end_src
 
 Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-min= and =point-max=) are still accessible by pressing the same key again. ([[https://github.com/DamienCassou/beginend][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package beginend
   :blackout beginend-global-mode
   :config (progn
             (beginend-global-mode)
             (dolist (mode beginend-modes)
               (blackout (cdr mode)))))
-#+END_SRC
+#+end_src
 
 ** Pulse Kills and Yanks
 
@@ -2324,14 +2324,14 @@ Redefine =M-<= and =M->=. The real beginning and end of buffers (i.e., =point-mi
 Helpful is an alternative to the built-in Emacs help that provides much more contextual information. — [[https://github.com/Wilfred/helpful][helpful]]
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helpful
   :config (progn
             (bind-key "C-h f" #'helpful-callable)
             (bind-key "C-h v" #'helpful-variable)
             (bind-key "C-h k" #'helpful-key)
             (bind-key "C-h ," #'helpful-at-point)))
-#+END_SRC
+#+end_src
 
 ** Refine
 
@@ -2339,9 +2339,9 @@ Helpful is an alternative to the built-in Emacs help that provides much more con
 Refine provides a convenient UI for editing variables. Refine is not for editing files, but for changing elisp variables, particularly lists. — [[https://github.com/Wilfred/refine][refine]]
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package refine)
-#+END_SRC
+#+end_src
 
 * Projects (Projectile)
 
@@ -2398,7 +2398,7 @@ This library provides easy project management and navigation. The concept of a p
 
 *Note*: =next-error= has nothing to do with projectile, but =<f5>= and =<f6>= kind of go together. ~previous-error~ is bound to =M-g p=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package projectile
   :after tab-bar
   :bind (("<f5>" . projectile-compile-project)
@@ -2493,7 +2493,7 @@ This library provides easy project management and navigation. The concept of a p
                   projectile-mode-line '(:eval (format "{%s}" (projectile-project-name))))
 
             (projectile-mode)))
-#+END_SRC
+#+end_src
 
 [[https://tuhdo.github.io/helm-projectile.html][Helm]] integration
 
@@ -2504,7 +2504,7 @@ This library provides easy project management and navigation. The concept of a p
 
 We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8i5r/helmprojectile_quickly_findcreate_new_file_in/][source]]) and replace =grep= by =ag=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-projectile
   :config (progn
             (defvar malb/helm-source-file-not-found
@@ -2521,7 +2521,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
             ;; (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-projects 4)
             ;; (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-dirty-projects 4)
             ))
-#+END_SRC
+#+end_src
 
 * Git
 ** Magit
@@ -2531,7 +2531,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 [[https://magit.vc/screenshots/status.png]] ([[http://magit.vc][source]])
 
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package magit
   :commands (magit-status
              magit-diff
@@ -2559,7 +2559,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
                   magit-define-global-key-bindings t)
 
             (setq-default magit-diff-refine-hunk t)))
-#+END_SRC
+#+end_src
 
 *Notes*
 
@@ -2569,7 +2569,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 
 We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package magit-svn
   :after magit
   :config (progn
@@ -2577,38 +2577,38 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
               (if (file-exists-p (magit-git-dir "svn"))
                   (magit-svn-mode)))
             (add-hook 'magit-mode-hook #'malb/magit-svn)))
-#+END_SRC
+#+end_src
 
 *** GitHub
 
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package forge
   :after magit
   :config (setq ghub-use-workaround-for-emacs-bug 'force))
-#+END_SRC
+#+end_src
 
 *** Org Links for Magit Buffers
 
 [[https://github.com/magit/orgit][orgit]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package orgit)
-#+END_SRC
+#+end_src
 
 [[https://github.com/magit/orgit-forge/][orgit-forge]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package orgit-forge)
-#+END_SRC
+#+end_src
 
 ** Git Timemachine
 
 I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][git-timemachine]] but when I do …
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package git-timemachine)
-#+END_SRC
+#+end_src
 
 ** Git Link
 
@@ -2618,17 +2618,17 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
 functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories. =git-link= returns the URL for the current buffer's file location at the current line number or active region. =git-link-commit= returns the URL for a commit. URLs are added to the kill ring.
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package git-link)
-#+END_SRC
+#+end_src
 
 ** Git Autocommit
 
 [[https://github.com/ryuslash/git-auto-commit-mode][git-auto-commit-mode]] for committing … automatically.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package git-auto-commit-mode)
-#+END_SRC
+#+end_src
 
 ** Git Annex
 
@@ -2663,15 +2663,15 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 ** Files
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-directory malb/org-files-dir
       org-agenda-files malb/org-files
       org-default-notes-file malb/inbox-org)
-#+END_SRC
+#+end_src
 
 ** Options
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-enforce-todo-dependencies nil   ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
@@ -2716,7 +2716,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 (bind-key "<end>" #'org-end-of-line org-mode-map)
 (bind-key "C-c C-." #'org-time-stamp org-mode-map) ; ede binds C-c . too
 (bind-key "C-c C-," #'org-time-stamp-inactive org-mode-map) ; fylcheck binds C-c !
-#+END_SRC
+#+end_src
 
 ** Agenda
 
@@ -2841,7 +2841,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 ** Look
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-hide-emphasis-markers nil      ; don’t hide markers for like *foo*
       ;; org-ellipsis " ••• "
       org-ellipsis " ▼ "
@@ -2852,7 +2852,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-preview-latex-default-process 'imagemagick
       org-pretty-entities nil
       org-image-actual-width 800)
-#+END_SRC
+#+end_src
 
 Pretty print some maths:
 
@@ -2865,7 +2865,7 @@ Pretty print some maths:
 
 ** ToDo Keywords & Scheduling
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-todo-keywords
       '((sequence "TODO(t)"
                   "WAIT(w@)"
@@ -2905,11 +2905,11 @@ Pretty print some maths:
               "|" "DONE")))
 
 (org-clock-persistence-insinuate)
-#+END_SRC
+#+end_src
 
 delete SCHEDULED if new state is a WAITing state
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/org-after-todo-state-change ()
   (when (or
          (string-equal org-state "WAIT")
@@ -2922,11 +2922,11 @@ delete SCHEDULED if new state is a WAITing state
         (org-deadline nil (org-read-date nil t "+7d"))))))
 
 (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
-#+END_SRC
+#+end_src
 
 ** Tags
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-tag-persistent-alist '((:startgroup . nil)
                                  ("@office" . ?o)
                                  ("@train" . ?t)
@@ -2935,13 +2935,13 @@ delete SCHEDULED if new state is a WAITing state
                                  ("quick" . ?q)
                                  ("noexport" . ?n)
                                  ("ignore" . ?i)))
-#+END_SRC
+#+end_src
 
 ** Tables
 
 Bind =org-table-*= command when the point is in an org table ([[http://emacs.stackexchange.com/a/22457/115][source]]).
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-keys
  :map org-mode-map
  :filter (org-at-table-p)
@@ -2953,7 +2953,7 @@ Bind =org-table-*= command when the point is in an org table ([[http://emacs.sta
  ("C-#" . org-table-rotate-recalc-marks)
  ("C-c }" . org-table-toggle-coordinate-overlays)
  ("C-c {" . org-table-toggle-formula-debugger))
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (setq org-latex-tables-booktabs t)
@@ -3001,7 +3001,7 @@ Extract org tables as lists of alists.
 
 ([[https://raw.githubusercontent.com/jkitchin/scimax/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'org-speed-commands (cons "m" 'org-mark-subtree)) ;; Mark a subtree
 (add-to-list 'org-speed-commands (cons "S" 'widen)) ;; Widen
 (add-to-list 'org-speed-commands (cons "k" (lambda () ;; kill a subtree
@@ -3010,39 +3010,39 @@ Extract org tables as lists of alists.
                                                    (region-beginning)
                                                    (region-end)))))
 (add-to-list 'org-speed-commands (cons "J" 'avy-org-goto-heading-timer))
-#+END_SRC
+#+end_src
 
 #+BEGIN_QUOTE
 If you prefer using previous patterns, e.g. <s, you can activate them again by requiring Org Tempo library: ~(require 'org-tempo)~
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-tempo
   :ensure org)
-#+END_SRC
+#+end_src
 
 ** Refiling
 
 Targets include this file and any file contributing to the agenda - up to 9 levels deep
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-refile-targets (quote ((nil :maxlevel . 9) (org-agenda-files :maxlevel . 9))))
-#+END_SRC
+#+end_src
 
 Stop using paths for refile targets - we file directly with helm
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-refile-use-outline-path 'file)
-#+END_SRC
+#+end_src
 
 Allow refile to create parent tasks with confirmation
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-refile-allow-creating-parent-nodes '(confirm))
-#+END_SRC
+#+end_src
 
 ** Spell Checking
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;; source http://endlessparentheses.com/ispell-and-org-mode.html
 (defun malb/org-ispell ()
   "Configure `ispell-skip-region-alist' for `org-mode'."
@@ -3056,21 +3056,21 @@ Allow refile to create parent tasks with confirmation
 
 (add-hook 'org-mode-hook #'malb/org-ispell)
 (add-hook 'org-mode-hook #'flyspell-mode)
-#+END_SRC
+#+end_src
 
 ** Diminish Minor Modes
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-indent
   :ensure nil
   :blackout)
-#+END_SRC
+#+end_src
 
 ** Archiving
 
 Archive with some order in target file preserved. ([[https://gist.github.com/edgimar/072d99d8650abe81a9fe7c8687c0c993][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defadvice org-archive-subtree (around fix-hierarchy activate)
   (let* ((fix-archive-p (and (not current-prefix-arg)
                              (not (use-region-p))))
@@ -3097,7 +3097,8 @@ Archive with some order in target file preserved. ([[https://gist.github.com/edg
                 (lambda (heading)
                   (if (re-search-forward
                        (rx-to-string
-                        `(: bol (repeat ,level "*") (1+ " ") ,heading)) nil t)
+                        `(: bol (repeat ,level "*") (1+ " ") ,heading))
+                       nil t)
                       (org-narrow-to-subtree)
                     (goto-char (point-max))
                     (unless (looking-at "^")
@@ -3110,26 +3111,26 @@ Archive with some order in target file preserved. ([[https://gist.github.com/edg
               (widen)
               (org-end-of-subtree t t)
               (org-paste-subtree level tree-text))))))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-archive-location "~/Documents/Archive/org-files/%s_archive::")
-#+END_SRC
+#+end_src
 
 ** Habit
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-habit
   :ensure nil
   :config (add-to-list 'org-modules 'org-habit))
-#+END_SRC
+#+end_src
 
 ** Protocol
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-protocol
   :ensure nil)
-#+END_SRC
+#+end_src
 
 ** Pretty
 
@@ -3156,7 +3157,7 @@ I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-
 
 UTF-8 everywhere.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-export-coding-system 'utf-8
       org-ascii-charset 'utf-8
       org-export-in-background nil
@@ -3165,20 +3166,20 @@ UTF-8 everywhere.
       org-export-with-timestamps 'active
       org-latex-pdf-process '("latexmk -g -pdf -pdflatex=\"%latex --shell-escape -halt-on-error\" -outdir=%o %f")
       org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))
-#+END_SRC
+#+end_src
 
 ([[https://lists.gnu.org/archive/html/emacs-orgmode/2016-12/msg00555.html][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
 (add-to-list 'org-babel-default-inline-header-args '(:eval . "never-export"))
-#+END_SRC
+#+end_src
 
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-latex-to-mathml-convert-command "java -jar %j -unicode -force -df %o %I"
       org-latex-to-mathml-jar-file (expand-file-name "mathtoweb.jar" user-emacs-directory))
-#+END_SRC
+#+end_src
 
 *** iCalendar
 
@@ -3186,7 +3187,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
 *Note*: this code is definitely from somewhere else. I don’t remember where, though.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-icalendar
   :ensure nil
   :config (progn
@@ -3197,14 +3198,14 @@ iCal export is triggered after 600 seconds of inactivity.
                   org-icalendar-use-scheduled '(todo-start event-if-not-todo)
                   org-icalendar-use-deadline '(todo-due)
                   org-icalendar-with-timestamps 'active)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/org-icalendar-export-timer nil
   "Timer that `malb/org-icalendar-export-timer' uses to reschedule itself, or nil.")
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/org-icalendar-export-with-delay (secs)
   "Export after `secs' seconds unless the file changed in the meantime."
   (when malb/org-icalendar-export-timer
@@ -3215,16 +3216,16 @@ iCal export is triggered after 600 seconds of inactivity.
                           ;; async, check org-export-init.el
                           (org-icalendar-combine-agenda-files t)
                           (org-agenda-redo)))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/ox-export-after-save-hook ()
   "Save after 600 seconds of no changes."
   (if (eq major-mode 'org-mode)
       (malb/org-icalendar-export-with-delay 600)))
 
 (add-hook 'after-save-hook 'malb/ox-export-after-save-hook)
-#+END_SRC
+#+end_src
 
 *** Org LaTeX
 
@@ -3232,7 +3233,7 @@ iCal export is triggered after 600 seconds of inactivity.
 - Add some standard (to us) packages
 - Handouts are done via [[https://www.ctan.org/pkg/tufte-latex?lang=en][tufte-handout]], letters via =ox-koma-letter=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-latex
   :ensure nil
   :config (progn
@@ -3471,14 +3472,14 @@ iCal export is triggered after 600 seconds of inactivity.
                                                       "[DEFAULT-PACKAGES]\n"
                                                       "[EXTRA]\n")
                                            nil)))
-#+END_SRC
+#+end_src
 
 *** Beamer
 
 - _underline_ becomes *bold* in Beamer. ([[https://xgarrido.github.io/emacs-starter-kit/starter-kit-org.html][source]])
 - +strikethrough+ becomes grey in Beamer.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-beamer
   :ensure nil
   :config (progn
@@ -3514,36 +3515,36 @@ iCal export is triggered after 600 seconds of inactivity.
 
             ;; backward compatibility
             (add-to-list 'org-latex-classes (cons "mbeamer" (cdr (assoc "beamer" org-latex-classes))))))
-#+END_SRC
+#+end_src
 
 *** ODT
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-odt
   :ensure nil
   :init (progn
           (setq org-odt-styles-file
                 (expand-file-name "org-export-template.ott" user-emacs-directory)
                 org-odt-preferred-output-format "docx")))
-#+END_SRC
+#+end_src
 
 Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/6baa1e42ad4d7353e125][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (load-file (expand-file-name "local/ox-inline-comments.el" user-emacs-directory))
-#+END_SRC
+#+end_src
 
 *** Bootstrap
 
 [[https://github.com/marsmining/ox-twbs][ox-twbs]] - Twitter Bootstrap.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-twbs)
-#+END_SRC
+#+end_src
 
 *** Pandoc
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-pandoc
   :init (progn
           (setq org-pandoc-menu-entry  '((?m "as md." org-pandoc-export-as-commonmark)
@@ -3561,19 +3562,19 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
                 org-pandoc-options '((standalone . t)
                                      (mathjax . t)
                                      (wrap . "preserve")))))
-#+END_SRC
+#+end_src
 
 *** Rich Text Clipboard
 
 Place rich text version of selection in clipboard ([[https://melpa.org/#/ox-clip][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-clip)
-#+END_SRC
+#+end_src
 
 *** HTML Clipboard
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/org-clip-block-to-html ()
   "Copy current block as HTML"
   (interactive)
@@ -3592,17 +3593,17 @@ Place rich text version of selection in clipboard ([[https://melpa.org/#/ox-clip
           (mark-whole-buffer)
           (org-html-convert-region-to-html)
           (kill-new (buffer-string)))))))
-#+END_SRC
+#+end_src
 
 *** Ignore Some Headlines
 
 The tag =:ignore:= ignores a headline when exporting, section content is exported as usual.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-extra
   :ensure nil
   :config (ox-extras-activate '(ignore-headlines)))
-#+END_SRC
+#+end_src
 
 *** GitHub Flavoured Markdown
 
@@ -3616,7 +3617,7 @@ Emacs Everywhere wants this (optionally).
 
 If we are in a project we might add a TODO entry to the appropriate entry in =projects.org=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/org-capture-projectile ()
   (if (projectile-project-p)
       (progn
@@ -3635,11 +3636,11 @@ If we are in a project we might add a TODO entry to the appropriate entry in =pr
       (goto-char (point-min))
       (re-search-forward "^\* Tasks" nil t)
       (newline 1))))
-#+END_SRC
+#+end_src
 
 Some helper functions
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;; https://web.archive.org/web/20181019173343/http://ul.io/nb/2018/04/30/better-code-snippets-with-org-capture
 (defun malb/org-capture-get-src-block-string (major-mode)
   "Given a major mode symbol, return the associated org-src block
@@ -3671,7 +3672,7 @@ In [[file:%s::%s][%s]]:
        func-name
        org-src-mode
        code-snippet))))
-#+END_SRC
+#+end_src
 
 *Template Expansions*
 
@@ -3716,7 +3717,7 @@ In [[file:%s::%s][%s]]:
 | =%:path=                                | file system path                                                            |
 | =%:subject=                             | message subject                                                             |
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package doct)
 (use-package org-capture
   :ensure nil
@@ -3973,9 +3974,9 @@ In [[file:%s::%s][%s]]:
             ("eo" ((in-mode . "mu4e-view-mode")))
             ("ey" ((in-mode . "mu4e-view-mode")))
             ("es" ((in-mode . "mu4e-headers-mode")))))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/mu4e-view-org-capture (arg)
   "Call `org-capture' followed by removing flag from e-mail."
   (interactive "P")
@@ -3985,11 +3986,11 @@ In [[file:%s::%s][%s]]:
   (org-capture arg))
 
 (bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
-#+END_SRC
+#+end_src
 
 Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-capture-pop-frame
   :after (org-capture)
   :config (progn (setq ocpf-frame-parameters '((name . "*Org Capture*")
@@ -4008,24 +4009,24 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
                    (condition-case nil ;; MALB: handle "q"
                        (funcall orig-fun goto keys)
                      ((debug error) (ocpf--delete-frame))))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'helm-commands-using-frame 'org-refile)
-#+END_SRC
+#+end_src
 
 ** Web Tools
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-web-tools
   :after org)
-#+END_SRC
+#+end_src
 
 ** Eldoc
 
 Activate eldoc and show footnotes in minibuffer.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-eldoc
   :ensure nil
   :config (progn
@@ -4041,11 +4042,11 @@ Activate eldoc and show footnotes in minibuffer.
 
 (advice-add 'org-eldoc-documentation-function
             :before-until #'malb/org-eldoc-get-footnote)
-#+END_SRC
+#+end_src
 
 ** Inline Tasks
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-inlinetask
   :ensure nil
   :config (progn
@@ -4064,7 +4065,7 @@ See `org-latex-format-inlinetask-function' for details."
                 (format "\\todo[]{%s}\n" title))))
             (setq org-latex-format-inlinetask-function #'malb/org-latex-format-inlinetask-function)
             (setq org-inlinetask-min-level 6)))
-#+END_SRC
+#+end_src
 
 ** Functions
 
@@ -4089,7 +4090,7 @@ The equivalent of a TeX-Master. To use add ~eval: (add-hook 'after-save-hook #'m
 
 Working with source code in org-mode.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ob
   :ensure nil
   :after jupyter
@@ -4124,17 +4125,17 @@ Working with source code in org-mode.
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
 
             (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
-#+END_SRC
+#+end_src
 
 *** Async
 
 Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-async-org-babel-execute-src-block~.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ob-async
   :after ob
   :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia")))
-#+END_SRC
+#+end_src
 
 *** To String
 
@@ -4165,12 +4166,12 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 
 This extension facilitates moving images from point A (e.g. an image inside your browser that you can drag to Emacs) to point B (an Emacs org-mode buffer where the inline link will be inserted).
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-download
   :config (progn
             (setq-default org-download-heading-lvl nil)
             (add-hook 'dired-mode-hook 'org-download-enable)))
-#+END_SRC
+#+end_src
 
 ** Org Chef
 
@@ -4254,24 +4255,24 @@ In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =v
 
 *Note* the order matters, i.e. open the file first then call =org-latex-export-to-pdf=
 
-#+BEGIN_SRC shell :tangle no
+#+begin_src shell :tangle no
 emacs --batch -l ~/.emacs.d/org-export-init.el file.org -f org-latex-export-to-pdf
-#+END_SRC
+#+end_src
 
 * Shells
 
 We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#eshell-and-shell-environment][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setenv "PAGER" "cat")
 (setq shell-file-name "/bin/zsh")
-#+END_SRC
+#+end_src
 
 ** Toggle Shells
 
 Open various shells at point, close with =x= Config partly stolen from [[https://github.com/syl20bnr/spacemacs/blob/master/layers/shell/packages.el][spacemacs]] and from ([[http://www.howardism.org/Technical/Emacs/eshell-fun.html][source]]).
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/make-toggle-shell (shell-name shell-cmd &optional post-exec per-project enter-exec)
   "Create function to toggle a shell-like thing in current project/directory.
 
@@ -4315,7 +4316,7 @@ The function behaves as follows:
                (rename-buffer buffer-name)
                (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
                ,post-exec)))))))
-#+END_SRC
+#+end_src
 
 ** Vterm
 
@@ -4361,7 +4362,7 @@ The function behaves as follows:
 
 [[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package multi-term
   :commands (malb/toggle-multi-term multi-term)
   :config (progn
@@ -4400,11 +4401,11 @@ The function behaves as follows:
                                              (insert "ls")
                                              (term-send-input))
                                           t))))
-#+END_SRC
+#+end_src
 
 ** Shell
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package shell
   :config (progn
             (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
@@ -4423,13 +4424,13 @@ When `exit' from shell buffer."
             (add-hook 'shell-mode-hook #'malb/comint-close-buffer-when-finished)
             (fset 'malb/toggle-shell
                   (malb/make-toggle-shell "shell" '(shell)  nil t))))
-#+END_SRC
+#+end_src
 
 ** EShell
 
 ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package eshell
   :config (progn
 
@@ -4742,7 +4743,7 @@ to be `:text'.
                   eshell-ls-initial-args "-hk"
                   eshell-buffer-shorthand t
                   eshell-plain-echo-behavior t)))
-#+END_SRC
+#+end_src
 
 *** COMMENT Plan 9 Smart Shell
 
@@ -4759,22 +4760,22 @@ to be `:text'.
 
 *** Git Prompt
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package eshell-git-prompt
   :config (progn (eshell-git-prompt-use-theme "powerline")))
-#+END_SRC
+#+end_src
 
 *** Tips
 
 Cat directly into a buffer (select with =C-c M-b=)
 
-#+BEGIN_SRC shell :tangle no
+#+begin_src shell :tangle no
 cat mylog.log >> #<buffer *scratch*>
-#+END_SRC
+#+end_src
 
 ** ZSH History
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/helm-c-source-zsh-history
   '((name . "Zsh History")
     (candidates . malb/helm-c-zsh-history-set-candidates)
@@ -4811,13 +4812,15 @@ cat mylog.log >> #<buffer *scratch*>
   (interactive)
   (require 'helm)
   (helm-other-buffer 'malb/helm-c-source-zsh-history "*helm zsh history*"))
-#+END_SRC
+#+end_src
 
 ** Detached
 
 #+begin_quote
 =detached.el= is a package to launch, and manage, detached processes. The idea is that these processes are detached from the Emacs process and the package can make Emacs seamlessly attach to these processes. This enables users to launch processes that can survive when Emacs itself is being shutdown. The package relies on the program dtach, in order to make this functionality possible. — [[https://sr.ht/~niklaseklund/detached.el/][detached.el]]
 #+end_quote
+
+- =Shift-Enter= runs a command in detached mode
 
 #+begin_src emacs-lisp
 (use-package detached
@@ -4834,21 +4837,21 @@ cat mylog.log >> #<buffer *scratch*>
 
 … still my main shell, let’s make sure we can get there quickly.
 
-#+BEGIN_SRC sh :tangle no
+#+begin_src sh :tangle no
 #!/usr/bin/env bash
 if [ -z $(wmctrl -xl | grep -iF 'yakuake.yakuake' | head -n1 | cut -d' ' -f1) ]; then
     qdbus org.kde.yakuake /yakuake/window toggleWindowState;
 fi
 qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.addSession;
 qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev/null 2>&1 &
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/ykcd ()
   (interactive)
   (let ((fn (or (buffer-file-name) "~")))
     (shell-command (concat "ykcd " (file-name-directory fn)))))
-#+END_SRC
+#+end_src
 
 ** Yequake
 
@@ -4858,7 +4861,7 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev
 
 [[https://raw.githubusercontent.com/alphapapa/yequake/master/images/animation.gif]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package yequake
   :config (setq yequake-frames
                 '(("yequake-scratch" .
@@ -4869,7 +4872,7 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev
                     (frame-parameters . ((undecorated . t)
                                          (buffer-predicate . (lambda (x) nil))
                                          (internal-border-width . 24))))))))
-#+END_SRC
+#+end_src
 
 * Programming (Languages)
 ** General
@@ -4878,7 +4881,7 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev
 
 We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.com/questions/14072/replicate-ipython-history-behaviour-in-emacs][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package comint
   :ensure nil
   :config (progn
@@ -4926,7 +4929,7 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
 
             (bind-key "M-w" #'malb/comint-kill-ring-save comint-mode-map)
             (bind-key "C-S-w" #'malb/kill-buffer-delete-window comint-mode-map)))
-#+END_SRC
+#+end_src
 
 ***** Comint History Across Sessions
 
@@ -4934,27 +4937,27 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
 
 Directory where comint history will be stored
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
 (defvar comint-history-dir (locate-user-emacs-file "comint-history"))
 
 (unless (file-exists-p comint-history-dir)
   (make-directory comint-history-dir))
-  #+END_SRC
+  #+end_src
 
 Function to write comint history on exit
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
 (defun comint-write-history-on-exit (process event)
   (comint-write-input-ring)
   (let ((buf (process-buffer process)))
     (when (buffer-live-p buf)
       (with-current-buffer buf
         (insert (format "\nProcess %s %s" process event))))))
-  #+END_SRC
+  #+end_src
 
 Function to setup comint history
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
 (defun turn-on-comint-history ()
   (let ((process (get-buffer-process (current-buffer))))
     (when process
@@ -4966,23 +4969,23 @@ Function to setup comint history
       (add-hook 'kill-buffer-hook 'comint-write-input-ring t t)
       (set-process-sentinel process
                             #'comint-write-history-on-exit))))
-  #+END_SRC
+  #+end_src
 
 Setup comint history on comint start
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
 (add-hook 'comint-mode-hook 'turn-on-comint-history)
-  #+END_SRC
+  #+end_src
 
 Save comint history when emacs is killed
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
 (defun comint-write-input-ring-all-buffers ()
   (mapc (lambda (buffer) (with-current-buffer buffer (comint-write-input-ring)))
         (buffer-list)))
 
 (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
-  #+END_SRC
+  #+end_src
 
 ***** COMMENT Shx
 
@@ -4992,7 +4995,7 @@ shx or “shell-extras” extends comint-mode in Emacs — https://github.com/ri
 
 [[https://github.com/riscy/shx-for-emacs/blob/master/img/screenshot.png]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package shx
   :after comint
   :config (progn
@@ -5000,15 +5003,15 @@ shx or “shell-extras” extends comint-mode in Emacs — https://github.com/ri
               (add-hook 'inferior-python-mode-hook #'shx-mode))
             (with-eval-after-load 'shell
               (add-hook 'shell-mode-hook #'shx-mode))))
-#+END_SRC
+#+end_src
 
 *** Spell Checking
 
 Enable spell checking in comments and documentation.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-#+END_SRC
+#+end_src
 
 *** Flycheck
 
@@ -5016,13 +5019,13 @@ Enable spell checking in comments and documentation.
 
 Use [[https://github.com/flycheck/flycheck][Flycheck]] to run static checkers on code. We use clang’s checker for flycheck for which we can load per directory configuration using =.dir-locals.el=, e.g.
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no
 ((c-mode . ((flycheck-clang-include-path . ("/FULL/PATH/TO/DIR1" "/FULL/PATH/TO/DIR2" ) ))))
-#+END_SRC
+#+end_src
 
 Make flycheck prettier based on what spacemacs does.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package flycheck
   :blackout flycheck-mode
 
@@ -5074,45 +5077,45 @@ Make flycheck prettier based on what spacemacs does.
               :fringe-bitmap 'my-flycheck-fringe-indicator
               :fringe-face 'flycheck-fringe-info)
             ))
-#+END_SRC
+#+end_src
 
 Use [[https://github.com/yasuyk/helm-flycheck][helm-flycheck]] because reasons.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-flycheck
   :after flycheck
   :config (progn
             (bind-key "C-c f h" #'helm-flycheck flycheck-mode-map)))
-#+END_SRC
+#+end_src
 
 [[https://raw.githubusercontent.com/flycheck/flycheck-pos-tip/master/screenshot.png]]
 
 Use [[https://github.com/flycheck/flycheck-pos-tip][flycheck-pos-tip]] to display hints about potential issues.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package flycheck-pos-tip
   :after flycheck
   :init (progn
           ;; flycheck errors on a tooltip (doesnt work on console)
           (with-eval-after-load 'flycheck
             (flycheck-pos-tip-mode))))
-#+END_SRC
+#+end_src
 
 *** Comments
 
 Comments, as I mean, using [[https://github.com/remyferre/comment-dwim-2][comment-dwim-2]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package comment-dwim-2
   :bind ("M-;" . comment-dwim-2)
   :config (setq cd2/region-command #'cd2/comment-or-uncomment-region))
-#+END_SRC
+#+end_src
 
 Make bug references in comments and string clickable
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
-#+END_SRC
+#+end_src
 
 *** Indenting
 
@@ -5120,11 +5123,11 @@ Make bug references in comments and string clickable
 
 [[https://github.com/jscheid/dtrt-indent][drt-indent]] guesses the indentation offset originally used for creating source code files and transparently adjusts the corresponding settings in Emacs, making it more convenient to edit foreign files.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dtrt-indent
   :blackout dtrt-indent-mode
   :config (progn (dtrt-indent-global-mode t)))
-#+END_SRC
+#+end_src
 
 **** Agressive Indenting
 
@@ -5134,23 +5137,23 @@ Make bug references in comments and string clickable
 
 Enable it on a per-project basis in order to keep RC check ins clean: use it in own projects but not necessarily in projects where not the main contributor. Use =.dir-locals.el= to enable it, e.g.:
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no
 ((c-mode . ((aggressive-indent-mode t))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package aggressive-indent
   :config (progn
             (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
             (unbind-key "C-c C-q" aggressive-indent-mode-map))
   :blackout aggressive-indent-mode)
-#+END_SRC
+#+end_src
 
 *** Trailing whitespace
 
 [[https://github.com/lewang/ws-butler][ws-buttler]] for not leaving trailing white spaces without being that guy™.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ws-butler
   :blackout ws-butler-mode
   :config (progn
@@ -5161,11 +5164,11 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
             (add-hook 'LaTeX-mode-hook      #'ws-butler-mode)
             (add-hook 'emacs-lisp-mode-hook #'ws-butler-mode)
             ))
-#+END_SRC
+#+end_src
 
 *** Highlight FIXME and friends
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/fixme-highlight ()
   (font-lock-add-keywords nil
                           '(("\\<\\(FIXME\\|BUG\\|TODO\\|HACK\\|NOTE\\)" 1
@@ -5173,13 +5176,13 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
 
 (add-hook 'prog-mode-hook #'malb/fixme-highlight)
 (add-hook 'python-mode-hook #'malb/fixme-highlight)
-#+END_SRC
+#+end_src
 
 *** Which Function
 
 Show function in mode-line ([[https://github.com/howardabrams/dot-files/blob/master/emacs-mode-line.org][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package which-func
   :config (progn
             (which-function-mode 1)
@@ -5207,13 +5210,13 @@ mouse-2: toggle rest visibility\n\
 mouse-3: go to end")
                     " "))
             ))
-#+END_SRC
+#+end_src
 
 *** Highlight Symbols
 
 [[https://github.com/wolray/symbol-overlay][symbol-overlay]] for highlighting symbols.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package symbol-overlay
   :bind ("M-s h ." . symbol-overlay-put)
   :config (setq symbol-overlay-faces '((t (:background "#b58900" :foreground "black"))
@@ -5224,7 +5227,7 @@ mouse-3: go to end")
                                        (t (:background "#268bd2" :foreground "white"))
                                        (t (:background "#2aa198" :foreground "black"))
                                        (t (:background "#859900" :foreground "black")))))
-#+END_SRC
+#+end_src
 
 *** Looking Stuff Up (Devdocs)
 
@@ -5239,7 +5242,7 @@ Browse [[https://devdocs.io][devdocs.io]] documents inside Emacs
 
 Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and optionally for C++
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ggtags
   :config (progn  (add-hook 'c-mode-common-hook
                             (lambda ()
@@ -5254,10 +5257,10 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
                   (bind-key "C-c j g f" #'ggtags-find-file ggtags-mode-map)
                   (bind-key "C-c j g c" #'ggtags-create-tags ggtags-mode-map)
                   (bind-key "C-c j g u" #'ggtags-update-tags ggtags-mode-map)))
-#+END_SRC
+#+end_src
 
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-gtags
   :init (setq helm-gtags-prefix-key "\C-cjg")
   :blackout helm-gtags-mode
@@ -5274,7 +5277,7 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
                   (bind-key "C-c j g ," #'helm-gtags-pop-stack helm-gtags-mode-map)
                   (bind-key "C-c j g <"   #'helm-gtags-previous-history helm-gtags-mode-map)
                   (bind-key "C-c j g >"   #'helm-gtags-next-history helm-gtags-mode-map)))
-#+END_SRC
+#+end_src
 
 *** Dump Jump
 
@@ -5284,7 +5287,7 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
 - =dumb-jump-back= =C-c j d ,= jumps back to where you were when you jumped. These are chained so if you go down a rabbit hole you can get back out or where you want to be.
 - =dumb-jump-quick-look= =C-c j d q= like =dumb-jump-go= but shows tooltip with file, line, and context
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dumb-jump
   :config (progn
             (setq dumb-jump-selector 'helm)
@@ -5295,7 +5298,7 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
             (bind-key "C-c j d ," #'dumb-jump-back dumb-jump-mode-map)
             (bind-key "C-c j d q" #'dumb-jump-quick-look dumb-jump-mode-map)
             (dumb-jump-mode)))
-#+END_SRC
+#+end_src
 
 *** Smart Jump
 
@@ -5303,32 +5306,32 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
 This packages tries to smartly go to definition leveraging several methods to do so. If one method fails, this package will go on to the next one, eventually falling back to dumb-jump. — [[https://github.com/jojojames/smart-jump][smart-jump]]
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package smart-jump
   :config (smart-jump-setup-default-registers))
-#+END_SRC
+#+end_src
 
 *** Debuggers
 
 [[https://github.com/realgud/realgud][All the debuggers]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package realgud
   :commands (realgud:pdb realgud:ipdb realgud:trepan2 realgud:gdb)
   :config (progn
             (setq realgud:pdb-command-name "python -m pdb")))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq gdb-find-source-frame t
       gdb-many-windows t)
-#+END_SRC
+#+end_src
 
 *** CamelCase
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package string-inflection)
-#+END_SRC
+#+end_src
 
 *** Code Formatting
 
@@ -5336,15 +5339,15 @@ This packages tries to smartly go to definition leveraging several methods to do
 Auto-format source code in many languages with one command – [[https://github.com/lassik/emacs-format-all-the-code][format-all]]
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package format-all)
-#+END_SRC
+#+end_src
 
 *** Jupyter
 
 [[https://github.com/dzop/emacs-jupyter][emacs-jupyter]] is an Emacs frontend to Jupyter kernels
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package jupyter
   :commands (jupyter-run-server-repl
              jupyter-run-repl
@@ -5380,7 +5383,7 @@ Auto-format source code in many languages with one command – [[https://github.
                 (delete-char arg)))
 
             (org-babel-jupyter-override-src-block "python")))
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (defun malb/previous-org-jupyter-kernel ()
@@ -5478,7 +5481,7 @@ A generator for pop-up Jupyter repls.
 The Language Server Protocol (LSP) defines the protocol used between an editor or IDE and a language server that provides language features like auto complete, go to definition, find all references etc. – https://microsoft.github.io/language-server-protocol/
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package lsp-mode
   :after (projectile)
   :commands lsp
@@ -5489,9 +5492,9 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
                  (setq read-process-output-max (* 1024 1024))
                  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package lsp-ui
   :after (lsp-mode)
   :config (progn
@@ -5507,9 +5510,9 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (setq lsp-ui-imenu-enable t)
             (setq lsp-ui-doc-enable nil)
             (setq lsp-ui-flycheck-enable t)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;; https://github.com/emacs-lsp/helm-lsp/issues/19
 (use-package helm-lsp
   :config (progn
@@ -5520,11 +5523,11 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 ;; (use-package lsp-ivy
 ;;   :config (progn
 ;;             (define-key lsp-mode-map [remap xref-find-apropos] #'lsp-ivy-workspace-symbol)))
-#+END_SRC
+#+end_src
 
 ** C/C++ Development
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package cc-mode
   :bind (:map c-mode-base-map
               ("M-<up>" . drag-stuff-up)
@@ -5535,11 +5538,11 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (add-hook 'c-mode-common-hook #'hs-minor-mode)
             (add-hook 'c-mode-common-hook 'display-line-numbers-mode)
             (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
-#+END_SRC
+#+end_src
 
 *** Language Server Protocol (LSP)
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/lsp-enable ()
   (condition-case nil
       (if (buffer-file-name)
@@ -5548,13 +5551,13 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 (add-hook 'c-mode-hook #'malb/lsp-enable)
 (add-hook 'c++-mode-hook #'malb/lsp-enable)
-#+END_SRC
+#+end_src
 
 *** Font Lock
 
 Grey out ~#if 0~ blocks.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/c-mode-font-lock-if0 (limit)
   (save-restriction
     (widen)
@@ -5581,11 +5584,11 @@ Grey out ~#if 0~ blocks.
 (defun malb/c-mode-common-hook ()
   (font-lock-add-keywords  nil
                            '((malb/c-mode-font-lock-if0 (0 font-lock-comment-face prepend))) 'add-to-end))
-#+END_SRC
+#+end_src
 
 Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/27eqwm/highlighting_c_member_function_calls/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (dolist (major-mode '(c-mode c++-mode))
   (font-lock-add-keywords major-mode
                           `((,(concat
@@ -5597,21 +5600,21 @@ Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/2
                                "\\s *"                              ; Optional white space
                                "(")                                 ; Paren for method invocation
                              1 'font-lock-function-name-face t))))
-#+END_SRC
+#+end_src
 
 Modern C++
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package modern-cpp-font-lock
   :blackout modern-c++-font-lock-mode
   :config (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
-#+END_SRC
+#+end_src
 
 *** Valgrind
 
 This code allows to run [[http://valgrind.org/][valgrind]] and step through warnings/errors. We set =--error-errorcode=1= because we bury compilation buffers that finish with exit code zero automatically. By default, valgrind returns the exit code of the program it runs. ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'compile "compile")
 
 (defgroup valgrind nil
@@ -5655,42 +5658,42 @@ and move to the source code that caused it."
   (unless (equal command (eval valgrind-command))
     (setq valgrind-command command))
   (compilation-start command t))
-#+END_SRC
+#+end_src
 
 *** Clang Format
 
 Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format code, [[https://github.com/SavchenkoValeriy/emacs-clang-format-plus][clang-format+]] automatically runs =clang-format= when a =.clang-format= is present.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package clang-format
   :config (progn
             (setq clang-format-executable "clang-format")))
 
 (use-package clang-format+
   :config (add-hook 'c-mode-common-hook #'clang-format+-mode))
-#+END_SRC
+#+end_src
 
 *** Disassemble
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package disaster)
-#+END_SRC
+#+end_src
 
 ** Golang
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package go-mode
   :mode "\\.go$"
   :interpreter "go"
   :config (add-hook 'go-mode-hook #'flycheck-mode))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package go-eldoc
   :hook (go-mode . go-eldoc-setup))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package go-guru
   :commands (go-guru-describe go-guru-freevars go-guru-implements go-guru-peers
                               go-guru-referrers go-guru-definition go-guru-pointsto
@@ -5698,16 +5701,16 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format 
                               go-guru-expand-region)
   :config (unless (executable-find "guru")
             (warn "go-mode: couldn't find guru, refactoring commands won't work")))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package gorepl-mode
   :commands (gorepl-run gorepl-run-load-current-file)
   :config (unless (executable-find "gore")
             (warn "go-mode: couldn't find gore, REPL support disabled")))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package company-go
   :init (setq command-go-gocode-command "gocode"
               company-go-show-annotation t)
@@ -5715,9 +5718,9 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format 
   :config (if (executable-find command-go-gocode-command)
               (add-to-list 'company-backends #'company-go)
             (warn "go-mode: couldn't find gocode, code completion won't work")))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package gotest
   :bind (:map go-mode-map
               ("C-c a" . go-test-current-project)
@@ -5725,7 +5728,7 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format 
               ("C-c ." . go-test-current-test)
               ("C-c b" . go-run)
               ("C-h f" . godoc-at-point)))
-#+END_SRC
+#+end_src
 
 #+BEGIN_QUOTE
 Go Projectile is a set of Go language related add-ons for the Emacs Projectile mode. — https://github.com/dougm/go-projectile
@@ -5743,7 +5746,7 @@ The Interwebs seems to hold that [[https://github.com/brotzeit/rustic][rustic]] 
 
 We use the “onetwo” style to fill docstrings in Python, i.e.:
 
-#+BEGIN_SRC python :tangle no
+#+begin_src python :tangle no
 """Process foo, return bar."""
 
 """
@@ -5752,11 +5755,11 @@ Process foo, return bar.
 If processing fails throw ProcessingError.
 
 """
-#+END_SRC
+#+end_src
 
 I often restart Python processes (Cython development), so let’s bind a key for that.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package python
   :mode (("\\.py\\'" . python-mode))
   :bind (:map python-mode-map
@@ -5790,7 +5793,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
             (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")))
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package python-docstring
@@ -5800,7 +5803,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
 Create an iPython based toggle shell (consider using jupyter here)
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/make-ipython-shell (shell-name virtual-env &optional venv-vars post-exec per-project)
   `(lambda (arg)
      (interactive "P")
@@ -5837,17 +5840,17 @@ Create an iPython based toggle shell (consider using jupyter here)
                  (dolist (cmd ,post-exec)
                    (insert (concat cmd "\n")))
                  ))))))))
-#+END_SRC
+#+end_src
 
 *** Highlight indentation
 
 It makes sense to highlight indentation in Python.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package highlight-indentation
   :blackout highlight-indentation-mode
   :config (progn (add-hook 'python-mode-hook #'highlight-indentation-mode)))
-#+END_SRC
+#+end_src
 
 *** Autocompletion
 
@@ -5863,7 +5866,7 @@ Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-comp
 
 Fall back to dumb jump if anaconda fails.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package anaconda-mode
   :after smart-jump
   :blackout anaconda-mode
@@ -5889,7 +5892,7 @@ Fall back to dumb jump if anaconda fails.
                 (apply orig-fun args)))
 
             (advice-add 'anaconda-mode-start :around #'malb/vanilla-python-shell-interpreter)))
-#+END_SRC
+#+end_src
 
 *** Docstrings
 **** [[https://github.com/glyph/python-docstring-mode][Python Docstring Mode]]
@@ -5902,21 +5905,21 @@ Manually fixed bugs:
 
 - [[https://github.com/glyph/python-docstring-mode/issues/9][Problems locating `docstring_wrap.py` #9]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package python-docstring
   :blackout python-docstring-mode
   :hook (python-mode . python-docstring-mode))
-#+END_SRC
+#+end_src
 
 **** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx Doc]]
 
 An emacs minor mode for inserting docstring skeleton for Python functions and methods (=C-c M-d=). The structure of the docstring is as per the requirement of the Sphinx documentation generator.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package sphinx-doc
   :blackout sphinx-doc-mode
   :hook (python-mode . sphinx-doc-mode))
-#+END_SRC
+#+end_src
 
 Tweak sphinx-doc to fit my preferences
 
@@ -5965,44 +5968,44 @@ INDENT is the current indentation level of the Python function."
 
 *** Cython
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package cython-mode
   :mode (("\\.pyx\\'"  . cython-mode)
          ("\\.spyx\\'" . cython-mode)
          ("\\.pxd\\'"  . cython-mode)
          ("\\.pxi\\'"  . cython-mode)))
-#+END_SRC
+#+end_src
 
 [[https://github.com/lbolla/emacs-flycheck-cython][Flycheck for Cython]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package flycheck-cython
   :after (cython-mode flycheck))
-#+END_SRC
+#+end_src
 
 *** Black
 
 Code formatting “do what they want”: [[https://github.com/psf/black][https://github.com/psf/black]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package blacken
   :config (setq blacken-line-length 'fill))
-#+END_SRC
+#+end_src
 
 *** Managing Imports
 
 [[https://github.com/anachronic/importmagic.el][importmagic]] tries to guess how to add missing imports. You need to install =importmagic= and =epc= for it work.
 
-#+BEGIN_SRC shell :tangle no
+#+begin_src shell :tangle no
 pip install importmagic epc
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package importmagic
   :blackout importmagic-mode
   :hook (python-mode-hook . importmagic-mode)
   :config (setq importmagic-python-interpreter "python"))
-#+END_SRC
+#+end_src
 
 [[https://github.com/timothycrosley/isort][isort]] sorts Python imports. You need to install =isort= first.
 
@@ -6010,10 +6013,10 @@ pip install importmagic epc
 pip install isort
 #+end_example
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package py-isort
   :config (setq py-isort-options '("--lines=120")))
-#+END_SRC
+#+end_src
 
 *** ElPy
 
@@ -6023,7 +6026,7 @@ pip install isort
 
 Elpy is quite opinionated and we don’t necessarily share all those opinions. Hence, we only enable a small subset.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package elpy
   :bind (:map python-mode-map ("C-c C-c" . elpy-shell-send-region-or-buffer))
   :commands (elpy-shell-send-region-or-buffer elpy-module-yasnippet elpy-module-sane-defaults)
@@ -6032,13 +6035,13 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (defun malb/elpy-sane-defaults ()
               (elpy-module-sane-defaults 'buffer-init))
             (add-hook 'python-mode-hook #'malb/elpy-sane-defaults)))
-#+END_SRC
+#+end_src
 
 *** Pip
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package pip-requirements)
-#+END_SRC
+#+end_src
 
 *** Virtual Environments
 
@@ -6069,7 +6072,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package sage-shell-mode
   :custom ((sage-shell:use-simple-prompt t)
            (sage-shell:use-prompt-toolkit nil)
@@ -6123,11 +6126,11 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
             (bind-key "M-p" #'comint-previous-matching-input-from-input sage-shell-mode-map)
             (bind-key "M-n" #'comint-next-matching-input-from-input sage-shell-mode-map)
             (bind-key "C-<return>" #'auto-complete sage-shell:sage-mode-map)))
-#+END_SRC
+#+end_src
 
 org babel for Sage can be quite handy for writing talks etc. ([[https://github.com/stakemori/ob-sagemath][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ob-sagemath
   :config (progn
             (setq org-babel-default-header-args:sage '((:session . t)
@@ -6138,7 +6141,7 @@ org babel for Sage can be quite handy for writing talks etc. ([[https://github.c
                                                        (:noweb . "no")
                                                        (:hlines . "no")
                                                        (:tangle . "no")))))
-#+END_SRC
+#+end_src
 
 ** Lisp
 
@@ -6201,30 +6204,30 @@ Code manipulation:
 | ~O~     | formats the code into one line                                          |
 | ~M~     | formats the code into multiple lines                                    |
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package lispy
    :hook (lisp-data-mode . lispy-mode))
-#+END_SRC
+#+end_src
 
 [[https://raw.githubusercontent.com/cpitclaudel/easy-escape/master/img/easy-escape.png]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package easy-escape
   :hook ((emacs-lisp-mode lisp-mode) . easy-escape-minor-mode))
-#+END_SRC
+#+end_src
 
 *** Emacs Lisp
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package elisp-mode
   :ensure nil
   :bind (:map emacs-lisp-mode-map
               ("C-c C-z" . ielm)
               ("C-c C-c" . eval-defun)
               ("C-c C-b" . eval-buffer)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package elisp-slime-nav
   :blackout elisp-slime-nav-mode
   :config (progn
@@ -6245,36 +6248,36 @@ Code manipulation:
 
             (bind-key "M-?" #'elisp-slime-nav-describe-elisp-thing-at-point
                       emacs-lisp-mode-map)))
-#+END_SRC
+#+end_src
 
 [[http://emacsredux.com/blog/2016/03/02/pimp-my-minibuffer/][Eldoc in minibuffer eval]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)
-#+END_SRC
+#+end_src
 
 [[https://github.com/Wilfred/suggest.el][suggest.el]] is an Emacs package for discovering elisp functions based on examples.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package suggest)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'emacs-lisp-mode-hook #'hs-minor-mode)
-#+END_SRC
+#+end_src
 
 ** Web
 
 [[http://web-mode.org/web-mode.png?v=5]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package web-mode
   :mode "\\\.html?\\\'"
   :after pandoc
   :config (progn
             (setq web-mode-enable-engine-detection t)
             (add-to-list 'pandoc-major-modes '(web-mode . "html"))))
-#+END_SRC
+#+end_src
 
 * Prose
 ** General
@@ -6282,20 +6285,20 @@ Code manipulation:
 
 Use less tab completion in prose. ([[http://endlessparentheses.com/tab-completion-for-prose.html][souce]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/config-prose-completion ()
   "Make auto-complete less agressive in this buffer."
   (setq-local company-minimum-prefix-length 3)
   (setq-local company-idle-delay 0.5))
 
 (add-hook 'text-mode-hook #'malb/config-prose-completion)
-#+END_SRC
+#+end_src
 
 *** Line Wrapping
 
 Put everything back on one line if =M-q= is pressed twice and use ~visual-line-mode~ to do the work of wrapping text for us. ([[http://endlessparentheses.com/fill-and-unfill-paragraphs-with-a-single-key.html?source=rss][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'text-mode-hook #'turn-on-visual-line-mode)
 (blackout 'visual-line-mode)
 
@@ -6321,41 +6324,41 @@ Put everything back on one line if =M-q= is pressed twice and use ~visual-line-m
 
 (bind-key [remap fill-paragraph] #'malb/fill-or-unfill)
 (bind-key "M-q" #'malb/org-fill-or-unfill org-mode-map)
-#+END_SRC
+#+end_src
 
 Indent correctly in ~visual-line-mode~ (~org-mode~ has its own thing).
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package adaptive-wrap
   :config (progn
             (add-hook 'markdown-mode-hook #'adaptive-wrap-prefix-mode)
             (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)))
-#+END_SRC
+#+end_src
 
 Allow for a bit more characters per line by default.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default fill-column 100)
-#+END_SRC
+#+end_src
 
 For some modes we want resp. less wrapping width.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/fill-column-32768 ()
   (set-fill-column 32768))
-#+END_SRC
+#+end_src
 
 Indicate soft wrapped lines.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq visual-line-fringe-indicators '(nil right-curly-arrow))
-#+END_SRC
+#+end_src
 
 *** Typography
 
 [[https://github.com/jorgenschaefer/typoel][typo]] is a minor mode that will change a number of normal keys to make them insert typographically useful unicode characters. Some of those keys can be used repeatedly to cycle through variations. This includes in particular quotation marks and dashes.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package typo
   :blackout typo-mode
   :config (progn
@@ -6371,7 +6374,7 @@ Indicate soft wrapped lines.
             (add-to-list 'typo-disable-electricity-functions #'texmathp)
 
             (add-hook 'org-mode-hook #'typo-mode)))
-#+END_SRC
+#+end_src
 
 *** Visual Fill Column Mode
 
@@ -6379,7 +6382,7 @@ Indicate soft wrapped lines.
 
 ([[http://www.lunaryorn.com/posts/center-buffer-text-in-emacs.html][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package visual-fill-column
   :commands (visual-fill-column-mode turn-on-visual-fill-column-mode)
   :config (progn
@@ -6389,18 +6392,18 @@ Indicate soft wrapped lines.
 
             (dolist (fn '(text-scale-increase text-scale-decrease text-scale-adjust))
               (advice-add fn :after #'visual-fill-column-adjust))))
-#+END_SRC
+#+end_src
 
 *** Sentences
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq sentence-end-double-space nil)
 (bind-key "C-x C-t" #'transpose-sentences)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (advice-add 'kill-sentence :after #'fixup-whitespace)
-#+END_SRC
+#+end_src
 
 *** Highlighting Sentences & Paragraphs
 
@@ -6409,9 +6412,9 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 [[https://raw.githubusercontent.com/larstvei/Focus/master/demo-light.gif]] ([[https://github.com/larstvei/Focus][source]])
 
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package focus)
-#+END_SRC
+#+end_src
 
 *** Spell Checking
 
@@ -6419,7 +6422,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
 - Enable/disable company completion from ispell dictionaries ([[https://github.com/redguardtoo/emacs.d/blob/master/lisp/init-company.el][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ispell
   :hook ((message-mode) . malb/company-ispell-setup)
   :config (progn
@@ -6461,19 +6464,19 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
                     (setq company-ispell-dictionary ispell-alternate-dictionary))))
 
             (advice-add #'ispell-parse-output :filter-args #'malb/replace-quote)))
-#+END_SRC
+#+end_src
 
 Diminish ~flyspell-mode~ as we always use it.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package flyspell
   :blackout
   :config (setq flyspell-issue-message-flag nil))
-#+END_SRC
+#+end_src
 
 Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typos. I find myself pressing =C-.= in other programs these days just to be frustrated that it doesn’t just work™
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ace-flyspell
   :bind (("C-." . ace-flyspell-correct-word)
          :map flyspell-mode-map
@@ -6492,31 +6495,31 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
                 (ace-flyspell-dwim)))
 
             (unbind-key "C-;" flyspell-mode-map)))
-#+END_SRC
+#+end_src
 
 Automatically pick dictionary.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package auto-dictionary
   :disabled
   :config (progn
             (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package guess-language
   :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
   :config (setq guess-language-langcodes '((en . ("en_GB" "English"))
                                            (de . ("de_DE" "German")))
                 guess-language-languages '(en de)))
-#+END_SRC
+#+end_src
 
 *** Grammar Checking
 
 Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package langtool
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
@@ -6533,12 +6536,12 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
             (bind-key "C-x 4 l" #'langtool-switch-default-language)
             (bind-key "C-x 4 4" #'langtool-show-message-at-point)
             (bind-key "C-x 4 c" #'langtool-correct-buffer)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package flycheck-languagetool
   :ensure nil)
-#+END_SRC
+#+end_src
 
 *** Synonyms
 
@@ -6546,7 +6549,7 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
 [[https://github.com/hpdeifel/synosaurus][synosaurus]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package synosaurus
   :bind (("C-c w s" . synosaurus-lookup)
          ("C-c w r" . synosaurus-choose-and-replace))
@@ -6556,16 +6559,16 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
             (unbind-key "C-c s r" synosaurus-mode-map)
             (add-hook 'org-mode-hook #'synosaurus-mode)
             (add-hook 'LaTeX-mode-hook #'synosaurus-mode)))
-#+END_SRC
+#+end_src
 
 [[https://raw.githubusercontent.com/SavchenkoValeriy/emacs-powerthesaurus/master/assets/demo.gif]]
 
 [[https://github.com/SavchenkoValeriy/emacs-powerthesaurus][powerthesaurus]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package powerthesaurus
   :bind ("C-c w p" . powerthesaurus-lookup-dwim))
-#+END_SRC
+#+end_src
 
 *** Dictionary
 
@@ -6573,10 +6576,10 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
 Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package define-word
   :bind (("C-c w D" . define-word-at-point)))
-#+END_SRC
+#+end_src
 
 Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 
@@ -6601,13 +6604,13 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 
 # [[https://github.com/atykhonov/google-translate][google-translate]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package google-translate
   :bind ("C-c w t" . google-translate-smooth-translate)
   :init (progn
           (setq google-translate-translation-directions-alist
                 '(("de" . "en") ("en" . "de")))))
-#+END_SRC
+#+end_src
 
 [[https://github.com/lorniu/go-translate][go-translate]]
 
@@ -6629,7 +6632,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
 [[http://jblevins.org/projects/deft/deft-v0.6.gif]] ([[http://jblevins.org/projects/deft/deft-v0.6.gif][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package deft
   :bind ("<f8>" . malb/deft)
   :bind ("S-<f8>" . malb/blog)
@@ -6693,13 +6696,13 @@ title."
           (advice-add #'deft-parse-summary :override #'malb/deft-parse-summary)
 
           (add-hook 'deft-mode-hook #'hl-line-mode)))
-#+END_SRC
+#+end_src
 
 ** Markdown
 
 Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-markdown.el][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package markdown-mode
   :bind (:map markdown-mode-map
               ("M-<up>" . markdown-move-up)
@@ -6761,13 +6764,13 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
                              (forward-line (1- new-line))
                              (delete-region (line-beginning-position) (line-end-position))
                              (insert (plist-get it :content)))))))))
-#+END_SRC
+#+end_src
 
 *** Pandoc
 
 Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http://johnmacfarlane.net/pandoc/][pandoc]] for converting markdown to everything else.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package pandoc-mode
   :config (progn
             (add-hook 'markdown-mode-hook #'conditionally-turn-on-pandoc)
@@ -6829,13 +6832,13 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
               (deactivate-mark))
 
             (bind-key "M-W" #'malb/copy-as)))
-#+END_SRC
+#+end_src
 
 ** ReST
 
 Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt= or =README= in ReST. Hence, we add =README.txt= as the kind of file which wants ReST and use [[http://docutils.sourceforge.net/docs/user/emacs.html][rst-mode]] to edit it.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package rst
   :bind (:map rst-mode-map
               ("M-<up>" . drag-stuff-up)
@@ -6843,7 +6846,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
   :commands rst-mode-hook
   :hook (rst-mode . adaptive-wrap-prefix-mode)
   :mode "README\\.txt")
-#+END_SRC
+#+end_src
 
 ** LaTeX (AucTeX)
 
@@ -6853,7 +6856,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 | ~C-c @~   | outline minor mode   |
 | ~C-c ?~   | symbol documentation |
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package tex
   :ensure auctex
   :bind (:map LaTeX-mode-map
@@ -7018,7 +7021,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (setq font-latex-fontify-sectioning 1.0)
 
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
-#+END_SRC
+#+end_src
 
 *** Yanking
 
@@ -7084,16 +7087,16 @@ When pressed twice, make the sub/superscript roman."
 
 *** LaTeXMK
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package auctex-latexmk
   :config (progn
             (setq auctex-latexmk-inherit-TeX-PDF-mode t)
             (auctex-latexmk-setup)))
-#+END_SRC
+#+end_src
 
 Run =latexmk -pvc= in async shell
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/toggle-latexmk ()
   "Run LaTeXMK in continuos mode."
   (interactive)
@@ -7135,7 +7138,7 @@ Run =latexmk -pvc= in async shell
                    (compilation-mode))
                  (rename-buffer buffer-name)
                  (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))))))
-#+END_SRC
+#+end_src
 
 *** Mathpix
 
@@ -7182,7 +7185,7 @@ Run =latexmk -pvc= in async shell
 
 ([[https://sriramkswamy.github.io/dotemacs/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/align-& (start end)
   "Align columns by ampersand"
   (interactive "r")
@@ -7220,7 +7223,7 @@ Run =latexmk -pvc= in async shell
   (save-excursion
     (align-regexp start end
                   "\\(\\s-*\\):" 1 0 t)))
-#+END_SRC
+#+end_src
 
 ** BibTeX
 
@@ -7233,7 +7236,7 @@ My standard BibTeX sources are
 
 These are stored in some =common-latex= folder which has my [[https://bitbucket.org/malb/paper-template][paper-template]] as a subfolder.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/common-latex (concat (file-name-as-directory malb/projects-dir) "common-latex"))
 
 (defvar malb/crypto-bib (concat (file-name-as-directory malb/common-latex) "cryptobib"))
@@ -7248,11 +7251,11 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
                                 ))
 
 (setq reftex-default-bibliography malb/bibtex-files)
-#+END_SRC
+#+end_src
 
 We cite as “Alice15” or “AliBobCha15” or “ABCD15” ([[https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-emacs/#comment-2977][source]]) and clean up BibTeX entries as we like them on =C-c C-c=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package bibtex
   :config (progn
             (setq bibtex-align-at-equal-sign t
@@ -7294,11 +7297,11 @@ We cite as “Alice15” or “AliBobCha15” or “ABCD15” ([[https://nickhig
                         while (assoc ret existing-keys)
                         do (setq ret (format "%s%c" key c)))
                   ret)))))
-#+END_SRC
+#+end_src
 
 Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9682592/setting-up-reftex-tab-completion-in-emacs][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/get-bibtex-keys (file)
   (with-current-buffer (find-file-noselect file)
     (mapcar #'car (bibtex-parse-keys))))
@@ -7308,7 +7311,7 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
   (mapc 'LaTeX-add-bibitems
         (apply 'append
                (mapcar #'malb/get-bibtex-keys (reftex-get-bibfile-list)))))
-#+END_SRC
+#+end_src
 
 *** BibTeX Completion & Helm BibTeX
 
@@ -7320,7 +7323,7 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
 - patch =bibtex-completion-find-pdf-in-library= to replace =:= with =_=, e.g. =EPRINT:FooBar21= to =EPRINT_FooBar=; [[https://cryptobib.di.ens.fr/][crypto.bib]] uses those keys.
 - add another layer of caching to speed up loading.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package bibtex-completion)
 
 ;; my tweaks
@@ -7402,11 +7405,11 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
                                          bibtex-completion-string-cache (nth 1 result)
                                          bibtex-completion-string-hash-table (nth 2 result))
                                    (message "Finished scanning BibTeX file.")))))))
-#+END_SRC
+#+end_src
 
 We add an option to search for the paper’s title online.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-bibtex
   :commands (helm-bibtex helm-bibtex-with-local-bibliography)
   :config (progn
@@ -7440,11 +7443,11 @@ We add an option to search for the paper’s title online.
               :around 'helm-bibtex-with-local-bibliography
               (let ((helm-case-fold-search t))
                 (apply fn args)))))
-#+END_SRC
+#+end_src
 
 A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun company-bibtex-completion-candidates ()
   (let ((bibtex-completion-bibliography
          (or (bibtex-completion-find-local-bibliography)
@@ -7474,7 +7477,7 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
     (annotation (get-text-property 0 'bibtex-completion-annotation arg))))
 
 (add-to-list 'company-backends #'company-bibtex-completion)
-#+END_SRC
+#+end_src
 
 ****** TODO turn company-bibtex-completion into library so it can be lazy loaded
 
@@ -7484,18 +7487,18 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 
 - [[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
 (use-package biblio
   :config (setq biblio-bibtex-use-autokey t))
-  #+END_SRC
+  #+end_src
 
 - [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
 (use-package gscholar-bibtex
   :init (progn
             (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))))
-  #+END_SRC
+  #+end_src
 
 *** Org Cite
 
@@ -7517,19 +7520,19 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 [[https://github.com/jkitchin/org-ref][Org-ref]] is a library for org-mode that provides rich support for citations, labels and cross-references in org-mode. org-ref is especially suitable for org-mode documents destined for LaTeX export and scientific publication. org-ref is also extremely useful for research documents and notes. org-ref bundles several other libraries that provide functions to create and modify bibtex entries from a variety of sources, but most notably from a DOI.
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-ref
   :after org
   :defer 2
   :config (progn
             (bind-key "<f2> ;" #'org-ref-bibtex-hydra/body bibtex-mode-map)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-ref-latex
   :ensure nil
   :commands org-ref-latex-jump-to-bibtex)
-#+END_SRC
+#+end_src
 
 ** Speed Reading
 
@@ -7539,7 +7542,7 @@ Spray is a speed reading mode.
 
 ([[https://gitlab.com/iankelling/spray][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package spray
   :config (progn
             (setq spray-wpm 512
@@ -7548,26 +7551,26 @@ Spray is a speed reading mode.
             (bind-key "+" 'spray-faster spray-mode-map)
             (bind-key "-" 'spray-slower spray-mode-map)
             (add-to-list 'spray-unsupported-minor-modes 'beacon-mode)))
-#+END_SRC
+#+end_src
 
 ** AWS Polly
 
 A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s severs so keep privacy implications in mind before using this.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package aws-polly
   :after emms
   :commands aws-polly-region
   :ensure nil)
-#+END_SRC
+#+end_src
 
 * E-mail (Mu4e)
 
 We use Mu4e:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq mail-user-agent 'mu4e-user-agent)
-#+END_SRC
+#+end_src
 
 We can then use the following =emacsmail= script as =mailto= handler
 
@@ -7578,7 +7581,7 @@ emacsclient -c --eval "(browse-url-mail \"$@\")"
 
 E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]]. See this [[https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/#more-1336][blog post]] for details.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package mu4e
   :ensure nil
   :ensure-system-package mu
@@ -7606,7 +7609,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-index-lazy-check nil
                  mu4e-headers-auto-update nil
                  mu4e-org-link-query-in-headers-mode t))
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package mu4e-icalendar
@@ -7616,7 +7619,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 ** Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package mu4e-headers
   :ensure nil
   :after all-the-icons
@@ -7639,7 +7642,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                                   (all-the-icons-faicon "tree" :face 'all-the-icons :v-adjust 0.01))
                 mu4e-headers-related-label (cons "R"
                                                  (all-the-icons-faicon "circle-o-notch" :face 'all-the-icons :v-adjust 0.01))))
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (add-to-list 'mu4e-headers-mode-hook #'stripe-buffer-mode)
@@ -7647,7 +7650,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 ** Folders
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq mu4e-drafts-folder "/gmail/[Google Mail]/Drafts"
       mu4e-sent-folder   "/gmail/[Google Mail]/Sent Mail"
       mu4e-trash-folder  "/gmail/[Google Mail]/Bin")
@@ -7660,13 +7663,13 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
         (:maildir "/gmail/[Google Mail]/Sent Mail" :key ?s)
         (:maildir "/gmail/[Google Mail]/Spam"      :key ?j)
         (:maildir "/gmail/[Google Mail]/Bin"       :key ?t)))
-#+END_SRC
+#+end_src
 
 ** Search
 
 ([[https://melpa.org/#/mu4e-query-fragments][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package mu4e-query-fragments
   :config (setq mu4e-query-fragments-list
                 `(("%hidden" . ,(s-join " OR "
@@ -7708,22 +7711,22 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                                                   (format "from:%s" arg))
                                                                 malb/user-mail-addresses))
                                          ")")))))
-#+END_SRC
+#+end_src
 
 #+begin_quote
 Just press ~l~ in the headers view and any mailing list you've subscribed to will be automatically discovered and presented in recency order. No setup or refiling necessary.
 #+end_quote
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package mu4e-jump-to-list
   :config (progn
             (unbind-key "l" mu4e-main-mode-map)
             (unbind-key "l" mu4e-headers-mode-map)))
-#+END_SRC
+#+end_src
 
 Canned queries.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq mu4e-bookmarks nil)               ; clear out
 
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%inbox") :name "Inbox" :key ?i) t)
@@ -7742,14 +7745,14 @@ Canned queries.
              t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%sent AND %week") :name "Last 7 days (sent)" :key ?s) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
-#+END_SRC
+#+end_src
 
 ** Retrieving
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync all"
       mu4e-update-interval nil)
-#+END_SRC
+#+end_src
 
 ** Contacts
 
@@ -7757,11 +7760,11 @@ Handling contacts semi-automagically is one of mu4e’s big selling points to me
 
 My shitty regexp for detecting e-mail addresses
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defconst malb/email-regexp "<?\\([^ ]+@[^ ]+\.[^ >]+\\)>?")
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/extract-email (str)
   ;; return last sub-string looking like an email address
   (let ((tokens (reverse (split-string-and-unquote str)))
@@ -7770,24 +7773,24 @@ My shitty regexp for detecting e-mail addresses
       (string-match malb/email-regexp token)
       (setq match (or match (match-string 1 token))))
     match))
-#+END_SRC
+#+end_src
 
 *** Canonicalisation
 
 A table of canonical names for people who cannot seem to fix their headers …
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defcustom malb/mu4e-name-replacements nil
   "replacement names from e-mail addresses"
   :type '(list :type string)
   :group 'malb)
-#+END_SRC
+#+end_src
 
 - My uni likes “Lastname, Firstname (Year)” which is weird, so we fix it.
 - Some people like to YELL their LASTNAME and then write the first name, we also canonicalise that
 - Some people like to send incomplete data, so we maintain a local replacement list
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/canonicalise-contact-name (email  &optional name nick)
   "Try to extract a firstname lastname pair from whatever is written in an email"
   (let* ((name (or name ""))
@@ -7810,11 +7813,11 @@ A table of canonical names for people who cannot seem to fix their headers …
              (setq name (replace-regexp-in-string "^\\(.*\\), \\([^ ]+\\).*" "\\2 \\1" name))
              ;; foo bar becomes Foo Bar
              (setq name (capitalize name)))))))
-#+END_SRC
+#+end_src
 
 A function to add new replacements.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/add-mu4e-name-replacement ()
   (interactive)
   (let* ((email (helm-read-string "E-mail: " (replace-regexp-in-string
@@ -7828,15 +7831,15 @@ A function to add new replacements.
          (nick  (helm-read-string "Nick: " (replace-regexp-in-string "\\([^ ]?\\) .*" "\\1" name))))
     (add-to-list 'malb/mu4e-name-replacements (list email name nick) t)
     (customize-save-variable 'malb/mu4e-name-replacements malb/mu4e-name-replacements)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map)
-#+END_SRC
+#+end_src
 
 Canonicalise contacts as they appear from mu4e.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/mu4e-contact-rewrite-function (contact)
   (let ((heuristic-email-regex "\\([^ \\.]*+\\)\\.\\([^ \\.]*+\\)@\\(.*?\\)")
         (full-email-regex "\"?\\(.*?\\)\"? <\\(.*?\\)>"))
@@ -7876,7 +7879,7 @@ Canonicalise contacts as they appear from mu4e.
      (t contact))))
 
 (setq mu4e-contact-process-function #'malb/mu4e-contact-rewrite-function)
-#+END_SRC
+#+end_src
 
 Some tests, these should all return the same value.
 
@@ -7896,7 +7899,7 @@ Some tests, these should all return the same value.
 
 Extract a pretty-ish list of contacts from an e-mail.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/extract-contacts (fields)
   "Return a list of 'name <email>' entries."
   (let (addresses
@@ -7919,13 +7922,13 @@ Extract a pretty-ish list of contacts from an e-mail.
                                       (malb/canonicalise-contact-name (car address) (cdr address))
                                       (car address)))
                             addresses))))
-#+END_SRC
+#+end_src
 
 ****** TODO replace regexp parsing by appropriate library functions
 
 The following is useful in e-mail templates
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/get-names-from-fields (fields)
   (let (contacts
         ret
@@ -7949,23 +7952,23 @@ The following is useful in e-mail templates
           (when (string-match "\\([^ ,]+\\)" name)
             (push (match-string 1 name) ret))))
       (if ret (string-join (nreverse ret) ", ") ret "there"))))
-#+END_SRC
+#+end_src
 
 ****** TODO replace regexp parsing by appropriate library functions
 
 A shortcut:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/get-names-from-to-field ()
   (interactive)
   (malb/get-names-from-fields '("To")))
-#+END_SRC
+#+end_src
 
 *** Rearrange To and CC
 
 Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with Charley in CC which prompts me to send an e-mail to Charley with Bob in CC.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/helm-reorder-recipients ()
   "Re-distribute addresses to To: and CC: fields."
   (interactive)
@@ -8004,15 +8007,15 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
       (if cc (progn (newline)
                     (insert "Cc: ")
                     (insert (mapconcat #'identity cc ", ")))))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "C-c ]" #'malb/helm-reorder-recipients mu4e-compose-mode-map)
-#+END_SRC
+#+end_src
 
 *** Contact Look up
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/fullcontact ()
   (interactive)
   (let* ((email (replace-regexp-in-string "<?\\(.*?\\)>?" "\\1" (thing-at-point 'email)))
@@ -8022,7 +8025,7 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
           (message "%s" msg)))))
 
 (bind-key "@" #'malb/fullcontact mu4e-view-mode-map)
-#+END_SRC
+#+end_src
 
 *** Add MailRC entry
 
@@ -8059,13 +8062,13 @@ Query the user for an alias and add an entry to =~/.mailrc=.
 
 *** Searching
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (unbind-key "s" mu4e-main-mode-map)
-#+END_SRC
+#+end_src
 
 A helm menu for contacts, based on ([[http://kitchingroup.cheme.cmu.edu/blog/2015/03/14/A-helm-mu4e-contact-selector/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/helm-mu-contacts (arg)
   "Helm interface to e-mail addresses.
 
@@ -8133,15 +8136,15 @@ it is to insert the contact.
                                                          (cons (car malb/helm-mu-actions)
                                                                (cddr  malb/helm-mu-actions))))
                                     (t malb/helm-mu-actions))))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map)
-#+END_SRC
+#+end_src
 
 Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-mu
   :config (progn
 
@@ -8167,7 +8170,7 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
                                (interactive)
                                (malb/helm-mu-contacts 4))
                         mode-map))))
-#+END_SRC
+#+end_src
 
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
 
@@ -8175,7 +8178,7 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
 Use =<TAB>= to preview messages and =q= to close previews.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'mu4e-view)
 (require 'mu4e-headers)
 
@@ -8202,20 +8205,20 @@ Use =<TAB>= to preview messages and =q= to close previews.
 
 (bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
 (bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
-#+END_SRC
+#+end_src
 
 Visual-line mode all the way.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
 (bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
-#+END_SRC
+#+end_src
 
 Use ace-link for links as it is compatible with gnus.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "g" #'ace-link mu4e-view-mode-map)
-#+END_SRC
+#+end_src
 
 Dropping =[mouse-1]= otherwise I end up with links being clicked twice.
 
@@ -8227,7 +8230,7 @@ Dropping =[mouse-1]= otherwise I end up with links being clicked twice.
 
 Headers to show in header view.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'mu4e-header-info-custom
              '(:empty . (:name "Empty"
                                :shortname ""
@@ -8239,9 +8242,9 @@ Headers to show in header view.
                             (:mailing-list . 16)
                             (:from-or-to . 22)
                             (:subject . nil)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
   "View e-mails with width restriction, but wider for HTML."
   (set-fill-column 80)
@@ -8249,7 +8252,7 @@ Headers to show in header view.
   (visual-fill-column-mode 1))
 
 (add-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook)
-#+END_SRC
+#+end_src
 
 Discourage HTML rendering in GNUS:
 
@@ -8297,7 +8300,7 @@ Put attachments at end of my writing ([[http://mbork.pl/2015-11-28_Fixing_mml-at
 
 Attachments are mostly handled using the helm baloo interface, but sometimes we want to send files from a directory: =C-c C-m C-a= ([[https://writequit.org/eos/eos-mail.html][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 
 (use-package gnus-dired
@@ -8327,7 +8330,7 @@ Attachments are mostly handled using the helm baloo interface, but sometimes we 
           (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
             (gnus-dired-attach (list (buffer-file-name))))
         (error "Buffer is not visiting a file")))))
-#+END_SRC
+#+end_src
 
 *** Form filling
 
@@ -8436,10 +8439,10 @@ number and then increment it."
 
 Action to view e-mails in external browser.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'mu4e-view-actions
              '("browser" . mu4e-action-view-in-browser) t)
-#+END_SRC
+#+end_src
 
 Action to save e-mail to PDF.
 
@@ -8490,13 +8493,13 @@ return the filename."
 (add-to-list 'mu4e-view-actions '("save to pdf" . malb/mu4e-action-save-to-pdf) t)
 #+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (delete '("show this thread" . mu4e-action-show-thread) mu4e-view-actions)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (delete '("view as pdf" . mu4e-action-view-as-pdf) mu4e-view-actions)
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (add-to-list 'mu4e-view-actions '("Save all attachments" . malb/mu4e-view-save-all-attachments) t)
@@ -8504,7 +8507,7 @@ return the filename."
 
 Action to search messages by/to sender.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/search-for-sender (msg)
   "Search for messages sent by the sender of the message at point."
   (mu4e-headers-search
@@ -8524,11 +8527,11 @@ Action to search messages by/to sender.
 
 ;; (add-to-list 'mu4e-view-actions
 ;;              '("sender search" . malb/search-for-sender-extended) t)
-#+END_SRC
+#+end_src
 
 Action to search messages involving all correspondents.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/find-correspondence (msg)
   "Find messages involving all correspondents."
   (let ((addresses (append (mapcar (lambda (x) (downcase (plist-get x :email)))
@@ -8554,11 +8557,11 @@ Action to search messages involving all correspondents.
 
 (add-to-list 'mu4e-headers-actions
              '("interaction 🔍" . malb/find-correspondence) t)
-#+END_SRC
+#+end_src
 
 DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subject regexp" (lambda (msg) …))~ where the lambda is executed whenever both regexps match. Processing does not stop after the first match.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq malb/mu4e-dwim-actions nil)
 
 (defun malb/mu4e-dwim-action (msg)
@@ -8580,7 +8583,7 @@ DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subj
              '("dwim" . malb/mu4e-dwim-action) t)
 (add-to-list 'mu4e-headers-actions
              '("dwim" . malb/mu4e-dwim-action) t)
-#+END_SRC
+#+end_src
 
 This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d/mu4e.html][source]])
 
@@ -8603,29 +8606,29 @@ This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d
 
 Don’t break long lines manually.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq mu4e-compose-format-flowed t)
 
 (defun malb/no-hard-newlines ()
   (setq use-hard-newlines nil))
 
 (add-hook 'mu4e-compose-mode-hook #'malb/no-hard-newlines)
-#+END_SRC
+#+end_src
 
 We also enable footnotes, to add a footnote try =C-c ! a=. Also set e-mail width to 80 characters.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
 (add-hook 'message-mode-hook #'flyspell-mode)
 (add-hook 'message-mode-hook #'typo-mode)
 
 ;; TODO this isn’t as nice as it could be
 (bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
-#+END_SRC
+#+end_src
 
 Don’t add an empty line after “On bla” line but add one before.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'message)
 
 (malb/defadvice! malb/message-insert-formatted-citation-line (fn &rest args)
@@ -8638,21 +8641,21 @@ Don’t add an empty line after “On bla” line but add one before.
             (buffer-substring-no-properties (point-min) (point-max)))))
 
 (setq message-citation-line-function #'message-insert-formatted-citation-line)
-#+END_SRC
+#+end_src
 
 Various shortcuts to jump to/create headers.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "C-c g t" #'message-goto-to mu4e-compose-mode-map)
 (bind-key "C-c g c" #'message-goto-cc mu4e-compose-mode-map)
 (bind-key "C-c g b" #'message-goto-bcc mu4e-compose-mode-map)
 (bind-key "C-c g f" #'message-goto-from mu4e-compose-mode-map)
 (bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
-#+END_SRC
+#+end_src
 
 Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/switch-to-mu4e-advice (old-function &rest arguments)
   (malb/switch-to-mu4e)
   (apply old-function arguments))
@@ -8666,18 +8669,18 @@ Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 (advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
 (advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
 (advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-mu4e-advice)
-#+END_SRC
+#+end_src
 
 Don’t ask me to remove the backup file, I do want to remove the backup file, too.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/yes-no-skip-remove-backup (orig-fn &rest args)
   (if (string-prefix-p "Remove the backup file" (car args))
       t
     (apply orig-fn args)))
 
 (advice-add #'yes-or-no-p :around #'malb/yes-no-skip-remove-backup)
-#+END_SRC
+#+end_src
 
 ** Context Switching
 
@@ -8685,7 +8688,7 @@ Update "From:" and signature on context switch.
 
 ([[https://github.com/djcb/mu/issues/776][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/mu4e-compose-context-switch (&rest _ignore)
   "When switching context in a compose buffer, switch “from” and signature."
   (when (eq major-mode 'mu4e-compose-mode)
@@ -8736,9 +8739,9 @@ message from the wrong account"
     (message-remove-header "Date")))
 
 (add-hook 'message-send-hook #'malb/message-send-check-context)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/mu4e-cycle-contexts ()
   "Cycle through `mu4e-contexts'."
   (interactive)
@@ -8754,34 +8757,34 @@ message from the wrong account"
                             names)))))
 
 (bind-key "C-c C-i" #'malb/mu4e-cycle-contexts mu4e-compose-mode-map)
-#+END_SRC
+#+end_src
 
 ** Window Management
 
 Create a new mu4e session in a new frame.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/mail ()
   (interactive)
   (select-frame (make-frame '((malb/is-special . t))))
   (set-frame-name "*mu4e*") ;; we use this in our window management
   (mu4e))
-#+END_SRC
+#+end_src
 
 Kill mu4e frame.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/mu4e-quit-session ()
   (interactive)
   (kill-buffer)
   (delete-frame))
 
 (bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map)
-#+END_SRC
+#+end_src
 
 We patch mu4e to be way less clever about window management after sending an e-mail,  my =mu4e-message-kill-buffer= looks like this:
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no
 (defun mu4e-sent-handler (docid path)
   "Handler function, called with DOCID and PATH for the just-sent
 message. For Forwarded ('Passed') and Replied messages, try to set
@@ -8798,11 +8801,11 @@ the appropriate flag at the message forwarded or replied-to."
 	  (kill-buffer buf))))
   ;; (mu4e~switch-back-to-mu4e-buffer)
   (mu4e-message "Message sent"))
-#+END_SRC
+#+end_src
 
 I set my compose frame to be a dedicated window, which then takes care of all window management for me.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/mu4e-compose-frame ()
   (set-fill-column 80)
   (sleep-for 0.25) ;; this is a HACK
@@ -8810,28 +8813,28 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
   (sleep-for 0.25) ;; this is a HACK
   (set-frame-parameter nil 'malb/is-special t)
   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-#+END_SRC
+#+end_src
 
 ** PGP
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq mml2015-encrypt-to-self t)
 (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
 (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
 (setq epg-gpg-program "gpg2")
-#+END_SRC
+#+end_src
 
 ** Org-Mu4e
 
 Link to mu4e messages and threads.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-mu4e
   :ensure nil
   :config (progn
             (setq org-mu4e-link-query-in-headers-mode t)
             (advice-add 'org-mu4e-open :around  #'malb/switch-to-mu4e-advice)))
-#+END_SRC
+#+end_src
 
 ****** TODO check if advise can be removed since we’re now checking for major-mode
 
@@ -8930,7 +8933,7 @@ Martin
 
 We change the default template to not include the title which is filled in by deft. We also query the user for a date/time for the blog post.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org2blog
   :config (progn
             (let ((credentials (auth-source-user-and-password "martinralbrecht.wordpress.com")))
@@ -8964,7 +8967,7 @@ We change the default template to not include the title which is filled in by de
 \n")
 
             ))
-#+END_SRC
+#+end_src
 
 ****** TODO https://github.com/org2blog/org2blog/wiki/Debugging-Stories
 
@@ -8974,7 +8977,7 @@ We change the default template to not include the title which is filled in by de
 
 We also add support to extract PDF annotations to a temporary org-mode/markdown buffer, based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]], and calling [[https://github.com/tabulapdf/tabula-java][tabular]] or [[https://en.wikipedia.org/wiki/Pdftotext][pdftotext]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package pdf-tools
   :magic ("%PDF" . pdf-view-mode)
   :after (org tex)
@@ -9268,7 +9271,7 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
             (bind-key "C-<" #'malb/other-pdf-view-prev-page org-mode-map)
             (bind-key "C->" #'malb/other-pdf-view-next-page LaTeX-mode-map)
             (bind-key "C-<" #'malb/other-pdf-view-prev-page LaTeX-mode-map)))
-#+END_SRC
+#+end_src
 
 * Directories
 ** Dired
@@ -9284,7 +9287,7 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 
 Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer editable to batch-rename.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dired
   :ensure nil
   :commands dired
@@ -9357,11 +9360,11 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                   (add-to-list exts item))))
 
             (add-hook 'dired-mode-hook #'dired-dim-git-ignores)))
-#+END_SRC
+#+end_src
 
 Show dired histories you have visited.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-dired-history
   :after (dired helm)
   :config (defun helm-dired-history--update(dir)
@@ -9379,28 +9382,28 @@ Show dired histories you have visited.
                   ;; HACK: adding "." to make it work again
                   (append (list (concat dir ".")) helm-dired-history-variable))
             (helm-dired-history-trim)))
-#+END_SRC
+#+end_src
 
 [[https://camo.githubusercontent.com/966cf1fc63ee7bdb7631c0debc74957ccefaff37/687474703a2f2f692e696d6775722e636f6d2f6d6d36674662582e706e67]]
 
 [[https://github.com/Fuco1/dired-hacks][dired-collapse]] renders directories with just one file like GitHub does.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dired-collapse
   :after dired)
-#+END_SRC
+#+end_src
 
 [[https://github.com/Fuco1/dired-hacks#dired-narrow][dired-narrow]] to … narrow down dired buffers, undo with =g=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dired-narrow
   :after dired
   :bind (:map dired-mode-map ("/" . dired-narrow)))
-#+END_SRC
+#+end_src
 
 [[https://github.com/Fuco1/dired-hacks#dired-subtree][dired-subtree]] to insert subtrees.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dired-subtree
   :config (progn
             (defun malb/dired-subtree-all-the-icons ()
@@ -9409,11 +9412,11 @@ Show dired histories you have visited.
   :bind (:map dired-mode-map
               ("<tab>" . dired-subtree-toggle)
               ("<backtab>" . dired-subtree-cycle)))
-#+END_SRC
+#+end_src
 
 [[https://github.com/Fuco1/dired-hacks/blob/master/dired-ranger.el][dired-ranger]] for easy copy’n’pasting.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dired-ranger
   :after dired
   :bind (:map dired-mode-map
@@ -9425,24 +9428,24 @@ Show dired histories you have visited.
                          (interactive "P")
                          (dired-ranger-copy arg)
                          (bind-key "C-y" #'dired-ranger-paste dired-mode-map)))))
-#+END_SRC
+#+end_src
 
 [[https://github.com/yqrashawn/fd-dired][fd-dired]] run =fd= to produce dired buffers.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package fd-dired
   :ensure-system-package fdfind
   :config  (setq fd-dired-program "fdfind"
                  fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
-#+END_SRC
+#+end_src
 
 [[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]] for eye candy.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package all-the-icons-dired
   :defer t
   :init (add-hook 'dired-mode-hook  #'all-the-icons-dired-mode))
-#+END_SRC
+#+end_src
 
 [[https://github.com/asok/peep-dired][peep-dired]] for previewing files.
 
@@ -9462,7 +9465,7 @@ Show dired histories you have visited.
 
 [[https://github.com/jojojames/dired-sidebar/][dired-sidebar]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dired-sidebar
   :commands (dired-sidebar-toggle-sidebar)
   :init (progn (add-hook 'dired-sidebar-mode-hook
@@ -9490,13 +9493,13 @@ Show dired histories you have visited.
                  ;;     (apply orig-fun args)))
                  ;; (advice-add #'dired-sidebar-get-or-create-buffer :around #'malb/dired-sidebar-drop-icons)
                  ))
-#+END_SRC
+#+end_src
 
 ** Tramp
 
 =.ssh/config= already contains the appropriate config for persistent sessions so we ask tramp to respect it.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package tramp
   :ensure nil
   :config (progn
@@ -9506,11 +9509,11 @@ Show dired histories you have visited.
                   vc-ignore-dir-regexp (format "%s\\|%s"
                                                vc-ignore-dir-regexp
                                                tramp-file-name-regexp))))
-#+END_SRC
+#+end_src
 
 [[https://github.com/masasam/emacs-helm-tramp/blob/master/image/helm-tramp.gif]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package helm-tramp
   :after (helm tramp)
   :config (progn
@@ -9553,20 +9556,20 @@ Show dired histories you have visited.
                              "Tramp" #'helm-tramp-open
                              "Term"  #'helm-tramp-open-vterm
                              "Shell" #'helm-tramp-open-shell)))))
-#+END_SRC
+#+end_src
 
 #+BEGIN_QUOTE
 [[https://github.com/emacs-pe/docker-tramp.el][docker-tramp.el]] offers a TRAMP method for Docker containers.
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package docker-tramp
   :after tramp)
-#+END_SRC
+#+end_src
 
 * Diff
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ediff
   :config (progn
             (setq ediff-window-setup-function 'ediff-setup-windows-plain
@@ -9576,15 +9579,15 @@ Show dired histories you have visited.
                           ediff-highlighting-style 'face
                           ediff-highlight-all-diffs t)
             (add-hook 'ediff-after-quit-hook-internal 'winner-undo)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq diff-switches "-u")
-#+END_SRC
+#+end_src
 
 ** Smerge
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package smerge-mode
   :config
   (defhydra unpackaged/smerge-hydra
@@ -9623,11 +9626,11 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   :hook (magit-diff-visit-file . (lambda ()
                                    (when smerge-mode
                                      (unpackaged/smerge-hydra/body)))))
-#+END_SRC
+#+end_src
 
 ** PDF Diff
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/diff-pdf (arg)
   "Run pdftotext on two PDFs and open ediff buffer on texts.
 
@@ -9651,22 +9654,22 @@ Uses baloo to find files."
     (shell-command (format "pdftotext -layout -nopgbrk \"%s\" \"%s\"" left left-tmp) nil)
     (shell-command (format "pdftotext -layout -nopgbrk \"%s\" \"%s\"" right right-tmp) nil)
     (ediff-files left-tmp right-tmp)))
-#+END_SRC
+#+end_src
 
 * Diagrams
 ** [[http://plantuml.com/][PlantUML]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package plantuml-mode
   :commands (plantuml-mode)
   :init (progn
           (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
                 plantuml-default-exec-mode 'jar)))
-#+END_SRC
+#+end_src
 
 *Example*
 
-#+BEGIN_SRC plantuml :file plantuml-example.svg :tangle no
+#+begin_src plantuml :file plantuml-example.svg :tangle no
 skinparam monochrome true
 skinparam dpi 150
 skinparam backgroundColor transparent
@@ -9688,7 +9691,7 @@ note left: Session established
 deactivate Server
 Client -> Client: Saves token
 deactivate Client
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 [[file:plantuml-example.svg]]
@@ -9699,7 +9702,7 @@ Note that PlantUML supports [[http://plantuml.com/latex.html][TikZ export]].
 
 [[https://github.com/kiwanami/emacs-calfw][calfw]] for displaying calendars, because why not.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package calfw
   :commands (malb/calendar cfw:open-calendar-buffer)
   :bind (:map cfw:calendar-mode-map ("q" . kill-this-buffer))
@@ -9718,24 +9721,24 @@ Note that PlantUML supports [[http://plantuml.com/latex.html][TikZ export]].
                 buf))
             (setq cfw:org-agenda-schedule-args '(:timestamp :scheduled))
             (advice-add 'cfw:ical-url-to-buffer :around #'malb/cfw:ical-url-to-buffer)))
-#+END_SRC
+#+end_src
 
 * File Sharing
 ** Transfer.sh
 
 [[https://github.com/Brillow/transfer-sh.el][transfer.sh]] for interfacing with https://transfer.sh.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package transfer-sh)
-#+END_SRC
+#+end_src
 
 ** Pastebin/ix.io
 
 Interfacing with http://ix.io/, run =ix=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ix)
-#+END_SRC
+#+end_src
 
 ** Gists
 
@@ -9754,7 +9757,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 
 ~gist-region-or-buffer~ - Post either the current region, or if mark is not set, the current buffer as a new paste at https://gist.github.com . Copies the URL into the kill ring. With a prefix argument, makes a private paste.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package gist
   :commands (gist-list gist-buffer malb/update-gist)
   :config (progn
@@ -9772,26 +9775,26 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
                                        (gist-mode-edit-buffer))))
 
             (setq gist-ask-for-description t)))
-#+END_SRC
+#+end_src
 
 ** Copy as
 
 Copy source code marked up in various ways.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package copy-as-format
   :commands (copy-as-format-github
              copy-as-format-jira
              copy-as-format-markdown
              copy-as-format-org-mode
              copy-as-format-slack))
-#+END_SRC
+#+end_src
 
 * Manage Local Services (Prodigy)
 
 [[https://github.com/rejeep/prodigy.el][Prodigy]] is a way of managing services from Emacs. Use it for IMAP idle via [[https://www.npmjs.com/package/imapnotify][imapnotify]]. For completeness here’s a matching imapnotify config.
 
-#+BEGIN_SRC js :tangle no
+#+begin_src js :tangle no
 var child_process = require('child_process');
 
 function getStdout(cmd) {
@@ -9808,9 +9811,9 @@ exports.password = // whatever needs doing
 exports.onNewMail = "mbsync googlemail-default";
 exports.onNewMailPost = "emacsclient  -e '(mu4e-update-index)'";
 exports.boxes = [ "INBOX"];
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package prodigy
   :init (progn
           (prodigy-define-tag
@@ -9866,12 +9869,12 @@ exports.boxes = [ "INBOX"];
             ;; (prodigy-start-service (prodigy-find-service "bitlbee"))
             ;; (prodigy-start-service (prodigy-find-service "weechat"))
             )))
-#+END_SRC
+#+end_src
 
 * Media Players
 ** EMMS
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package emms-setup
   :ensure emms)
 
@@ -9886,7 +9889,7 @@ exports.boxes = [ "INBOX"];
                  ;;                 ".rm" ".rmvb" ".mp4" ".flac" ".vob" ".m4a" ".flv" ".ogv" ".pls"))
                  ;;   "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")
                  ))
-#+END_SRC
+#+end_src
 
 
 ** Kodi
@@ -9975,7 +9978,7 @@ exports.boxes = [ "INBOX"];
 
 ([[https://github.com/baron42bba/.emacs.d/blob/master/bba.org#browser-switch][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/switch-default-browser ()
   "switch between default browser and eww"
   (interactive)
@@ -9983,13 +9986,13 @@ exports.boxes = [ "INBOX"];
       (setq browse-url-browser-function 'eww-browse-url)
     (setq browse-url-browser-function 'browse-url-default-browser))
   (message "%s" browse-url-browser-function))
-#+END_SRC
+#+end_src
 
 Set Firefox directly because using =xdg-open= can lead to weird redirect on load.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq browse-url-browser-function 'browse-url-firefox)
-#+END_SRC
+#+end_src
 
 ** Pocket
 
@@ -9997,18 +10000,18 @@ Set Firefox directly because using =xdg-open= can lead to weird redirect on load
 This is a client for Pocket (getpocket.com). It allows you to manage your reading list: add, remove, delete, tag, view, favorite, etc. Doing so in Emacs with the keyboard is fast and efficient. Links can be opened in Emacs with any function, or in external browsers, and specific sites/URLs can be opened with specific browser functions. Views can be sorted by date, title, domain, tags, favorite, etc, and “limited” mutt-style. Items can be searched for using keywords, tags, favorite status, unread/archived status, etc. Items can optionally be colorized by site, making it easy to tell which items come from different sites. Items are grouped depending on the sort column.
 #+end_quote
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package pocket-reader
   :config (progn
             (setq pocket-reader-archive-on-open nil
                   pocket-reader-color-title nil
                   pocket-reader-color-site t)))
-#+END_SRC
+#+end_src
 
 * Chat
 ** Tracking
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package tracking
   :bind (
          ("<f2> <right>" . tracking-next-buffer)
@@ -10016,13 +10019,13 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
   :config (progn
             (unbind-key "C-c C-SPC" tracking-mode-map)
             (unbind-key "C-c C-@" tracking-mode-map)))
-#+END_SRC
+#+end_src
 
 ** COMMENT Weechat
 
 Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/the-kenny/weechat.el][weechat.el]] to get [[https://matrix.org/docs/projects/client/weechat-matrix/][matrix]], [[https://github.com/wee-slack/wee-slack][slack]] and [[https://github.com/mbologna/docker-bitlbee][skype]].
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package weechat
   :commands (weechat-connect malb/weechat weechat-switch-buffer)
   :bind (:map weechat-mode-map
@@ -10066,7 +10069,7 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
             ;;   (run-at-time  60 nil #'weechat-connect "localhost" 9000 nil 'plain)
             ;;   (run-at-time 180 nil #'weechat-monitor-all-buffers))
             ))
-#+END_SRC
+#+end_src
 
 *** Notes
 
@@ -10077,26 +10080,26 @@ Run [[https://weechat.org/][weechat]] for chatting through [[https://github.com/
 
 * X11 Integration
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq select-enable-clipboard t                  ; use clipboard for copy and paste
       save-interprogram-paste-before-kill t      ; keep a copy of clipboard stuff around
       mouse-yank-at-point t
       mouse-drag-copy-region t
       select-enable-primary t
       x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-#+END_SRC
+#+end_src
 
 Use GTK printing interface.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq lpr-command "gtklp")
-#+END_SRC
+#+end_src
 
 * Autosave & Backups
 
 Put autosave files (ie =#foo#=) in one place, not scattered across the file system.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/autosave-dir
   (expand-file-name "autosaves" user-emacs-directory))
 
@@ -10111,18 +10114,18 @@ Put autosave files (ie =#foo#=) in one place, not scattered across the file syst
               (concat "#" (file-name-nondirectory buffer-file-name) "#")
             (expand-file-name
              (concat "#%" (buffer-name) "#")))))
-#+END_SRC
+#+end_src
 
 Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list contains regexp → directory mappings. Filenames matching a regexp are backed up in the corresponding directory. Emacs will mkdir it if necessary.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar backup-dir (expand-file-name "autosaves" user-emacs-directory))
 (setq backup-directory-alist (list (cons "." backup-dir)))
-#+END_SRC
+#+end_src
 
 * UTF-8 Everywhere
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq locale-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
@@ -10132,7 +10135,7 @@ Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list
 (setq default-input-method "rfc1345")
 
 (prefer-coding-system 'utf-8)
-#+END_SRC
+#+end_src
 
 Use [[https://gitlab.com/matsievskiysv/insert-char-preview][insert-char-preview]] for handling unicode character insertion.
 
@@ -10146,36 +10149,36 @@ Use [[https://gitlab.com/matsievskiysv/insert-char-preview][insert-char-preview]
 
 A file is large if it is 32MB in my world.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq large-file-warning-threshold 33554432)
-#+END_SRC
+#+end_src
 
 [[https://github.com/m00natic/vlfi][vlf]] for large files.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package vlf-setup
   :ensure vlf)
-#+END_SRC
+#+end_src
 
 * Scratch
 
 We don’t want the *scratch* buffer to be killed ever.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package unkillable-scratch
   :config (progn
             (unkillable-scratch 1)))
-#+END_SRC
+#+end_src
 
 Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package scratch)
-#+END_SRC
+#+end_src
 
 Make scratch buffer an org-mode buffer.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq initial-major-mode 'org-mode
       initial-scratch-message "\
 This buffer is for notes you don't want to save, and for Lisp evaluation.
@@ -10191,7 +10194,7 @@ then enter the text in that file's own buffer.
 ,#+end_src
 
 ")
-#+END_SRC
+#+end_src
 
 * Emacs from Elsewhere
 
@@ -10210,12 +10213,12 @@ then enter the text in that file's own buffer.
 
 [[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package grab-x-link
   :bind (("C-c i l" . grab-x-link-firefox-insert-link)
          ("C-c i o" . grab-x-link-firefox-insert-org-link)
          ("C-c i m" . grab-x-link-firefox-insert-markdown-link)))
-#+END_SRC
+#+end_src
 
 ** Org-protocol entpoints for bookmarklets
 
@@ -10311,35 +10314,35 @@ Create convenience functions to open a shell on my servers and “cd” into the
 
 Characterise files with the same name by their path.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package uniquify
   :ensure nil
   :config (setq uniquify-buffer-name-style 'forward))
-#+END_SRC
+#+end_src
 
 I hate tabs …
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
-#+END_SRC
+#+end_src
 
 but if they happen to be there (I’m looking at you Go)
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default tab-width 4)
-#+END_SRC
+#+end_src
 
 Pressing =y= or =n= is sufficient.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defalias 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
+#+end_src
 
 Kill whole line not just content on =C-k=.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq kill-whole-line t)
-#+END_SRC
+#+end_src
 
 In emacs minibuffer prompt, when you press the left arrow key, the cursor will move back all the way
 over the prompt text. This is annoying because user often will hold down ~Alt+b~ to move back by
@@ -10347,71 +10350,71 @@ word to edit, and when user starts to type something, emacs will say ’This is 
 have to manually move cursor out of the prompt. You can try it now by calling query-replace or
 shell-command. Here's how to set the cursor not going into prompt. ([[http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq minibuffer-prompt-properties
       (quote
        (read-only
         t
         point-entered minibuffer-avoid-prompt
         face minibuffer-prompt)))
-#+END_SRC
+#+end_src
 
 Smoother scrolling.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq scroll-conservatively 10000
       scroll-preserve-screen-position t
       fast-but-imprecise-scrolling t
       auto-window-vscroll nil)
-#+END_SRC
+#+end_src
 
 Smoother mouse scrolling.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)) ; one line at a time
       mouse-wheel-progressive-speed nil            ; don't accelerate scrolling
       mouse-wheel-follow-mouse 't)                 ; scroll window under mouse
-#+END_SRC
+#+end_src
 
 Use ~kill -pUSR1~ to kill Emacs. ([[https://github.com/wasamasa/dotemacs/blob/master/init.org][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/quit-emacs-unconditionally ()
   (interactive)
   (save-some-buffers t t)
   (kill-emacs))
 
 (define-key special-event-map (kbd "<sigusr1>") #'malb/quit-emacs-unconditionally)
-#+END_SRC
+#+end_src
 
 Show key combos
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq echo-keystrokes 0.1)
-#+END_SRC
+#+end_src
 
 Diminish ~eldoc-mode~
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (blackout 'eldoc-mode)
-#+END_SRC
+#+end_src
 
 When saving a file that starts with =#!=, make it executable.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'after-save-hook
           'executable-make-buffer-file-executable-if-script-p)
-#+END_SRC
+#+end_src
 
 =C-u C-SPC C-SCP= pops the mark twice
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq set-mark-command-repeat-pop t)
-#+END_SRC
+#+end_src
 
 Skip over duplicates ([[http://endlessparentheses.com/faster-pop-to-mark-command.html][source]]):
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/multi-pop-to-mark (orig-fun &rest args)
   "Call ORIG-FUN until the cursor moves.
 Try the repeated popping up to 10 times. ARGS is passed through."
@@ -10421,7 +10424,7 @@ Try the repeated popping up to 10 times. ARGS is passed through."
         (apply orig-fun args)))))
 
 (advice-add 'pop-to-mark-command :around #'malb/multi-pop-to-mark)
-#+END_SRC
+#+end_src
 
 Diminish =abbrev-mode=
 
@@ -10437,45 +10440,45 @@ for ASCII characters (a in this example). To enable this feature, set the variab
 
 #+END_QUOTE
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq search-default-mode 'char-fold-to-regexp
       replace-char-fold t)
-#+END_SRC
+#+end_src
 
 Don’t error when killing read-only text.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq kill-read-only-ok t)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
-#+END_SRC
+#+end_src
 
 Allow pixel-wise scaling
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq frame-resize-pixelwise t)
-#+END_SRC
+#+end_src
 
 Don’t yank syntax highlighting etc.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-to-list 'yank-excluded-properties 'font)
 (add-to-list 'yank-excluded-properties 'font-lock-face)
-#+END_SRC
+#+end_src
 
 Increase resolution for Excel files etc.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq doc-view-resolution 300)
-#+END_SRC
+#+end_src
 
 Open man pages with focus set
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq Man-notify-method 'aggressive)
-#+END_SRC
+#+end_src
 
 Use =xdg-open= by default.
 
@@ -10508,7 +10511,7 @@ Use ~(copyright-update)~ to update copyright info
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
@@ -10525,11 +10528,11 @@ Add a function for renaming the file being edited ([[https://github.com/bodil/oh
           (set-buffer-modified-p nil)
           (message "File '%s' successfully renamed to '%s'"
                    name (file-name-nondirectory new-name)))))))
-#+END_SRC
+#+end_src
 
 Copy filename to clipboard
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/kill-buffer-file-name ()
   "Show current buffer's filename in the echo area and add it to the kill ring."
   (interactive)
@@ -10545,7 +10548,7 @@ Copy filename to clipboard
     (if (not (null buffer-file-name))
         (message "%s" (kill-new (file-name-nondirectory buffer-file-name)))
       (error "Buffer %s is not associated with a file" (buffer-name)))))
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (defun malb/delete-file-and-buffer ()
@@ -10560,7 +10563,7 @@ Copy filename to clipboard
 
 Edit files as root ([[http://emacsredux.com/blog/2013/04/21/edit-files-as-root/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/sudo-edit (&optional arg)
   "Edit currently visited file as root.
 
@@ -10572,11 +10575,11 @@ buffer is not visiting a file."
       (find-file (concat "/sudo:root@localhost:"
                          (ido-read-file-name "Find file(as root): ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
-#+END_SRC
+#+end_src
 
 Run a command in a named compile buffer ([[https://ivanmalison.github.io/dotfiles/#namedcompile][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/named-compile (command)
   (interactive
    (list
@@ -10586,7 +10589,7 @@ Run a command in a named compile buffer ([[https://ivanmalison.github.io/dotfile
         command))))
   (compilation-start command nil (lambda (&rest args)
                                    (format "*compilation %s*" command))))
-#+END_SRC
+#+end_src
 
 Generate new random URLs for some commonly used online services.
 
@@ -10646,7 +10649,7 @@ If i is pressed after, insert the result at the end of region. If r is pressed r
 
 Make links in comments and string clickable
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package goto-addr
   :hook ((compilation-mode . goto-address-mode)
          (prog-mode . goto-address-prog-mode)
@@ -10659,40 +10662,40 @@ Make links in comments and string clickable
               ("<RET>" . newline))
 
   :commands (goto-address-prog-mode goto-address-mode))
-#+END_SRC
+#+end_src
 
 ** Encryption
 
 Transparent encryption and decryption.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package epa-file
   :ensure nil
   :config (progn
             (setq epa-armor t)
             (epa-file-enable)))
-#+END_SRC
+#+end_src
 
 ** Memory Usage
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package memory-usage)
-#+END_SRC
+#+end_src
 
 ** Alert
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package alert
   :config (setq alert-default-style 'libnotify))
-#+END_SRC
+#+end_src
 
 ** Upcase, Downcase, Capitalise
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "M-l" #'downcase-dwim)
 (bind-key "M-c" #'capitalize-dwim)
 (bind-key "M-u" #'upcase-dwim)
-#+END_SRC
+#+end_src
 
 * File Types
 ** CMake Files
@@ -10705,25 +10708,25 @@ Transparent encryption and decryption.
 
 Wireshark et al. outputs ([[https://github.com/orgcandman/pcap-mode][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package pcap-mode)
-#+END_SRC
+#+end_src
 
 ** ELF Files
 
 List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package elf-mode
   :mode (("\\.so\\'"  . elf-mode)
          ("\\.a\\'"   . elf-mode)))
-#+END_SRC
+#+end_src
 
 ** Sobj Files
 
 ([[https://emacs.stackexchange.com/questions/44202/open-a-file-in-read-only-preprocessed-mode][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (define-derived-mode sobj-mode python-mode "sobj"
   "Major mode for viewing sobj files."
   (delete-region (point-min) (point-max))
@@ -10737,56 +10740,56 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
   (beginning-of-buffer))
 
 (add-to-list 'auto-mode-alist '("\\.sobj\\'" . sobj-mode))
-#+END_SRC
+#+end_src
 
 ** Log Files
 
 Using [[https://github.com/doublep/logview][logview]] mode.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package logview
   :commands (logview-mode)
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
-#+END_SRC
+#+end_src
 
 ** JSON
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package json-mode)
-#+END_SRC
+#+end_src
 
 ** YaML Files
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package yaml-mode)
-#+END_SRC
+#+end_src
 
 ** CSV
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package csv-mode
   :hook (csv-mode . hl-line-mode)
   :hook (csv-mode . toggle-truncate-lines)
   :hook (csv-mode . (lambda ()  (call-interactively #'csv-align-fields))))
-#+END_SRC
+#+end_src
 
 ** Docker Filers
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dockerfile-mode
   :mode ("Dockerfile\\." . dockerfile-mode))
-#+END_SRC
+#+end_src
 
 ** ePub
 
 [[https://github.com/wasamasa/nov.el][Nov.el]] is surprisingly useful.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package nov
   :mode ("\\.epub$" . nov-mode)
   :config (progn
             (add-hook 'nov-mode-hook #'turn-on-visual-fill-column-mode)))
-#+END_SRC
+#+end_src
 
 ** MailRC
 
@@ -10817,11 +10820,11 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 
 Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob/master/init.org#display-buffer-name-in-frame-titles][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq frame-title-format
       '("" (:eval (replace-regexp-in-string "^ +" "" (buffer-name)))
         " - " invocation-name))
-#+END_SRC
+#+end_src
 
 ** Stripe Buffer
 
@@ -10829,11 +10832,11 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 
 [[https://github.com/sabof/stripe-buffer][Stripe Buffer]] makes it vastly easier to read tables and dired buffers. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package stripe-buffer
   :config (progn
             (add-hook 'dired-mode-hook #'turn-on-stripe-buffer-mode)))
-#+END_SRC
+#+end_src
 
 ** Modeline
 
@@ -10841,7 +10844,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 
 [[https://user-images.githubusercontent.com/140797/49694189-6913d480-fbc0-11e8-93ae-9578455dcd2c.png]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package doom-modeline
   :config (progn
             (require 'doom-modeline-segments)
@@ -10889,7 +10892,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
                         (:eval
                          (doom-modeline-segment--matches))))) )
   :custom (doom-modeline-project-detection 'projectile))
-#+END_SRC
+#+end_src
 
 ** Theme
 
@@ -10906,7 +10909,7 @@ The result looks like this:
 [[./screenshot.png]]
 
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package solarized
   :ensure solarized-theme
   :config (progn
@@ -10922,18 +10925,18 @@ The result looks like this:
                   solarized-scale-org-headlines nil
                   solarized-scale-outline-headlines nil
                   x-underline-at-descent-line t)))
-#+END_SRC
+#+end_src
 
 *** High Contrast/Bright
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package one-themes
   :disabled)
-#+END_SRC
+#+end_src
 
 *** Switch between Light and Dark Theme
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/toggle-light-dark ()
   "Switch between light and dark theme"
   (interactive)
@@ -10963,11 +10966,11 @@ The result looks like this:
                  (pdf-view-midnight-minor-mode -1)
                (pdf-view-midnight-minor-mode 1))
              )))))
-#+END_SRC
+#+end_src
 
 *** Load Theme
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defvar malb/theme-loaded nil)
 
 (defun malb/load-theme (frame)
@@ -10982,7 +10985,7 @@ The result looks like this:
 (if (daemonp)
     (add-hook 'after-make-frame-functions #'malb/load-theme)
   (malb/load-theme (selected-frame)))
-#+END_SRC
+#+end_src
 
 ** Fonts
 
@@ -10990,7 +10993,7 @@ The result looks like this:
 
 ([[https://github.com/domtronn/all-the-icons.el][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package all-the-icons
   :config
   (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil)
@@ -10999,20 +11002,20 @@ The result looks like this:
   (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
   (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
   (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append))
-#+END_SRC
+#+end_src
 
 Better unicode font support.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package unicode-fonts)
-#+END_SRC
+#+end_src
 
 - [[https://fonts.google.com/specimen/Cousine][Cousine]] is wide font which means glyphs rendered in different fonts (when Cousine doesn’t have the matching glyph) are too high. Thus, we scale those other fonts down when Cousine is the default face.
 - We use [[https://www.google.com/get/noto/][Noto Sans Mono]] in condensed form which means some other glyphs can be too wide.
 
 Note that =face-font-rescale-alist= is frame specific, thus the hook.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/fonts (frame)
   (set-face-font 'default malb/font)
   (set-face-font 'fixed-pitch malb/font)
@@ -11061,7 +11064,7 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
 
 (add-hook 'after-make-frame-functions #'malb/fonts)
 (malb/fonts (selected-frame)) ;; initial frame
-#+END_SRC
+#+end_src
 
 ** SHR (EWW et al)
 
@@ -11069,14 +11072,14 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
 [[https://github.com/chenyanming/shrface/][shrface]] is a shr faces package that helps you apply your favourite org faces to shr, dash-docs, eww, nov.el, mu4e, and more!
 #+end_quote
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package shr
   :ensure nil
   :config (setq shr-use-fonts nil
                 shr-use-colors nil))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package shrface
   :after shr
   :config (progn
@@ -11093,9 +11096,9 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
               (setq nov-shr-rendering-functions (append nov-shr-rendering-functions
                                                         shr-external-rendering-functions))
               (add-hook 'nov-mode-hook #'shrface-mode))))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package eww
   :ensure nil
   :after shrface
@@ -11105,9 +11108,9 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
   :config (progn
             (add-hook 'eww-mode-hook #'turn-on-visual-fill-column-mode)
             (add-hook 'eww-after-render-hook 'shrface-mode)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package shr-tag-pre-highlight
   :after shr
   :config (progn
@@ -11134,7 +11137,7 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
                                 (shr-tag-pre-highlight--get-lang-mode lang))))
                 (shr-ensure-newline)
                 (insert (make-string shrface-paragraph-indentation ?\ )) ; make indent string
-                (insert (propertize (concat "#+BEGIN_SRC " lang) 'face 'org-block-begin-line))
+                (insert (propertize (concat "#+begin_src " lang) 'face 'org-block-begin-line))
                 (shr-ensure-newline)
                 (insert
                  (or (and (fboundp mode)
@@ -11143,15 +11146,15 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
                      code))
                 (shr-ensure-newline)
                 (insert (make-string shrface-paragraph-indentation ?\ )) ; make indent string
-                (insert (propertize "#+END_SRC" 'face 'org-block-end-line ) )
+                (insert (propertize "#+end_src" 'face 'org-block-end-line ) )
                 (shr-ensure-newline)))))
-#+END_SRC
+#+end_src
 
 Set higher contrast.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq shr-color-visible-luminance-min 80)
-#+END_SRC
+#+end_src
 
 ([[https://github.com/alphapapa/unpackaged.el/blob/3b46f9c0e0195d78df8c4ca6e1953b69539e2844/unpackaged.el][source]])
 
@@ -11181,29 +11184,29 @@ Suitable for `imenu-create-index-function'."
 
 Colourise colours or names in buffers ([[http://git.savannah.gnu.org/cgit/emacs/elpa.git/tree/packages/rainbow-mode][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package rainbow-mode
   :config (progn
             (add-hook 'emacs-lisp-mode-hook #'rainbow-mode))
   :blackout rainbow-mode)
-#+END_SRC
+#+end_src
 
 ** Vim-like Empty Line Indicator
 
 ([[https://www.reddit.com/r/emacs/comments/2kdztw/emacs_in_evil_mode_show_tildes_for_blank_lines/][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
 (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
 (set-fringe-bitmap-face 'tilde 'font-lock-comment-face)
 (setq-default indicate-empty-lines t)
-#+END_SRC
+#+end_src
 
 ** Text Size
 
 Easily change the text size:
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun malb/global-text-scale-increase ()
   "Globally increase font size."
   (interactive)
@@ -11222,17 +11225,17 @@ Easily change the text size:
 (bind-key "C-<mouse-5>" #'text-scale-decrease)
 (bind-key "C-M-<mouse-4>" #'malb/global-text-scale-increase)
 (bind-key "C-M-<mouse-5>" #'malb/global-text-scale-decrease)
-#+END_SRC
+#+end_src
 
 ** Bell
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no
 (setq visible-bell t)
-#+END_SRC
+#+end_src
 
 ** Dim other Buffers
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package dimmer
   :commands dimmer-mode
   :config (progn
@@ -11241,7 +11244,7 @@ Easily change the text size:
             (dimmer-configure-posframe)
             (dimmer-configure-company-box)
             (setq dimmer-percent 0.25)))
-#+END_SRC
+#+end_src
 
 ** Hide Mode Line
 
@@ -11251,7 +11254,7 @@ Easily change the text size:
 
 * Key Bindings
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (malb/set-menu-key "<f2>" #'malb/hydra-window/body)
 (malb/set-menu-key "A" #'malb/imenu-anywhere)
 (malb/set-menu-key "a" #'aws-polly-region)
@@ -11285,31 +11288,31 @@ Easily change the text size:
 (malb/set-menu-key "<up>" #'drag-stuff-up)
 (malb/set-menu-key "<down>" #'drag-stuff-down)
 (malb/set-menu-key "#" #'jupyter-org-hydra/body)
-#+END_SRC
+#+end_src
 
 Remap join-line to ~M-j~ where it's easier to get to. ~join-line~ will join the line you're on with the line above it in a reasonable manner for the type of file you're editing.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "M-j" #'join-line)
-#+END_SRC
+#+end_src
 
 =C-z= only annoys me, use =C-x C-z= when you need it
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (bind-key "C-z" nil)
-#+END_SRC
+#+end_src
 
 I never use ~list-directory~, I only mistype it.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (unbind-key "C-x C-d")
-#+END_SRC
+#+end_src
 
 ** Toggle Map
 
 ([[http://endlessparentheses.com/the-toggle-map-and-wizardry.html][source]])
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (define-prefix-command 'malb/toggle-map)
 (define-key ctl-x-map "t" 'malb/toggle-map)
 
@@ -11322,16 +11325,16 @@ I never use ~list-directory~, I only mistype it.
 (bind-key "d" #'dired-sidebar-toggle-sidebar malb/toggle-map)
 (bind-key "D" #'dedicated-mode               malb/toggle-map)
 (bind-key "c" #'visual-fill-column-mode      malb/toggle-map)
-#+END_SRC
+#+end_src
 
 ** Learn Key Bindings
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package which-key
   :blackout which-key-mode
   :config (progn
             (which-key-mode 1)))
-#+END_SRC
+#+end_src
 
 * Technical Artefacts
 
