@@ -4827,8 +4827,7 @@ cat mylog.log >> #<buffer *scratch*>
   :init (detached-init)
   :ensure-system-package ((dtach . dtach))
   :bind (;; Replace `async-shell-command' with `detached-shell-command'
-         ([remap async-shell-command] . detached-shell-command)
-         )
+         ([remap async-shell-command] . detached-shell-command))
   :custom ((detached-show-output-on-attach t)
            (detached-terminal-data-command system-type)))
 #+end_src
@@ -6517,10 +6516,15 @@ Automatically pick dictionary.
 
 *** Grammar Checking
 
-Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
+Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]]) for offline grammar checking.
 
 #+begin_src emacs-lisp
 (use-package langtool
+  :bind (("C-c w l c" . langtool-check)
+         ("C-c w l d" . langtool-check-done)
+         ("C-c w l l" . langtool-switch-default-language)
+         ("C-c w l m" . langtool-show-message-at-point)
+         ("C-c w l C" . langtool-correct-buffer))
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
                                                                (concat user-emacs-directory "langtool"))
@@ -6529,14 +6533,13 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
                                             "EN_QUOTES"
                                             "DASH_RULE"
                                             "OXFORD_SPELLING_ISE_VERBS"
-                                            "OXFORD_SPELLING_NOUNS"))
-
-            (bind-key "C-x 4 w" #'langtool-check)
-            (bind-key "C-x 4 W" #'langtool-check-done)
-            (bind-key "C-x 4 l" #'langtool-switch-default-language)
-            (bind-key "C-x 4 4" #'langtool-show-message-at-point)
-            (bind-key "C-x 4 c" #'langtool-correct-buffer)))
+                                            "OXFORD_SPELLING_NOUNS"))))
 #+end_src
+
+To use:
+
+1. enable flycheck =flycheck-mode=
+2. enable flycheck-languagetool =flycheck-select-checker=
 
 #+begin_src emacs-lisp
 (use-package flycheck-languagetool
@@ -6545,14 +6548,17 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
 *** Synonyms
 
+**** Synosaurus for offline lookups
+
 [[https://raw.githubusercontent.com/hpdeifel/synosaurus/master/screenshots/cnr.png]]
 
 [[https://github.com/hpdeifel/synosaurus][synosaurus]]
 
 #+begin_src emacs-lisp
 (use-package synosaurus
+  :ensure-system-package ((wn . wordnet))
   :bind (("C-c w s" . synosaurus-lookup)
-         ("C-c w r" . synosaurus-choose-and-replace))
+         ("C-c w S" . synosaurus-choose-and-replace))
   :config (progn
             (setq synosaurus-choose-method 'popup)
             (unbind-key "C-c s l" synosaurus-mode-map)
@@ -6560,6 +6566,8 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
             (add-hook 'org-mode-hook #'synosaurus-mode)
             (add-hook 'LaTeX-mode-hook #'synosaurus-mode)))
 #+end_src
+
+**** Powerthesaurus for online lookups
 
 [[https://raw.githubusercontent.com/SavchenkoValeriy/emacs-powerthesaurus/master/assets/demo.gif]]
 
@@ -6574,12 +6582,16 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]])
 
 [[https://raw.githubusercontent.com/wiki/abo-abo/define-word/images/define-word.png]]
 
-Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word.
+**** Define-word for online Wordnix lookups
+
+Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word using [[https://www.wordnik.com/][wordnik]].
 
 #+begin_src emacs-lisp
 (use-package define-word
   :bind (("C-c w D" . define-word-at-point)))
 #+end_src
+
+**** Lexic for offline lookups
 
 Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 
@@ -6602,7 +6614,7 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 
 *** Translating
 
-# [[https://github.com/atykhonov/google-translate][google-translate]]
+[[https://github.com/atykhonov/google-translate][google-translate]] queries just that.
 
 #+begin_src emacs-lisp
 (use-package google-translate
@@ -6612,18 +6624,14 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
                 '(("de" . "en") ("en" . "de")))))
 #+end_src
 
-[[https://github.com/lorniu/go-translate][go-translate]]
+[[https://www.reverso.net/][Reverso]] offers translation, grammar checks, synonyms and context
 
 #+begin_src emacs-lisp
-;; (use-package go-translate
-;;   :bind ("C-c w t" . gts-do-translate)
-;;   :config (progn
-;;             (setq gts-translate-list '(("de" "en")
-;;                                        ("en" "de"))
-;;                   gts-default-translator (gts-translator
-;;                                           :picker (gts-prompt-picker)
-;;                                           :engines (list (gts-bing-engine) (gts-google-engine))
-;;                                           :render (gts-buffer-render)))))
+(use-package reverso
+  :bind (("C-c w r" . reverso))
+  :hook ((reverso-result-mode . visual-line-mode))
+  :straight (:host github :repo "SqrtMinusOne/reverso.el")
+  :config (setq reverso-languages '(english german)))
 #+end_src
 
 ** Taking Notes (Deft)
@@ -6764,6 +6772,12 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
                              (forward-line (1- new-line))
                              (delete-region (line-beginning-position) (line-end-position))
                              (insert (plist-get it :content)))))))))
+#+end_src
+
+The [[https://github.com/Fanael/edit-indirect][edit-indirect]] package is used to edit code blocks in markdown-mode.
+
+#+begin_src emacs-lisp
+(use-package edit-indirect)
 #+end_src
 
 *** Pandoc
@@ -7200,8 +7214,6 @@ Run =latexmk -pvc= in async shell
     (replace-regexp "\\s-*&\\s-*" " & " nil start end)
     (replace-regexp "^\\s-*" " " nil start end))
   (align-regexp start end "\\(\\s-*\\)&" 1 1 t))
-
-(bind-key "C-c w &" #'malb/align-&)
 
 (defun malb/align-whitespace (start end)
   "Align columns by whitespace"

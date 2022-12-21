@@ -50,7 +50,7 @@
   :command ("java"
             (option "-jar" langtool-language-tool-jar)
             "-d" (eval (mapconcat 'identity langtool-disabled-rules ","))
-            (option "-l" langtool-default-language)
+            ;; (option "-l" langtool-default-language)
             "--json"
             "-")
   :standard-input t
