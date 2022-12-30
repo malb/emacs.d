@@ -870,9 +870,9 @@ See [[http://emacsrocks.com/e10.html][Emacs Rocks #10]] which is on ~ace-jump-mo
 
 ** Links
 
-#+BEGIN_QUOTE
+#+begin_quote
 Currently, to jump to a link in an =Info-mode= or =help-mode= or =woman-mode= or =org-mode= or =eww-mode= or =compilation-mode= buffer, you can tab through the links to select the one you want. This is an O(N) operation, where the N is the amount of links. This package turns this into an O(1) operation, or at least O(log(N)) if you manage to squeeze thousands of links in one screen. It does so by assigning a letter to each link using avy. ([[https://github.com/abo-abo/ace-link][source]])
-#+END_QUOTE
+#+end_quote
 
 #+begin_src emacs-lisp
 (use-package ace-link
@@ -906,9 +906,9 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 * Snippets
 ** YaSnippet
 
-#+BEGIN_QUOTE
+#+begin_quote
 [[https://github.com/capitaomorte/yasnippet][YASnippet]] is a template system for Emacs. It allows you to type an abbreviation and automatically expand it into function templates. ([[https://github.com/capitaomorte/yasnippet][source]])
-#+END_QUOTE
+#+end_quote
 
 Also, see [[http://emacsrocks.com/e06.html][Emacs Rocks #06]] which is on ~yasnippet~.
 
@@ -993,9 +993,9 @@ We populate empty files with yasnippet ([[https://github.com/hlissner/.emacs.d/b
 
 ** Yankpad
 
-#+BEGIN_QUOTE
+#+begin_quote
 Let’s say that you have text snippets that you want to paste, but that yasnippet or skeleton is a bit too much when you do not need a shortcut/abbrev for your snippet. You like org-mode, so why not write your snippets there? Introducing the yankpad: — ([[https://github.com/Kungsgeten/yankpad/blob/master/README.org][source]])
-#+END_QUOTE
+#+end_quote
 
 #+begin_src emacs-lisp
 (use-package yankpad
@@ -1088,8 +1088,8 @@ For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We
             (require 'math-symbol-lists)
             (setq math-symbol-list-extended
                   (remove '("mathrel" "\\coloneq" 8788 "≔") math-symbol-list-extended))
-
             (push '("mathrel" "\\coloneqq" 8788 "≔") math-symbol-list-extended)
+
             (setq company-math--symbols
                   (delete-dups
                    (append (company-math--make-candidates math-symbol-list-basic company-math-symbol-prefix)
