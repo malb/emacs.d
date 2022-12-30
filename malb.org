@@ -406,21 +406,10 @@ The default tab-bar name uses the buffer name."
                       ((equal ntabs 2) (tab-bar-switch-to-tab (if (equal current-tab (car tabs))
                                                                   (cadr tabs)
                                                                 (car tabs))))
-                      (t (tab-switcher)
-                         ;; (let ((helm-display-function #'helm-display-buffer-in-own-frame))
-                         ;;   (helm-other-buffer
-                         ;;    (append
-                         ;;     `((name . "Tabs")
-                         ;;       (candidates . tabs)
-                         ;;       (action . (lambda (candidate)
-                         ;;                   (interactive)
-                         ;;                   (tab-bar-switch-to-tab candidate)))))
-                         ;;    "*Tabs*"))
-                         ))))))
+                      (t (tab-switcher)))))))
 #+end_src
 
 ** Switching
-
 *** Ace Window
 
 [[https://github.com/abo-abo/ace-window][ace-window]] for switching windows.
@@ -632,14 +621,6 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 Separate mu4e windows from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
 
-Mu4e buffers start with =*mu4e-=:
-
-#+begin_src emacs-lisp
-(defvar malb/mu4e-buffer-regexps '("\\`\\*mu4e-.*\\*")
-  "Buffer names of mu4e buffers.")
-#+end_src
-
-
 #+begin_src emacs-lisp
 (defvar malb/special-frame-names '("\\*Minibuf-1\\*.*" ;; helm
                                    "\\*mu4e\\*"
@@ -731,7 +712,7 @@ Main dispatch function:
   (cond
    ;; this is a mu4e buffer
    ((or
-     (malb/regexp-match-p malb/mu4e-buffer-regexps (buffer-name buffer))
+     (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer))
      (memq (buffer-local-value 'major-mode buffer) '(mu4e-view-mode mu4e-headers-mode)))
     (if (malb/get-frame "*mu4e*") (select-frame-set-input-focus (malb/get-frame "*mu4e*"))
       (make-frame (list '(name . "*mu4e*")
@@ -744,7 +725,7 @@ Main dispatch function:
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
    ((and (string-match "mu4e" (frame-parameter nil 'name))
-         (not (malb/regexp-match-p malb/mu4e-buffer-regexps (buffer-name buffer)))
+         (not (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer)))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
     (malb/switch-away-from-mu4e)
     nil ;; pass control back to display-buffer-alist
