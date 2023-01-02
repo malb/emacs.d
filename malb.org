@@ -3709,10 +3709,11 @@ In [[file:%s::%s][%s]]:
     (setq
      org-capture-templates
      (doct
-      `((,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
+      `((,(format "%s\tTask" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
          :prepend t
          :empty-lines 1
-         :children ((,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
+         :children ((,(format "%s\tTask" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
+                     :keys "t"
                      :template ("* TODO %?"
                                 "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
                                 ":PROPERTIES:"
@@ -3721,7 +3722,8 @@ In [[file:%s::%s][%s]]:
                                 ""
                                 "%i")
                      :file malb/inbox-org)
-                    (,(format "%s\tTask in Context" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "c"
+                    (,(format "%s\tTask in Context" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
+                     :keys "c"
                      :template ("* TODO %?"
                                 ":PROPERTIES:"
                                 ":CREATED: %U"
@@ -3731,7 +3733,8 @@ In [[file:%s::%s][%s]]:
                                 ""
                                 "%i")
                      :file malb/inbox-org)
-                    (,(format "%s\tTask for Project" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "p"
+                    (,(format "%s\tTask for Project" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
+                     :keys "p"
                      :template ("** TODO %?"
                                 ":PROPERTIES:"
                                 ":CREATED: %U"
@@ -3869,14 +3872,21 @@ In [[file:%s::%s][%s]]:
          :prepend t
          :empty-lines 1)
         (,(format "%s\tJournal" (all-the-icons-faicon "clipboard" :face 'all-the-icons :v-adjust 0.01)) :keys "j"
-         :file (lambda () (expand-file-name "journal.org"
+         :file (lambda () (expand-file-name "journal.org.gpg"
                                             malb/org-files-dir))
          :datetree t
          :olp ("Daily")
+         :type plain
          :template ,malb/journal-template)
+        (,(format "%s\tSandbox Weekly" (all-the-icons-faicon "tasks" :face 'all-the-icons :v-adjust 0.01)) :keys "w"
+         :file (lambda () malb/sandbox-journal)
+         :datetree t
+         :tree-type week
+         :olp ("Weekly")
+         :type plain
+         :template ("" "- %?"))
         (,(format "%s\tMeeting" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "m"
          :file malb/inbox-org
-         ;; :headline "Meetings"
          :template ("* Meeting with %^{who}"
                     "%U"
                     ""
@@ -3905,7 +3915,7 @@ In [[file:%s::%s][%s]]:
                     "")
          :prepend t
          :empty-lines 1)
-        (,(format "%s\tWeight" (all-the-icons-faicon "tachometer"  :face 'all-the-icons :v-adjust 0.01)) :keys "w"
+        (,(format "%s\tWeight" (all-the-icons-faicon "tachometer"  :face 'all-the-icons :v-adjust 0.01)) :keys "z"
          :file malb/private-org
          :headline "Weight"
          :type table-line
@@ -4523,11 +4533,6 @@ When `exit' from shell buffer."
               (let ((inhibit-read-only t))
                 (erase-buffer)
                 (eshell-send-input)))
-
-            ;; TODO This is broken
-            (defun eshell/ag (&optional dir)
-              (malb/helm-ag (file-name-as-directory
-                             (expand-file-name (or dir ".")))))
 
             ;; -----------
             ;; MINOR MODES
@@ -6913,31 +6918,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                          ("todo" "*[{")
                                          ("anonymous" "{{")
                                          ("fullversion" "{{"))
-                                       'function)
-
-
-              ;; TODO dunno why cleveref.el isn't loaded
-              ;; (font-latex-add-keywords '(("cref"          "*{")
-              ;;                            ("Cref"          "*{")
-              ;;                            ("crefrange"     "*{{")
-              ;;                            ("Crefrange"     "*{{")
-              ;;                            ("cpageref"      "{")
-              ;;                            ("Cpageref"      "{")
-              ;;                            ("cpagerefrange" "{{")
-              ;;                            ("Cpagerefrange" "{{")
-              ;;                            ("namecref"      "{")
-              ;;                            ("nameCref"      "{")
-              ;;                            ("lcnamecref"    "{")
-              ;;                            ("namecrefs"     "{")
-              ;;                            ("nameCrefs"     "{")
-              ;;                            ("lcnamecrefs"   "{")
-              ;;                            ("labelcref"     "{")
-              ;;                            ("labelcpageref" "{")
-              ;;                            ("label"         "[{")
-              ;;                            ("citet"         "*[{")
-              ;;                            ("citep"         "*[{"))
-              ;;                          'reference)
-              )
+                                       'function))
 
             (defun malb/enable-cleveref ()
               (setq reftex-ref-style-default-list '("Default" "Cleveref")))
@@ -7539,7 +7520,7 @@ Spray is a speed reading mode.
 #+begin_src emacs-lisp
 (use-package spray
   :config (progn
-            (setq spray-wpm 512
+            (setq spray-wpm 400
                   spray-margin-left 4
                   spray-margin-top 12)
             (bind-key "+" 'spray-faster spray-mode-map)
@@ -8822,11 +8803,8 @@ Link to mu4e messages and threads.
 (use-package org-mu4e
   :ensure nil
   :config (progn
-            (setq org-mu4e-link-query-in-headers-mode t)
-            (advice-add 'org-mu4e-open :around  #'malb/switch-to-mu4e-advice)))
+            (setq org-mu4e-link-query-in-headers-mode t)))
 #+end_src
-
-****** TODO check if advise can be removed since we’re now checking for major-mode
 
 ** Mail Merge
 :PROPERTIES:
@@ -8959,7 +8937,7 @@ We change the default template to not include the title which is filled in by de
             ))
 #+end_src
 
-****** TODO https://github.com/org2blog/org2blog/wiki/Debugging-Stories
+https://github.com/org2blog/org2blog/wiki/Debugging-Stories
 
 * PDF Viewer
 
