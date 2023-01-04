@@ -3700,6 +3700,13 @@ In [[file:%s::%s][%s]]:
 
 #+begin_src emacs-lisp
 (use-package doct)
+
+(defun malb/org-toggle-todo-by-id (id)
+  (save-excursion
+    (org-id-goto id)
+    (org-todo 'done))
+  (winner-undo))
+
 (use-package org-capture
   :ensure nil
   :after all-the-icons
@@ -3879,12 +3886,14 @@ In [[file:%s::%s][%s]]:
          :type plain
          :template ,malb/journal-template)
         (,(format "%s\tSandbox Weekly" (all-the-icons-faicon "tasks" :face 'all-the-icons :v-adjust 0.01)) :keys "w"
-         :file (lambda () malb/sandbox-journal)
+         :file malb/sandbox-journal
          :datetree t
          :tree-type week
          :olp ("Weekly")
          :type plain
-         :template ("" "- %?"))
+         :template (""
+                    "- %?"
+                    "%(malb/org-toggle-todo-by-id \"4641f4bf-49b7-43a2-8966-715a107a0d68\")"))
         (,(format "%s\tMeeting" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "m"
          :file malb/inbox-org
          :template ("* Meeting with %^{who}"
@@ -8219,8 +8228,7 @@ Headers to show in header view.
 (defun malb/mu4e-view-mode-hook ()
   "View e-mails with width restriction, but wider for HTML."
   (set-fill-column 80)
-  (visual-line-mode 1)
-  (visual-fill-column-mode 1))
+  (visual-line-mode 1))
 
 (add-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook)
 #+end_src
@@ -9805,31 +9813,13 @@ exports.boxes = [ "INBOX"];
             :port 4001
             :tags '(web))
 
-          (prodigy-define-service
-            :name "discrete-subgroup"
-            :cwd (expand-file-name "web/lattice-meetings" malb/projects-dir)
-            :command "jekyll"
-            :args '("serve" "-P" "4002")
-            :url "http://127.0.0.1:4002/discrete-subgroup/"
-            :tags '(web))
-
-          (prodigy-define-service
-            :name "bitlbee"
-            :cwd (expand-file-name "~/Software/docker-bitlbee")
-            :command "docker-compose"
-            :args '("up")
-            :port 16667
-            :stop-signal 'sigterm
-            :kill-process-buffer-on-stop t
-            :tags '(chat))
-
-          (prodigy-define-service
-            :name "weechat"
-            :command "weechat-headless"
-            :port 9000
-            :stop-signal 'sigterm
-            :kill-process-buffer-on-stop t
-            :tags '(chat))
+          ;; (prodigy-define-service
+          ;;   :name "discrete-subgroup"
+          ;;   :cwd (expand-file-name "web/lattice-meetings" malb/projects-dir)
+          ;;   :command "jekyll"
+          ;;   :args '("serve" "-P" "4002")
+          ;;   :url "http://127.0.0.1:4002/discrete-subgroup/"
+          ;;   :tags '(web))
 
           ;; start some services
           (when (and (daemonp) (not malb/startup-quick))
@@ -11054,8 +11044,7 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
             (shrface-basic)
             (shrface-trial)
             (setq shrface-paragraph-indentation 0
-                  shrface-href-versatile t
-                  shrface-paragraph-fill-column fill-column)
+                  shrface-href-versatile t)
 
             (with-eval-after-load 'nov
               ;; reset nov-shr-rendering-functions, in case of the list get bigger and bigger
