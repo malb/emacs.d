@@ -2639,6 +2639,10 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 #+end_src
 
 #+begin_src emacs-lisp
+(add-hook 'org-cycle-hook #'org-cycle-hide-drawers)
+#+end_src
+
+#+begin_src emacs-lisp
 (use-package org-contrib)
 #+end_src
 
