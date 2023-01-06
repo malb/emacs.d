@@ -2045,8 +2045,8 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
   :bind (("C-c m" . vr/mc-mark)
          ("M-%" . vr/query-replace)
          ("C-%" . query-replace)
-         ("C-S-s" . vr/isearch-forward)
-         ("C-S-r" . vr/isearch-backward)))
+         ("C-S-s" . isearch-forward-regexp)
+         ("C-S-r" . isearch-backward-regexp)))
 #+end_src
 
 ([[http://howardism.org/Technical/Emacs/eshell-why.html][source]])
@@ -5458,21 +5458,7 @@ A generator for pop-up Jupyter repls.
 
 *** Tree Sitter
 
-#+begin_src emacs-lisp
-(use-package tree-sitter
-  :config (global-tree-sitter-mode))
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package tree-sitter-langs
-  :config (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package combobulate
-  :hook ((python-mode . combobulate-mode))
-  :load-path "local/combobulate")
-#+end_src
+https://blog.markhepburn.com/posts/experimenting-with-the-built-in-treesitter-support-in-emacs/
 
 *** Language Server Protocol (LSP)
 
