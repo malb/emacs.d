@@ -681,7 +681,7 @@ Find a frame which isn’t the =mu4e= frame or create a fresh one.
 (defun malb/switch-to-mu4e ()
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
-                         (if (string-match "mu4e" (frame-parameter frame 'name))
+                         (if (string-match "\\*mu4e\\*" (frame-parameter frame 'name))
                              (throw 'other-frame frame)
                            nil)))))
     (if other-frame
@@ -1481,7 +1481,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
               (interactive)
               (if (or (> (buffer-size) 1048576) ;; helm-swoop can be slow on big buffers
                       (memq major-mode malb/helm-swoop-ignore-major-mode))
-                  (call-interactively #'isearch-forward)
+                  (call-interactively #'isearch-forward-regexp)
                 (helm-swoop)))
 
             ;; https://emacs.stackexchange.com/questions/28790/helm-swoop-how-to-make-it-behave-more-like-isearch
@@ -2419,6 +2419,9 @@ This library provides easy project management and navigation. The concept of a p
               :around 'projectile-switch-project-by-name
               :around 'helm-projectile-vc
               :around 'helm-projectile-switch-to-shell
+
+              (malb/switch-away-from-mu4e) ;; doesn't really belong here but might as well
+
               (let* ((project-name (projectile-project-name project-to-switch))
                      (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-project-names))
                                              project-name))
@@ -2639,6 +2642,11 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 #+end_src
 
 #+begin_src emacs-lisp
+(defun malb/org-hidden-link-ignore-isearch ()
+  "Do not match hidden parts of links during isearch."
+  (org-fold-core-set-folding-spec-property 'org-link :isearch-open nil))
+
+(add-hook 'org-mode-hook #'malb/org-hidden-link-ignore-isearch)
 (add-hook 'org-cycle-hook #'org-cycle-hide-drawers)
 #+end_src
 
@@ -5503,7 +5511,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :config (progn
             (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
             (add-to-list 'helm-commands-using-frame #'helm-lsp-workspace-symbol)
-            (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbo)))
+            (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbol)))
 
 ;; (use-package lsp-ivy
 ;;   :config (progn
@@ -6920,6 +6928,28 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                        'function))
 
             (defun malb/enable-cleveref ()
+              ;; TODO dunno why cleveref.el isn't loaded
+              (font-latex-add-keywords '(("cref"          "*{")
+                                         ("Cref"          "*{")
+                                         ("crefrange"     "*{{")
+                                         ("Crefrange"     "*{{")
+                                         ("cpageref"      "{")
+                                         ("Cpageref"      "{")
+                                         ("cpagerefrange" "{{")
+                                         ("Cpagerefrange" "{{")
+                                         ("namecref"      "{")
+                                         ("nameCref"      "{")
+                                         ("lcnamecref"    "{")
+                                         ("namecrefs"     "{")
+                                         ("nameCrefs"     "{")
+                                         ("lcnamecrefs"   "{")
+                                         ("labelcref"     "{")
+                                         ("labelcpageref" "{")
+                                         ("label"         "[{")
+                                         ("citet"         "*[{")
+                                         ("citep"         "*[{"))
+                                       'reference)
+
               (setq reftex-ref-style-default-list '("Default" "Cleveref")))
 
             (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
