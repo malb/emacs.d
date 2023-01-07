@@ -21,18 +21,9 @@
 (defun helm-baloo-search (&optional directory)
   (baloo-search helm-pattern directory))
 
-(defun helm-baloo-transform (cs)
-  (let '(helm-baloo-clean-up-regexp (rx (or
-                                         control
-                                         (seq "[0;31m" (+ (not (any "["))) "[0;0m")
-                                         "[0;32m"
-                                         "[0;0m")))
-    (mapcar (function
-             (lambda (c)
-               (replace-regexp-in-string
-                (rx (seq bol (+ space))) ""
-                (replace-regexp-in-string helm-baloo-clean-up-regexp "" c))))
-            cs)))
+(defun helm-baloo-transform (candidates)
+  (cl-loop for i in candidates
+           collect (ansi-color-apply i)))
 
 (defvar helm-baloo-actions
   '(("Open"                                  . helm-find-many-files)
@@ -72,8 +63,7 @@
     (define-key map (kbd "C-c C-x") 'helm-ff-run-open-file-externally)
     (define-key map (kbd "C-c X")   'helm-ff-run-open-file-with-default-tool)
     (define-key map (kbd "C-c @")   'helm-ff-run-insert-org-link)
-    (define-key map (kbd "C-d")     (lambda ()
-                                      (interactive)
+    (define-key map (kbd "C-d")     (lambda () (interactive)
                                       (with-helm-alive-p
                                         (helm-exit-and-execute-action
                                          'helm-open-dired))))
@@ -82,27 +72,32 @@
   "Keymap for Helm Baloo.")
 
 (defun helm-baloo-no-directory ()
+  "Run `baloosearch' without any directory restriction."
   (interactive)
   (helm :sources (helm-build-async-source "Baloo"
                    :candidates-process #'helm-baloo-search
                    :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
                    :action helm-baloo-actions
                    :keymap helm-baloo-map
+                   :requires-pattern 3
                    :help-message #'helm-generic-file-help-message)
         :buffer "*helm baloo*"))
 
 (defun helm-baloo-in-directory (directory)
+  "Run `baloosearch' restricted to DIRECTORY."
   (interactive "D")
   (helm :sources (helm-build-async-source "Baloo"
                    :candidates-process (lambda () (helm-baloo-search directory))
                    :candidate-transformer '(helm-baloo-transform helm-skip-boring-files)
                    :action helm-baloo-actions
                    :keymap helm-baloo-map
+                   :requires-pattern 3
                    :help-message #'helm-generic-file-help-message)
         :buffer "*helm baloo*"))
 
 ;;;###autoload
 (defun helm-baloo (&optional arg)
+  "Run `baloosearch'. If ARG is given, set a directory first"
   (interactive "P")
   (if arg
       (progn
@@ -110,4 +105,5 @@
     (call-interactively #'helm-baloo-no-directory)))
 
 (provide 'helm-baloo)
+
 ;;; helm-baloo.el ends here
