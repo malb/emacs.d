@@ -2033,7 +2033,7 @@ Automatically revert buffers.
 
 #+begin_src emacs-lisp
 (use-package focus-autosave-mode
-  :blackout (focus-autosave-local-mode . " "))
+  :blackout (focus-autosave-local-mode . " ♻"))
 #+end_src
 
 ** Regexp
@@ -4625,10 +4625,10 @@ When nth is set, it will copy the nth previous command."
                     pcomplete-ignore-case t)
               (setq-local company-idle-delay 1.0)
               (define-key eshell-mode-map [remap eshell-pcomplete]
-                (lambda ()
-                  (interactive)
-                  (let ((completion--capf-misbehave-funs nil))
-                    (call-interactively #'company-capf)))))
+                          (lambda ()
+                            (interactive)
+                            (let ((completion--capf-misbehave-funs nil))
+                              (call-interactively #'company-capf)))))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
@@ -4659,7 +4659,9 @@ When nth is set, it will copy the nth previous command."
                   (delete-region pre-p (point)))
                 (put 'malb/eshell-insert-last-word 'pre-n (1+ n))
                 (put 'malb/eshell-insert-last-word 'pre-p (point))
-                (insert (malb/eshell-last-argument n))))
+                (if (s-contains-p " " (malb/eshell-last-argument n))
+                    (insert "\"" (malb/eshell-last-argument n) "\"")
+                  (insert (malb/eshell-last-argument n) ))))
 
             ;;
             ;; https://github.com/howardabrams/hamacs/blob/main/ha-eshell.org#last-results
@@ -10830,7 +10832,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
               "The current conda environment.  Works with `conda'."
               (when (bound-and-true-p conda-env-current-name)
                 (propertize (format " |%s|" conda-env-current-name)
-                            'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+                            'face (doom-modeline-face)
                             'help-echo (format "Conda environment: %s"
                                                conda-env-current-name))))
             (setq doom-modeline-icon t
