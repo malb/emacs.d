@@ -3721,6 +3721,19 @@ In [[file:%s::%s][%s]]:
     (org-todo 'done))
   (winner-undo))
 
+;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
+(defun malb/org-get-target-headline (&optional targets prompt)
+  "Prompt for a location in an org file and jump to it.
+
+This is for promping for refile targets when doing captures.
+Targets are selected from `org-refile-targets'. If TARGETS is
+given it temporarily overrides `org-refile-targets'. PROMPT will
+replace the default prompt message."
+  (let ((org-refile-targets (or targets org-refile-targets))
+        (prompt (or prompt "Capture Location")))
+    (org-refile t nil nil prompt)))
+
+
 (use-package org-capture
   :ensure nil
   :after all-the-icons
@@ -3771,7 +3784,9 @@ In [[file:%s::%s][%s]]:
          :file malb/inbox-org
          ;; :headline "E-Mail"
          :empty-lines 1
-         :children  ((,(format "%s\tRespond to Email" (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)) :keys "r"
+         :children  ((,(format "%s\tRespond to Email"
+                               (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01))
+                      :keys "r"
                       :template  ("* REPLY to %:fromname on %a :email:"
                                   "DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))"
                                   ":PROPERTIES:"
@@ -3781,17 +3796,20 @@ In [[file:%s::%s][%s]]:
                                   "%i")
                       :prepend t
                       :immediate-finish t)
-                     (,(format "%s\tFile an Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01)) :keys "f"
-                      :template  ("* %a"
-                                  ":PROPERTIES:"
-                                  ":CREATED: %U"
-                                  ":END:")
-                      :prepend nil
-                      :immediate-finish nil)
-                     (,(format "%s\tStore Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01)) :keys "s"
-                      :template ("* %a")
+                     (,(format "%s\tFile an Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
+                      :keys "f"
+                      :template  ("- email: %A")
+                      :type item
+                      :function malb/org-get-target-headline
                       :immediate-finish nil
-                      :prepend nil
+                      :empty-lines 0)
+                     (,(format "%s\tFile an Email Search"
+                               (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
+                      :keys "s"
+                      :template  ("- query: %A")
+                      :type item
+                      :function malb/org-get-target-headline
+                      :immediate-finish nil
                       :empty-lines 0)
                      (,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
                       :file malb/work-org
@@ -3808,20 +3826,22 @@ In [[file:%s::%s][%s]]:
                                  "")
                       :immediate-finish nil
                       :prepend t)
-                     (,(format "%s\tOffice Task" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "o"
-                      :file malb/work-org
-                      :headline "Admin"
-                      :template ("* TODO %a (%:from) %^{tag|:@office:|:@train:}email:"
-                                 "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
-                                 "                             (thu (org-read-date nil t \"Thu\")))"
-                                 "                         (if (time-less-p tue thu)"
-                                 "                             tue"
-                                 "                           thu)))"
-                                 ":PROPERTIES:"
-                                 ":CREATED: %U"
-                                 ":END:")
-                      :immediate-finish t
-                      :prepend t)
+                     ;; (,(format "%s\tOffice Task"
+                     ;;           (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
+                     ;;  :keys "o"
+                     ;;  :file malb/work-org
+                     ;;  :headline "Admin"
+                     ;;  :template ("* TODO %a (%:from) %^{tag|:@office:|:@train:}email:"
+                     ;;             "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
+                     ;;             "                             (thu (org-read-date nil t \"Thu\")))"
+                     ;;             "                         (if (time-less-p tue thu)"
+                     ;;             "                             tue"
+                     ;;             "                           thu)))"
+                     ;;             ":PROPERTIES:"
+                     ;;             ":CREATED: %U"
+                     ;;             ":END:")
+                     ;;  :immediate-finish t
+                     ;;  :prepend t)
                      (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01)) :keys "m"
                       :file malb/work-org
                       :headline "Admin"
@@ -3860,15 +3880,21 @@ In [[file:%s::%s][%s]]:
                                  ":END:")
                       :immediate-finish t
                       :prepend t)))
-        (,(format "%s\tQuick Task " (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
+        (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
+         :file malb/work-org
+         :headline "Admin"
          :template ("* TODO %?"
-                    "SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))"
+                    "SCHEDULED: %(let ((hour (third (decode-time (current-time)))))"
+                    "                  (if (< hour 16)"
+                    "                    (org-insert-time-stamp nil)"
+                    "                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))"
                     ":PROPERTIES:"
                     ":CREATED: %U"
                     ":END:"
                     ""
                     "%i")
-         :file malb/inbox-org)
+         :immediate-finish t
+         :prepend t)
         (,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01)) :keys "r"
          :file malb/work-org
          :headline "Reading"
