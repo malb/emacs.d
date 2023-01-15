@@ -123,11 +123,10 @@ Configure package repositories.
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/"))
-      package-archive-priorities '(("gnu" . 10)
-                                   ("nongnu" . 10)
+      package-archive-priorities '(("gnu" . 20)
+                                   ("nongnu" . 20)
                                    ("melpa" . 20)
-                                   ("melpa-stable" . 25)
-                                   ("org" . 20))
+                                   ("melpa-stable" . 10))
       package-menu-hide-low-priority nil)
 #+end_src
 
@@ -631,6 +630,8 @@ Separate mu4e windows from others ([[https://stackoverflow.com/questions/1834678
 
 (defun malb/frame-is-special-p (frame)
   (or (frame-parameter frame 'malb/is-special)
+      ;; handle leftover helm frames
+      (not (frame-parameter frame 'visibility))
       (seq-some (lambda (name)
                   (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
                 malb/special-frame-names)))
@@ -3132,6 +3133,7 @@ I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-
 #+begin_src emacs-lisp
 (use-package org-modern
   :custom ((org-modern-block-name nil "Don't stylise blocks")
+           (org-modern-block-fringe nil "Don't stylise block fringes")
            (org-modern-priority nil "Don't stylise priorities")
            (org-modern-tag nil "Don't stylise tags")
            (org-modern-timestamp nil "Don't stylisee timestamps")
@@ -3794,15 +3796,16 @@ In [[file:%s::%s][%s]]:
                      (,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
                       :file malb/work-org
                       :headline "Admin"
-                      :template ("* %^{type|TODO|REPLY|READ|REVIEW} %? %:fromname :email:"
-                                 "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
+                      :template ("* %^{type|TODO|REPLY|READ|REVIEW} %?"
+                                 "%^{schedule|DEADLINE: |SCHEDULED: ||}%^t"
                                  ":PROPERTIES:"
                                  ":CREATED: %U"
                                  ":END:"
                                  ""
                                  "%i"
                                  ""
-                                 "See %a by %:fromname")
+                                 "See %a by %:fromname"
+                                 "")
                       :immediate-finish nil
                       :prepend t)
                      (,(format "%s\tOffice Task" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "o"
@@ -4147,7 +4150,11 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 #+begin_src emacs-lisp
 (use-package ob-async
   :after ob
-  :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia")))
+  :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia"))
+  :config (progn
+            (malb/defadvice! malb/no-hide-overlays (orig-fun &rest args)
+              :before #'ob-async-org-babel-execute-src-block
+              (setq org-babel-hide-result-overlays nil))))
 #+end_src
 
 *** To String
@@ -5391,6 +5398,9 @@ Auto-format source code in many languages with one command – [[https://github.
                     (kill-buffer))
                 (delete-char arg)))
 
+            (defun jupyter-ansi-color-apply-on-region (begin end)
+              (ansi-color-apply-on-region begin end t))
+
             (org-babel-jupyter-override-src-block "python")))
 #+end_src
 
@@ -5402,7 +5412,7 @@ Auto-format source code in many languages with one command – [[https://github.
       "sagemath")))
 #+end_src
 
-**** Workaround
+**** COMMENT Workaround
 
 ([[https://github.com/nnicandro/emacs-jupyter/issues/366][source]])
 
@@ -9554,15 +9564,6 @@ Show dired histories you have visited.
                              "Tramp" #'helm-tramp-open
                              "Term"  #'helm-tramp-open-vterm
                              "Shell" #'helm-tramp-open-shell)))))
-#+end_src
-
-#+BEGIN_QUOTE
-[[https://github.com/emacs-pe/docker-tramp.el][docker-tramp.el]] offers a TRAMP method for Docker containers.
-#+END_QUOTE
-
-#+begin_src emacs-lisp
-(use-package docker-tramp
-  :after tramp)
 #+end_src
 
 * Diff
