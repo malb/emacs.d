@@ -3715,31 +3715,31 @@ In [[file:%s::%s][%s]]:
 #+begin_src emacs-lisp
 (use-package doct)
 
-(defun malb/org-toggle-todo-by-id (id)
-  (save-excursion
-    (org-id-goto id)
-    (org-todo 'done))
-  (winner-undo))
-
-;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
-(defun malb/org-get-target-headline (&optional targets prompt)
-  "Prompt for a location in an org file and jump to it.
-
-This is for promping for refile targets when doing captures.
-Targets are selected from `org-refile-targets'. If TARGETS is
-given it temporarily overrides `org-refile-targets'. PROMPT will
-replace the default prompt message."
-  (let ((org-refile-targets (or targets org-refile-targets))
-        (prompt (or prompt "Capture Location")))
-    (org-refile t nil nil prompt)))
-
-
 (use-package org-capture
   :ensure nil
   :after all-the-icons
   :bind ("<f9>" . org-capture)
   :config
   (progn
+
+    (defun malb/org-toggle-todo-by-id (id)
+      (save-excursion
+        (org-id-goto id)
+        (org-todo 'done))
+      (winner-undo))
+
+    ;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
+    (defun malb/org-get-target-headline (&optional targets prompt)
+      "Prompt for a location in an org file and jump to it.
+
+This is for promping for refile targets when doing captures.
+Targets are selected from `org-refile-targets'. If TARGETS is
+given it temporarily overrides `org-refile-targets'. PROMPT will
+replace the default prompt message."
+      (let ((org-refile-targets (or targets org-refile-targets))
+            (prompt (or prompt "Capture Location")))
+        (org-refile t nil nil prompt)))
+
     (setq
      org-capture-templates
      (doct
@@ -3784,8 +3784,7 @@ replace the default prompt message."
          :file malb/inbox-org
          ;; :headline "E-Mail"
          :empty-lines 1
-         :children  ((,(format "%s\tRespond to Email"
-                               (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01))
+         :children  ((,(format "%s\tRespond to Email" (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01))
                       :keys "r"
                       :template  ("* REPLY to %:fromname on %a :email:"
                                   "DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))"
@@ -3796,15 +3795,14 @@ replace the default prompt message."
                                   "%i")
                       :prepend t
                       :immediate-finish t)
-                     (,(format "%s\tFile an Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
+                     (,(format "%s\tFile Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
                       :keys "f"
                       :template  ("- email: %A")
                       :type item
                       :function malb/org-get-target-headline
                       :immediate-finish nil
                       :empty-lines 0)
-                     (,(format "%s\tFile an Email Search"
-                               (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
+                     (,(format "%s\tFile Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
                       :keys "s"
                       :template  ("- query: %A")
                       :type item
@@ -3826,23 +3824,39 @@ replace the default prompt message."
                                  "")
                       :immediate-finish nil
                       :prepend t)
-                     ;; (,(format "%s\tOffice Task"
-                     ;;           (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
-                     ;;  :keys "o"
-                     ;;  :file malb/work-org
-                     ;;  :headline "Admin"
-                     ;;  :template ("* TODO %a (%:from) %^{tag|:@office:|:@train:}email:"
-                     ;;             "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
-                     ;;             "                             (thu (org-read-date nil t \"Thu\")))"
-                     ;;             "                         (if (time-less-p tue thu)"
-                     ;;             "                             tue"
-                     ;;             "                           thu)))"
-                     ;;             ":PROPERTIES:"
-                     ;;             ":CREATED: %U"
-                     ;;             ":END:")
-                     ;;  :immediate-finish t
-                     ;;  :prepend t)
-                     (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01)) :keys "m"
+                     (,(format "%s\tKCL Herrschaftswissen" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01))
+                      :keys "k"
+                      :file malb/work-org
+                      :headline "King’s College London (KCL)"
+                      :template ("* %?"
+                                 ":PROPERTIES:"
+                                 ":CREATED: %U"
+                                 ":END:"
+                                 ""
+                                 "#+begin_quote"
+                                 "%i"
+                                 "#+end_quote"
+                                 ""
+                                 "— %a by %:fromname"
+                                 "")
+                      :immediate-finish nil
+                      :prepend t)
+                     (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
+                      :keys "y"
+                      :file malb/work-org
+                      :headline "Admin"
+                      :template ("* TODO %a (%:fromname) :email:"
+                                 "SCHEDULED: %(let ((hour (third (decode-time (current-time)))))"
+                                 "                  (if (< hour 16)"
+                                 "                    (org-insert-time-stamp nil)"
+                                 "                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))"
+                                 ":PROPERTIES:"
+                                 ":CREATED: %U"
+                                 ":END:")
+                      :immediate-finish t
+                      :prepend t)
+                     (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01))
+                      :keys "m"
                       :file malb/work-org
                       :headline "Admin"
                       :template ("* MAIL %?"
@@ -3867,19 +3881,23 @@ replace the default prompt message."
                                  "#+end_src"
                                  "")
                       :prepend t)
-                     (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
-                      :file malb/work-org
-                      :headline "Admin"
-                      :template ("* TODO %a (%:fromname) :email:"
-                                 "SCHEDULED: %(let ((hour (third (decode-time (current-time)))))"
-                                 "                  (if (< hour 16)"
-                                 "                    (org-insert-time-stamp nil)"
-                                 "                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))"
-                                 ":PROPERTIES:"
-                                 ":CREATED: %U"
-                                 ":END:")
-                      :immediate-finish t
-                      :prepend t)))
+                     ;; (,(format "%s\tOffice Task"
+                     ;;           (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
+                     ;;  :keys "o"
+                     ;;  :file malb/work-org
+                     ;;  :headline "Admin"
+                     ;;  :template ("* TODO %a (%:from) %^{tag|:@office:|:@train:}email:"
+                     ;;             "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
+                     ;;             "                             (thu (org-read-date nil t \"Thu\")))"
+                     ;;             "                         (if (time-less-p tue thu)"
+                     ;;             "                             tue"
+                     ;;             "                           thu)))"
+                     ;;             ":PROPERTIES:"
+                     ;;             ":CREATED: %U"
+                     ;;             ":END:")
+                     ;;  :immediate-finish t
+                     ;;  :prepend t)
+                     ))
         (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
          :file malb/work-org
          :headline "Admin"
@@ -9845,11 +9863,16 @@ exports.boxes = [ "INBOX"];
             :ready-message "Checking E-mail using IMAP IDLE. Ctrl-C to shutdown.")
 
           (prodigy-define-service
-            :name "imapnotify"
-            ;; :command "goimapnotify"
-            ;; :args (list "-conf" (expand-file-name ".config/imapnotify/gmail.conf" (getenv "HOME")))
+            :name "imapnotify-gmail"
             :command "imapnotify"
             :args (list "-c" (expand-file-name ".config/imapnotify.gmail.js" (getenv "HOME")))
+            :tags '(email)
+            :kill-signal 'sigkill)
+
+          (prodigy-define-service
+            :name "imapnotify-kcl"
+            :command "goimapnotify"
+            :args (list "-conf" (expand-file-name ".config/imapnotify.kcl.json" (getenv "HOME")))
             :tags '(email)
             :kill-signal 'sigkill)
 
@@ -9861,19 +9884,10 @@ exports.boxes = [ "INBOX"];
             :port 4001
             :tags '(web))
 
-          ;; (prodigy-define-service
-          ;;   :name "discrete-subgroup"
-          ;;   :cwd (expand-file-name "web/lattice-meetings" malb/projects-dir)
-          ;;   :command "jekyll"
-          ;;   :args '("serve" "-P" "4002")
-          ;;   :url "http://127.0.0.1:4002/discrete-subgroup/"
-          ;;   :tags '(web))
-
           ;; start some services
           (when (and (daemonp) (not malb/startup-quick))
-            (prodigy-start-service (prodigy-find-service "imapnotify"))
-            ;; (prodigy-start-service (prodigy-find-service "bitlbee"))
-            ;; (prodigy-start-service (prodigy-find-service "weechat"))
+            (prodigy-start-service (prodigy-find-service "imapnotify-gmail"))
+            (prodigy-start-service (prodigy-find-service "imapnotify-kcl"))
             )))
 #+end_src
 
