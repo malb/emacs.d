@@ -104,6 +104,12 @@
           :buffer "*helm ddgr*"
           :history 'helm-ddgr-input-history)))
 
+;;;###autoload
+(defun helm-ddgr-return (&optional search-term)
+  "Web search interface for Emacs."
+  (let ((helm-ddgr-actions '(("Return" . (lambda (candidate) candidate)))))
+    (helm-ddgr search-term)))
+
 (provide 'helm-ddgr)
 
 ;;; helm-ddgr.el ends here
