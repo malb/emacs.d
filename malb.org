@@ -2666,7 +2666,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 ** Options
 
 #+begin_src emacs-lisp
-(setq org-enforce-todo-dependencies nil   ; enforce todo dependencies
+(setq org-enforce-todo-dependencies nil ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
       org-catch-invisible-edits 'smart
@@ -2677,11 +2677,11 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-log-done t
       org-return-follows-link nil       ; don’t follow links by pressing ENTER
       org-clock-persist 'history
-      org-special-ctrl-a/e t               ; begin/end of line to skip starts …
-      org-special-ctrl-k t                 ; special keys for killing a headline
-      org-edit-src-content-indentation 0   ; don't indent source code
-      org-src-preserve-indentation t       ; preserve indentation in code
-      org-src-window-setup 'plain ; when hitting C-c '
+      org-special-ctrl-a/e t             ; begin/end of line to skip starts …
+      org-special-ctrl-k t               ; special keys for killing a headline
+      org-edit-src-content-indentation 0 ; don't indent source code
+      org-src-preserve-indentation t     ; preserve indentation in code
+      org-src-window-setup 'plain        ; when hitting C-c '
       org-reverse-note-order t
       org-footnote-auto-adjust t          ; renumber footnotes automagically
       org-link-elisp-confirm-function nil ;
@@ -2694,6 +2694,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                                          (plain-list-item . nil)))
       org-yank-adjusted-subtrees nil
       org-treat-S-cursor-todo-selection-as-state-change nil
+      org-extend-today-until 3
       org-show-context-detail '((agenda . canonical) ;; instead of "local"
                                 (bookmark-jump . lineage)
                                 (isearch . lineage)
@@ -3722,11 +3723,14 @@ In [[file:%s::%s][%s]]:
   :config
   (progn
 
-    (defun malb/org-toggle-todo-by-id (id)
-      (save-excursion
-        (org-id-goto id)
-        (org-todo 'done))
-      (winner-undo))
+    (defun malb/org-toggle-todo-by-id (id &optional only-today)
+      (when (or (not only-today)
+                (= (nth 3 (org-decode-time nil))
+                   (nth 3 (org-decode-time (org-capture-get :default-time)))))
+        (save-excursion
+          (org-id-goto id)
+          (org-todo 'done))
+        (winner-undo)))
 
     ;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
     (defun malb/org-get-target-headline (&optional targets prompt)
