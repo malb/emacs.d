@@ -3747,162 +3747,164 @@ replace the default prompt message."
     (setq
      org-capture-templates
      (doct
-      `((,(format "%s\tTask" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
+      `((,(format "%s\tTask" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
+         :keys "t"
          :prepend t
          :empty-lines 1
-         :children ((,(format "%s\tTask" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
-                     :keys "t"
-                     :template ("* TODO %?"
-                                "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
-                                ":PROPERTIES:"
-                                ":CREATED: %U"
-                                ":END:"
-                                ""
-                                "%i")
-                     :file malb/inbox-org)
-                    (,(format "%s\tTask in Context" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
-                     :keys "c"
-                     :template ("* TODO %?"
-                                ":PROPERTIES:"
-                                ":CREATED: %U"
-                                ":END:"
-                                ""
-                                "%a"
-                                ""
-                                "%i")
-                     :file malb/inbox-org)
-                    (,(format "%s\tTask for Project" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
-                     :keys "p"
-                     :template ("** TODO %?"
-                                ":PROPERTIES:"
-                                ":CREATED: %U"
-                                ":END:"
-                                ""
-                                "%i"
-                                "%a")
-                     :type plain
-                     :function malb/org-capture-projectile)
-                    )
-         )
-        (,(format "%s\tEmail " (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)) :keys "e"
+         :children
+         ((,(format "%s\tTask" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
+           :keys "t"
+           :template ("* TODO %?"
+                      "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":END:"
+                      ""
+                      "%i")
+           :file malb/inbox-org)
+          (,(format "%s\tTask in Context" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
+           :keys "c"
+           :template ("* TODO %?"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":END:"
+                      ""
+                      "%a"
+                      ""
+                      "%i")
+           :file malb/inbox-org)
+          (,(format "%s\tTask for Project" (all-the-icons-faicon "check-square-o" :face 'all-the-icons :v-adjust 0.01))
+           :keys "p"
+           :template ("** TODO %?"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":END:"
+                      ""
+                      "%i"
+                      "%a")
+           :type plain
+           :function malb/org-capture-projectile)))
+        (,(format "%s\tEmail " (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01))
+         :keys "e"
          :file malb/inbox-org
-         ;; :headline "E-Mail"
          :empty-lines 1
-         :children  ((,(format "%s\tRespond to Email" (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01))
-                      :keys "r"
-                      :template  ("* REPLY to %:fromname on %a :email:"
-                                  "DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))"
-                                  ":PROPERTIES:"
-                                  ":CREATED: %U"
-                                  ":END:"
-                                  ""
-                                  "%i")
-                      :prepend t
-                      :immediate-finish t)
-                     (,(format "%s\tFile Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
-                      :keys "f"
-                      :template  ("- email: %A")
-                      :type item
-                      :function malb/org-get-target-headline
-                      :immediate-finish nil
-                      :empty-lines 0)
-                     (,(format "%s\tFile Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
-                      :keys "s"
-                      :template  ("- query: %A")
-                      :type item
-                      :function malb/org-get-target-headline
-                      :immediate-finish nil
-                      :empty-lines 0)
-                     (,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
-                      :file malb/work-org
-                      :headline "Admin"
-                      :template ("* %^{type|TODO|REPLY|READ|REVIEW} %?"
-                                 "%^{schedule|DEADLINE: |SCHEDULED: ||}%^t"
-                                 ":PROPERTIES:"
-                                 ":CREATED: %U"
-                                 ":END:"
-                                 ""
-                                 "%i"
-                                 ""
-                                 "See %a by %:fromname"
-                                 "")
-                      :immediate-finish nil
-                      :prepend t)
-                     (,(format "%s\tKCL Herrschaftswissen" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01))
-                      :keys "k"
-                      :file malb/work-org
-                      :headline "King’s College London (KCL)"
-                      :template ("* %?"
-                                 ":PROPERTIES:"
-                                 ":CREATED: %U"
-                                 ":END:"
-                                 ""
-                                 "#+begin_quote"
-                                 "%i"
-                                 "#+end_quote"
-                                 ""
-                                 "— %a by %:fromname"
-                                 "")
-                      :immediate-finish nil
-                      :prepend t)
-                     (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
-                      :keys "y"
-                      :file malb/work-org
-                      :headline "Admin"
-                      :template ("* TODO %a (%:fromname) :email:"
-                                 "SCHEDULED: %(let ((hour (third (decode-time (current-time)))))"
-                                 "                  (if (< hour 16)"
-                                 "                    (org-insert-time-stamp nil)"
-                                 "                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))"
-                                 ":PROPERTIES:"
-                                 ":CREATED: %U"
-                                 ":END:")
-                      :immediate-finish t
-                      :prepend t)
-                     (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01))
-                      :keys "m"
-                      :file malb/work-org
-                      :headline "Admin"
-                      :template ("* MAIL %?"
-                                 "SCHEDULED: %^t"
-                                 ":PROPERTIES:"
-                                 ":CREATED: %U"
-                                 ":BCC:"
-                                 ":END:"
-                                 ""
-                                 "#+name: mm-data"
-                                 "| TO | CC | name |"
-                                 "|----|----|------|"
-                                 "|    |    |      |"
-                                 ""
-                                 "#+name: mm-template"
-                                 "#+begin_src markdown"
-                                 "Hi {{ name }},",
-                                 ""
-                                 ""
-                                 "Cheers,"
-                                 "Martin"
-                                 "#+end_src"
-                                 "")
-                      :prepend t)
-                     ;; (,(format "%s\tOffice Task"
-                     ;;           (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
-                     ;;  :keys "o"
-                     ;;  :file malb/work-org
-                     ;;  :headline "Admin"
-                     ;;  :template ("* TODO %a (%:from) %^{tag|:@office:|:@train:}email:"
-                     ;;             "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
-                     ;;             "                             (thu (org-read-date nil t \"Thu\")))"
-                     ;;             "                         (if (time-less-p tue thu)"
-                     ;;             "                             tue"
-                     ;;             "                           thu)))"
-                     ;;             ":PROPERTIES:"
-                     ;;             ":CREATED: %U"
-                     ;;             ":END:")
-                     ;;  :immediate-finish t
-                     ;;  :prepend t)
-                     ))
-        (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01)) :keys "y"
+         :children
+         ((,(format "%s\tRespond to Email" (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01))
+           :keys "r"
+           :template  ("* REPLY to %:fromname on %a :email:"
+                       "DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))"
+                       ":PROPERTIES:"
+                       ":CREATED: %U"
+                       ":END:"
+                       ""
+                       "%i")
+           :prepend t
+           :immediate-finish t)
+          (,(format "%s\tFile Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
+           :keys "f"
+           :template  ("- email: %a%?")
+           :type item
+           :function malb/org-get-target-headline
+           :immediate-finish nil
+           :empty-lines 0)
+          (,(format "%s\tFile Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
+           :keys "s"
+           :template  ("- query: %a%?")
+           :type item
+           :function malb/org-get-target-headline
+           :immediate-finish nil
+           :empty-lines 0)
+          (,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
+           :file malb/work-org
+           :headline "Admin"
+           :template ("* %^{type|TODO|REPLY|READ|REVIEW} %?"
+                      "%^{schedule|DEADLINE: |SCHEDULED: ||}%^t"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":END:"
+                      ""
+                      "%i"
+                      ""
+                      "See %a by %:fromname"
+                      "")
+           :immediate-finish nil
+           :prepend t)
+          (,(format "%s\tKCL Herrschaftswissen" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01))
+           :keys "k"
+           :file malb/work-org
+           :headline "King’s College London (KCL)"
+           :template ("* %?"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":END:"
+                      ""
+                      "#+begin_quote"
+                      "%i"
+                      "#+end_quote"
+                      ""
+                      "— %a by %:fromname"
+                      "")
+           :immediate-finish nil
+           :prepend t)
+          (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
+           :keys "y"
+           :file malb/work-org
+           :headline "Admin"
+           :template ("* TODO %a (%:fromname) :email:"
+                      "SCHEDULED: %(let ((hour (third (decode-time (current-time)))))"
+                      "                  (if (< hour 16)"
+                      "                    (org-insert-time-stamp nil)"
+                      "                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":END:")
+           :immediate-finish t
+           :prepend t)
+          (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01))
+           :keys "m"
+           :file malb/work-org
+           :headline "Admin"
+           :template ("* MAIL %?"
+                      "SCHEDULED: %^t"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":BCC:"
+                      ":END:"
+                      ""
+                      "#+name: mm-data"
+                      "| TO | CC | name |"
+                      "|----|----|------|"
+                      "|    |    |      |"
+                      ""
+                      "#+name: mm-template"
+                      "#+begin_src markdown"
+                      "Hi {{ name }},",
+                      ""
+                      ""
+                      "Cheers,"
+                      "Martin"
+                      "#+end_src"
+                      "")
+           :prepend t)
+          ;; (,(format "%s\tOffice Task"
+          ;;           (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
+          ;;  :keys "o"
+          ;;  :file malb/work-org
+          ;;  :headline "Admin"
+          ;;  :template ("* TODO %a (%:from) %^{tag|:@office:|:@train:}email:"
+          ;;             "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
+          ;;             "                             (thu (org-read-date nil t \"Thu\")))"
+          ;;             "                         (if (time-less-p tue thu)"
+          ;;             "                             tue"
+          ;;             "                           thu)))"
+          ;;             ":PROPERTIES:"
+          ;;             ":CREATED: %U"
+          ;;             ":END:")
+          ;;  :immediate-finish t
+          ;;  :prepend t)
+          ))
+        (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
+         :keys "y"
          :file malb/work-org
          :headline "Admin"
          :template ("* TODO %?"
@@ -3916,7 +3918,8 @@ replace the default prompt message."
                     ""
                     "%i")
          :prepend t)
-        (,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01)) :keys "r"
+        (,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01))
+         :keys "r"
          :file malb/work-org
          :headline "Reading"
          :template ("* READ %?"
@@ -3928,7 +3931,8 @@ replace the default prompt message."
                     "%i")
          :prepend t
          :empty-lines 1)
-        (,(format "%s\tResearch Idea" (all-the-icons-faicon "lightbulb-o" :face 'all-the-icons :v-adjust 0.01)) :keys "i"
+        (,(format "%s\tResearch Idea" (all-the-icons-faicon "lightbulb-o" :face 'all-the-icons :v-adjust 0.01))
+         :keys "i"
          :file malb/work-org
          :headline "Ideas"
          :template ("* EXPLORE %?"
@@ -3940,14 +3944,16 @@ replace the default prompt message."
                     "%i")
          :prepend t
          :empty-lines 1)
-        (,(format "%s\tJournal" (all-the-icons-faicon "clipboard" :face 'all-the-icons :v-adjust 0.01)) :keys "j"
+        (,(format "%s\tJournal" (all-the-icons-faicon "clipboard" :face 'all-the-icons :v-adjust 0.01))
+         :keys "j"
          :file (lambda () (expand-file-name "journal.org.gpg"
                                             malb/org-files-dir))
          :datetree t
          :olp ("Daily")
          :type plain
          :template ,malb/journal-template)
-        (,(format "%s\tSandbox Weekly" (all-the-icons-faicon "tasks" :face 'all-the-icons :v-adjust 0.01)) :keys "w"
+        (,(format "%s\tSandbox Weekly" (all-the-icons-faicon "tasks" :face 'all-the-icons :v-adjust 0.01))
+         :keys "w"
          :file malb/sandbox-journal
          :datetree t
          :tree-type week
@@ -3956,7 +3962,8 @@ replace the default prompt message."
          :template (""
                     "- %?"
                     "%(malb/org-toggle-todo-by-id \"4641f4bf-49b7-43a2-8966-715a107a0d68\")"))
-        (,(format "%s\tMeeting" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01)) :keys "m"
+        (,(format "%s\tMeeting" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
+         :keys "m"
          :file malb/inbox-org
          :template ("* Meeting with %^{who}"
                     "%U"
@@ -3965,7 +3972,8 @@ replace the default prompt message."
          :clock-in t
          :clock-resume t
          :empty-lines 1)
-        (,(format "%s\tNote" (all-the-icons-faicon "sticky-note" :face 'all-the-icons :v-adjust 0.01)) :keys "n"
+        (,(format "%s\tNote" (all-the-icons-faicon "sticky-note" :face 'all-the-icons :v-adjust 0.01))
+         :keys "n"
          :file malb/inbox-org
          :template ("* %?"
                     ":PROPERTIES:"
@@ -3974,7 +3982,8 @@ replace the default prompt message."
                     ""
                     "%i")
          :empty-lines 1)
-        (,(format "%s\tSoftware Tip" (all-the-icons-faicon "code" :face 'all-the-icons :v-adjust 0.01)) :keys "s"
+        (,(format "%s\tSoftware Tip" (all-the-icons-faicon "code" :face 'all-the-icons :v-adjust 0.01))
+         :keys "s"
          :file (lambda () (expand-file-name "software.org" deft-directory))
          :headline "Incoming"
          :template ("* %?"
@@ -3986,49 +3995,53 @@ replace the default prompt message."
                     "")
          :prepend t
          :empty-lines 1)
-        (,(format "%s\tWeight" (all-the-icons-faicon "tachometer"  :face 'all-the-icons :v-adjust 0.01)) :keys "z"
+        (,(format "%s\tWeight" (all-the-icons-faicon "tachometer"  :face 'all-the-icons :v-adjust 0.01))
+         :keys "z"
          :file malb/private-org
          :headline "Weight"
          :type table-line
          :template "| %u | %? | |")
 
-        (,(format "%s\t[External] " (all-the-icons-faicon "firefox" :face 'all-the-icons :v-adjust 0.01)) :keys "%"
-         :children (
-                    (,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01)) :keys "r"
-                     :file malb/work-org
-                     :headline "Reading"
-                     :template ("* READ %a%?"
-                                "DEADLINE: %^t"
-                                ":PROPERTIES:"
-                                ":CREATED: %U"
-                                ":END:"
-                                ""
-                                "%i")
-                     :prepend t
-                     :empty-lines 1)
-                    (,(format "%s\tWebsite" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01)) :keys "w"
-                     :file malb/inbox-org
-                     ;; :headline "Links"
-                     :template ("* %?%a"
-                                ":PROPERTIES:"
-                                ":CREATED: %U"
-                                ":END:")
-                     :immediate-finish nil
-                     :prepend t)
-                    (,(format "%s\tWebsite (selected text)" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01)) :keys "W"
-                     :file malb/inbox-org
-                     ;; :headline "Links"
-                     :template  ("* %?%a"
-                                 ":PROPERTIES:"
-                                 ":CREATED: %U"
-                                 ":END:"
-                                 ""
-                                 "#+begin_quote"
-                                 "%:initial"
-                                 "#+end_quote"
-                                 )
-                     :immediate-finish nil
-                     :prepend t))))))
+        (,(format "%s\t[External] " (all-the-icons-faicon "firefox" :face 'all-the-icons :v-adjust 0.01))
+         :keys "%"
+         :children
+         ((,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01))
+           :keys "r"
+           :file malb/work-org
+           :headline "Reading"
+           :template ("* READ %a%?"
+                      "DEADLINE: %^t"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":END:"
+                      ""
+                      "%i")
+           :prepend t
+           :empty-lines 1)
+          (,(format "%s\tWebsite" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01))
+           :keys "w"
+           :file malb/inbox-org
+           :template ("* %?%a"
+                      ":PROPERTIES:"
+                      ":CREATED: %U"
+                      ":END:")
+           :immediate-finish nil
+           :prepend t)
+          (,(format "%s\tWebsite (selected text)" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01))
+           :keys "W"
+           :file malb/inbox-org
+           ;; :headline "Links"
+           :template  ("* %?%a"
+                       ":PROPERTIES:"
+                       ":CREATED: %U"
+                       ":END:"
+                       ""
+                       "#+begin_quote"
+                       "%:initial"
+                       "#+end_quote"
+                       )
+           :immediate-finish nil
+           :prepend t))))))
 
     (setq org-capture-templates-contexts
           '(("er" ((in-mode . "mu4e-view-mode")))
