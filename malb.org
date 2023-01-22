@@ -1740,7 +1740,7 @@ Make sure to auto automatically rescan for imenu change.
                 (let ((imenu-anywhere-buffer-filter-functions
                        `((lambda (current other)
                            (let ((parent (buffer-local-value 'major-mode other)))
-                             (while (and (not (memq parent '(prog-mode c-mode c++-mode)))
+                             (while (and (not (memq parent '(prog-mode c-mode c-ts-mode c++-mode c++-ts-mode)))
                                          (setq parent (get parent 'derived-mode-parent))))
                              parent)))))
                   (call-interactively #'helm-imenu-anywhere)))
@@ -1887,7 +1887,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                      (goto-char (line-beginning-position))
                      (looking-at-p "[ 	]*#include[^<]+"))))
 
-            (sp-with-modes '(c-mode c++-mode)
+            (sp-with-modes '(c-mode c-ts-mode c++-mode c++-ts-mode)
               (sp-local-pair "<" ">"    :when '(malb/sp-point-is-template-p malb/sp-point-after-include-p))
               (sp-local-pair "/*" "*/"  :post-handlers '(("||\n[i]" "RET") ("| " "SPC")))
               (sp-local-pair "/**" "*/" :post-handlers '(("||\n[i]" "RET") ("||\n[i]" "SPC")))
@@ -1897,7 +1897,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (sp-pair "{"  nil :post-handlers '(("||\n[i]" "RET") ("| " " ")) :wrap "C-{")
             (sp-pair "("  nil :post-handlers '(("||\n[i]" "RET") ("| " " ")) :wrap "C-(")
             (sp-pair "["  nil :post-handlers '(("| " " ")))
-            (sp-local-pair '(sh-mode markdown-mode python-mode cython-mode) "`" nil)
+            (sp-local-pair '(sh-mode markdown-mode python-mode python-ts-mode cython-mode) "`" nil)
 
             ;; https://github.com/Fuco1/smartparens/issues/652#issuecomment-250518705
             (defun malb/latex-replace-dollar (_id action _context)
@@ -1962,7 +1962,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
             (let ((bracket-qualifiers '(sp-point-before-word-p
                                         sp-point-before-same-p)))
-              (sp-with-modes '(python-mode)
+              (sp-with-modes '(python-mode python-ts-mode)
                 (sp-local-pair  "(" ")" :unless bracket-qualifiers)
                 (sp-local-pair  "[" "]" :unless bracket-qualifiers)))
 
@@ -3644,7 +3644,9 @@ string that will enable syntax highlighting for that language
 
 E.g. tuareg-mode will return 'ocaml', python-mode 'python', etc..."
 
-  (let ((mm (intern (replace-regexp-in-string "-mode" "" (format "%s" major-mode)))))
+  (let ((mm (intern (replace-regexp-in-string (rx (seq (opt "-ts") "-mode"))
+                                              ""
+                                              (format "%s" major-mode)))))
     (or (car (assoc mm org-babel-load-languages))
         (car (rassoc mm org-src-lang-modes))
         (format "%s" mm))))
@@ -5096,7 +5098,7 @@ Enable spell checking in comments and documentation.
 Use [[https://github.com/flycheck/flycheck][Flycheck]] to run static checkers on code. We use clang’s checker for flycheck for which we can load per directory configuration using =.dir-locals.el=, e.g.
 
 #+begin_src emacs-lisp :tangle no
-((c-mode . ((flycheck-clang-include-path . ("/FULL/PATH/TO/DIR1" "/FULL/PATH/TO/DIR2" ) ))))
+((c-ts-mode . ((flycheck-clang-include-path . ("/FULL/PATH/TO/DIR1" "/FULL/PATH/TO/DIR2" ) ))))
 #+end_src
 
 Make flycheck prettier based on what spacemacs does.
@@ -5214,7 +5216,7 @@ Make bug references in comments and string clickable
 Enable it on a per-project basis in order to keep RC check ins clean: use it in own projects but not necessarily in projects where not the main contributor. Use =.dir-locals.el= to enable it, e.g.:
 
 #+begin_src emacs-lisp :tangle no
-((c-mode . ((aggressive-indent-mode t))))
+((c-ts-mode . ((aggressive-indent-mode t))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -5235,7 +5237,8 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
   :config (progn
             ;; adding it to prog-mode-hook causes problems for emacsclient
             (add-hook 'c-mode-common-hook   #'ws-butler-mode)
-            (add-hook 'python-mode-hook     #'ws-butler-mode)
+            (add-hook 'c-ts-mode-base-hook  #'ws-butler-mode)
+            (add-hook 'python-ts-mode-hook  #'ws-butler-mode)
             (add-hook 'cython-mode-hook     #'ws-butler-mode)
             (add-hook 'LaTeX-mode-hook      #'ws-butler-mode)
             (add-hook 'emacs-lisp-mode-hook #'ws-butler-mode)
@@ -5267,9 +5270,11 @@ Show function in mode-line ([[https://github.com/howardabrams/dot-files/blob/mas
                   which-func-modes '(latex-mode
                                      markdown-mode
                                      c-mode
+                                     c-ts-mode
                                      emacs-lisp-mode
                                      org-mode
-                                     c++-mode))
+                                     c++-mode
+                                     c++-ts-mode))
 
             (setq which-func-format
                   `(" "
@@ -5320,9 +5325,8 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
 
 #+begin_src emacs-lisp
 (use-package ggtags
-  :config (progn  (add-hook 'c-mode-common-hook
-                            (lambda ()
-                              (ggtags-mode t)))
+  :config (progn  (add-hook 'c-mode-common-hook (lambda () (ggtags-mode t)))
+                  (add-hook 'c-ts-base-mode-hook (lambda () (ggtags-mode t)))
 
                   (unbind-key "M-." ggtags-mode-map)
                   (unbind-key "M-," ggtags-mode-map)
@@ -5346,6 +5350,7 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
                         helm-gtags-pulse-at-cursor t)
 
                   (add-hook 'c-mode-common-hook #'helm-gtags-mode)
+                  (add-hook 'c-ts-base-mode-hook #'helm-gtags-mode)
 
                   (bind-key "C-c j g a" #'helm-gtags-tags-in-this-function helm-gtags-mode-map)
                   (bind-key "C-c j g j" #'helm-gtags-select helm-gtags-mode-map)
@@ -5471,7 +5476,7 @@ Auto-format source code in many languages with one command – [[https://github.
             (advice-add 'jupyter-ansi-color-apply-on-region :override #'malb/display-ansi-colors)
             ;; in org-babel
             (add-hook 'org-babel-after-execute-hook #'malb/display-ansi-colors)
-
+            (require 'ob-jupyter)
             (org-babel-jupyter-override-src-block "python")))
 #+end_src
 
@@ -5481,16 +5486,6 @@ Auto-format source code in many languages with one command – [[https://github.
     (if (re-search-backward " :kernel \\(\\w+\\)" nil t)
         (substring-no-properties (match-string 1))
       "sagemath")))
-#+end_src
-
-**** COMMENT Workaround
-
-([[https://github.com/nnicandro/emacs-jupyter/issues/366][source]])
-
-#+begin_src emacs-lisp
-(defun malb/display-ansi-colors ()
-  (ansi-color-apply-on-region (point-min) (point-max)))
-(add-hook 'org-babel-after-execute-hook #'malb/display-ansi-colors)
 #+end_src
 
 **** Toggle Shell for Jupyter Kernels
@@ -5549,7 +5544,20 @@ A generator for pop-up Jupyter repls.
 
 *** Tree Sitter
 
-https://blog.markhepburn.com/posts/experimenting-with-the-built-in-treesitter-support-in-emacs/
+[[https://blog.markhepburn.com/posts/experimenting-with-the-built-in-treesitter-support-in-emacs/][Experimenting With the Built-in Tree-sitter Support in Emacs]]
+[[https://archive.casouri.cc/note/2023/tree-sitter-in-emacs-29/index.html?utm_source=pocket_reader][Tree-sitter in Emacs 29 and Beyond]]
+
+#+begin_src emacs-lisp
+(use-package c-ts-mode
+  :ensure nil
+  :config
+  (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode)))
+
+(use-package python-ts-mode
+  :ensure nil
+  :config
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
+#+end_src
 
 *** Language Server Protocol (LSP)
 
@@ -5579,7 +5587,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
             (setq lsp-ui-peek-enable t)
             ;; register the defaults which will call out to ccls
-            (smart-jump-register :modes '(c-mode c++-mode)
+            (smart-jump-register :modes '(c-mode c-ts-mode c++-modec c++-ts-mode)
                                  :async 2000
                                  :order 1)
 
@@ -5608,11 +5616,18 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :bind (:map c-mode-base-map
               ("M-<up>" . drag-stuff-up)
               ("M-<down>" . drag-stuff-down)
+              ("<home>"  .  malb/beginning-of-line-dwim)
+              :map c-ts-base-mode-map
+              ("M-<up>" . drag-stuff-up)
+              ("M-<down>" . drag-stuff-down)
               ("<home>"  .  malb/beginning-of-line-dwim))
   :config (progn
             (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
             (add-hook 'c-mode-common-hook #'hs-minor-mode)
             (add-hook 'c-mode-common-hook 'display-line-numbers-mode)
+            (add-hook 'c-ts-base-mode-hook #'malb/c-mode-common-hook)
+            (add-hook 'c-ts-base-mode-hook #'hs-minor-mode)
+            (add-hook 'c-ts-base-mode-hook 'display-line-numbers-mode)
             (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
 #+end_src
 
@@ -5626,7 +5641,9 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
     (user-error nil)))
 
 (add-hook 'c-mode-hook #'malb/lsp-enable)
+(add-hook 'c-ts-mode-hook #'malb/lsp-enable)
 (add-hook 'c++-mode-hook #'malb/lsp-enable)
+(add-hook 'c++-ts-mode-hook #'malb/lsp-enable)
 #+end_src
 
 *** Font Lock
@@ -5746,7 +5763,8 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format 
             (setq clang-format-executable "clang-format")))
 
 (use-package clang-format+
-  :config (add-hook 'c-mode-common-hook #'clang-format+-mode))
+  :hook ((c-ts-base-mode . clang-format+-mode)
+         (c-mode-common . clang-format+-mode)))
 #+end_src
 
 *** Disassemble
@@ -5761,7 +5779,7 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format 
 (use-package go-mode
   :mode "\\.go$"
   :interpreter "go"
-  :config (add-hook 'go-mode-hook #'flycheck-mode))
+  :hook ((go-mode . flycheck-mode)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -5837,8 +5855,8 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
 #+begin_src emacs-lisp
 (use-package python
-  :mode (("\\.py\\'" . python-mode))
-  :bind (:map python-mode-map
+  :mode (("\\.py\\'" . python-ts-mode))
+  :bind (:map python-ts-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
               ("C-c C-r" . pyvenv-restart-python)
               ("<home>"  . malb/beginning-of-line-dwim)
@@ -5846,7 +5864,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
               ("<backtab>" . bicycle-cycle-global)
               :map inferior-python-mode-map
               ("C-c C-r" . pyvenv-restart-python))
-  :hook (python-mode . outline-minor-mode)
+  :hook (python-ts-mode . outline-minor-mode)
   :config (progn
             (setq-default python-indent 4
                           python-fill-docstring-style 'django)
@@ -5858,7 +5876,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (defun malb/python-mode-hook ()
               (setq-local outline-blank-line t))
 
-            (add-hook 'python-mode-hook #'malb/python-mode-hook)
+            (add-hook 'python-ts-mode-hook #'malb/python-mode-hook)
 
             (defun malb/inferior-python-setup ()
               (make-local-variable 'company-backends)
@@ -5925,7 +5943,7 @@ It makes sense to highlight indentation in Python.
 #+begin_src emacs-lisp
 (use-package highlight-indentation
   :blackout highlight-indentation-mode
-  :config (progn (add-hook 'python-mode-hook #'highlight-indentation-mode)))
+  :config (progn (add-hook 'python-ts-mode-hook #'highlight-indentation-mode)))
 #+end_src
 
 *** Autocompletion
@@ -5953,14 +5971,14 @@ Fall back to dumb jump if anaconda fails.
                          (not (file-remote-p (buffer-file-name))))
                 (anaconda-mode)))
 
-            (add-hook 'python-mode-hook #'malb/local-anaconda-mode)
+            (add-hook 'python-ts-mode-hook #'malb/local-anaconda-mode)
 
             (defun malb/local-anaconda-eldoc-mode ()
               (when (and (buffer-file-name)
                          (not (file-remote-p (buffer-file-name))))
                 (anaconda-eldoc-mode)))
 
-            (add-hook 'python-mode-hook #'malb/local-anaconda-eldoc-mode)
+            (add-hook 'python-ts-mode-hook #'malb/local-anaconda-eldoc-mode)
 
             (defun malb/vanilla-python-shell-interpreter (orig-fun &rest args)
               (let ((python-shell-interpreter "python")
@@ -5984,7 +6002,7 @@ Manually fixed bugs:
 #+begin_src emacs-lisp
 (use-package python-docstring
   :blackout python-docstring-mode
-  :hook (python-mode . python-docstring-mode))
+  :hook (python-ts-mode . python-docstring-mode))
 #+end_src
 
 **** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx Doc]]
@@ -5994,7 +6012,7 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 #+begin_src emacs-lisp
 (use-package sphinx-doc
   :blackout sphinx-doc-mode
-  :hook (python-mode . sphinx-doc-mode))
+  :hook (python-ts-mode . sphinx-doc-mode))
 #+end_src
 
 Tweak sphinx-doc to fit my preferences
@@ -6079,7 +6097,7 @@ pip install importmagic epc
 #+begin_src emacs-lisp
 (use-package importmagic
   :blackout importmagic-mode
-  :hook (python-mode-hook . importmagic-mode)
+  :hook (python-ts-mode-hook . importmagic-mode)
   :config (setq importmagic-python-interpreter "python"))
 #+end_src
 
@@ -6104,13 +6122,13 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 #+begin_src emacs-lisp
 (use-package elpy
-  :bind (:map python-mode-map ("C-c C-c" . elpy-shell-send-region-or-buffer))
+  :bind (:map python-ts-mode-map ("C-c C-c" . elpy-shell-send-region-or-buffer))
   :commands (elpy-shell-send-region-or-buffer elpy-module-yasnippet elpy-module-sane-defaults)
   :config (progn
             (elpy-module-yasnippet 'global-init)
             (defun malb/elpy-sane-defaults ()
               (elpy-module-sane-defaults 'buffer-init))
-            (add-hook 'python-mode-hook #'malb/elpy-sane-defaults)))
+            (add-hook 'python-ts-mode-hook #'malb/elpy-sane-defaults)))
 #+end_src
 
 *** Pip
@@ -7269,6 +7287,8 @@ Run =latexmk -pvc= in async shell
   :bind (:map TeX-mode-map ("$" . math-delimiters-insert)
          :map org-mode-map ("$" . math-delimiters-insert)))
 #+end_src
+
+****** TODO Turn into minor mode
 
 ** Utility Functions
 
@@ -10265,7 +10285,26 @@ then enter the text in that file's own buffer.
 (use-package grab-x-link
   :bind (("C-c i l" . grab-x-link-firefox-insert-link)
          ("C-c i o" . grab-x-link-firefox-insert-org-link)
-         ("C-c i m" . grab-x-link-firefox-insert-markdown-link)))
+         ("C-c i m" . grab-x-link-firefox-insert-markdown-link))
+  :config (progn
+            (malb/defadvice! malb/grab-x-link-firefox ()
+              :override #'grab-x-link-firefox
+              (let ((emacs-window
+                     (grab-x-link--shell-command-to-string
+                      "xdotool getactivewindow"))
+                    (firefox-window
+                     (or (grab-x-link--shell-command-to-string
+                          "xdotool search --classname Navigator")
+                         (error "Can't detect Firfox Window -- is it running?"))))
+                (shell-command (format "xdotool windowactivate --sync %s key ctrl+l ctrl+c" firefox-window))
+                (shell-command (format "xdotool windowactivate %s" emacs-window))
+                (sit-for 0.2)
+                (let ((url (substring-no-properties (grab-x-link--get-clipboard)))
+                      (title (grab-x-link--title-strip
+                              (grab-x-link--shell-command-to-string
+                               (concat "xdotool getwindowname " firefox-window))
+                              " — Mozilla Firefox"))) ;; malb: changed
+                  (cons url title))))))
 #+end_src
 
 ** Org-protocol entpoints for bookmarklets
@@ -10355,6 +10394,26 @@ Create convenience functions to open a shell on my servers and “cd” into the
   :ensure nil
   :bind (:map messages-buffer-mode-map
               ("/" . isearch-backward)))
+#+end_src
+
+* Proced (Top)
+
+([[https://laurencewarne.github.io/emacs/programming/2022/12/26/exploring-proced.html][source]])
+
+#+begin_src emacs-lisp
+(use-package proced
+  :ensure nil
+  :commands proced
+  :config (progn
+            (setq-default proced-auto-update-flag t)
+            (setq proced-auto-update-interval 1
+                  proced-goal-attribute nil
+                  proced-enable-color-flag t
+                  proced-show-remote-processes t)
+            (add-to-list
+             'proced-format-alist
+             '(custom user pid ppid sess tree pcpu pmem rss start time state (args comm)))
+            (setq-default proced-format 'custom)))
 #+end_src
 
 * Misc
@@ -10775,7 +10834,7 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 ([[https://emacs.stackexchange.com/questions/44202/open-a-file-in-read-only-preprocessed-mode][source]])
 
 #+begin_src emacs-lisp
-(define-derived-mode sobj-mode python-mode "sobj"
+(define-derived-mode sobj-mode python-ts-mode "sobj"
   "Major mode for viewing sobj files."
   (delete-region (point-min) (point-max))
   (call-process "python" nil t t "-c" (format (concat "# -*- coding: utf-8 -*-\n"
