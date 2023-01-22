@@ -4954,8 +4954,7 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev
 
 * Programming (Languages)
 ** General
-*** REPL
-**** Comint
+*** REPL / Comint
 
 We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.com/questions/14072/replicate-ipython-history-behaviour-in-emacs][source]])
 
@@ -5064,24 +5063,6 @@ Save comint history when emacs is killed
 
 (add-hook 'kill-emacs-hook 'comint-write-input-ring-all-buffers)
   #+end_src
-
-***** COMMENT Shx
-
-#+BEGIN_QUOTE
-shx or “shell-extras” extends comint-mode in Emacs — https://github.com/riscy/shx-for-emacs/
-#+END_QUOTE
-
-[[https://github.com/riscy/shx-for-emacs/blob/master/img/screenshot.png]]
-
-#+begin_src emacs-lisp
-(use-package shx
-  :after comint
-  :config (progn
-            (with-eval-after-load 'python
-              (add-hook 'inferior-python-mode-hook #'shx-mode))
-            (with-eval-after-load 'shell
-              (add-hook 'shell-mode-hook #'shx-mode))))
-#+end_src
 
 *** Spell Checking
 
@@ -5196,7 +5177,6 @@ Make bug references in comments and string clickable
 #+end_src
 
 *** Indenting
-
 **** Obey Project Rules
 
 [[https://github.com/jscheid/dtrt-indent][drt-indent]] guesses the indentation offset originally used for creating source code files and transparently adjusts the corresponding settings in Emacs, making it more convenient to edit foreign files.
@@ -5236,13 +5216,9 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
   :blackout ws-butler-mode
   :config (progn
             ;; adding it to prog-mode-hook causes problems for emacsclient
-            (add-hook 'c-mode-common-hook   #'ws-butler-mode)
-            (add-hook 'c-ts-mode-base-hook  #'ws-butler-mode)
-            (add-hook 'python-ts-mode-hook  #'ws-butler-mode)
             (add-hook 'cython-mode-hook     #'ws-butler-mode)
             (add-hook 'LaTeX-mode-hook      #'ws-butler-mode)
-            (add-hook 'emacs-lisp-mode-hook #'ws-butler-mode)
-            ))
+            (add-hook 'emacs-lisp-mode-hook #'ws-butler-mode)))
 #+end_src
 
 *** Highlight FIXME and friends
@@ -5254,7 +5230,6 @@ Enable it on a per-project basis in order to keep RC check ins clean: use it in 
                              font-lock-warning-face t))))
 
 (add-hook 'prog-mode-hook #'malb/fixme-highlight)
-(add-hook 'python-mode-hook #'malb/fixme-highlight)
 #+end_src
 
 *** Which Function
@@ -5325,42 +5300,38 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
 
 #+begin_src emacs-lisp
 (use-package ggtags
-  :config (progn  (add-hook 'c-mode-common-hook (lambda () (ggtags-mode t)))
-                  (add-hook 'c-ts-base-mode-hook (lambda () (ggtags-mode t)))
-
-                  (unbind-key "M-." ggtags-mode-map)
-                  (unbind-key "M-," ggtags-mode-map)
-                  (unbind-key "C-M-." ggtags-mode-map)
-                  (bind-key "C-c j g s" #'ggtags-find-other-symbol ggtags-mode-map)
-                  (bind-key "C-c j g h" #'ggtags-view-tag-history ggtags-mode-map)
-                  (bind-key "C-c j g r" #'ggtags-find-reference ggtags-mode-map)
-                  (bind-key "C-c j g f" #'ggtags-find-file ggtags-mode-map)
-                  (bind-key "C-c j g c" #'ggtags-create-tags ggtags-mode-map)
-                  (bind-key "C-c j g u" #'ggtags-update-tags ggtags-mode-map)))
+  :commands ggtags-mode
+  :bind (:map ggtags-mode-map
+              ("C-c j g s" . ggtags-find-other-symbol)
+              ("C-c j g h" . ggtags-view-tag-history)
+              ("C-c j g r" . ggtags-find-reference)
+              ("C-c j g f" . ggtags-find-file)
+              ("C-c j g c" . ggtags-create-tags)
+              ("C-c j g u" . ggtags-update-tags))
+  :config (progn (unbind-key "M-." ggtags-mode-map)
+                 (unbind-key "M-," ggtags-mode-map)
+                 (unbind-key "C-M-." ggtags-mode-map)))
 #+end_src
-
 
 #+begin_src emacs-lisp
 (use-package helm-gtags
   :init (setq helm-gtags-prefix-key "\C-cjg")
+  :commands helm-gtags-mode
   :blackout helm-gtags-mode
-  :config (progn  (setq helm-gtags-ignore-case t
-                        helm-gtags-auto-update t
-                        helm-gtags-use-input-at-cursor t
-                        helm-gtags-pulse-at-cursor t)
-
-                  (add-hook 'c-mode-common-hook #'helm-gtags-mode)
-                  (add-hook 'c-ts-base-mode-hook #'helm-gtags-mode)
-
-                  (bind-key "C-c j g a" #'helm-gtags-tags-in-this-function helm-gtags-mode-map)
-                  (bind-key "C-c j g j" #'helm-gtags-select helm-gtags-mode-map)
-                  (bind-key "C-c j g ." #'helm-gtags-dwim helm-gtags-mode-map)
-                  (bind-key "C-c j g ," #'helm-gtags-pop-stack helm-gtags-mode-map)
-                  (bind-key "C-c j g <"   #'helm-gtags-previous-history helm-gtags-mode-map)
-                  (bind-key "C-c j g >"   #'helm-gtags-next-history helm-gtags-mode-map)))
+  :bind (:map helm-gtags-mode-map
+              ("C-c j g a"  . helm-gtags-tags-in-this-function)
+              ("C-c j g j"  . helm-gtags-select)
+              ("C-c j g ."  . helm-gtags-dwim)
+              ("C-c j g ,"  . helm-gtags-pop-stack)
+              ("C-c j g <"  . helm-gtags-previous-history)
+              ("C-c j g >"  . helm-gtags-next-history))
+  :config (setq helm-gtags-ignore-case t
+                helm-gtags-auto-update t
+                helm-gtags-use-input-at-cursor t
+                helm-gtags-pulse-at-cursor t))
 #+end_src
 
-*** Dump Jump
+*** Dumb & Smart Jump
 
 zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for JavaScript, Emacs Lisp, Python, Go, Clojure, …
 
@@ -5370,22 +5341,21 @@ zero-config [[https://github.com/jacktasia/dumb-jump][jump to definition]] for J
 
 #+begin_src emacs-lisp
 (use-package dumb-jump
+  :bind (:map dumb-jump-mode-map
+         ("C-c j d ." . dumb-jump-go)
+         ("C-c j d ," . dumb-jump-back)
+         ("C-c j d q" . dumb-jump-quick-look))
   :config (progn
             (setq dumb-jump-selector 'helm)
             (unbind-key "C-M-g" dumb-jump-mode-map)
             (unbind-key "C-M-p" dumb-jump-mode-map)
             (unbind-key "C-M-q" dumb-jump-mode-map)
-            (bind-key "C-c j d ." #'dumb-jump-go dumb-jump-mode-map)
-            (bind-key "C-c j d ," #'dumb-jump-back dumb-jump-mode-map)
-            (bind-key "C-c j d q" #'dumb-jump-quick-look dumb-jump-mode-map)
             (dumb-jump-mode)))
 #+end_src
 
-*** Smart Jump
-
-#+BEGIN_QUOTE
+#+begin_quote
 This packages tries to smartly go to definition leveraging several methods to do so. If one method fails, this package will go on to the next one, eventually falling back to dumb-jump. — [[https://github.com/jojojames/smart-jump][smart-jump]]
-#+END_QUOTE
+#+end_quote
 
 #+begin_src emacs-lisp
 (use-package smart-jump
@@ -5547,18 +5517,6 @@ A generator for pop-up Jupyter repls.
 [[https://blog.markhepburn.com/posts/experimenting-with-the-built-in-treesitter-support-in-emacs/][Experimenting With the Built-in Tree-sitter Support in Emacs]]
 [[https://archive.casouri.cc/note/2023/tree-sitter-in-emacs-29/index.html?utm_source=pocket_reader][Tree-sitter in Emacs 29 and Beyond]]
 
-#+begin_src emacs-lisp
-(use-package c-ts-mode
-  :ensure nil
-  :config
-  (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode)))
-
-(use-package python-ts-mode
-  :ensure nil
-  :config
-  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
-#+end_src
-
 *** Language Server Protocol (LSP)
 
 #+BEGIN_QUOTE
@@ -5568,11 +5526,16 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 (use-package lsp-mode
   :after (projectile)
-  :commands lsp
+  :commands (lsp malb/lsp-enable)
   :bind (:map lsp-mode-map
               ("M-r" . lsp-find-references))
   :config (progn (setq lsp-eldoc-render-all nil
                        lsp-prefer-flymake nil)
+
+                 (defun malb/lsp-enable ()
+                   (condition-case nil
+                       (if (buffer-file-name) (lsp))
+                     (user-error nil)))
 
                  (setq read-process-output-max (* 1024 1024))
                  (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
@@ -5609,101 +5572,38 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 ;;             (define-key lsp-mode-map [remap xref-find-apropos] #'lsp-ivy-workspace-symbol)))
 #+end_src
 
-** C/C++ Development
+** C/C++
 
 #+begin_src emacs-lisp
-(use-package cc-mode
-  :bind (:map c-mode-base-map
-              ("M-<up>" . drag-stuff-up)
-              ("M-<down>" . drag-stuff-down)
-              ("<home>"  .  malb/beginning-of-line-dwim)
-              :map c-ts-base-mode-map
+(use-package c-ts-mode
+  :bind (:map c-ts-base-mode-map
               ("M-<up>" . drag-stuff-up)
               ("M-<down>" . drag-stuff-down)
               ("<home>"  .  malb/beginning-of-line-dwim))
+  :hook ((c-ts-base-mode . hs-minor-mode)
+         (c-ts-base-mode . display-line-numbers-mode)
+         (c-ts-base-mode . ws-butler-mode)
+         (c-ts-base-mode . ggtags-mode)
+         (c-ts-base-mode . helm-gtags-mode)
+         (c-ts-base-mode . malb/lsp-enable)
+         (c-ts-base-mode . clang-format+-mode))
   :config (progn
-            (add-hook 'c-mode-common-hook #'malb/c-mode-common-hook)
-            (add-hook 'c-mode-common-hook #'hs-minor-mode)
-            (add-hook 'c-mode-common-hook 'display-line-numbers-mode)
-            (add-hook 'c-ts-base-mode-hook #'malb/c-mode-common-hook)
-            (add-hook 'c-ts-base-mode-hook #'hs-minor-mode)
-            (add-hook 'c-ts-base-mode-hook 'display-line-numbers-mode)
-            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-mode))))
+            (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+            (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
+            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-ts-mode))))
 #+end_src
 
-*** Language Server Protocol (LSP)
+Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format code, [[https://github.com/SavchenkoValeriy/emacs-clang-format-plus][clang-format+]] automatically runs =clang-format= when a =.clang-format= is present.
 
 #+begin_src emacs-lisp
-(defun malb/lsp-enable ()
-  (condition-case nil
-      (if (buffer-file-name)
-          (lsp))
-    (user-error nil)))
+(use-package clang-format
+  :config (setq clang-format-executable "clang-format"))
 
-(add-hook 'c-mode-hook #'malb/lsp-enable)
-(add-hook 'c-ts-mode-hook #'malb/lsp-enable)
-(add-hook 'c++-mode-hook #'malb/lsp-enable)
-(add-hook 'c++-ts-mode-hook #'malb/lsp-enable)
+(use-package clang-format+
+  :commands clang-format+-mode)
 #+end_src
 
-*** Font Lock
-
-Grey out ~#if 0~ blocks.
-
-#+begin_src emacs-lisp
-(defun malb/c-mode-font-lock-if0 (limit)
-  (save-restriction
-    (widen)
-    (save-excursion
-      (goto-char (point-min))
-      (let ((depth 0) str start start-depth)
-        (while (re-search-forward "^\\s-*#\\s-*\\(if\\|else\\|endif\\)" limit 'move)
-          (setq str (match-string 1))
-          (if (string= str "if")
-              (progn
-                (setq depth (1+ depth))
-                (when (and (null start) (looking-at "\\s-+0"))
-                  (setq start (match-end 0)
-                        start-depth depth)))
-            (when (and start (= depth start-depth))
-              (c-put-font-lock-face start (match-beginning 0) 'font-lock-comment-face)
-              (setq start nil))
-            (when (string= str "endif")
-              (setq depth (1- depth)))))
-        (when (and start (> depth 0))
-          (c-put-font-lock-face start (point) 'font-lock-comment-face)))))
-  nil)
-
-(defun malb/c-mode-common-hook ()
-  (font-lock-add-keywords  nil
-                           '((malb/c-mode-font-lock-if0 (0 font-lock-comment-face prepend))) 'add-to-end))
-#+end_src
-
-Highlight member functions in C/C++ ([[https://www.reddit.com/r/emacs/comments/27eqwm/highlighting_c_member_function_calls/][source]])
-
-#+begin_src emacs-lisp
-(dolist (major-mode '(c-mode c++-mode))
-  (font-lock-add-keywords major-mode
-                          `((,(concat
-                               "\\<[_a-zA-Z][_a-zA-Z0-9]*\\>"       ; Object identifier
-                               "\\s *"                              ; Optional white space
-                               "\\(?:\\.\\|->\\)"                   ; Member access
-                               "\\s *"                              ; Optional white space
-                               "\\<\\([_a-zA-Z][_a-zA-Z0-9]*\\)\\>" ; Member identifier
-                               "\\s *"                              ; Optional white space
-                               "(")                                 ; Paren for method invocation
-                             1 'font-lock-function-name-face t))))
-#+end_src
-
-Modern C++
-
-#+begin_src emacs-lisp
-(use-package modern-cpp-font-lock
-  :blackout modern-c++-font-lock-mode
-  :config (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
-#+end_src
-
-*** Valgrind
+*** COMMENT Valgrind
 
 This code allows to run [[http://valgrind.org/][valgrind]] and step through warnings/errors. We set =--error-errorcode=1= because we bury compilation buffers that finish with exit code zero automatically. By default, valgrind returns the exit code of the program it runs. ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
 
@@ -5753,21 +5653,7 @@ and move to the source code that caused it."
   (compilation-start command t))
 #+end_src
 
-*** Clang Format
-
-Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format code, [[https://github.com/SavchenkoValeriy/emacs-clang-format-plus][clang-format+]] automatically runs =clang-format= when a =.clang-format= is present.
-
-#+begin_src emacs-lisp
-(use-package clang-format
-  :config (progn
-            (setq clang-format-executable "clang-format")))
-
-(use-package clang-format+
-  :hook ((c-ts-base-mode . clang-format+-mode)
-         (c-mode-common . clang-format+-mode)))
-#+end_src
-
-*** Disassemble
+*** COMMENT Disassemble
 
 #+begin_src emacs-lisp
 (use-package disaster)
@@ -5854,7 +5740,8 @@ If processing fails throw ProcessingError.
 I often restart Python processes (Cython development), so let’s bind a key for that.
 
 #+begin_src emacs-lisp
-(use-package python
+(use-package python-ts-mode
+  :ensure nil
   :mode (("\\.py\\'" . python-ts-mode))
   :bind (:map python-ts-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
@@ -5864,7 +5751,15 @@ I often restart Python processes (Cython development), so let’s bind a key for
               ("<backtab>" . bicycle-cycle-global)
               :map inferior-python-mode-map
               ("C-c C-r" . pyvenv-restart-python))
-  :hook (python-ts-mode . outline-minor-mode)
+  :hook ((python-base-mode . outline-minor-mode)
+         (python-base-mode . highlight-indentation-mode)
+         (python-base-mode . malb/local-anaconda-mode)
+         (python-base-mode . malb/local-anaconda-eldoc-mode)
+         (python-base-mode . python-docstring-mode)
+         (python-base-mode . sphinx-doc-mode)
+         (python-mode . importmagic-mode) ;; doesn't like python-ts-mode
+         (python-base-mode . ws-butler-mode)
+         (python-base-mode . malb/elpy-sane-defaults))
   :config (progn
             (setq-default python-indent 4
                           python-fill-docstring-style 'django)
@@ -5873,16 +5768,18 @@ I often restart Python processes (Cython development), so let’s bind a key for
                   python-shell-interpreter-args "console --simple-prompt"
                   python-shell-prompt-detect-failure-warning nil)
 
-            (defun malb/python-mode-hook ()
+            (defun malb/python-ts-mode-hook ()
               (setq-local outline-blank-line t))
 
-            (add-hook 'python-ts-mode-hook #'malb/python-mode-hook)
+            (add-hook 'python-ts-mode-hook #'malb/python-ts-mode-hook)
 
             (defun malb/inferior-python-setup ()
               (make-local-variable 'company-backends)
               (setq company-backends '(company-files company-capf)))
 
             (add-hook 'inferior-python-mode-hook #'malb/inferior-python-setup)
+
+            (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
@@ -5943,7 +5840,7 @@ It makes sense to highlight indentation in Python.
 #+begin_src emacs-lisp
 (use-package highlight-indentation
   :blackout highlight-indentation-mode
-  :config (progn (add-hook 'python-ts-mode-hook #'highlight-indentation-mode)))
+  :commands highlight-indentation-mode)
 #+end_src
 
 *** Autocompletion
@@ -5964,6 +5861,7 @@ Fall back to dumb jump if anaconda fails.
 (use-package anaconda-mode
   :after smart-jump
   :blackout anaconda-mode
+  :commands (malb/local-anaconda-mode malb/local-anaconda-eldoc-mode)
   :config (progn
 
             (defun malb/local-anaconda-mode ()
@@ -5971,14 +5869,10 @@ Fall back to dumb jump if anaconda fails.
                          (not (file-remote-p (buffer-file-name))))
                 (anaconda-mode)))
 
-            (add-hook 'python-ts-mode-hook #'malb/local-anaconda-mode)
-
             (defun malb/local-anaconda-eldoc-mode ()
               (when (and (buffer-file-name)
                          (not (file-remote-p (buffer-file-name))))
                 (anaconda-eldoc-mode)))
-
-            (add-hook 'python-ts-mode-hook #'malb/local-anaconda-eldoc-mode)
 
             (defun malb/vanilla-python-shell-interpreter (orig-fun &rest args)
               (let ((python-shell-interpreter "python")
@@ -6002,7 +5896,7 @@ Manually fixed bugs:
 #+begin_src emacs-lisp
 (use-package python-docstring
   :blackout python-docstring-mode
-  :hook (python-ts-mode . python-docstring-mode))
+  :commands python-docstring-mode)
 #+end_src
 
 **** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx Doc]]
@@ -6012,7 +5906,7 @@ An emacs minor mode for inserting docstring skeleton for Python functions and me
 #+begin_src emacs-lisp
 (use-package sphinx-doc
   :blackout sphinx-doc-mode
-  :hook (python-ts-mode . sphinx-doc-mode))
+  :commands sphinx-doc-mode)
 #+end_src
 
 Tweak sphinx-doc to fit my preferences
@@ -6097,7 +5991,7 @@ pip install importmagic epc
 #+begin_src emacs-lisp
 (use-package importmagic
   :blackout importmagic-mode
-  :hook (python-ts-mode-hook . importmagic-mode)
+  :commands importmagic-mode
   :config (setq importmagic-python-interpreter "python"))
 #+end_src
 
@@ -6122,13 +6016,16 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 #+begin_src emacs-lisp
 (use-package elpy
-  :bind (:map python-ts-mode-map ("C-c C-c" . elpy-shell-send-region-or-buffer))
-  :commands (elpy-shell-send-region-or-buffer elpy-module-yasnippet elpy-module-sane-defaults)
+  :bind (:map python-ts-mode-map
+              ("C-c C-c" . elpy-shell-send-region-or-buffer))
+  :commands (elpy-shell-send-region-or-buffer
+             elpy-module-yasnippet
+             elpy-module-sane-defaults
+             malb/elpy-sane-defaults)
   :config (progn
             (elpy-module-yasnippet 'global-init)
             (defun malb/elpy-sane-defaults ()
-              (elpy-module-sane-defaults 'buffer-init))
-            (add-hook 'python-ts-mode-hook #'malb/elpy-sane-defaults)))
+              (elpy-module-sane-defaults 'buffer-init))))
 #+end_src
 
 *** Pip
@@ -6153,8 +6050,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (malb/defadvice! conda-no-more-nil (fn name)
               "Don't throw an error if there's no conda env"
               :around #'conda-env-name-to-dir
-              (if name
-                  (apply fn (list name))))
+              (if name (apply fn (list name))))
 
             (malb/defadvice! conda-shut-up (fn params)
               :around #'conda-env-activate-path
@@ -6172,8 +6068,16 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
            (sage-shell:use-prompt-toolkit nil)
            (sage-shell:set-ipython-version-on-startup nil)
            (sage-shell:check-ipython-version-on-startup nil))
+  :hook ((sage-shell-mode . malb/sage-shell-company-completion)
+         (sage-shell:sage-mode-hook . eldoc-mode)
+         (sage-shell-mode-hook . eldoc-mode)
+         (sage-shell-after-prompt . sage-shell-view-mode))
+  :bind (:map sage-shell-mode-map
+              ("C-<up>" . comint-previous-matching-input-from-input)
+              ("C-<down>" . comint-next-matching-input-from-input)
+              ("M-p" . comint-previous-matching-input-from-input)
+              ("M-n" . comint-next-matching-input-from-input))
   :config (progn
-
             (defun malb/sage-shell-company-completion ()
               (setq-local company-backends
                           '((:separate company-files
@@ -6182,12 +6086,6 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                                        company-capf
                                        ))))
 
-            (add-hook 'sage-shell-mode-hook #'malb/sage-shell-company-completion)
-
-
-            (add-hook 'sage-shell:sage-mode-hook #'eldoc-mode)
-            (add-hook 'sage-shell-mode-hook #'eldoc-mode)
-            (add-hook 'sage-shell-after-prompt-hook #'sage-shell-view-mode)
 
             (setq sage-shell-view-default-commands 'plots
                   sage-shell-view-scale 1.5
@@ -6213,13 +6111,7 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                 (unwind-protect
                     (apply fn args)
                   (when prev-env-path
-                    (conda-env-activate-path prev-env-path)))))
-
-            (bind-key "C-<up>" #'comint-previous-matching-input-from-input sage-shell-mode-map)
-            (bind-key "C-<down>" #'comint-next-matching-input-from-input sage-shell-mode-map)
-            (bind-key "M-p" #'comint-previous-matching-input-from-input sage-shell-mode-map)
-            (bind-key "M-n" #'comint-next-matching-input-from-input sage-shell-mode-map)
-            (bind-key "C-<return>" #'auto-complete sage-shell:sage-mode-map)))
+                    (conda-env-activate-path prev-env-path))))) ))
 #+end_src
 
 org babel for Sage can be quite handy for writing talks etc. ([[https://github.com/stakemori/ob-sagemath][source]])
@@ -6325,7 +6217,6 @@ Code manipulation:
 (use-package elisp-slime-nav
   :blackout elisp-slime-nav-mode
   :config (progn
-
             (defun malb/elisp-hook ()
               (elisp-slime-nav-mode)
               (smartparens-strict-mode)
