@@ -5744,10 +5744,10 @@ If processing fails throw ProcessingError.
 I often restart Python processes (Cython development), so let’s bind a key for that.
 
 #+begin_src emacs-lisp
-(use-package python-ts-mode
+(use-package python
   :ensure nil
-  :mode (("\\.py\\'" . python-ts-mode))
-  :bind (:map python-ts-mode-map
+  :mode (("\\.py\\'" . python-mode))
+  :bind (:map python-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
               ("C-c C-r" . pyvenv-restart-python)
               ("<home>"  . malb/beginning-of-line-dwim)
@@ -5772,10 +5772,10 @@ I often restart Python processes (Cython development), so let’s bind a key for
                   python-shell-interpreter-args "console --simple-prompt"
                   python-shell-prompt-detect-failure-warning nil)
 
-            (defun malb/python-ts-mode-hook ()
+            (defun malb/python-mode-hook ()
               (setq-local outline-blank-line t))
 
-            (add-hook 'python-ts-mode-hook #'malb/python-ts-mode-hook)
+            (add-hook 'python-mode-hook #'malb/python-mode-hook)
 
             (defun malb/inferior-python-setup ()
               (make-local-variable 'company-backends)
@@ -5783,7 +5783,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
 
             (add-hook 'inferior-python-mode-hook #'malb/inferior-python-setup)
 
-            (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+            ;(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
@@ -5836,6 +5836,9 @@ Create an iPython based toggle shell (consider using jupyter here)
                    (insert (concat cmd "\n")))
                  ))))))))
 #+end_src
+
+****** TODO Using python-ts-mode triggers dedicated ob-jupyter buffers for some reason
+****** END
 
 *** Highlight indentation
 
@@ -6020,7 +6023,7 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 #+begin_src emacs-lisp
 (use-package elpy
-  :bind (:map python-ts-mode-map
+  :bind (:map python-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer))
   :commands (elpy-shell-send-region-or-buffer
              elpy-module-yasnippet
@@ -6131,6 +6134,24 @@ org babel for Sage can be quite handy for writing talks etc. ([[https://github.c
                                                        (:noweb . "no")
                                                        (:hlines . "no")
                                                        (:tangle . "no")))))
+#+end_src
+
+([[https://emacs.stackexchange.com/questions/44202/open-a-file-in-read-only-preprocessed-mode][source]])
+
+#+begin_src emacs-lisp
+(define-derived-mode sobj-mode python-mode "sobj"
+  "Major mode for viewing sobj files."
+  (delete-region (point-min) (point-max))
+  (call-process "python" nil t t "-c" (format (concat "# -*- coding: utf-8 -*-\n"
+                                                      "import pickle\n"
+                                                      "import pprint\n"
+                                                      "pprint.PrettyPrinter(indent=4).pprint(pickle.load(open('%s', 'rb')))")
+                                              (buffer-file-name)))
+  (set-buffer-modified-p nil)
+  (read-only-mode)
+  (beginning-of-buffer))
+
+(add-to-list 'auto-mode-alist '("\\.sobj\\'" . sobj-mode))
 #+end_src
 
 ** Lisp
@@ -10722,26 +10743,6 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 (use-package elf-mode
   :mode (("\\.so\\'"  . elf-mode)
          ("\\.a\\'"   . elf-mode)))
-#+end_src
-
-** Sobj Files
-
-([[https://emacs.stackexchange.com/questions/44202/open-a-file-in-read-only-preprocessed-mode][source]])
-
-#+begin_src emacs-lisp
-(define-derived-mode sobj-mode python-ts-mode "sobj"
-  "Major mode for viewing sobj files."
-  (delete-region (point-min) (point-max))
-  (call-process "python" nil t t "-c" (format (concat "# -*- coding: utf-8 -*-\n"
-                                                      "import pickle\n"
-                                                      "import pprint\n"
-                                                      "pprint.PrettyPrinter(indent=4).pprint(pickle.load(open('%s', 'rb')))")
-                                              (buffer-file-name)))
-  (set-buffer-modified-p nil)
-  (read-only-mode)
-  (beginning-of-buffer))
-
-(add-to-list 'auto-mode-alist '("\\.sobj\\'" . sobj-mode))
 #+end_src
 
 ** Log Files
