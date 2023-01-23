@@ -5386,13 +5386,17 @@ This packages tries to smartly go to definition leveraging several methods to do
 
 *** Code Formatting
 
-#+BEGIN_QUOTE
+#+begin_quote
 Auto-format source code in many languages with one command – [[https://github.com/lassik/emacs-format-all-the-code][format-all]]
-#+END_QUOTE
+#+end_quote
 
 #+begin_src emacs-lisp
 (use-package format-all)
 #+end_src
+
+****** TODO It would be nice to use this to replace the various other modes floating around
+****** END
+
 
 *** Jupyter
 
