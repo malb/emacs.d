@@ -1838,6 +1838,25 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 #+begin_src emacs-lisp
 (use-package smartparens
   :blackout smartparens-mode
+  :bind (:map smartparens-mode-map
+              ("C-M-f" . sp-forward-sexp)
+              ("C-M-b" . sp-backward-sexp)
+              ("C-M-n" . sp-next-sexp)
+              ("C-M-p" . sp-previous-sexp)
+              ("C-M-d" . sp-down-sexp)
+              ("C-M-u" . sp-backward-up-sexp)
+              ("C-M-a" . sp-beginning-of-sexp)
+              ("C-M-e" . sp-end-of-sexp)
+              ("C-M-k" . sp-kill-sexp)
+              ("C-M-w" . sp-copy-sexp)
+              ("C-M-t" . sp-transpose-sexp)
+              ("C-M-s" . sp-split-sexp)
+              ("C-M-j" . sp-join-sexp)
+              ("C-<right>" . sp-forward-slurp-sexp)
+              ("C-<left>"  . sp-forward-barf-sexp)
+              ("M-S-<backspace>" . sp-backward-unwrap-sexp)
+              ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
+              ("C-S-<backspace>" . sp-splice-sexp-killing-around))
   :config (progn
             (require 'smartparens-config)
             (require 'smartparens-latex)
@@ -1845,37 +1864,10 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (require 'smartparens-python)
 
             (smartparens-global-mode t)
-            (setq sp-autodelete-wrap t)
-            (setq sp-cancel-autoskip-on-backward-movement nil)
+            (setq sp-autodelete-wrap t
+                  sp-cancel-autoskip-on-backward-movement nil)
 
             (setq-default sp-autoskip-closing-pair t)
-
-            (bind-key "C-M-f" #'sp-forward-sexp smartparens-mode-map)
-            (bind-key "C-M-b" #'sp-backward-sexp smartparens-mode-map)
-
-            (bind-key "C-M-n" #'sp-next-sexp smartparens-mode-map)
-            (bind-key "C-M-p" #'sp-previous-sexp smartparens-mode-map)
-
-            (bind-key "C-M-d" 'sp-down-sexp smartparens-mode-map)
-            (bind-key "C-M-u" 'sp-backward-up-sexp smartparens-mode-map)
-
-            (bind-key "C-M-a" 'sp-beginning-of-sexp smartparens-mode-map)
-            (bind-key "C-M-e" 'sp-end-of-sexp smartparens-mode-map)
-
-            (bind-key "C-M-k" #'sp-kill-sexp smartparens-mode-map)
-            (bind-key "C-M-w" #'sp-copy-sexp smartparens-mode-map)
-
-            (bind-key "C-M-t" #'sp-transpose-sexp smartparens-mode-map)
-
-            (bind-key "C-M-s" #'sp-split-sexp smartparens-mode-map)
-            (bind-key "C-M-j" #'sp-join-sexp smartparens-mode-map)
-
-            (bind-key "C-<right>" #'sp-forward-slurp-sexp smartparens-mode-map)
-            (bind-key "C-<left>" #'sp-forward-barf-sexp smartparens-mode-map)
-
-            (bind-key "M-S-<backspace>" 'sp-backward-unwrap-sexp smartparens-mode-map)
-            (bind-key "C-M-<backspace>" 'sp-splice-sexp-killing-backward smartparens-mode-map)
-            (bind-key "C-S-<backspace>" 'sp-splice-sexp-killing-around smartparens-mode-map)
 
             (defun malb/sp-point-is-template-p (id action context)
               (and (sp-in-code-p id action context)
