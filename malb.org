@@ -1635,6 +1635,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 (use-package helm-ddgr
   :ensure nil
   :after helm
+  :commands helm-ddgr-return
   :bind ("C-c h g" . helm-ddgr))
 #+end_src
 
