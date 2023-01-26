@@ -3735,7 +3735,7 @@ This is for promping for refile targets when doing captures.
 Targets are selected from `org-refile-targets'. If TARGETS is
 given it temporarily overrides `org-refile-targets'. PROMPT will
 replace the default prompt message."
-      (let ((org-refile-targets (or targets org-refile-targets))
+      (let ((org-refile-targets (or targets '((org-agenda-files :maxlevel . 9))))
             (prompt (or prompt "Capture Location")))
         (org-refile t nil nil prompt)))
 
