@@ -8667,18 +8667,20 @@ Various shortcuts to jump to/create headers.
 Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
 
 #+begin_src emacs-lisp
+(advice-add #'mu4e-compose :around #'malb/clean-display-buffer-alist-advice)
+(advice-add #'mu4e~compose-handler :around #'malb/clean-display-buffer-alist-advice)
+
 (defun malb/switch-to-mu4e-advice (old-function &rest arguments)
   (malb/switch-to-mu4e)
   (apply old-function arguments))
+
+(advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
+(advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
 
 (defun malb/switch-away-from-mu4e-advice (old-function &rest arguments)
   (malb/switch-away-from-mu4e)
   (apply old-function arguments))
 
-(advice-add #'mu4e-compose :around #'malb/clean-display-buffer-alist-advice)
-(advice-add #'mu4e~compose-handler :around #'malb/clean-display-buffer-alist-advice)
-(advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
-(advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
 (advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-mu4e-advice)
 #+end_src
 
