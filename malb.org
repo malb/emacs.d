@@ -122,7 +122,8 @@ Configure package repositories.
 #+begin_src emacs-lisp
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                         ("melpa" . "https://melpa.org/packages/"))
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("melpa-stable" . "https://stable.melpa.org/packages/"))
       package-archive-priorities '(("gnu" . 20)
                                    ("nongnu" . 20)
                                    ("melpa" . 20)
