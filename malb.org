@@ -10665,7 +10665,8 @@ If i is pressed after, insert the result at the end of region. If r is pressed r
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
-     (list (point-at-bol) (point-at-eol))))
+     (list (save-excursion (thing-at-point--beginning-of-sexp) (point))
+           (save-excursion (thing-at-point--end-of-sexp) (point)))))
   (let* ((expr (buffer-substring-no-properties beg end))
          (result (calc-eval expr))
          (my-beg beg)
