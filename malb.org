@@ -7882,10 +7882,10 @@ Canonicalise contacts as they appear from mu4e.
     (cond
      ;; ignore a bunch
      ((string-match-p (rx  (or (seq "no" (zero-or-one "-") "reply")
-                               (seq "replyto-" (one-or-more char) "@plus.google.com")
-                               (seq "@" (one-or-more char) ".twitter.com")
-                               (seq "do-not-reply" (zero-or-more char) "@")
-                               (seq "bounce-" (one-or-more char) "@")))
+                               (seq "replyto-" (one-or-more anychar) "@plus.google.com")
+                               (seq "@" (one-or-more anychar) ".twitter.com")
+                               (seq "do-not-reply" (zero-or-more anychar) "@")
+                               (seq "bounce-" (one-or-more anychar) "@")))
                       contact)
       nil)
      ;; ignore a bunch of invalid addresses
