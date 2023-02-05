@@ -5774,9 +5774,12 @@ I often restart Python processes (Cython development), so let’s bind a key for
          (python-base-mode . malb/local-anaconda-eldoc-mode)
          (python-base-mode . python-docstring-mode)
          (python-base-mode . sphinx-doc-mode)
-         (python-mode . importmagic-mode) ;; doesn't like python-ts-mode
+         (python-base-mode . malb/python-mode-hook)
          (python-base-mode . ws-butler-mode)
-         (python-base-mode . malb/elpy-sane-defaults))
+         (python-base-mode . malb/elpy-sane-defaults)
+         ;; (python-mode . importmagic-mode) ;; doesn't like python-ts-mode
+         (inferior-python-mode . malb/inferior-python-mode-hook)
+         )
   :config (progn
             (setq-default python-indent 4
                           python-fill-docstring-style 'django)
@@ -5788,15 +5791,10 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (defun malb/python-mode-hook ()
               (setq-local outline-blank-line t))
 
-            (add-hook 'python-mode-hook #'malb/python-mode-hook)
+            (defun malb/inferior-python-mode-hook ()
+              (setq-local company-backends '(company-files company-capf)))
 
-            (defun malb/inferior-python-setup ()
-              (make-local-variable 'company-backends)
-              (setq company-backends '(company-files company-capf)))
-
-            (add-hook 'inferior-python-mode-hook #'malb/inferior-python-setup)
-
-            ;(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+                                        ;(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
