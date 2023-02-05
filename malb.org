@@ -5766,6 +5766,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
               ("<backtab>" . bicycle-cycle-global)
               :map inferior-python-mode-map
               ("C-c C-r" . pyvenv-restart-python))
+  :commands (malb/python-mode-hook malb/inferior-python-mode-hook)
   :hook ((python-base-mode . outline-minor-mode)
          (python-base-mode . highlight-indentation-mode)
          (python-base-mode . malb/local-anaconda-mode)
