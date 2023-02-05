@@ -57,7 +57,7 @@ Enable TLS cert checking ([[https://glyph.twistedmatrix.com/2015/11/editor-malwa
         tls-checktrust t))
 
 ;; (let ((bad-hosts
-;;        (loop for bad
+;;        (cl-loop for bad
 ;;              in `("https://wrong.host.badssl.com/"
 ;;                   "https://self-signed.badssl.com/")
 ;;              if (condition-case e
@@ -4872,12 +4872,12 @@ cat mylog.log >> #<buffer *scratch*>
     (with-current-buffer (find-file-noselect "~/.zsh_history" t t)
       (auto-revert-mode -1)
       (goto-char (point-max))
-      (loop for pos = (re-search-backward pattern nil t)
-            while pos
-            collect (replace-regexp-in-string
-                     "\\`:.+?;" ""
-                     (buffer-substring (line-beginning-position)
-                                       (line-end-position)))))))
+      (cl-loop for pos = (re-search-backward pattern nil t)
+               while pos
+               collect (replace-regexp-in-string
+                        "\\`:.+?;" ""
+                        (buffer-substring (line-beginning-position)
+                                          (line-end-position)))))))
 
 (defun malb/helm-c-zsh-history-insert (candidate)
   (insert candidate))
@@ -7328,7 +7328,7 @@ We cite as “Alice15” or “AliBobCha15” or “ABCD15” ([[https://nickhig
                                        ""))
                 (setq key (format "%s%s" names year))
                 (let ((ret key))
-                  (loop for c from ?a to ?z
+                  (cl-loop for c from ?a to ?z
                         while (assoc ret existing-keys)
                         do (setq ret (format "%s%c" key c)))
                   ret)))))
@@ -9382,7 +9382,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             ;; https://www.reddit.com/r/emacs/comments/u2lf9t/weekly_tips_tricks_c_thread/
             (defun dired-dim-git-ignores ()
               "Dim out .gitignore contents"
-              (when-let ((_ (require 'vc))
+              (when-let ((foo (require 'vc))
                          (ignores (vc-default-ignore-completion-table 'git ".gitignore"))
                          (exts (make-local-variable 'completion-ignored-extensions)))
                 (dolist (item ignores)
