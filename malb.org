@@ -4062,6 +4062,8 @@ replace the default prompt message."
 (bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
 #+end_src
 
+****** TODO replace the above with a hook? https://github.com/progfolio/doct
+
 Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]].
 
 #+begin_src emacs-lisp
