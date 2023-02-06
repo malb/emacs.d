@@ -2670,7 +2670,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-tags-column -120
       org-startup-folded 'fold
       org-log-into-drawer t
-      org-log-done t
+      org-log-done 'time
       org-return-follows-link nil       ; don’t follow links by pressing ENTER
       org-clock-persist 'history
       org-special-ctrl-a/e t             ; begin/end of line to skip starts …
@@ -2852,7 +2852,6 @@ Pretty print some maths:
                           ("deg" "\\deg" t "deg" "deg" "deg" "deg")
                           ("ZZ" "\\ZZ" t "ZZ" "ZZ" "ZZ" "ℤ")))
 #+end_src
-
 
 ** ToDo Keywords & Scheduling
 
@@ -3728,7 +3727,8 @@ In [[file:%s::%s][%s]]:
         (save-excursion
           (org-id-goto id)
           (org-todo 'done))
-        (winner-undo)))
+        ;; (winner-undo)
+        ))
 
     ;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
     (defun malb/org-get-target-headline (&optional targets prompt)
@@ -3800,14 +3800,16 @@ replace the default prompt message."
            :immediate-finish t)
           (,(format "%s\tFile Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
            :keys "f"
-           :template  ("- email: %a%?")
+           :template  ("- Email %a%? %U")
            :type item
+           :prepend t
            :function malb/org-get-target-headline
            :immediate-finish nil
            :empty-lines 0)
           (,(format "%s\tFile Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
            :keys "s"
-           :template  ("- query: %a%?")
+           :template  ("Query: %a%?")
+           :prepend t
            :type item
            :function malb/org-get-target-headline
            :immediate-finish nil
@@ -9027,6 +9029,7 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
 
             (setq pdf-view-resize-factor 1.1
                   pdf-annot-activate-created-annotations t
+                  pdf-view-midnight-invert nil
                   pdf-misc-print-programm "gtklp")
 
             (add-hook 'pdf-annot-list-mode-hook #'pdf-annot-list-follow-minor-mode)
