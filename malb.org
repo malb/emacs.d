@@ -5578,10 +5578,6 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
             (add-to-list 'helm-commands-using-frame #'helm-lsp-workspace-symbol)
             (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbol)))
-
-;; (use-package lsp-ivy
-;;   :config (progn
-;;             (define-key lsp-mode-map [remap xref-find-apropos] #'lsp-ivy-workspace-symbol)))
 #+end_src
 
 ** C/C++
