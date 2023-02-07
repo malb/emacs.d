@@ -7201,7 +7201,9 @@ Run =latexmk -pvc= in async shell
 
 #+begin_src emacs-lisp
 (use-package math-delimiters
-  :commands (math-delimiters-no-dollars)
+  :commands (math-delimiters-no-dollars math-delimiters-mode)
+  :hook ((LaTeX-mode . math-delimiters-mode)
+           (org-mode . math-delimiters-mode))
   :ensure nil
   :config (progn
             (setq math-delimiters-compressed-display-math nil)
@@ -7213,12 +7215,15 @@ Run =latexmk -pvc= in async shell
                 (when (region-active-p)
                   (narrow-to-region (caar (region-bounds)) (cdar (region-bounds))))
                 (apply old-function args)))
-            )
-  :bind (:map TeX-mode-map ("$" . math-delimiters-insert)
-         :map org-mode-map ("$" . math-delimiters-insert)))
-#+end_src
 
-****** TODO Turn into minor mode
+            (define-minor-mode math-delimiters-mode
+              "Math Delimeters"
+              :init-value nil
+              :lighter " MD"
+              :keymap (let ((map (make-sparse-keymap)))
+                        (define-key map (kbd "$")  #'math-delimiters-insert)
+                        map))))
+#+end_src
 
 ** Utility Functions
 
