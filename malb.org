@@ -6902,6 +6902,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 #+begin_src emacs-lisp
 (use-package tex
   :ensure auctex
+  ;; :commands (malb/latex-add-environments malb/latex-add-font-lock malb/enable-cleveref)
   :bind (:map LaTeX-mode-map
               ("C-<tab>" . outline-cycle)
               ("M-." . malb/latex-jump)
@@ -6910,24 +6911,25 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               ("M-<up>" . outline-move-subtree-up)
               ("M-<down>" . outline-move-subtree-down)
               ("C-c h ." . TeX-doc))
+  :hook ((LaTeX-mode . electric-indent-local-mode)
+         (LaTeX-mode . turn-on-visual-line-mode)
+         (LaTeX-mode . turn-on-flyspell)
+         (LaTeX-mode . turn-on-reftex)
+         (LaTeX-mode . turn-on-visual-fill-column-mode)
+         (LaTeX-mode . outline-minor-mode)
+         (LaTeX-mode . turn-on-cdlatex)
+         (LaTeX-mode . prettify-symbols-mode)
+         (LaTeX-mode . malb/latex-add-environments)
+         (LaTeX-mode . malb/latex-add-font-lock)
+         (LaTeX-mode . malb/enable-cleveref))
   :custom ((texmathp-tex-commands '(("pcvstack" env-on) ("pchstack" env-on))))
   :config (progn
-            (add-hook 'LaTeX-mode-hook #'turn-on-visual-line-mode)
-            (add-hook 'LaTeX-mode-hook #'turn-on-flyspell)
-            (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
-            (add-hook 'LaTeX-mode-hook #'turn-on-visual-fill-column-mode)
-            (add-hook 'LaTeX-mode-hook #'outline-minor-mode)
-            (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)
-            (add-hook 'LaTeX-mode-hook #'prettify-symbols-mode)
-
             (require 'tex-mode)
             ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
             (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
 
             ;; :- vs :=
-            (setq tex--prettify-symbols-alist
-                  (remove '("\\coloneq" . ?≔) tex--prettify-symbols-alist))
-
+            (setq tex--prettify-symbols-alist (remove '("\\coloneq" . ?≔) tex--prettify-symbols-alist))
             (push '("\\coloneqq" . ?≔) tex--prettify-symbols-alist)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
@@ -6987,10 +6989,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
               (setq reftex-ref-style-default-list '("Default" "Cleveref")))
 
-            (add-hook 'LaTeX-mode-hook #'malb/latex-add-environments)
-            (add-hook 'LaTeX-mode-hook #'malb/latex-add-font-lock)
-            (add-hook 'LaTeX-mode-hook #'malb/enable-cleveref)
-
             (defun malb/latex-jump ()
               "If point is on a citation, jump to the bibtex file, otherwise open refex menu."
               (interactive)
@@ -7023,11 +7021,10 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-save-query nil
                   TeX-error-overview-open-after-TeX-run t
                   TeX-electric-sub-and-superscript t
-                  ;; TeX-electric-math '("\\(" . "\\)")
-                  ;; LaTeX-electric-left-right-brace t
                   TeX-quote-after-quote nil
                   reftex-toc-split-windows-fraction 0.15
-                  reftex-toc-split-windows-horizontally t)
+                  reftex-toc-split-windows-horizontally t
+                  font-latex-fontify-sectioning 1.0)
 
             (add-to-list 'display-buffer-alist
                          '("^\\*toc\\*$" display-buffer-in-side-window
@@ -7056,10 +7053,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                     (case-fold-search nil))
                 (call-interactively 'query-replace-regexp)))
 
-            (setq-default TeX-master 'dwim)
-            (setq-default TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
-
-            (setq font-latex-fontify-sectioning 1.0)
+            (setq-default TeX-master 'dwim
+                          TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
 
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+end_src
