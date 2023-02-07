@@ -5599,10 +5599,10 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
          (c-ts-base-mode . helm-gtags-mode)
          (c-ts-base-mode . malb/lsp-enable)
          (c-ts-base-mode . clang-format+-mode))
-  :config (progn
-            (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
-            (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
-            (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-ts-mode))))
+  :init (progn
+          (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+          (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
+          (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-ts-mode))))
 #+end_src
 
 Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format code, [[https://github.com/SavchenkoValeriy/emacs-clang-format-plus][clang-format+]] automatically runs =clang-format= when a =.clang-format= is present.
