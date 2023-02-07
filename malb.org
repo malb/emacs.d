@@ -3720,6 +3720,11 @@ In [[file:%s::%s][%s]]:
   :config
   (progn
 
+    (defun malb/org-capture-mu4e-after-finalize ()
+      (mu4e~view-in-headers-context
+       (if (member 'flagged (mu4e-message-field-at-point :flags))
+           (mu4e-mark-set 'unflag))))
+
     (defun malb/org-toggle-todo-by-id (id &optional only-today)
       (when (or (not only-today)
                 (= (nth 3 (org-decode-time nil))
@@ -3797,6 +3802,7 @@ replace the default prompt message."
                        ""
                        "%i")
            :prepend t
+           :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish t)
           (,(format "%s\tFile Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
            :keys "f"
@@ -3804,6 +3810,7 @@ replace the default prompt message."
            :type item
            :prepend t
            :function malb/org-get-target-headline
+           :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish nil
            :empty-lines 0)
           (,(format "%s\tFile Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
@@ -3827,6 +3834,7 @@ replace the default prompt message."
                       ""
                       "See %a by %:fromname"
                       "")
+           :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish nil
            :prepend t)
           (,(format "%s\tKCL Herrschaftswissen" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01))
@@ -3844,6 +3852,7 @@ replace the default prompt message."
                       ""
                       "— %a by %:fromname"
                       "")
+           :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish nil
            :prepend t)
           (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
@@ -3858,6 +3867,7 @@ replace the default prompt message."
                       ":PROPERTIES:"
                       ":CREATED: %U"
                       ":END:")
+           :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish t
            :prepend t)
           (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01))
@@ -4053,18 +4063,16 @@ replace the default prompt message."
 #+end_src
 
 #+begin_src emacs-lisp
-(defun malb/mu4e-view-org-capture (arg)
-  "Call `org-capture' followed by removing flag from e-mail."
-  (interactive "P")
-  (mu4e~view-in-headers-context
-   (if (member 'flagged (mu4e-message-field-at-point :flags))
-       (mu4e-mark-set 'unflag)))
-  (org-capture arg))
+;; (defun malb/mu4e-view-org-capture (arg)
+;;   "Call `org-capture' followed by removing flag from e-mail."
+;;   (interactive "P")
+;;   (mu4e~view-in-headers-context
+;;    (if (member 'flagged (mu4e-message-field-at-point :flags))
+;;        (mu4e-mark-set 'unflag)))
+;;   (org-capture arg))
 
-(bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
+;; (bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
 #+end_src
-
-****** TODO replace the above with a hook? https://github.com/progfolio/doct
 
 Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]].
 
