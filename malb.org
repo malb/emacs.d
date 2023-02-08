@@ -11076,7 +11076,7 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       ;; (set-fontset-font "fontset-default" #x22c5 "DejaVu Sans Mono")
       ;; otherwise ⋅ is too narrow
 
-      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.85) t)
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.8) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Material Icons") 0.8) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "all-the-icons") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "file-icons") 0.8) t)
