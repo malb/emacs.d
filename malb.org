@@ -9467,8 +9467,9 @@ Show dired histories you have visited.
   :defer t
   :init (add-hook 'dired-mode-hook  #'all-the-icons-dired-mode)
   ;; https://github.com/jtbm37/all-the-icons-dired/pull/31/files
-  :config (defun all-the-icons-dired--put-icon (pos)
+  :config (malb/defadvice! malb/all-the-icons-dired--put-icon (pos)
             "Propertize POS with icon."
+            :override #'all-the-icons-dired--put-icon
             (let* ((file (dired-get-filename 'relative 'noerror))
                    (icon (all-the-icons-dired--icon file))
                    (image (get-text-property 0 'display icon)))
