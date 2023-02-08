@@ -2616,7 +2616,25 @@ functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... 
 Dired additions for git-annex.
 
 #+begin_src emacs-lisp
-(use-package git-annex)
+(use-package git-annex
+  :config (defun git-annex-dired-get-files (file-list &optional arg)
+            (interactive (let ((files (dired-get-marked-files t current-prefix-arg)))
+                           (list files current-prefix-arg)))
+            (async-start
+             `(lambda ()
+                (package-initialize)
+                (require 'git-annex)
+                (require 'dired-aux)
+                ,(async-inject-variables "file-list")
+                (git-annex-dired--apply "get" file-list))
+             (lambda (result)
+               (let ((here (point)))
+                 (unwind-protect
+                     (mapc #'(lambda (file)
+                               (dired-relist-file (expand-file-name file)))
+                           file-list)
+                   (goto-char here)))
+               (message (format "Annex: got %d file(s)" (length file-list)))))))
 #+end_src
 
 * Org-mode all the things!
