@@ -5670,64 +5670,31 @@ and move to the source code that caused it."
 ** Golang
 
 #+begin_src emacs-lisp
-(use-package go-mode
+(use-package go-ts-mode
   :mode "\\.go$"
-  :interpreter "go"
-  :hook ((go-mode . flycheck-mode)))
+  :ensure-system-package gopls
+  :hook ((go-ts-mode . eldoc-mode)
+         (go-ts-mode . malb/lsp-enable)
+         (go-ts-mode . display-line-numbers-mode))
+  :init (add-to-list 'major-mode-remap-alist '(go-mode . go-ts-mode))
+  :config (when (boundp 'dtrt-indent-hook-mapping-list)
+            (add-to-list 'dtrt-indent-hook-mapping-list
+                         '(go-ts-mode c/c++/java go-ts-mode-indent-offset))))
 #+end_src
-
-#+begin_src emacs-lisp
-(use-package go-eldoc
-  :hook (go-mode . go-eldoc-setup))
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package go-guru
-  :commands (go-guru-describe go-guru-freevars go-guru-implements go-guru-peers
-                              go-guru-referrers go-guru-definition go-guru-pointsto
-                              go-guru-callstack go-guru-whicherrs go-guru-callers go-guru-callees
-                              go-guru-expand-region)
-  :config (unless (executable-find "guru")
-            (warn "go-mode: couldn't find guru, refactoring commands won't work")))
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package gorepl-mode
-  :commands (gorepl-run gorepl-run-load-current-file)
-  :config (unless (executable-find "gore")
-            (warn "go-mode: couldn't find gore, REPL support disabled")))
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package company-go
-  :init (setq command-go-gocode-command "gocode"
-              company-go-show-annotation t)
-  :after go-mode
-  :config (if (executable-find command-go-gocode-command)
-              (add-to-list 'company-backends #'company-go)
-            (warn "go-mode: couldn't find gocode, code completion won't work")))
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package gotest
-  :bind (:map go-mode-map
-              ("C-c a" . go-test-current-project)
-              ("C-c m" . go-test-current-file)
-              ("C-c ." . go-test-current-test)
-              ("C-c b" . go-run)
-              ("C-h f" . godoc-at-point)))
-#+end_src
-
-#+BEGIN_QUOTE
-Go Projectile is a set of Go language related add-ons for the Emacs Projectile mode. — https://github.com/dougm/go-projectile
-#+END_QUOTE
 
 ** Rust
 
-The Interwebs seems to hold that [[https://github.com/brotzeit/rustic][rustic]] is the way to go.
-
 #+begin_src emacs-lisp
-(use-package rustic)
+(use-package rust-ts-mode
+  :ensure nil
+  :mode "\\.rs$"
+  :hook ((rust-ts-mode . eldoc-mode)
+         (rust-ts-mode . malb/lsp-enable)
+         (rust-ts-mode . display-line-numbers-mode))
+  :init (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
+  :config (when (boundp 'dtrt-indent-hook-mapping-list)
+            (add-to-list 'dtrt-indent-hook-mapping-list
+                         '(rust-ts-mode c/c++/java rust-ts-mode-indent-offset))))
 #+end_src
 
 ** Python
