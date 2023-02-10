@@ -633,8 +633,6 @@ Separate mu4e windows from others ([[https://stackoverflow.com/questions/1834678
 
 (defun malb/frame-is-special-p (frame)
   (or (frame-parameter frame 'malb/is-special)
-      ;; handle leftover helm frames
-      (not (frame-parameter frame 'visibility))
       (seq-some (lambda (name)
                   (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
                 malb/special-frame-names)))
@@ -696,10 +694,12 @@ Find a frame which isn’t the =mu4e= frame or create a fresh one.
 Find a frame not named =mu4e= if there is any, make one otherwise.
 
 #+begin_src emacs-lisp
-(defun malb/switch-away-from-mu4e ()
+(defun malb/switch-away-from-mu4e (&optional helm-is-okay)
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
-                         (if (malb/frame-is-not-special-p frame)
+                         (if (and (malb/frame-is-not-special-p frame)
+                                  ;; handle leftover helm frames
+                                  (or helm-is-okay (frame-parameter frame 'visibility)))
                              (throw 'other-frame frame)
                            nil)))))
     (if other-frame
@@ -731,7 +731,7 @@ Main dispatch function:
    ((and (string-match "mu4e" (frame-parameter nil 'name))
          (not (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer)))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
-    (malb/switch-away-from-mu4e)
+    (malb/switch-away-from-mu4e (string-match-p ".*helm.*" (buffer-name buffer)))
     nil ;; pass control back to display-buffer-alist
     )
    ;; just hand back control to diplay-buffer-alist
