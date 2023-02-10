@@ -4565,7 +4565,6 @@ When `exit' from shell buffer."
 #+begin_src emacs-lisp
 (use-package eshell
   :config (progn
-
             ;; -------------
             ;; TOGGLE ESHELL
             ;; -------------
@@ -4630,7 +4629,7 @@ When `exit' from shell buffer."
                 ("status" (progn
                             (magit-status)
                             (eshell/echo)))
-                (_ (let ((command (s-join " " (append (list "git" command) args))))
+                (_ (let ((command (s-join " " (flatten-list (list "git" command args)))))
                      (message command)
                      (shell-command-to-string command)))))
 
@@ -4638,7 +4637,7 @@ When `exit' from shell buffer."
               (pcase command
                 ("activate"   (progn (conda-env-activate (car args))))
                 ("deactivate" (progn (conda-env-deactivate)))
-                (_ (let ((command (s-join " " (append (list "conda" command) args))))
+                (_ (let ((command (s-join " " (flatten-list (list "conda" command args)))))
                      (message command)
                      (shell-command-to-string command)))))
 
@@ -4674,6 +4673,16 @@ When `exit' from shell buffer."
                 (erase-buffer)
                 (eshell-send-input)))
 
+            (setq eshell-input-filter #'eshell-input-filter-initial-space)
+
+            (defun eshell/disable-eshell-history ()
+              (setq-local eshell-input-filter (lambda (input) nil))
+              nil)
+
+            (defun eshell/enable-eshell-history ()
+              (setq-local eshell-input-filter #'eshell-input-filter-initial-space)
+              nil)
+
             ;; -----------
             ;; MINOR MODES
             ;; -----------
@@ -4688,15 +4697,6 @@ When `exit' from shell buffer."
                   (sp-local-pair  "[" "]"  :unless bracket-qualifiers))))
 
             (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
-
-            ;; ------------------------------------------------
-            ;; DON'T ADD COMMAND STARTING WITH SPACE TO HISTORY
-            ;; ------------------------------------------------
-
-            (setq eshell-input-filter
-                  (lambda (str)
-                    (not (or (string= "" str)
-                             (string-prefix-p " " str)))))
 
             ;; --------------------
             ;; COPY PREVIOUS OUTPUT
