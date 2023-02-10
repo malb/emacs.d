@@ -3280,6 +3280,7 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("" "units"))
             (add-to-list 'org-latex-packages-alist '("" "xspace"))
             (add-to-list 'org-latex-packages-alist '("," "babel"))
+            (add-to-list 'org-latex-packages-alist '("," "stmaryrd"))
             (add-to-list 'org-latex-packages-alist '("capitalize" "cleveref"))
             (add-to-list 'org-latex-packages-alist (list (s-join "," '("notions"
                                                                        "operators"
@@ -3295,7 +3296,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                                                        "advantage"))
                                                          "cryptocode"))
             (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
-            (add-to-list 'org-latex-packages-alist '("verbose=silent" "microtype"))
+            (add-to-list 'org-latex-packages-alist '("" "microtype"))
             (add-to-list 'org-latex-packages-alist '("" "booktabs"))
             (add-to-list 'org-latex-packages-alist '("color=cyan!0!magenta!4!yellow!16" "todonotes") t)
 
@@ -3350,15 +3351,15 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\usepackage{fontspec}"
                                         "\\fi"
                                         "\\lstset{showstringspaces=false,"
-                                          "aboveskip=0.75em,"
-                                          "basicstyle=\\footnotesize\ttfamily,"
-                                          "keywordstyle=\\bfseries\\color{gray!40!black},"
-                                          "commentstyle=\\itshape\\color{gray!140!black},"
-                                          "identifierstyle=\\color{gray!40!black},"
-                                          "stringstyle=\\color{gray},"
-                                          "backgroundcolor=\\color{gray!190!black},"
-                                          "frame=none,"
-                                          "xleftmargin=\\parindent}"
+                                        "aboveskip=0.75em,"
+                                        "basicstyle=\\footnotesize\ttfamily,"
+                                        "keywordstyle=\\bfseries\\color{gray!40!black},"
+                                        "commentstyle=\\itshape\\color{gray!140!black},"
+                                        "identifierstyle=\\color{gray!40!black},"
+                                        "stringstyle=\\color{gray},"
+                                        "backgroundcolor=\\color{gray!190!black},"
+                                        "frame=none,"
+                                        "xleftmargin=\\parindent}"
                                         "[EXTRA]")
                                       '(("\\chapter{%s}" . "\\chapter*{%s}")
                                         ("\\section{%s}" . "\\section*{%s}")
@@ -3384,15 +3385,15 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\usepackage{fontspec}"
                                         "\\fi"
                                         "\\lstset{showstringspaces=false,"
-                                          "aboveskip=0.75em,"
-                                          "basicstyle=\\footnotesize\ttfamily,"
-                                          "keywordstyle=\\bfseries\\color{gray!40!black},"
-                                          "commentstyle=\\itshape\\color{gray!140!black},"
-                                          "identifierstyle=\\color{gray!40!black},"
-                                          "stringstyle=\\color{gray},"
-                                          "backgroundcolor=\\color{gray!190!black},"
-                                          "frame=none,"
-                                          "xleftmargin=\\parindent}"
+                                        "aboveskip=0.75em,"
+                                        "basicstyle=\\footnotesize\ttfamily,"
+                                        "keywordstyle=\\bfseries\\color{gray!40!black},"
+                                        "commentstyle=\\itshape\\color{gray!140!black},"
+                                        "identifierstyle=\\color{gray!40!black},"
+                                        "stringstyle=\\color{gray},"
+                                        "backgroundcolor=\\color{gray!190!black},"
+                                        "frame=none,"
+                                        "xleftmargin=\\parindent}"
                                         "[EXTRA]")
                                       '(("\\part{%s}" . "\\part*{%s}")
                                         ("\\chapter{%s}" . "\\chapter*{%s}")
@@ -3419,15 +3420,15 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\usepackage{fontspec}"
                                         "\\fi"
                                         "\\lstset{showstringspaces=false,"
-                                          "aboveskip=0.75em,"
-                                          "basicstyle=\\footnotesize\\ttfamily,"
-                                          "keywordstyle=\\bfseries\\color{gray!40!black},"
-                                          "commentstyle=\\itshape\\color{gray!140!black},"
-                                          "identifierstyle=\\color{gray!40!black},"
-                                          "stringstyle=\\color{gray},"
-                                          "backgroundcolor=\\color{gray!190!black},"
-                                          "frame=none,"
-                                          "}"
+                                        "aboveskip=0.75em,"
+                                        "basicstyle=\\footnotesize\\ttfamily,"
+                                        "keywordstyle=\\bfseries\\color{gray!40!black},"
+                                        "commentstyle=\\itshape\\color{gray!140!black},"
+                                        "identifierstyle=\\color{gray!40!black},"
+                                        "stringstyle=\\color{gray},"
+                                        "backgroundcolor=\\color{gray!190!black},"
+                                        "frame=none,"
+                                        "}"
                                         "[EXTRA]")
                                       '(("\\section{%s}" . "\\section*{%s}")
                                         ("\\subsection{%s}" . "\\subsection*{%s}")
