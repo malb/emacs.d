@@ -3849,7 +3849,7 @@ replace the default prompt message."
            :immediate-finish t)
           (,(format "%s\tFile Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
            :keys "f"
-           :template  ("- Email %a%? %U")
+           :template  ("- Email %a%? %:date-timestamp-inactive")
            :type item
            :prepend t
            :function malb/org-get-target-headline
@@ -3865,10 +3865,9 @@ replace the default prompt message."
            :immediate-finish nil
            :empty-lines 0)
           (,(format "%s\tTask" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01)) :keys "t"
-           :file malb/work-org
-           :headline "Admin"
+           :file malb/inbox-org
            :template ("* %^{type|TODO|REPLY|READ|REVIEW} %?"
-                      "%^{schedule|DEADLINE: |SCHEDULED: ||}%^t"
+                      "%^{schedule|DEADLINE: |SCHEDULED: |}%^t"
                       ":PROPERTIES:"
                       ":CREATED: %U"
                       ":END:"
