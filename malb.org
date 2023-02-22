@@ -931,6 +931,23 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
               (when (and yas-minor-mode (null (yas--get-snippet-tables)))
                 (yas-minor-mode -1)))
 
+            ;; create alias for -ts-modes
+            (let (did-create)
+              (dolist (mode '("c" "c++" "python"))
+                (let* ((src-mode (concat mode "-mode"))
+                       (dst-dir (expand-file-name  (concat mode "-ts-mode") yasnippet-snippets-dir))
+                       (dst-file (expand-file-name ".yas-parents" dst-dir)))
+                  (when (not (file-exists-p dst-dir))
+                    (mkdir dst-dir))
+                  (when (not (file-exists-p dst-file))
+                    (setq did-create t)
+                    (with-temp-buffer
+                      (insert src-mode)
+                      (insert "\n")
+                      (write-file dst-file)))))
+              (when did-create
+                (yas-reload-all)))
+
             (add-hook 'yas-minor-mode-hook #'malb/disable-yas-if-no-snippets)))
 #+end_src
 
