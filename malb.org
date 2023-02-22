@@ -4121,18 +4121,6 @@ replace the default prompt message."
             ("es" ((in-mode . "mu4e-headers-mode")))))))
 #+end_src
 
-#+begin_src emacs-lisp
-;; (defun malb/mu4e-view-org-capture (arg)
-;;   "Call `org-capture' followed by removing flag from e-mail."
-;;   (interactive "P")
-;;   (mu4e~view-in-headers-context
-;;    (if (member 'flagged (mu4e-message-field-at-point :flags))
-;;        (mu4e-mark-set 'unflag)))
-;;   (org-capture arg))
-
-;; (bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
-#+end_src
-
 Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]].
 
 #+begin_src emacs-lisp
