@@ -125,7 +125,7 @@ Configure package repositories.
                          ("melpa" . "https://melpa.org/packages/"))
       package-archive-priorities '(("gnu" . 20)
                                    ("nongnu" . 20)
-                                   ("melpa" . 20))
+                                   ("melpa" . 30))
       package-menu-hide-low-priority nil)
 #+end_src
 
