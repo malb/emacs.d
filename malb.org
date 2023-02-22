@@ -8871,15 +8871,15 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
 (setq epg-gpg-program "gpg2")
 #+end_src
 
-** Org-Mu4e
+** Mu4e <3 Org
 
 Link to mu4e messages and threads.
 
 #+begin_src emacs-lisp
-(use-package org-mu4e
+(use-package mu4e-org
   :ensure nil
   :config (progn
-            (setq org-mu4e-link-query-in-headers-mode t)))
+            (setq mu4e-org-link-query-in-headers-mode t)))
 #+end_src
 
 ** Mail Merge
