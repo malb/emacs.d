@@ -123,8 +123,8 @@ Configure package repositories.
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
                          ("melpa" . "https://melpa.org/packages/"))
-      package-archive-priorities '(("gnu" . 20)
-                                   ("nongnu" . 20)
+      package-archive-priorities '(("gnu" . 10)
+                                   ("nongnu" . 10)
                                    ("melpa" . 30))
       package-menu-hide-low-priority nil)
 #+end_src
@@ -1445,7 +1445,11 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
             (defun malb/helmified-transfer-sh-files ()
               (interactive)
               (with-helm-alive-p
-                (helm-exit-and-execute-action 'malb/helm-transfer-sh-files)))))
+                (helm-exit-and-execute-action 'malb/helm-transfer-sh-files)))
+
+            ;; (helm-add-action-to-source "Attach to E-mail" #'malb/helm-mml-attach-files helm-source-find-files)
+            ;; (helm-add-action-to-source "Transfer.sh"      #'malb/helm-transfer-sh-files helm-source-find-files)
+            ))
 #+end_src
 
 ** Helm Ring
@@ -2960,15 +2964,17 @@ delete SCHEDULED if new state is a WAITing state
 
 #+begin_src emacs-lisp
 (defun malb/org-after-todo-state-change ()
-  (when (or
-         (string-equal org-state "WAIT")
-         (string-equal org-state "COAUTHOR")
-         (string-equal org-state "DELEGATED")
-         (string-equal org-state "SUBMITTED"))
-    (progn
-      (org-remove-timestamp-with-keyword org-scheduled-string)
-      (when (not (org-get-deadline-time (point)))
-        (org-deadline nil (org-read-date nil t "+7d"))))))
+  ;; we no longer have this as sheduled
+  (when (or (string-equal org-state "WAIT")
+            (string-equal org-state "COAUTHOR")
+            (string-equal org-state "DELEGATED")
+            (string-equal org-state "SUBMITTED"))
+    (org-remove-timestamp-with-keyword org-scheduled-string))
+
+  ;; we set a default deadline for some
+  (when (and (or (string-equal org-state "WAIT"))
+             (not (org-get-deadline-time (point))))
+    (org-deadline nil (org-read-date nil t "+7d"))))
 
 (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
 #+end_src
@@ -3021,6 +3027,8 @@ Extract org tables as lists of alists.
       (let ( (case-fold-search t))
         (search-forward (format "+name: %s" name)))
       (forward-line)
+
+      (search-forward "|")
 
       (unless (org-at-table-p)
         (user-error "Not at a table"))
@@ -3705,7 +3713,9 @@ E.g. tuareg-mode will return 'ocaml', python-mode 'python', etc..."
     (or (car (assoc mm org-babel-load-languages))
         (car (rassoc mm org-src-lang-modes))
         (format "%s" mm))))
+#+end_src
 
+#+begin_src emacs-lisp
 (defun malb/org-capture-code-snippet (f)
   (with-current-buffer (find-buffer-visiting f)
     (let ((code-snippet (buffer-substring-no-properties (mark) (- (point) 1)))
@@ -3725,6 +3735,39 @@ In [[file:%s::%s][%s]]:
        func-name
        org-src-mode
        code-snippet))))
+#+end_src
+
+#+begin_src emacs-lisp
+(defun malb/org-capture-mu4e-after-finalize ()
+  (mu4e~view-in-headers-context
+   (if (member 'flagged (mu4e-message-field-at-point :flags))
+       (mu4e-mark-set 'unflag))))
+#+end_src
+
+#+begin_src emacs-lisp
+(defun malb/org-toggle-todo-by-id (id &optional only-today)
+  (when (or (not only-today)
+            (= (nth 3 (org-decode-time nil))
+               (nth 3 (org-decode-time (org-capture-get :default-time)))))
+    (save-excursion
+      (org-id-goto id)
+      (org-todo 'done))
+    ;; (winner-undo)
+    ))
+#+end_src
+
+#+begin_src emacs-lisp
+;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
+(defun malb/org-get-target-headline (&optional targets prompt)
+  "Prompt for a location in an org file and jump to it.
+
+This is for promping for refile targets when doing captures.
+Targets are selected from `org-refile-targets'. If TARGETS is
+given it temporarily overrides `org-refile-targets'. PROMPT will
+replace the default prompt message."
+  (let ((org-refile-targets (or targets '((org-agenda-files :maxlevel . 9))))
+        (prompt (or prompt "Capture Location")))
+    (org-refile t nil nil prompt)))
 #+end_src
 
 *Template Expansions*
@@ -3779,34 +3822,6 @@ In [[file:%s::%s][%s]]:
   :bind ("<f9>" . org-capture)
   :config
   (progn
-
-    (defun malb/org-capture-mu4e-after-finalize ()
-      (mu4e~view-in-headers-context
-       (if (member 'flagged (mu4e-message-field-at-point :flags))
-           (mu4e-mark-set 'unflag))))
-
-    (defun malb/org-toggle-todo-by-id (id &optional only-today)
-      (when (or (not only-today)
-                (= (nth 3 (org-decode-time nil))
-                   (nth 3 (org-decode-time (org-capture-get :default-time)))))
-        (save-excursion
-          (org-id-goto id)
-          (org-todo 'done))
-        ;; (winner-undo)
-        ))
-
-    ;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
-    (defun malb/org-get-target-headline (&optional targets prompt)
-      "Prompt for a location in an org file and jump to it.
-
-This is for promping for refile targets when doing captures.
-Targets are selected from `org-refile-targets'. If TARGETS is
-given it temporarily overrides `org-refile-targets'. PROMPT will
-replace the default prompt message."
-      (let ((org-refile-targets (or targets '((org-agenda-files :maxlevel . 9))))
-            (prompt (or prompt "Capture Location")))
-        (org-refile t nil nil prompt)))
-
     (setq
      org-capture-templates
      (doct
