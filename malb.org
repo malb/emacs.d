@@ -3767,7 +3767,7 @@ given it temporarily overrides `org-refile-targets'. PROMPT will
 replace the default prompt message."
   (let ((org-refile-targets (or targets '((org-agenda-files :maxlevel . 9))))
         (prompt (or prompt "Capture Location")))
-    (org-refile t nil nil prompt)))
+    (org-refile '(t) nil nil prompt)))
 #+end_src
 
 *Template Expansions*
