@@ -120,20 +120,17 @@ DOCSTRING and BODY are as in `defun'.
 Configure package repositories.
 
 #+begin_src emacs-lisp
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-                         ("melpa" . "https://melpa.org/packages/"))
-      package-archive-priorities '(("gnu" . 10)
-                                   ("nongnu" . 10)
-                                   ("melpa" . 30))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(setq package-archive-priorities '(("gnu" . 1)
+                                   ("nongnu" . 1)
+                                   ("melpa" . 2))
       package-menu-hide-low-priority nil)
 #+end_src
 
 Get the package manager going.
 
 #+begin_src emacs-lisp
-(if (< emacs-major-version 27)
-    (package-initialize))
+(package-initialize)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -6688,7 +6685,8 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 (use-package reverso
   :bind (("C-c w r" . reverso))
   :hook ((reverso-result-mode . visual-line-mode))
-  :straight (:host github :repo "SqrtMinusOne/reverso.el")
+  ;; :straight (:host github :repo "SqrtMinusOne/reverso.el")
+  :ensure nil
   :config (setq reverso-languages '(english german)))
 #+end_src
 
