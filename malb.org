@@ -7716,7 +7716,11 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                 mu4e-headers-threaded-label (cons "T"
                                                   (all-the-icons-faicon "tree" :face 'all-the-icons :v-adjust 0.01))
                 mu4e-headers-related-label (cons "R"
-                                                 (all-the-icons-faicon "circle-o-notch" :face 'all-the-icons :v-adjust 0.01))))
+                                                 (all-the-icons-faicon "circle-o-notch" :face 'all-the-icons :v-adjust 0.01))
+                mu4e-headers-eldoc-format (concat (all-the-icons-faicon "tag" :face 'all-the-icons :v-adjust 0.01)
+                                                  ": %m, "
+                                                  (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)
+                                                  ": %M")))
 #+end_src
 
 #+begin_src emacs-lisp
