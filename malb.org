@@ -336,6 +336,13 @@ Resize windows to accommodate new ones.
 
 #+begin_src emacs-lisp
 (winner-mode 1)
+
+(malb/defadvice! malb/winner-save-old-configurations (old-function &rest args)
+  "This deals with `Error in post-command-hook (winner-save-old-configurations):
+  (wrong-type-argument frame-live-p #<dead frame *Org Capture* …>)`"
+  :around 'winner-save-old-configurations
+  (ignore-errors
+    (apply old-function args)))
 #+end_src
 
 [[https://github.com/louiskottmann/zygospore.el][zygospore]] lets you revert =C-x 1= =(delete-other-window)= by pressing =C-x 1= again.
