@@ -9482,6 +9482,7 @@ Show dired histories you have visited.
 
 #+begin_src emacs-lisp
 (use-package dired-subtree
+  :after all-the-icons
   :config (progn
             (defun malb/dired-subtree-all-the-icons ()
               (when all-the-icons-dired-mode (revert-buffer)))
@@ -9521,6 +9522,7 @@ Show dired histories you have visited.
 #+begin_src emacs-lisp
 (use-package all-the-icons-dired
   :defer t
+  :after all-the-icons
   :init (add-hook 'dired-mode-hook  #'all-the-icons-dired-mode)
   ;; https://github.com/jtbm37/all-the-icons-dired/pull/31/files
   :config (malb/defadvice! malb/all-the-icons-dired--put-icon (pos)
@@ -9959,6 +9961,7 @@ exports.boxes = [ "INBOX"];
 (use-package kodi
   :ensure nil
   :commands ambient/body
+  :after all-the-icons
   :ensure-system-package (brightnessctl . brightnessctl)
   :config (progn
             ;;  adjust brightenss of external monitor
@@ -10897,6 +10900,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 #+end_src
 
 * Theme & Look
+
 ** Frame Title
 
 Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob/master/init.org#display-buffer-name-in-frame-titles][source]])
@@ -10927,6 +10931,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 
 #+begin_src emacs-lisp
 (use-package doom-modeline
+  :after all-the-icons
   :config (progn
             (require 'doom-modeline-segments)
             (doom-modeline-def-segment conda-env
@@ -11076,6 +11081,7 @@ The result looks like this:
 
 #+begin_src emacs-lisp
 (use-package all-the-icons
+  :init (setq all-the-icons-color-icons nil)
   :config
   (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil)
   (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
