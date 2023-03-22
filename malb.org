@@ -133,10 +133,6 @@ Get the package manager going.
 (package-initialize)
 #+end_src
 
-#+begin_src emacs-lisp
-(setq load-prefer-newer t)
-#+end_src
-
 Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our configuration readable.
 
 #+begin_src emacs-lisp
