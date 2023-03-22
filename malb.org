@@ -10789,6 +10789,19 @@ Transparent encryption and decryption.
   :config (setq alert-default-style 'libnotify))
 #+end_src
 
+** LLM
+
+A toggle shell for https://github.com/antimatter15/alpaca.cpp
+
+#+begin_src emacs-lisp
+(fset 'malb/toggle-alpaca
+      (malb/make-toggle-shell
+       "alpaca"
+       '(comint-run "alpaca-chat"
+                    '("-m" "/bulk/llm/ggml-alpaca-13b-q4.bin"))
+       nil nil))
+#+end_src
+
 ** Upcase, Downcase, Capitalise
 
 #+begin_src emacs-lisp
