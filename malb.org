@@ -4674,6 +4674,8 @@ When `exit' from shell buffer."
             (defalias 'eshell/emacs 'find-file)
             (defalias 'eshell/less  'view-file)
 
+            (require 'helm-find)
+
             (defun eshell/fd (pattern &optional path)
               (let ((default-directory (file-name-as-directory (or path default-directory)))
                     (helm-display-function #'helm-display-buffer-in-own-frame))
@@ -8639,8 +8641,8 @@ Action to search messages involving all correspondents.
                      :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
                                ("Use all" . (lambda (x))))))
     (mu4e-headers-search
-     (format "contact:%s"
-             (mapconcat 'identity addresses " AND ")))))
+     (mapconcat (lambda (x) (format "contact:%s" x))
+                addresses " AND "))))
 
 (add-to-list 'mu4e-view-actions
              '("interaction 🔍" . malb/find-correspondence) t)
