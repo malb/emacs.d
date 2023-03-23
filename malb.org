@@ -10818,7 +10818,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
 #+begin_src emacs-lisp
 (fset 'malb/toggle-alpaca
       (malb/make-toggle-shell
-       "alpaca"
+       "*alpaca*"
        '(comint-run "alpaca-chat"
                     '("-m" "/bulk/llm/ggml-alpaca-13b-q4.bin"))
        nil nil))
