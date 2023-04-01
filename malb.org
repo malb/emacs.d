@@ -523,7 +523,7 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                              "\\` \\*LanguageTool Errors\\* \\'"
                              "\\`\\*Edit footnote .*\\*\\'"
                              "\\`\\*TeX errors*\\*\\'"
-                             "\\`\\*mu4e-update*\\*\\'"
+                             "\\*mu4e-update*\\*\\'"
                              "\\`\\*prodigy-.*\\*\\'"
                              "\\`\\*Org Export Dispatcher\\*\\'"
                              "\\`\\*Helm Swoop\\*\\'"
