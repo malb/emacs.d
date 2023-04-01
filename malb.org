@@ -5843,7 +5843,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
             (defun malb/inferior-python-mode-hook ()
               (setq-local company-backends '(company-files company-capf)))
 
-                                        ;(add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+            ;; (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
 
             ;; http://emacs.stackexchange.com/a/21186/8930
             (add-to-list 'python-indent-trigger-commands 'malb/indent-fold-or-complete)
