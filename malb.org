@@ -10818,12 +10818,38 @@ Transparent encryption and decryption.
 A toggle shell for https://github.com/antimatter15/alpaca.cpp
 
 #+begin_src emacs-lisp
-(fset 'malb/toggle-alpaca
-      (malb/make-toggle-shell
-       "*alpaca*"
-       '(comint-run "alpaca-chat"
-                    '("-m" "/bulk/llm/ggml-alpaca-13b-q4.bin"))
-       nil nil))
+(defun malb/toggle-alpaca (&optional arg)
+  (interactive "P")
+  (let* ((parent (if (buffer-file-name)
+                     (file-name-directory (buffer-file-name))
+                   default-directory))
+         (height (/ (window-total-height) 3))
+         (buffer-name   "*alpaca")
+         (window (get-buffer-window buffer-name))
+         (model-file (if arg
+                         (read-file-name "Model: " "/bulk/llm/")
+                       "/bulk/llm/ggml-alpaca-13b-q4.model")))
+    (if (and window (<= (window-height window) (/ (frame-height) 3)))
+        (progn
+          (select-window window)
+          (delete-window))
+      (progn
+        (split-window-vertically (- height))
+        (other-window 1)
+        (if (get-buffer buffer-name)
+            (progn
+              (switch-to-buffer buffer-name)
+              (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+          (progn
+            (comint-run "alpaca-chat"
+                        (list
+                         "-t" "12"
+                         "-m" model-file))
+            (rename-buffer buffer-name)
+            (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+            (visual-line-mode 1)
+            (flyspell-mode 1)
+            ))))))
 #+end_src
 
 ** Upcase, Downcase, Capitalise
