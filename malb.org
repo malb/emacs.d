@@ -621,7 +621,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 ** Dispatch Buffers to Frames
 
-Separate mu4e windows from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
+Separate “special” windows from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
 
 #+begin_src emacs-lisp
 (defvar malb/special-frame-names '("\\*Minibuf-1\\*.*" ;; helm
@@ -646,7 +646,7 @@ Separate mu4e windows from others ([[https://stackoverflow.com/questions/1834678
        (< (length (seq-filter 'malb/frame-is-not-special-p (frame-list))) 2)))
 #+end_src
 
-But we allow helm buffers in the mu4e frame, e.g. to pick attachments.
+We allow helm buffers in the mu4e frame, e.g. to pick attachments.
 
 #+begin_src emacs-lisp
 (defvar malb/mu4e-buffer-allowed-regexps (append malb/popup-windows '("\\`\\*helm.*\\*\\'"))
@@ -677,24 +677,10 @@ If FRAME is a frame, it is returned."
            (error "Arg neither a string nor a frame: `%s'" frame)))))
 #+end_src
 
-Find a frame which isn’t the =mu4e= frame or create a fresh one.
+Find a frame not named qualified as “special” if there is any, make one otherwise.
 
 #+begin_src emacs-lisp
-(defun malb/switch-to-mu4e ()
-  (let ((other-frame (catch 'other-frame
-                       (dolist (frame (frame-list))
-                         (if (string-match "\\*mu4e\\*" (frame-parameter frame 'name))
-                             (throw 'other-frame frame)
-                           nil)))))
-    (if other-frame
-        (select-frame-set-input-focus other-frame)
-      (malb/mail))))
-#+end_src
-
-Find a frame not named =mu4e= if there is any, make one otherwise.
-
-#+begin_src emacs-lisp
-(defun malb/switch-away-from-mu4e (&optional helm-is-okay)
+(defun malb/switch-away-from-special (&optional helm-is-okay)
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
                          (if (and (malb/frame-is-not-special-p frame)
@@ -705,6 +691,13 @@ Find a frame not named =mu4e= if there is any, make one otherwise.
     (if other-frame
         (select-frame-set-input-focus other-frame)
       (select-frame-set-input-focus  (make-frame)))))
+
+
+(defun malb/switch-away-from-special-advice (old-function &rest arguments)
+  (malb/switch-away-from-special)
+  (apply old-function arguments))
+
+(advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-special-advice)
 #+end_src
 
 Main dispatch function:
@@ -715,25 +708,21 @@ Main dispatch function:
   ;; (message (format "dispatching %s" (buffer-name buffer)))
   (cond
    ;; this is a mu4e buffer
-   ((or
-     (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer))
-     (memq (buffer-local-value 'major-mode buffer) '(mu4e-view-mode mu4e-headers-mode)))
-    (if (malb/get-frame "*mu4e*") (select-frame-set-input-focus (malb/get-frame "*mu4e*"))
-      (make-frame (list '(name . "*mu4e*")
-                        '(malb/is-special . t))))
-    (unless (get-buffer-window buffer)
-      (set-window-buffer (get-largest-window) buffer))
-    (select-window (get-buffer-window buffer))
-    t ;; we are done
+   ((or (string-match-p "\\*mu4e-.*\\*" (buffer-name buffer))
+        (memq (buffer-local-value 'major-mode buffer)
+              '(mu4e-view-mode mu4e-headers-mode)))
+    (malb/switch-to-mu4e)
+    nil ;; ;; pass control back to display-buffer-alist
     )
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
    ((and (string-match "mu4e" (frame-parameter nil 'name))
          (not (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer)))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
-    (malb/switch-away-from-mu4e (string-match-p ".*helm.*" (buffer-name buffer)))
+    (malb/switch-away-from-special (string-match-p ".*helm.*" (buffer-name buffer)))
     nil ;; pass control back to display-buffer-alist
     )
+
    ;; just hand back control to diplay-buffer-alist
    (t nil))
   nil)
@@ -2438,7 +2427,7 @@ This library provides easy project management and navigation. The concept of a p
               :around 'helm-projectile-vc
               :around 'helm-projectile-switch-to-shell
 
-              (malb/switch-away-from-mu4e) ;; doesn't really belong here but might as well
+              (malb/switch-away-from-special) ;; doesn't really belong here but might as well
 
               (let* ((project-name (projectile-project-name project-to-switch))
                      (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-project-names))
@@ -7705,10 +7694,28 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-org-link-query-in-headers-mode t))
 #+end_src
 
+** Folders
+
 #+begin_src emacs-lisp
-(use-package mu4e-icalendar
-  :ensure nil
-  :config (mu4e-icalendar-setup))
+(setq mu4e-drafts-folder "/gmail/[Google Mail]/Drafts"
+      mu4e-sent-folder   "/gmail/[Google Mail]/Sent Mail"
+      mu4e-trash-folder  "/gmail/[Google Mail]/Bin")
+
+(setq mu4e-maildir-shortcuts
+      '((:maildir "/gmail/INBOX"    :key ?G)
+        (:maildir "/gmail/sandbox"    :key ?S)
+        (:maildir "/kcl/INBOX"    :key ?K)
+        (:maildir "/gmail/[Google Mail]/Drafts"    :key ?d)
+        (:maildir "/gmail/[Google Mail]/Sent Mail" :key ?s)
+        (:maildir "/gmail/[Google Mail]/Spam"      :key ?j)
+        (:maildir "/gmail/[Google Mail]/Bin"       :key ?t)))
+#+end_src
+
+** Retrieving
+
+#+begin_src emacs-lisp
+(setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync all"
+      mu4e-update-interval nil)
 #+end_src
 
 ** Prettier ([[https://github.com/Bronsa/.emacs.d/blob/master/config/mu4e.el][source]])
@@ -7732,35 +7739,21 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                 mu4e-headers-empty-parent-prefix '("-" . "○")
                 mu4e-headers-first-child-prefix '("\\" . "▸")
                 mu4e-headers-has-child-prefix '("+" . "●")
-                mu4e-headers-threaded-label (cons "T"
-                                                  (all-the-icons-faicon "tree" :face 'all-the-icons :v-adjust 0.01))
-                mu4e-headers-related-label (cons "R"
-                                                 (all-the-icons-faicon "circle-o-notch" :face 'all-the-icons :v-adjust 0.01))
-                mu4e-headers-eldoc-format (concat (all-the-icons-faicon "tag" :face 'all-the-icons :v-adjust 0.01)
-                                                  ": %m, "
-                                                  (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)
-                                                  ": %M")))
+                mu4e-headers-threaded-label (cons
+                                             "T"
+                                             (all-the-icons-faicon "tree" :face 'all-the-icons :v-adjust 0.01))
+                mu4e-headers-related-label (cons
+                                            "R"
+                                            (all-the-icons-faicon "circle-o-notch" :face 'all-the-icons :v-adjust 0.01))
+                mu4e-headers-eldoc-format (concat
+                                           (all-the-icons-faicon "tag" :face 'all-the-icons :v-adjust 0.01)
+                                           ": %m, "
+                                           (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)
+                                           ": %M")))
 #+end_src
 
 #+begin_src emacs-lisp
 (add-to-list 'mu4e-headers-mode-hook #'stripe-buffer-mode)
-#+end_src
-
-** Folders
-
-#+begin_src emacs-lisp
-(setq mu4e-drafts-folder "/gmail/[Google Mail]/Drafts"
-      mu4e-sent-folder   "/gmail/[Google Mail]/Sent Mail"
-      mu4e-trash-folder  "/gmail/[Google Mail]/Bin")
-
-(setq mu4e-maildir-shortcuts
-      '((:maildir "/gmail/INBOX"    :key ?G)
-        (:maildir "/gmail/sandbox"    :key ?S)
-        (:maildir "/kcl/INBOX"    :key ?K)
-        (:maildir "/gmail/[Google Mail]/Drafts"    :key ?d)
-        (:maildir "/gmail/[Google Mail]/Sent Mail" :key ?s)
-        (:maildir "/gmail/[Google Mail]/Spam"      :key ?j)
-        (:maildir "/gmail/[Google Mail]/Bin"       :key ?t)))
 #+end_src
 
 ** Search
@@ -7843,13 +7836,6 @@ Canned queries.
              t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%sent AND %week") :name "Last 7 days (sent)" :key ?s) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
-#+end_src
-
-** Retrieving
-
-#+begin_src emacs-lisp
-(setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync all"
-      mu4e-update-interval nil)
 #+end_src
 
 ** Contacts
@@ -8270,37 +8256,6 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
 ** Viewing
 
-Use =<TAB>= to preview messages and =q= to close previews.
-
-#+begin_src emacs-lisp
-(require 'mu4e-view)
-(require 'mu4e-headers)
-
-(defun malb/preview-message ()
-  (interactive)
-  (mu4e-headers-view-message)
-  (sleep-for 0.2) ;; this is a HACK
-  (select-window (previous-window)))
-
-;; based on (mu4e-select-other-view)
-(defun malb/close-message-view ()
-  (interactive)
-  (let* ((other-buf (cond ((eq major-mode 'mu4e-headers-mode)
-                           (mu4e-get-view-buffer))
-	                      ((eq major-mode 'mu4e-view-mode)
-	                       (mu4e-get-headers-buffer))))
-	     (other-win (and other-buf (get-buffer-window other-buf))))
-    (if (window-live-p other-win)
-        (progn
-          (select-window other-win)
-          (sleep-for 0.1)
-          (mu4e~view-quit-buffer))
-      (mu4e~headers-quit-buffer))))
-
-(bind-key "<tab>" #'malb/preview-message mu4e-headers-mode-map)
-(bind-key "q" #'malb/close-message-view mu4e-headers-mode-map)
-#+end_src
-
 Visual-line mode all the way.
 
 #+begin_src emacs-lisp
@@ -8318,8 +8273,10 @@ Dropping =[mouse-1]= otherwise I end up with links being clicked twice.
 
 #+begin_src emacs-lisp
 (setq mu4e-view-active-urls-keymap
-      '(keymap (M-return . mu4e~view-browse-url-from-binding)
-               (down-mouse-1 . mu4e~view-browse-url-from-binding)))
+      (let ((map (make-sparse-keymap)))
+        (define-key map [down-mouse-1] 'mu4e--view-browse-url-from-binding)
+        (define-key map (kbd "M-<return>") 'mu4e--view-browse-url-from-binding)
+        map))
 #+end_src
 
 Headers to show in header view.
@@ -8708,15 +8665,16 @@ Don’t break long lines manually.
 (add-hook 'mu4e-compose-mode-hook #'malb/no-hard-newlines)
 #+end_src
 
-We also enable footnotes, to add a footnote try =C-c ! a=. Also set e-mail width to 80 characters.
-
 #+begin_src emacs-lisp
-(add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-frame)
 (add-hook 'message-mode-hook #'flyspell-mode)
 (add-hook 'message-mode-hook #'typo-mode)
+#+end_src
 
-;; TODO this isn’t as nice as it could be
-(bind-key "C-c C-x f" #'org-footnote-action message-mode-map)
+#+begin_src emacs-lisp
+(defun malb/mu4e-compose-mode-hook ()
+  (set-fill-column 80))
+
+(add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-mode-hook)
 #+end_src
 
 Don’t add an empty line after “On bla” line but add one before.
@@ -8744,26 +8702,6 @@ Various shortcuts to jump to/create headers.
 (bind-key "C-c g b" #'message-goto-bcc mu4e-compose-mode-map)
 (bind-key "C-c g f" #'message-goto-from mu4e-compose-mode-map)
 (bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
-#+end_src
-
-Don’t let ~display-buffers-alist~ interfere with ~mu4e-compose~:
-
-#+begin_src emacs-lisp
-(advice-add #'mu4e-compose :around #'malb/clean-display-buffer-alist-advice)
-(advice-add #'mu4e~compose-handler :around #'malb/clean-display-buffer-alist-advice)
-
-(defun malb/switch-to-mu4e-advice (old-function &rest arguments)
-  (malb/switch-to-mu4e)
-  (apply old-function arguments))
-
-(advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
-(advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
-
-(defun malb/switch-away-from-mu4e-advice (old-function &rest arguments)
-  (malb/switch-away-from-mu4e)
-  (apply old-function arguments))
-
-(advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-mu4e-advice)
 #+end_src
 
 Don’t ask me to remove the backup file, I do want to remove the backup file, too.
@@ -8856,17 +8794,41 @@ message from the wrong account"
 
 ** Window Management
 
-Create a new mu4e session in a new frame.
+Find a frame which is the mu4e frame or create a fresh one.
 
 #+begin_src emacs-lisp
-(defun malb/mail ()
-  (interactive)
-  (select-frame (make-frame '((malb/is-special . t))))
-  (set-frame-name "*mu4e*") ;; we use this in our window management
-  (mu4e))
+(defun malb/mu4e-frame ()
+  "Return mu4e main frame if any."
+  (catch 'other-frame
+    (dolist (frame (frame-list))
+      (if (string-match "\\*mu4e\\*" (frame-parameter frame 'name))
+          (progn
+            (dolist (window (window-list frame))
+              (with-current-buffer (window-buffer window)
+                (when (or (eq major-mode 'mu4e-headers-mode)
+                          (eq major-mode 'mu4e-main-mode))
+                  (throw 'other-frame frame))))
+            nil)
+        nil))))
+
+(defun malb/switch-to-mu4e ()
+  (let ((other-frame (malb/mu4e-frame)))
+    (if other-frame
+        (select-frame-set-input-focus other-frame)
+      (progn
+        (select-frame (make-frame '((malb/is-special . t))))
+        (set-frame-name "*mu4e*") ;; we use this in our window management
+        (mu4e)))))
+
+(defun malb/switch-to-mu4e-advice (old-function &rest arguments)
+  (malb/switch-to-mu4e)
+  (apply old-function arguments))
+
+(advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
+(advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
 #+end_src
 
-Kill mu4e frame.
+Kill the mu4e frame.
 
 #+begin_src emacs-lisp
 (defun malb/mu4e-quit-session ()
@@ -8877,37 +8839,62 @@ Kill mu4e frame.
 (bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map)
 #+end_src
 
-We patch mu4e to be way less clever about window management after sending an e-mail,  my =mu4e-message-kill-buffer= looks like this:
+We patch mu4e to be way less clever about window management after sending an e-mail. That is, we drop all code for handling deleting the frame or the window when a compose buffer is killed. Instead, we mark the compose buffer as special so that when it is killed, its window and frame are deleted, too.
 
-#+begin_src emacs-lisp :tangle no
-(defun mu4e-sent-handler (docid path)
-  "Handler function, called with DOCID and PATH for the just-sent
-message. For Forwarded ('Passed') and Replied messages, try to set
-the appropriate flag at the message forwarded or replied-to."
-  (mu4e~compose-set-parent-flag path)
-  (when (file-exists-p path) ;; maybe the draft was not saved at all
-    (mu4e~proc-remove docid))
-  ;; kill any remaining buffers for the draft file, or they will hang around...
-  ;; this seems a bit hamfisted...
-  (dolist (buf (buffer-list))
-    (when (and (buffer-file-name buf)
-	       (string= (buffer-file-name buf) path))
-      (if message-kill-buffer-on-exit
-	  (kill-buffer buf))))
-  ;; (mu4e~switch-back-to-mu4e-buffer)
-  (mu4e-message "Message sent"))
+#+begin_src diff :tangle no
+@@ -591,24 +591,13 @@ are optional."
+     ;; don't allow undoing anything before this.
+     (setq buffer-undo-list nil)
+
+-    (when mu4e-compose-in-new-frame
+-      ;; make sure to close the frame when we're done with the message these are
+-      ;; all buffer-local;
+-      (push 'delete-frame message-exit-actions)
+-      (push 'delete-frame message-postpone-actions))
+-
+     ;; buffer is not user-modified yet
+     (set-buffer-modified-p nil)
+     (mu4e-display-buffer draft-buffer t)))
+
+ (defun mu4e~switch-back-to-mu4e-buffer ()
+   "Try to go back to some previous buffer, in the order view->headers->main."
+-  (if (buffer-live-p (mu4e-get-view-buffer))
+-      (mu4e-display-buffer (mu4e-get-view-buffer) t)
+-    (if (buffer-live-p (mu4e-get-headers-buffer))
+-        (mu4e-display-buffer (mu4e-get-headers-buffer) t)
+-      ;; if all else fails, back to the main view
+-      (when (fboundp 'mu4e) (mu4e)))))
++  nil)
+
+ (defun mu4e-compose-context-switch (&optional force name)
+   "Change the context for the current draft message.
+@@ -672,14 +661,7 @@ It restores mu4e window layout after killing the compose-buffer."
+   (let ((current-buffer (current-buffer))
+         (win (selected-window)))
+     (message-kill-buffer)
+-    (when (window-live-p win)
+-      (delete-window win))
+-    ;; Compose buffer killed
+-    (when (not (equal current-buffer (current-buffer)))
+-      ;; Restore mu4e
+-      (if mu4e-compose-in-new-frame
+-          (delete-frame)
+-        (mu4e~switch-back-to-mu4e-buffer)))))
++    ))
 #+end_src
 
-I set my compose frame to be a dedicated window, which then takes care of all window management for me.
+A bit of a hamfisted way to pass frame parameters to compose frames.
 
 #+begin_src emacs-lisp
-(defun malb/mu4e-compose-frame ()
-  (set-fill-column 80)
-  (sleep-for 0.25) ;; this is a HACK
-  (set-frame-size (selected-frame) 82 (alist-get 'height default-frame-alist))
-  (sleep-for 0.25) ;; this is a HACK
-  (set-frame-parameter nil 'malb/is-special t)
-  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+(malb/defadvice! malb/mu4e-compose-advice (orig-function)
+  :around #'mu4e-compose-new
+  (let* ((default-frame-alist default-frame-alist))
+    (add-to-list 'default-frame-alist '(width . 82))
+    (assoc-delete-all 'top default-frame-alist)
+    (assoc-delete-all 'left default-frame-alist)
+    (apply orig-function nil)
+    (set-frame-parameter nil 'malb/is-special t)
+    (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))
 #+end_src
 
 ** PGP
@@ -8919,7 +8906,15 @@ I set my compose frame to be a dedicated window, which then takes care of all wi
 (setq epg-gpg-program "gpg2")
 #+end_src
 
-** Mu4e <3 Org
+** iCal
+
+#+begin_src emacs-lisp
+(use-package mu4e-icalendar
+  :ensure nil
+  :config (mu4e-icalendar-setup))
+#+end_src
+
+** Mu4e 🖤 Org
 
 Link to mu4e messages and threads.
 
@@ -11413,7 +11408,7 @@ Easily change the text size:
 (malb/set-menu-key "l" #'helm-bibtex-with-local-bibliography)
 (malb/set-menu-key "L" #'mathpix-screenshot)
 (malb/set-menu-key "K" #'org-download-screenshot)
-(malb/set-menu-key "m" (lambda () (interactive) (malb/switch-to-mu4e)))
+(malb/set-menu-key "m" #'mu4e)
 (malb/set-menu-key "M" #'malb/helm-mu)
 (malb/set-menu-key "/" #'malb/helm-ag-projects)
 (malb/set-menu-key "o" #'malb/helm-org-ql-agenda-files)
