@@ -7682,7 +7682,6 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
   :ensure-system-package mu
   :bind (:map mu4e-main-mode-map ("u" . mu4e-update-index))
   :config  (setq mu4e-headers-skip-duplicates t
-                 mu4e-use-fancy-chars t
                  mu4e-view-show-images t
                  message-kill-buffer-on-exit t
                  mu4e-hide-index-messages t
