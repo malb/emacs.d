@@ -5810,7 +5810,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
 #+begin_src emacs-lisp
 (use-package python
   :ensure nil
-  :mode (("\\.py\\'" . python-mode))
+  :mode (("\\.py\\'" . python-ts-mode))
   :bind (:map python-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
               ("C-c C-r" . pyvenv-restart-python)
