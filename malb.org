@@ -8886,13 +8886,13 @@ We patch mu4e to be way less clever about window management after sending an e-m
 A bit of a hamfisted way to pass frame parameters to compose frames.
 
 #+begin_src emacs-lisp
-(malb/defadvice! malb/mu4e-compose-advice (orig-function)
-  :around #'mu4e-compose-new
+(malb/defadvice! malb/mu4e-compose-advice (orig-function &rest args)
+  :around #'mu4e~compose-handler
   (let* ((default-frame-alist default-frame-alist))
     (add-to-list 'default-frame-alist '(width . 82))
     (assoc-delete-all 'top default-frame-alist)
     (assoc-delete-all 'left default-frame-alist)
-    (apply orig-function nil)
+    (apply orig-function args)
     (set-frame-parameter nil 'malb/is-special t)
     (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))
 #+end_src
