@@ -709,15 +709,13 @@ Main frame dispatch function:
    ;; a mu4e compose buffer
    ((eq (buffer-local-value 'major-mode buffer) 'mu4e-compose-mode)
     (malb/display-mu4e-draft-buffer buffer alist)
-    ;; we are done
-    t)
+    nil)
 
    ;; this is a mu4e buffer
    ((or (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer))
         (memq (buffer-local-value 'major-mode buffer)
               '(mu4e-view-mode mu4e-headers-mode)))
     (malb/switch-to-mu4e)
-    ;; pass control back to display-buffer-alist
     nil)
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
@@ -725,7 +723,6 @@ Main frame dispatch function:
          (not (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer)))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
     (malb/switch-away-from-special (string-match-p ".*helm.*" (buffer-name buffer)))
-    ;; pass control back to display-buffer-alist
     nil)
 
    (t nil)))
@@ -8891,13 +8888,14 @@ We dispatch to our own display function in =malb/frame-dispatch=.
 #+begin_src emacs-lisp
 (malb/defadvice! malb/mu4e-compose-advice (orig-function &rest args)
   :around #'mu4e~compose-handler
-  (let* ((default-frame-alist default-frame-alist))
-    (add-to-list 'default-frame-alist '(width . 82))
-    (assoc-delete-all 'top default-frame-alist)
-    (assoc-delete-all 'left default-frame-alist)
-    (apply orig-function args)
-    (set-frame-parameter nil 'malb/is-special t)
-    (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))
+  (apply orig-function args)
+  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
+
+(defun malb/display-mu4e-draft-buffer (buffer alist)
+  (display-buffer-pop-up-frame buffer
+                               '((window-parameters . ((no-other-window . t)))
+                                 (pop-up-frame-parameters . ((width . 82)
+                                                             (malb/is-special . t))))))
 #+end_src
 
 ** PGP
