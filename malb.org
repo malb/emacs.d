@@ -700,32 +700,35 @@ Find a frame not named qualified as “special” if there is any, make one othe
 (advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-special-advice)
 #+end_src
 
-Main dispatch function:
+Main frame dispatch function:
 
 #+begin_src emacs-lisp
 (defun malb/frame-dispatch (buffer alist)
   "Assigning buffers to frames."
-  ;; (message (format "dispatching %s" (buffer-name buffer)))
   (cond
+   ;; a mu4e compose buffer
+   ((eq (buffer-local-value 'major-mode buffer) 'mu4e-compose-mode)
+    (malb/display-mu4e-draft-buffer buffer alist)
+    ;; we are done
+    t)
+
    ;; this is a mu4e buffer
-   ((or (string-match-p "\\*mu4e-.*\\*" (buffer-name buffer))
+   ((or (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer))
         (memq (buffer-local-value 'major-mode buffer)
               '(mu4e-view-mode mu4e-headers-mode)))
     (malb/switch-to-mu4e)
-    nil ;; ;; pass control back to display-buffer-alist
-    )
+    ;; pass control back to display-buffer-alist
+    nil)
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
    ((and (string-match "mu4e" (frame-parameter nil 'name))
          (not (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer)))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
     (malb/switch-away-from-special (string-match-p ".*helm.*" (buffer-name buffer)))
-    nil ;; pass control back to display-buffer-alist
-    )
+    ;; pass control back to display-buffer-alist
+    nil)
 
-   ;; just hand back control to diplay-buffer-alist
-   (t nil))
-  nil)
+   (t nil)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -8883,7 +8886,7 @@ We patch mu4e to be way less clever about window management after sending an e-m
 +    ))
 #+end_src
 
-A bit of a hamfisted way to pass frame parameters to compose frames.
+We dispatch to our own display function in =malb/frame-dispatch=.
 
 #+begin_src emacs-lisp
 (malb/defadvice! malb/mu4e-compose-advice (orig-function &rest args)
