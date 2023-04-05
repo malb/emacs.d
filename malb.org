@@ -711,7 +711,7 @@ Main frame dispatch function:
     (malb/display-mu4e-draft-buffer buffer alist)
     nil)
 
-   ;; this is a mu4e buffer
+   ;; an mu4e buffer
    ((or (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer))
         (memq (buffer-local-value 'major-mode buffer)
               '(mu4e-view-mode mu4e-headers-mode)))
@@ -3730,9 +3730,11 @@ In [[file:%s::%s][%s]]:
 
 #+begin_src emacs-lisp
 (defun malb/org-capture-mu4e-after-finalize ()
-  (mu4e~view-in-headers-context
-   (if (member 'flagged (mu4e-message-field-at-point :flags))
-       (mu4e-mark-set 'unflag))))
+  ;; TODO, doesn't work any longer
+  ;; (mu4e--view-in-headers-context
+  ;;  (if (member 'flagged (mu4e-message-field-at-point :flags))
+  ;;      (mu4e-mark-set 'unflag)))
+  )
 #+end_src
 
 #+begin_src emacs-lisp
@@ -7444,9 +7446,11 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
                                                                      ("{\\\\\"o}" . "ö")
                                                                      ("{\\\\\"o}" . "ö")
                                                                      ("{\\\\'{a}}" . "á")
+                                                                     ("{\\\\'a$" . "á")
                                                                      ("{\\\\'e}" . "é")
                                                                      ("{\\\\`a}" . "à")
                                                                      ("{\\\\`e}" . "è")
+                                                                     ("\\\\&" . "&")
                                                                      ("~" . " ")))
 
             (malb/defadvice! malb/bibtex-completion-get-value (old-function &rest args)
@@ -7691,7 +7695,9 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-compose-complete-only-after nil
                  mu4e-index-lazy-check nil
                  mu4e-headers-auto-update nil
-                 mu4e-org-link-query-in-headers-mode t))
+                 mu4e-org-link-query-in-headers-mode t
+                 mu4e-eldoc-support t
+                 mu4e-modeline-support nil))
 #+end_src
 
 ** Folders
@@ -7779,7 +7785,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                                       "maildir:/kcl/INBOX")
                                                     )
                                         ")"
-                                        "AND NOT %hidden"))
+                                        " AND NOT %hidden"))
                   ("%sent"   . ,(concat "(" (s-join " OR "
                                                     '("maildir:\"/gmail/[Google Mail]/Sent Mail\""
                                                       "maildir:\"/gmail/royal holloway/sent\""
@@ -8398,7 +8404,7 @@ Automate standard “form filling“ workflow
   (mu4e-compose-reply)
   (sleep-for 0.25)
 
-  (dolist (part (mu4e~view-gather-mime-parts))
+  (dolist (part (mu4e--view-gather-mime-parts))
     ;; spreadsheets and word documents
     (let* ((mimetypes '("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
@@ -8434,7 +8440,7 @@ Save all attachments at once ([[https://github.com/sje30/emacs/blob/master/mu4e-
          (id (replace-regexp-in-string "[^A-Z0-9]+" "-" (downcase (mu4e-message-field msg :subject))))
          (attachdir (concat (read-directory-name "Save to directory: ")
                             "/" id))
-	     (parts (mu4e~view-gather-mime-parts))
+	     (parts (mu4e--view-gather-mime-parts))
          (handles '())
          (files '())
          dir)
@@ -8498,7 +8504,7 @@ Action to save e-mail to PDF.
 
 #+begin_src emacs-lisp
 ;;  from mu4e-view-old.el
-(defun malb/mu4e~write-body-to-html (msg)
+(defun malb/mu4e--write-body-to-html (msg)
   "Write MSG's body to a temporary file;
 return the filename."
   (let* ((browse-url-browser-function (lambda (url &optional _rest)))
@@ -8534,7 +8540,7 @@ return the filename."
 
 (defun malb/mu4e-action-save-to-pdf (msg)
   (let* ((date (mu4e-message-field msg :date))
-         (infile (malb/mu4e~write-body-to-html msg))
+         (infile (malb/mu4e--write-body-to-html msg))
          (outfile (format-time-string "%Y-%m-%d%H%M%S.pdf" date)))
     (with-temp-buffer
       (shell-command
@@ -8598,15 +8604,11 @@ Action to search messages involving all correspondents.
                                                    (run-at-time 0.25 nil #'helm-mark-all)))
                      :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
                                ("Use all" . (lambda (x))))))
-    (mu4e-headers-search
-     (mapconcat (lambda (x) (format "contact:%s" x))
-                addresses " AND "))))
+    (mu4e-search (mapconcat (lambda (x) (format "contact:%s" x))
+                            addresses " AND "))))
 
-(add-to-list 'mu4e-view-actions
-             '("interaction 🔍" . malb/find-correspondence) t)
-
-(add-to-list 'mu4e-headers-actions
-             '("interaction 🔍" . malb/find-correspondence) t)
+(add-to-list 'mu4e-view-actions    '("interaction 🔍" . malb/find-correspondence) t)
+(add-to-list 'mu4e-headers-actions '("interaction 🔍" . malb/find-correspondence) t)
 #+end_src
 
 DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subject regexp" (lambda (msg) …))~ where the lambda is executed whenever both regexps match. Processing does not stop after the first match.
@@ -8842,7 +8844,7 @@ Kill the mu4e frame.
 We patch mu4e to be way less clever about window management after sending an e-mail. That is, we drop all code for handling deleting the frame or the window when a compose buffer is killed. Instead, we mark the compose buffer as special so that when it is killed, its window and frame are deleted, too.
 
 #+begin_src diff :tangle no
-@@ -591,24 +591,13 @@ are optional."
+@@ -591,12 +591,6 @@ are optional."
      ;; don't allow undoing anything before this.
      (setq buffer-undo-list nil)
 
@@ -8855,20 +8857,15 @@ We patch mu4e to be way less clever about window management after sending an e-m
      ;; buffer is not user-modified yet
      (set-buffer-modified-p nil)
      (mu4e-display-buffer draft-buffer t)))
+@@ -662,7 +656,6 @@ appropriate flag at the message forwarded or replied-to."
+       (and (buffer-file-name buf)
+            (string= (buffer-file-name buf) path)
+            (kill-buffer buf))))
+-  (mu4e~switch-back-to-mu4e-buffer)
+   (mu4e-message "Message sent"))
 
- (defun mu4e~switch-back-to-mu4e-buffer ()
-   "Try to go back to some previous buffer, in the order view->headers->main."
--  (if (buffer-live-p (mu4e-get-view-buffer))
--      (mu4e-display-buffer (mu4e-get-view-buffer) t)
--    (if (buffer-live-p (mu4e-get-headers-buffer))
--        (mu4e-display-buffer (mu4e-get-headers-buffer) t)
--      ;; if all else fails, back to the main view
--      (when (fboundp 'mu4e) (mu4e)))))
-+  nil)
-
- (defun mu4e-compose-context-switch (&optional force name)
-   "Change the context for the current draft message.
-@@ -672,14 +661,7 @@ It restores mu4e window layout after killing the compose-buffer."
+ (defun mu4e-message-kill-buffer ()
+@@ -672,14 +665,7 @@ It restores mu4e window layout after killing the compose-buffer."
    (let ((current-buffer (current-buffer))
          (win (selected-window)))
      (message-kill-buffer)
@@ -8881,6 +8878,9 @@ We patch mu4e to be way less clever about window management after sending an e-m
 -          (delete-frame)
 -        (mu4e~switch-back-to-mu4e-buffer)))))
 +    ))
+
+ (defun mu4e~compose-set-parent-flag (path)
+   "Set flags for replied-to and forwarded for the message at PATH.
 #+end_src
 
 We dispatch to our own display function in =malb/frame-dispatch=.
