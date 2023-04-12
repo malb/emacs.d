@@ -748,6 +748,24 @@ Run =old-function= with an empty =display-buffer-alist=
     (apply old-function arguments)))
 #+end_src
 
+#+begin_quote
+By default Emacs distinguishes between automatic and manual window switching. If you effect a window switch yourself with C-x b, it’s manual — and exempt from any display action rules you create yourself. — [[https://www.masteringemacs.org/article/demystifying-emacs-window-manager][Demystifying Emacs's Window Manager - Mastering Emacs]]
+#+end_quote
+
+#+begin_src emacs-lisp
+(setq switch-to-buffer-obey-display-actions t)
+#+end_src
+
+#+begin_quote
+Controls what happens if you, as a user, attempt to switch buffers in a dedicated window. (Remember, sidebars are also a form of dedicated window.)
+
+I prefer pop to the default, as I’d rather have it pop up the buffer somewhere else than simply error out. That then goes hand-in-hand with the next variable. — [[https://www.masteringemacs.org/article/demystifying-emacs-window-manager][Demystifying Emacs's Window Manager - Mastering Emacs]]
+#+end_quote
+
+#+begin_src emacs-lisp
+(setq switch-to-buffer-in-dedicated-window 'pop)
+#+end_src
+
 ** Dedicated Mode
 
 ([[https://github.com/jwiegley/dot-emacs/blob/master/site-lisp/dedicated.el][source]])
