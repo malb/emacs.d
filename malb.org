@@ -627,7 +627,6 @@ Separate “special” windows from others ([[https://stackoverflow.com/question
 #+begin_src emacs-lisp
 (defvar malb/special-frame-names '("\\*Minibuf-1\\*.*" ;; helm
                                    "\\*mu4e\\*"
-                                   "yequake-scratch"
                                    "F1" ;; daemon
                                    )
   "Special frame names")
@@ -5033,27 +5032,6 @@ qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev
   (interactive)
   (let ((fn (or (buffer-file-name) "~")))
     (shell-command (concat "ykcd " (file-name-directory fn)))))
-#+end_src
-
-** Yequake
-
-#+begin_quote
-[[https://github.com/alphapapa/yequake][This package]] provides configurable, drop-down Emacs frames, similar to drop-down terminal windows programs, like Yakuake.
-#+end_quote
-
-[[https://raw.githubusercontent.com/alphapapa/yequake/master/images/animation.gif]]
-
-#+begin_src emacs-lisp
-(use-package yequake
-  :config (setq yequake-frames
-                '(("yequake-scratch" .
-                   ((width . 0.75)
-                    (height . 0.4)
-                    (alpha . 0.95)
-                    (buffer-fns . ("*scratch*"))
-                    (frame-parameters . ((undecorated . t)
-                                         (buffer-predicate . (lambda (x) nil))
-                                         (internal-border-width . 24))))))))
 #+end_src
 
 * Programming (Languages)
