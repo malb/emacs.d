@@ -548,9 +548,9 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                `(,name
                  (malb/frame-dispatch
                   display-buffer-reuse-window
-                  display-buffer-in-side-window)
+                  display-buffer-below-selected)
                  (reusable-frames . visible)
-                 (side            . bottom)
+                 (dedicated       . t)
                  (window-parameters
                   (no-other-window . t)
                   (no-delete-other-windows . t))
@@ -7194,25 +7194,19 @@ Run =latexmk -pvc= in async shell
         (progn
           (select-window window)
           (delete-window))
-      (progn (split-window-vertically (- height))
-             (other-window 1)
-             (if (get-buffer buffer-name)
-                 (progn
-                   (switch-to-buffer buffer-name)
-                   (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-               (progn
-                 (let*
-                     ((default-directory (file-name-directory main-file-name))
-                      (process (start-process "latexmk"
-                                              (format "%s-temp" buffer-name)
-                                              "latexmk" "-pvc" "-pdfxe" "-shell-escape" "-interaction=nonstopmode"
-                                              (format "%s.tex"
-                                                      (file-name-sans-extension main-file-name)))))
-                   (set-process-query-on-exit-flag process nil)
-                   (switch-to-buffer (format "%s-temp" buffer-name))
-                   (compilation-mode))
-                 (rename-buffer buffer-name)
-                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t)))))))
+      (progn
+        (when (not (get-buffer buffer-name))
+          (let*
+              ((default-directory (file-name-directory main-file-name))
+               (process (start-process "latexmk"
+                                       buffer-name
+                                       "latexmk" "-pvc" "-pdfxe" "-shell-escape" "-interaction=nonstopmode"
+                                       (format "%s.tex"
+                                               (file-name-sans-extension main-file-name)))))
+            (set-process-query-on-exit-flag process nil)
+            (with-current-buffer buffer-name
+              (compilation-mode))))
+        (display-buffer (get-buffer buffer-name))))))
 #+end_src
 
 *** Mathpix
@@ -8880,14 +8874,10 @@ We patch mu4e to be way less clever about window management after sending an e-m
 We dispatch to our own display function in =malb/frame-dispatch=.
 
 #+begin_src emacs-lisp
-(malb/defadvice! malb/mu4e-compose-advice (orig-function &rest args)
-  :around #'mu4e~compose-handler
-  (apply orig-function args)
-  (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-
 (defun malb/display-mu4e-draft-buffer (buffer alist)
   (display-buffer-pop-up-frame buffer
                                '((window-parameters . ((no-other-window . t)))
+                                 (dedicated . t)
                                  (pop-up-frame-parameters . ((width . 82)
                                                              (malb/is-special . t))))))
 #+end_src
