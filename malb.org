@@ -484,10 +484,6 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
   :config (progn
             (defun malb/winum-assign ()
               (cond
-               ((string-match-p "\\*shell\\[.*\\]\\*"  (buffer-name)) 10)
-               ((string-match-p "\\*vterm\\[.*\\]\\*"  (buffer-name)) 10)
-               ((string-match-p "\\*eshell\\[.*\\]\\*" (buffer-name)) 10)
-               ((string-match-p "\\*Sage\\*" (buffer-name)) 10)
                ((equal major-mode 'imenu-list-major-mode) 8)
                ((equal major-mode 'dired-sidebar-mode) 8)
                ((equal major-mode 'reftex-toc-mode) 8)
@@ -542,10 +538,11 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
 #+end_src
 
 #+begin_src emacs-lisp
-; (setq display-buffer-alist nil)
-(dolist (name malb/popup-windows)
+;; (setq display-buffer-alist nil)
+
+(defun malb/register-popup-window (buffer-name-rx &optional winum-10)
   (add-to-list 'display-buffer-alist
-               `(,name
+               `(,buffer-name-rx
                  (malb/frame-dispatch
                   display-buffer-reuse-window
                   display-buffer-below-selected)
@@ -555,7 +552,12 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                   (no-other-window . t)
                   (no-delete-other-windows . t))
                  (window-height   . 0.3)))
-  t)
+
+  (if winum-10
+      (add-to-list 'winum-assign-functions
+                   (lambda () (when (string-match-p buffer-name-rx (buffer-name)) 10)))))
+
+(dolist (name-rx malb/popup-windows) (malb/register-popup-window name-rx nil))
 #+end_src
 
 ** Closing/Promoting Pop-up-style Windows
@@ -3753,6 +3755,19 @@ In [[file:%s::%s][%s]]:
   ;;  (if (member 'flagged (mu4e-message-field-at-point :flags))
   ;;      (mu4e-mark-set 'unflag)))
   )
+
+(defun malb/mu4e-view-org-capture (arg)
+  "Call `org-capture' followed by removing flag from e-mail."
+  (interactive "P")
+  (mu4e--view-in-headers-context
+   (if (member 'flagged (mu4e-message-field-at-point :flags))
+       (mu4e-mark-set 'unflag)))
+  (org-capture arg))
+
+(bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
+#+end_src
+
+
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3888,7 +3903,7 @@ replace the default prompt message."
                        ""
                        "%i")
            :prepend t
-           :after-finalize malb/org-capture-mu4e-after-finalize
+           ;; :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish t)
           (,(format "%s\tFile Email" (all-the-icons-faicon "file" :face 'all-the-icons :v-adjust 0.01))
            :keys "f"
@@ -3896,7 +3911,7 @@ replace the default prompt message."
            :type item
            :prepend t
            :function malb/org-get-target-headline
-           :after-finalize malb/org-capture-mu4e-after-finalize
+           ;; :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish nil
            :empty-lines 0)
           (,(format "%s\tFile Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
@@ -3919,7 +3934,7 @@ replace the default prompt message."
                       ""
                       "See %a by %:fromname"
                       "")
-           :after-finalize malb/org-capture-mu4e-after-finalize
+           ;; :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish nil
            :prepend t)
           (,(format "%s\tKCL Herrschaftswissen" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01))
@@ -3937,7 +3952,7 @@ replace the default prompt message."
                       ""
                       "— %a by %:fromname"
                       "")
-           :after-finalize malb/org-capture-mu4e-after-finalize
+           ;;: after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish nil
            :prepend t)
           (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
@@ -3952,7 +3967,7 @@ replace the default prompt message."
                       ":PROPERTIES:"
                       ":CREATED: %U"
                       ":END:")
-           :after-finalize malb/org-capture-mu4e-after-finalize
+           ;; :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish t
            :prepend t)
           (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01))
@@ -4468,17 +4483,12 @@ The function behaves as follows:
              (select-window window)
              (delete-window))
          (progn
-           (split-window-vertically (- height))
-           (other-window 1)
-           (if (get-buffer buffer-name)
-               (progn
-                 (switch-to-buffer buffer-name)
-                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-             (progn
+           (when (not (get-buffer buffer-name))
+             (save-window-excursion
                ,shell-cmd
                (rename-buffer buffer-name)
-               (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
-               ,post-exec)))))))
+               ,post-exec))
+           (pop-to-buffer buffer-name))))))
 #+end_src
 
 ** Vterm
@@ -4508,6 +4518,8 @@ The function behaves as follows:
                       (vterm-send-string "ls")
                       (vterm-send-return))
                    t))
+
+            (malb/register-popup-window (rx "*vterm["  (0+ any) "*") t)
 
             (defun malb/vterm-send-C-d-advive (orig-function &rest args)
               (let ((do-kill-frame (and (not (malb/only-frame-p (selected-frame)))
@@ -4586,7 +4598,9 @@ When `exit' from shell buffer."
             (add-hook 'shell-mode-hook #'toggle-truncate-lines)
             (add-hook 'shell-mode-hook #'malb/comint-close-buffer-when-finished)
             (fset 'malb/toggle-shell
-                  (malb/make-toggle-shell "shell" '(shell)  nil t))))
+                  (malb/make-toggle-shell "shell" '(shell)  nil t))
+
+            (malb/register-popup-window (rx "*shell["  (0+ any) "*") t)))
 #+end_src
 
 ** EShell
@@ -4604,6 +4618,8 @@ When `exit' from shell buffer."
                   (malb/make-toggle-shell "eshell"
                                           '(eshell "new")
                                           '(progn (insert "ls") (eshell-send-input)) t))
+
+            (malb/register-popup-window (rx "*eshell["  (0+ any) "*") t)
             ;; ------------
             ;; KEY BINDINGS
             ;; ------------
@@ -5567,18 +5583,12 @@ A generator for pop-up Jupyter repls.
              (select-window window)
              (delete-window))
          (progn
-           (split-window-vertically (- height))
-           (other-window 1)
-           (if (get-buffer buffer-name)
-               (progn
-                 (switch-to-buffer buffer-name)
-                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-             (progn
-               (jupyter-run-repl ,kernel name)
-               (switch-to-buffer buffer-name)
-               (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
+           (when (not (get-buffer buffer-name))
+             (jupyter-run-repl ,kernel name)
+             (with-current-buffer buffer-name
                (dolist (cmd ,post-exec)
-                 (insert (concat cmd "\n"))))))))))
+                 (insert (concat cmd "\n")))))
+           (pop-to-buffer buffer-name))))))
 #+end_src
 
 **** Tips
@@ -5855,47 +5865,6 @@ I often restart Python processes (Cython development), so let’s bind a key for
              ("M-q" . fill-paragraph)))
 #+end_src
 
-Create an iPython based toggle shell (consider using jupyter here)
-
-#+begin_src emacs-lisp
-(defun malb/make-ipython-shell (shell-name virtual-env &optional venv-vars post-exec per-project)
-  `(lambda (arg)
-     (interactive "P")
-     (let ((project-venv-vars ,venv-vars))
-       (conda-env-activate ,virtual-env))
-     (let* ((name   (if (and (not arg) ,per-project)
-                        (concat "*" ,shell-name
-                                "[" (if (projectile-project-p)
-                                        (projectile-project-name)
-                                      (car (last (split-string parent "/" t)))) "]" "*")
-                      (concat "*" ,shell-name "*")))
-            (height (/ (window-total-height) 3))
-            (window (get-buffer-window name)))
-       (if (and window (<= (window-height window) (/ (frame-height) 3)))
-           (progn
-             (select-window window)
-             (delete-window))
-         (progn
-           (if (get-buffer name)
-               (progn
-                 (split-window-vertically (- height))
-                 (other-window 1)
-                 (switch-to-buffer name)
-                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-             (progn
-               (let* ((buffer (python-shell-make-comint (python-shell-calculate-command)
-                                                        (replace-regexp-in-string "\*" "" name))))
-                 (display-buffer buffer '((display-buffer-reuse-window display-buffer-in-side-window) .
-                                          ((reusable-frames . visible)
-                                           (side            . bottom)
-                                           (window-height   . 0.3))))
-                 (select-window (get-buffer-window buffer))
-                 (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
-                 (dolist (cmd ,post-exec)
-                   (insert (concat cmd "\n")))
-                 ))))))))
-#+end_src
-
 *** Highlight indentation
 
 It makes sense to highlight indentation in Python.
@@ -6163,6 +6132,7 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                                           '(sage-shell:run-sage "sage --simple-prompt")
                                           nil
                                           nil))
+            (malb/register-popup-window (rx "*Sage*") t)
 
             (advice-add 'sage-shell:send-eof :around  #'malb/kill-buffer)
 
@@ -6728,7 +6698,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
           (defun malb/deft-in-dir (dir)
             "Run deft in directory DIR"
             (setq deft-directory dir) ;; TODO: cannot let-bind
-            (switch-to-buffer "*Deft*")
+            (pop-to-buffer "*Deft*")
             (kill-this-buffer)
             (deft))
 
@@ -6758,15 +6728,15 @@ title."
             (let* ((summary (let ((case-fold-search nil))
                               (replace-regexp-in-string deft-strip-summary-regexp " " contents)))
                    (summary-processed (deft-chomp
-                                        (if (and title
-                                                 (not deft-use-filename-as-title)
-                                                 (string-match (regexp-quote
-                                                                (if deft-org-mode-title-prefix
-                                                                    (concat "^#+TITLE: " title)
-                                                                  title))
-                                                               summary))
-                                            (substring summary (match-end 0) nil)
-                                          summary))))
+                                       (if (and title
+                                                (not deft-use-filename-as-title)
+                                                (string-match (regexp-quote
+                                                               (if deft-org-mode-title-prefix
+                                                                   (concat "^#+TITLE: " title)
+                                                                 title))
+                                                              summary))
+                                           (substring summary (match-end 0) nil)
+                                         summary))))
               (substring summary-processed 0 (min 512 (string-width summary-processed)))))
 
           (advice-add #'deft-parse-summary :override #'malb/deft-parse-summary)
@@ -6866,19 +6836,18 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
                      (end (or end (point-max)))
                      (reader (or reader (cdr (assq major-mode pandoc-major-modes))))
                      (text))
-                (switch-to-buffer pandoc-buffer)
-                (erase-buffer)
-                (switch-to-buffer buffer)
-                (call-process-region beginning end "pandoc" nil pandoc-buffer t
-                                     "--read"
-                                     reader
-                                     "--write"
-                                     writer
-                                     "--quiet"
-                                     "--wrap=none")
-                (switch-to-buffer pandoc-buffer)
-                (setq text (buffer-string))
-                (bury-buffer)
+                (with-current-buffer pandoc-buffer
+                  (erase-buffer))
+                (with-current-buffer buffer
+                  (call-process-region beginning end "pandoc" nil pandoc-buffer t
+                                       "--read"
+                                       reader
+                                       "--write"
+                                       writer
+                                       "--quiet"
+                                       "--wrap=none"))
+                (with-current-buffer pandoc-buffer
+                  (setq text (buffer-string)))
                 text))
 
             (defun malb/copy-as (arg)
@@ -9087,8 +9056,9 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
                                        format-
                                        (pdf-view-current-page)
                                        txt-filename
-                                       pdf-filename) nil)
-                (switch-to-buffer buffer)
+                                       pdf-filename)
+                               nil)
+                (pop-to-buffer buffer)
                 (insert-file-contents txt-filename)
                 (cond
                  ((eq format nil) (progn
@@ -9107,8 +9077,9 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
                               (generate-new-buffer-name (format "*pdftotext<%s>*"
                                                                 (file-name-base pdf-filename))))))
                 (shell-command (format "pdftotext -layout -nopgbrk \"%s\" \"%s\""
-                                       pdf-filename txt-filename) nil)
-                (switch-to-buffer buffer)
+                                       pdf-filename txt-filename)
+                               nil)
+                (pop-to-buffer buffer)
                 (insert-file-contents txt-filename)
                 (delete-file txt-filename)))
 
@@ -9158,44 +9129,48 @@ need region."
                      (source-file-name (buffer-file-name source-buffer))
                      (target-buffer-name (format "*Notes for %s*" source-buffer-name))
                      (target-buffer (get-buffer-create target-buffer-name)))
-                (switch-to-buffer target-buffer)
-                (org-mode)
-                (erase-buffer)
-                (insert (format "#+title: Notes for %s\n" source-buffer-name))
-                (insert (format "#+startup: indent\n\n"))
-                (insert (format "source: [[%s][%s]]\n\n" source-file-name source-buffer))
-                (mapc
-                 (lambda (annot) ;; traverse all annotations
-                   (progn
-                     (let ((page (cdr (assoc 'page annot)))
-                           (highlighted-text
-                            (if (pdf-annot-get annot 'markup-edges)
-                                (let ((highlighted-text
-                                       (with-current-buffer source-buffer
-                                         (pdf-info-gettext (pdf-annot-get annot 'page)
-                                                           (pdf-tools-org-edges-to-region
-                                                            (pdf-annot-get annot 'markup-edges))))))
-                                  (replace-regexp-in-string "\n" " " highlighted-text))
-                              nil))
-                           (note (pdf-annot-get annot 'contents)))
 
-                       (when (or highlighted-text (> (length note) 0))
-                         (insert (if compact "- " "* "))
-                         (insert (format "page %s" page))
+                (with-current-buffer target-buffer
+                  (org-mode)
+                  (erase-buffer)
+                  (visual-fill-column-mode)
 
-                         (when highlighted-text
-                           (insert (if compact (format ": “%s” " highlighted-text)
-                                     (concat "\n\n#+begin_quote\n"
-                                             highlighted-text
-                                             "\n#+end_quote"))))
-                         (if (> (length note) 0)
-                             (insert (if compact (format " %s\n" note)
-                                       (format "\n\n%s\n\n" note)))
-                           (insert (if compact "\n" "\n\n")))))))
-                 (cl-remove-if
-                  (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
-                  annots)
-                 )))
+                  (insert (format "#+title: Notes for %s\n" source-buffer-name))
+                  (insert (format "#+startup: indent\n\n"))
+                  (insert (format "source: [[%s][%s]]\n\n" source-file-name source-buffer))
+
+                  (mapc (lambda (annot) ;; traverse all annotations
+                          (progn
+                            (let ((page (cdr (assoc 'page annot)))
+                                  (highlighted-text
+                                   (if (pdf-annot-get annot 'markup-edges)
+                                       (let ((highlighted-text
+                                              (with-current-buffer source-buffer
+                                                (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                                  (pdf-tools-org-edges-to-region
+                                                                   (pdf-annot-get annot 'markup-edges))))))
+                                         (replace-regexp-in-string "\n" " " highlighted-text))
+                                     nil))
+                                  (note (pdf-annot-get annot 'contents)))
+
+                              (when (or highlighted-text (> (length note) 0))
+                                (insert (if compact "- " "* "))
+                                (insert (format "page %s" page))
+
+                                (when highlighted-text
+                                  (insert (if compact (format ": “%s” " highlighted-text)
+                                            (concat "\n\n#+begin_quote\n"
+                                                    highlighted-text
+                                                    "\n#+end_quote"))))
+                                (if (> (length note) 0)
+                                    (insert (if compact (format " %s\n" note)
+                                              (format "\n\n%s\n\n" note)))
+                                  (insert (if compact "\n" "\n\n")))))))
+                        (cl-remove-if
+                         (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
+                         annots))
+                  )
+                (pop-to-buffer target-buffer '(display-buffer-pop-up-window))))
 
             (defun malb/pdf-annot-export-as-md (compact)
               "Export annotations to Makrdown buffer."
@@ -9206,43 +9181,44 @@ need region."
                      (source-file-name (buffer-file-name source-buffer))
                      (target-buffer-name (format "*Notes for %s*" source-buffer-name))
                      (target-buffer (get-buffer-create target-buffer-name)))
-                (switch-to-buffer target-buffer)
-                (markdown-mode)
-                (erase-buffer)
-                (insert (format "---\ntitle: Notes for %s\n---\n\n" source-buffer-name))
-                (insert (format "source: [%s](%s)\n\n" source-buffer source-file-name))
-                (mapc
-                 (lambda (annot) ;; traverse all annotations
-                   (progn
-                     (let ((page (cdr (assoc 'page annot)))
-                           (highlighted-text
-                            (if (pdf-annot-get annot 'markup-edges)
-                                (let ((highlighted-text
-                                       (with-current-buffer source-buffer
-                                         (pdf-info-gettext (pdf-annot-get annot 'page)
-                                                           (pdf-tools-org-edges-to-region
-                                                            (pdf-annot-get annot 'markup-edges))))))
-                                  (replace-regexp-in-string "\n" " " highlighted-text))
-                              nil))
-                           (note (pdf-annot-get annot 'contents)))
+                (with-current-buffer target-buffer
+                  (markdown-mode)
+                  (erase-buffer)
+                  (visual-fill-column-mode)
 
-                       (when (or highlighted-text (> (length note) 0))
-                         (insert (if compact "- " "On "))
-                         (insert (format "page %s" page))
+                  (insert (format "---\ntitle: Notes for %s\n---\n\n" source-buffer-name))
+                  (insert (format "source: [%s](%s)\n\n" source-buffer source-file-name))
+                  (mapc (lambda (annot) ;; traverse all annotations
+                          (progn
+                            (let ((page (cdr (assoc 'page annot)))
+                                  (highlighted-text
+                                   (if (pdf-annot-get annot 'markup-edges)
+                                       (let ((highlighted-text
+                                              (with-current-buffer source-buffer
+                                                (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                                  (pdf-tools-org-edges-to-region
+                                                                   (pdf-annot-get annot 'markup-edges))))))
+                                         (replace-regexp-in-string "\n" " " highlighted-text))
+                                     nil))
+                                  (note (pdf-annot-get annot 'contents)))
 
-                         (when highlighted-text
-                           (insert (if compact (format ": “%s” " highlighted-text)
-                                     (concat ":  \n> "
-                                             (replace-regexp-in-string "\n" "\n> " highlighted-text)
-                                             "\n"))))
-                         (if (> (length note) 0)
-                             (insert (if compact (format " %s\n" note)
-                                       (format "\n\n%s\n\n" note)))
-                           (insert (if compact "\n" "\n\n")))))))
-                 (cl-remove-if
-                  (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
-                  annots)
-                 )))
+                              (when (or highlighted-text (> (length note) 0))
+                                (insert (if compact "- " "On "))
+                                (insert (format "page %s" page))
+
+                                (when highlighted-text
+                                  (insert (if compact (format ": “%s” " highlighted-text)
+                                            (concat ":  \n> "
+                                                    (replace-regexp-in-string "\n" "\n> " highlighted-text)
+                                                    "\n"))))
+                                (if (> (length note) 0)
+                                    (insert (if compact (format " %s\n" note)
+                                              (format "\n\n%s\n\n" note)))
+                                  (insert (if compact "\n" "\n\n")))))))
+                        (cl-remove-if
+                         (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
+                         annots)))
+                (pop-to-buffer target-buffer '(display-buffer-pop-up-window))))
 
             (defhydra malb/hydra-pdf-extract (:color blue)
               "
@@ -10373,6 +10349,8 @@ Create convenience functions to open a shell on my servers and “cd” into the
         `(lambda ()
            (insert ,(format "cd /ssh:%s:" server-name))
            (eshell-send-input))))
+
+(malb/register-popup-window (rx "*mosh:" (one-or-more any) "*") t)
 #+end_src
 
 * Timezones
@@ -10803,8 +10781,9 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
                      (file-name-directory (buffer-file-name))
                    default-directory))
          (height (/ (window-total-height) 3))
-         (buffer-name   "*alpaca")
-         (window (get-buffer-window buffer-name))
+         (name "alpaca-chat")
+         (buffer-name "*alpaca-chat*")
+         (window (get-buffer-window (buffer-name)))
          (model-file (if arg
                          (read-file-name "Model: " "/bulk/llm/")
                        "/bulk/llm/ggml-alpaca-13b-q4.model")))
@@ -10813,22 +10792,14 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
           (select-window window)
           (delete-window))
       (progn
-        (split-window-vertically (- height))
-        (other-window 1)
-        (if (get-buffer buffer-name)
-            (progn
-              (switch-to-buffer buffer-name)
-              (set-window-dedicated-p (get-buffer-window (current-buffer)) t))
-          (progn
-            (comint-run "alpaca-chat"
-                        (list
-                         "-t" "12"
-                         "-m" model-file))
-            (rename-buffer buffer-name)
-            (set-window-dedicated-p (get-buffer-window (current-buffer)) t)
-            (visual-line-mode 1)
-            (flyspell-mode 1)
-            ))))))
+        (when (not (get-buffer buffer-name))
+          (comint-run name
+                      (list
+                       "-t" "12"
+                       "-m" model-file)))
+        (pop-to-buffer buffer-name)))))
+
+(malb/register-popup-window (rx bos "*alpaca-chat*" eos))
 #+end_src
 
 ** Upcase, Downcase, Capitalise
