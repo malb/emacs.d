@@ -390,6 +390,15 @@ The default tab-bar name uses the buffer name."
                   (projectile-project-name))))
             (setq tab-bar-tab-name-function #'malb/name-tab-by-project-or-default)
 
+            (defmacro malb/with-tab (name &rest body)
+              `(progn
+                 (if (tab-bar--tab-index-by-name ,name)
+                     (tab-bar-switch-to-tab ,name)
+                   (progn
+                     (tab-bar-new-tab)
+                     (tab-bar-rename-tab ,name)))
+                 ,@body))
+
             (malb/defadvice! malb/switch-tab-1 (&rest arguments)
               "Switch to new tab 1."
               :before 'malb/deft
@@ -744,17 +753,9 @@ Main frame dispatch function:
 (setq display-buffer-base-action '(display-buffer-reuse-window (reusable-frames . visible)))
 #+end_src
 
-Run =old-function= with an empty =display-buffer-alist=
-
-#+begin_src emacs-lisp
-(defun malb/clean-display-buffer-alist-advice (old-function &rest arguments)
-  "Call old-function with an empty display-buffers-alist"
-  (let ((display-buffer-alist nil))
-    (apply old-function arguments)))
-#+end_src
-
 #+begin_quote
-By default Emacs distinguishes between automatic and manual window switching. If you effect a window switch yourself with C-x b, it’s manual — and exempt from any display action rules you create yourself. — [[https://www.masteringemacs.org/article/demystifying-emacs-window-manager][Demystifying Emacs's Window Manager - Mastering Emacs]]
+By default Emacs distinguishes between automatic and manual window switching. If you effect a window switch yourself with C-x b, it’s manual — and exempt from
+any display action rules you create yourself. — [[https://www.masteringemacs.org/article/demystifying-emacs-window-manager][Demystifying Emacs's Window Manager - Mastering Emacs]]
 #+end_quote
 
 #+begin_src emacs-lisp
@@ -764,7 +765,8 @@ By default Emacs distinguishes between automatic and manual window switching. If
 #+begin_quote
 Controls what happens if you, as a user, attempt to switch buffers in a dedicated window. (Remember, sidebars are also a form of dedicated window.)
 
-I prefer pop to the default, as I’d rather have it pop up the buffer somewhere else than simply error out. That then goes hand-in-hand with the next variable. — [[https://www.masteringemacs.org/article/demystifying-emacs-window-manager][Demystifying Emacs's Window Manager - Mastering Emacs]]
+I prefer pop to the default, as I’d rather have it pop up the buffer somewhere else than simply error out. That then goes hand-in-hand with the next variable.
+— [[https://www.masteringemacs.org/article/demystifying-emacs-window-manager][Demystifying Emacs's Window Manager - Mastering Emacs]]
 #+end_quote
 
 #+begin_src emacs-lisp
@@ -6712,21 +6714,13 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
           (defun malb/blog ()
             (interactive)
-            (if (tab-bar--tab-index-by-name "blog")
-                (tab-bar-switch-to-tab "blog")
-              (progn
-                (tab-bar-new-tab)
-                (tab-bar-rename-tab "blog")))
-            (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir)))
+            (malb/with-tab "blog"
+                           (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir))))
 
           (defun malb/deft ()
             (interactive)
-            (if (tab-bar--tab-index-by-name "deft")
-                (tab-bar-switch-to-tab "deft")
-              (progn
-                (tab-bar-new-tab)
-                (tab-bar-rename-tab "deft")))
-            (malb/deft-in-dir malb/deft-directory))
+            (malb/with-tab "deft"
+                           (malb/deft-in-dir malb/deft-directory)))
 
           ;; https://github.com/jrblevin/deft/issues/100
           (defun malb/deft-parse-summary (contents title)
