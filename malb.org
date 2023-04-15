@@ -502,43 +502,47 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
 
 ** Special Windows
 
-Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 height.
+Some buffers should behave like pop ups, i.e. display at the bottom with small height.
 
 #+begin_src emacs-lisp
-(defvar malb/popup-windows '("\\`\\*compilation\\*\\'"
-                             "\\`\\*helm flycheck\\*\\'"
-                             "\\`\\*Flycheck errors\\*\\'"
-                             "\\`\\*helm projectile\\*\\'"
-                             "\\`\\*Helm all the things\\*\\'"
-                             "\\`\\*Helm Find Files\\*\\'"
-                             "\\`\\*Help\\*\\'"
-                             "\\`\\*ielm\\*\\'"
-                             "\\`\\*Synonyms List\\*\\'"
-                             "\\`\\*anaconda-doc\\*\\'"
-                             "\\`\\*Google Translate\\*\\'"
-                             "\\` \\*LanguageTool Errors\\* \\'"
-                             "\\`\\*Edit footnote .*\\*\\'"
-                             "\\`\\*TeX errors*\\*\\'"
-                             "\\*mu4e-update*\\*\\'"
-                             "\\`\\*prodigy-.*\\*\\'"
-                             "\\`\\*Org Export Dispatcher\\*\\'"
-                             "\\`\\*Helm Swoop\\*\\'"
-                             "\\`\\*Backtrace\\*\\'"
-                             "\\`\\*Messages\\*\\'"
-                             "\\`\\*Calendar\\*\\'"
-                             "\\`\\*Go-Translate\\*\\'"
-                             "\\`\\*mscdb\\*\\'"
-                             "\\`\\*lexic\\*\\'"
-                             "\\`\\*Async Shell Command\\*\\'"
-                             "\\`\\*LaTeXMK\\[.*\\]\\*"
-                             "\\`\\*jupyter-error\\*\\'"
-                             "\\`\\*jupyter-traceback\\*\\'"
-                             "\\`\\*jupyter-repl\\[.*\\]\\*\\'"
-                             "\\`\\*tzc-times\\*\\'"))
+(defvar malb/popup-windows (list (rx (seq bos "*helm flycheck*" eos))
+                                 (rx (seq bos "*Flycheck errors*" eos))
+                                 (rx (seq bos "*helm projectile*" eos))
+                                 (rx (seq bos "*Helm all the things*" eos))
+                                 (rx (seq bos "*Helm Find Files*" eos))
+                                 (rx (seq bos "*Helm Swoop*" eos))
+                                 (rx (seq bos "*Help*" eos))
+                                 (rx (seq bos "*ielm*" eos))
+                                 (rx (seq bos "*Synonyms List*" eos))
+                                 (rx (seq bos "*anaconda-doc*" eos))
+                                 (rx (seq bos "*Google Translate*" eos))
+                                 (rx (seq bos "*LanguageTool Errors*" eos))
+                                 (rx (seq bos "*Edit footnote " (zero-or-more nonl) "*" eos))
+                                 (rx (seq bos "*TeX errors" "*" eos))
+                                 (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos))
+                                 (rx (seq bos "*Org Export Dispatcher*" eos))
+                                 (rx (seq bos "*Backtrace*" eos))
+                                 (rx (seq bos "*Messages*" eos))
+                                 (rx (seq bos "*Calendar*" eos))
+                                 (rx (seq bos "*Go-Translate*" eos))
+                                 (rx (seq bos "*lexic*" eos))
+                                 (rx (seq bos "*Async Shell Command*" eos))
+                                 (rx (seq bos "*LaTeXMK[" (zero-or-more nonl) "]*"))
+                                 (rx (seq bos "*jupyter-error*" eos))
+                                 (rx (seq bos "*jupyter-traceback*" eos))
+                                 (rx (seq bos "*jupyter-repl[" (zero-or-more nonl) "]*" eos))
+                                 (rx (seq bos "*tzc-times*" eos))))
 #+end_src
 
 #+begin_src emacs-lisp
 ;; (setq display-buffer-alist nil)
+
+(defvar malb/popup-window-height 0.381966011250145)
+
+(defun malb/window-has-popup-height-p (window)
+  (and window
+       (<= (window-height window)
+           (* (frame-height) malb/popup-window-height))))
 
 (defun malb/register-popup-window (buffer-name-rx &optional winum-10)
   (add-to-list 'display-buffer-alist
@@ -546,12 +550,12 @@ Some buffers should behave like pop ups, i.e. display at the bottom with 0.3 hei
                  (malb/frame-dispatch
                   display-buffer-reuse-window
                   display-buffer-below-selected)
-                 (reusable-frames . visible)
+                 (reusable-frames . nil)
                  (dedicated       . t)
                  (window-parameters
                   (no-other-window . t)
                   (no-delete-other-windows . t))
-                 (window-height   . 0.3)))
+                 (window-height   . ,malb/popup-window-height)))
 
   (if winum-10
       (add-to-list 'winum-assign-functions
@@ -569,7 +573,7 @@ In case we just want to kill the bottom window, set a shortcut do to this.
   "Quit disposable windows of the current frame."
   (interactive)
   (dolist (window (window-at-side-list))
-    (if (<= (window-height window) (/ (frame-height) 3))
+    (if (malb/window-has-popup-height-p window)
         (delete-window window))))
 
 (defun malb/promote-disposable-window-or-to-frame ()
@@ -2063,7 +2067,7 @@ Automatically revert buffers.
   :blackout (focus-autosave-local-mode . " ♻"))
 #+end_src
 
-** Regexp
+** Regular Expressions
 
 Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regular expressions. This makes Emacs regexp actually usable for me.
 
@@ -2096,6 +2100,12 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
               (uuid    (seq (= 8 hex) "-" (= 3 (seq (= 4 hex) "-")) (= 12 hex)))
               (guid    (seq uuid)))
        (rxt-elisp-to-pcre (rx ,@expressions)))))
+#+end_src
+
+Inverse of =rx=.
+
+#+begin_src emacs-lisp
+(use-package xr)
 #+end_src
 
 ** Undo
@@ -4469,7 +4479,6 @@ The function behaves as follows:
      (let* ((parent (if (buffer-file-name)
                         (file-name-directory (buffer-file-name))
                       default-directory))
-            (height (/ (window-total-height) 3))
             (name (if (projectile-project-p)
                       (projectile-project-name)
                     (car (last (split-string parent "/" t)))))
@@ -4478,7 +4487,7 @@ The function behaves as follows:
                                        "[" name "]" "*")
                              ,shell-name))
             (window (get-buffer-window buffer-name)))
-       (if (and window (<= (window-height window) (/ (frame-height) 3)))
+       (if (malb/window-has-popup-height-p window)
            (progn
              (select-window window)
              (delete-window))
@@ -5568,8 +5577,7 @@ A generator for pop-up Jupyter repls.
 (defun malb/make-jupyter-shell (shell-name kernel &optional post-exec per-project)
   `(lambda (&optional arg)
      (interactive "P")
-     (let* ((height (/ (window-total-height) 3))
-            (name (if (and (not arg) ,per-project)
+     (let* ((name (if (and (not arg) ,per-project)
                       (format "%s,%s"
                               ,shell-name
                               (if (projectile-project-p)
@@ -5578,7 +5586,7 @@ A generator for pop-up Jupyter repls.
                     ,shell-name))
             (buffer-name (format "*jupyter-repl[%s]*" name))
             (window (get-buffer-window buffer-name)))
-       (if (and window (<= (window-height window) (/ (frame-height) 3)))
+       (if (malb/window-has-popup-height-p window)
            (progn
              (select-window window)
              (delete-window))
@@ -7148,7 +7156,6 @@ Run =latexmk -pvc= in async shell
       (error (format "Buffer %s is not visiting a file." (buffer-name))))
   (let*
       ((parent (if (buffer-file-name) (file-name-directory (buffer-file-name)) default-directory))
-       (height (/ (window-total-height) 3))
        (name (if (projectile-project-p) (projectile-project-name) (car (last (split-string parent "/" t)))))
        (main-file-name (if (boundp 'TeX-master)
                            (cond
@@ -7159,7 +7166,7 @@ Run =latexmk -pvc= in async shell
                            (buffer-file-name))))
        (buffer-name (concat "*" "LaTeXMK" "[" name "|" (file-name-nondirectory main-file-name) "]" "*"))
        (window (get-buffer-window buffer-name)))
-    (if (and window (<= (window-height window) (/ (frame-height) 3)))
+    (if (malb/window-has-popup-height-p window)
         (progn
           (select-window window)
           (delete-window))
@@ -8849,6 +8856,19 @@ We dispatch to our own display function in =malb/frame-dispatch=.
                                  (dedicated . t)
                                  (pop-up-frame-parameters . ((width . 82)
                                                              (malb/is-special . t))))))
+#+end_src
+
+#+begin_src emacs-lisp
+(add-to-list 'display-buffer-alist
+             `(,(regexp-quote mu4e--update-name)
+               (display-buffer-reuse-window
+                display-buffer-below-selected)
+               (reusable-frames . nil)
+               (dedicated       . t)
+               (window-parameters
+                (no-other-window . t)
+                (no-delete-other-windows . t))
+               (window-height   . 0.2)))
 #+end_src
 
 ** PGP
@@ -10780,14 +10800,13 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
   (let* ((parent (if (buffer-file-name)
                      (file-name-directory (buffer-file-name))
                    default-directory))
-         (height (/ (window-total-height) 3))
          (name "alpaca-chat")
          (buffer-name "*alpaca-chat*")
          (window (get-buffer-window (buffer-name)))
          (model-file (if arg
                          (read-file-name "Model: " "/bulk/llm/")
                        "/bulk/llm/ggml-alpaca-13b-q4.model")))
-    (if (and window (<= (window-height window) (/ (frame-height) 3)))
+    (if (malb/window-has-popup-height-p window)
         (progn
           (select-window window)
           (delete-window))
