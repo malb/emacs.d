@@ -10837,8 +10837,8 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
   (let* ((parent (if (buffer-file-name)
                      (file-name-directory (buffer-file-name))
                    default-directory))
-         (name "alpaca-chat")
-         (buffer-name "*alpaca-chat*")
+         (name "llama")
+         (buffer-name "*llama*")
          (window (get-buffer-window (buffer-name)))
          (model-file (if arg
                          (read-file-name "Model: " "/bulk/llm/")
@@ -10849,13 +10849,24 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
           (delete-window))
       (progn
         (when (not (get-buffer buffer-name))
-          (comint-run name
-                      (list
-                       "-t" "12"
-                       "-m" model-file)))
+          (comint-run
+           name
+           (list
+            "--color"
+            "-p"
+            "\"Below is an instruction that describes a task. Write a response that appropriately completes the request.\""
+            "--ctx_size" "2048"
+            "-n" "-1"
+            "-ins"
+            "-b" "256"
+            "--top_k" "10000"
+            "--temp" "0.2"
+            "--repeat_penalty" "1.1"
+            "-t" "8"
+            "-m" model-file)))
         (pop-to-buffer buffer-name)))))
 
-(malb/register-popup-window (rx bos "*alpaca-chat*" eos))
+(malb/register-popup-window (rx bos "*llama*" eos))
 #+end_src
 
 ** Upcase, Downcase, Capitalise
