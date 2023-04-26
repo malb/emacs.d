@@ -253,6 +253,13 @@ Ilist, dired-sidebar, reftex-toc etc.
 (defconst malb/side-window-width 40)
 #+end_src
 
+One side-window per direction.
+
+#+begin_src emacs-lisp
+(customize-set-variable 'window-sides-slots '(1 1 1 2))
+(customize-set-variable 'window-sides-vertical t)
+#+end_src
+
 When splitting windows open the previous buffer in it.
 
 #+begin_src  emacs-lisp
@@ -272,17 +279,6 @@ When splitting windows open the previous buffer in it.
 
 (bind-key "C-x 2" 'malb/vsplit-last-buffer)
 (bind-key "C-x 3" 'malb/hsplit-last-buffer)
-#+end_src
-
-Treat/tag some side windows/bars as special.
-
-#+begin_src emacs-lisp
-(defun malb/side-windows-no-other ()
-  (dolist (window (window-list))
-    (when (and (eq (window-parameter window 'window-side) 'left)
-               (<= (window-width window) malb/side-window-width))
-      (set-window-parameter window 'no-other-window t)
-      (set-window-parameter window 'no-delete-other-windows t))))
 #+end_src
 
 Don’t split horizontally.
@@ -509,7 +505,7 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
             (winum-mode)))
 #+end_src
 
-** Special Windows
+** Popup Windows
 
 Some buffers should behave like pop ups, i.e. display at the bottom with small height.
 
@@ -540,7 +536,8 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                                  (rx (seq bos "*jupyter-error*" eos))
                                  (rx (seq bos "*jupyter-traceback*" eos))
                                  (rx (seq bos "*jupyter-repl[" (zero-or-more nonl) "]*" eos))
-                                 (rx (seq bos "*tzc-times*" eos))))
+                                 (rx (seq bos "*tzc-times*" eos))
+                                 (rx (seq bos "*batzenca*" eos))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -553,15 +550,28 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
        (<= (window-height window)
            (* (frame-height) malb/popup-window-height))))
 
+(defun malb/display-buffer-in-popup-window (buffer alist)
+  (let ((window (catch 'window
+                  (dolist (window (window-list))
+                    (when (and (window-parameter window 'malb/popup-window)
+                               (<= (window-height window) (* (frame-height) malb/popup-window-height)))
+                      (throw 'window window))))))
+    (when window
+      (window--display-buffer buffer window 'reuse alist))))
+
 (defun malb/register-popup-window (buffer-name-rx &optional winum-10)
   (add-to-list 'display-buffer-alist
                `(,buffer-name-rx
                  (malb/frame-dispatch
                   display-buffer-reuse-window
-                  display-buffer-below-selected)
+                  malb/display-buffer-in-popup-window
+                  display-buffer-in-direction)
                  (reusable-frames . nil)
                  (dedicated       . t)
+                 (direction       . below)
+                 (preserve-size   . (nil . t))
                  (window-parameters
+                  (malb/popup-window . t)
                   (no-other-window . t)
                   (no-delete-other-windows . t))
                  (window-height   . ,malb/popup-window-height)))
@@ -637,7 +647,7 @@ If you change the variable ~compilation-scroll-output~ to a ~non-nil~ value, the
 
 ** Dispatch Buffers to Frames
 
-Separate “special” windows from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
+Separate “special” frames from others ([[https://stackoverflow.com/questions/18346785/how-to-intercept-a-file-before-it-opens-and-decide-which-frame/18371427#18371427][source]])
 
 #+begin_src emacs-lisp
 (defvar malb/special-frame-names '("\\*Minibuf-1\\*.*" ;; helm
@@ -647,7 +657,7 @@ Separate “special” windows from others ([[https://stackoverflow.com/question
   "Special frame names")
 
 (defun malb/frame-is-special-p (frame)
-  (or (frame-parameter frame 'malb/is-special)
+  (or (frame-parameter frame 'malb/special-frame)
       (seq-some (lambda (name)
                   (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
                 malb/special-frame-names)))
@@ -2346,11 +2356,17 @@ Helpful is an alternative to the built-in Emacs help that provides much more con
 
 #+begin_src emacs-lisp
 (use-package helpful
+  :bind (("C-h f" . helpful-callable)
+         ("C-h v" . helpful-variable)
+         ("C-h k" . helpful-key)
+         ("C-h ," . helpful-at-point))
   :config (progn
-            (bind-key "C-h f" #'helpful-callable)
-            (bind-key "C-h v" #'helpful-variable)
-            (bind-key "C-h k" #'helpful-key)
-            (bind-key "C-h ," #'helpful-at-point)))
+            (add-to-list 'display-buffer-alist
+                         `(,(rx "*helpful")
+                           (display-buffer-in-side-window)
+                           (side . right)
+                           (slot . 0)
+                           (window-width . 80)))))
 #+end_src
 
 ** Refine
@@ -4183,7 +4199,7 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
                                                (width . 120)
                                                (height . 24)
                                                (sticky . t)
-                                               (malb/is-special . t)
+                                               (malb/special-frame . t)
                                                (fullscreen . nil)
                                                (tool-bar-lines . 0)
                                                (menu-bar-lines . 0)))
@@ -4311,6 +4327,17 @@ Working with source code in org-mode.
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
 
             (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
+#+end_src
+
+#+begin_src emacs-lisp
+(add-to-list 'display-buffer-alist
+             `(,(rx "*Org Src " (zero-or-more nonl) "[" (zero-or-more nonl) "]*")
+               (display-buffer-reuse-window
+                display-buffer-pop-up-frame)
+               (dedicated . t)
+               (pop-up-frame-parameters .
+                                        ((height . 30)
+                                         (width . 160)))))
 #+end_src
 
 *** Async
@@ -4673,7 +4700,7 @@ When `exit' from shell buffer."
                 ;;                                          (get-buffer-window
                 ;;                                           (process-buffer proc)))))))
                 (set-window-dedicated-p (get-buffer-window) t)
-                (set-frame-parameter frame 'malb/is-special t)))
+                (set-frame-parameter frame 'malb/special-frame t)))
 
             (advice-add #'eshell-exec-visual :around #'malb/visual-command-frame)
 
@@ -6622,7 +6649,13 @@ To use:
 
 #+begin_src emacs-lisp
 (use-package powerthesaurus
-  :bind ("C-c w p" . powerthesaurus-lookup-dwim))
+  :bind ("C-c w p" . powerthesaurus-lookup-dwim)
+  :config (add-to-list 'display-buffer-alist
+                       `(,(rx bos "*Powerthesaurus - " (0+ any) "*" eos)
+                         (display-buffer-in-side-window)
+                         (side . right)
+                         (slot . 0)
+                         (window-width . 80))))
 #+end_src
 
 *** Dictionary
@@ -6656,7 +6689,14 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
                      current-prefix-arg))
               (cl-letf (((symbol-function 'visual-fill-column-mode)
                          (lambda (&optional arg)) nil))
-                (lexic-search identifier nil nil t)))))
+                (lexic-search identifier nil nil t)))
+
+            (add-to-list 'display-buffer-alist
+                         `(,(rx bos "*lexic*" eos)
+                           (display-buffer-in-side-window)
+                           (side . right)
+                           (slot . 0)
+                           (window-width . 80)))))
 #+end_src
 
 *** Translating
@@ -8776,7 +8816,7 @@ Find a frame which is the mu4e frame or create a fresh one.
     (if other-frame
         (select-frame-set-input-focus other-frame)
       (progn
-        (select-frame (make-frame '((malb/is-special . t))))
+        (select-frame (make-frame '((malb/special-frame . t))))
         (set-frame-name "*mu4e*") ;; we use this in our window management
         (mu4e)))))
 
@@ -8849,7 +8889,7 @@ We dispatch to our own display function in =malb/frame-dispatch=.
                                '((window-parameters . ((no-other-window . t)))
                                  (dedicated . t)
                                  (pop-up-frame-parameters . ((width . 82)
-                                                             (malb/is-special . t))))))
+                                                             (malb/special-frame . t))))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -8858,7 +8898,7 @@ We dispatch to our own display function in =malb/frame-dispatch=.
                (display-buffer-reuse-window
                 display-buffer-below-selected)
                (reusable-frames . nil)
-               (dedicated       . t)
+               (dedicated . t)
                (window-parameters
                 (no-other-window . t)
                 (no-delete-other-windows . t))
@@ -9020,8 +9060,11 @@ We change the default template to not include the title which is filled in by de
 ,#+TAGS:
 ,#+DESCRIPTION:
 \n")
-
-            ))
+            ;; https://github.com/org2blog/org2blog/issues/193
+            (malb/defadvice! malb/org2blog--upload-files-replace-urls (orig-function text)
+              :around #'org2blog-buffer-post-save
+              (let ((org-export-show-temporary-export-buffer nil))
+                (apply orig-function (list text))))))
 #+end_src
 
 https://github.com/org2blog/org2blog/wiki/Debugging-Stories
@@ -10799,7 +10842,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
          (window (get-buffer-window (buffer-name)))
          (model-file (if arg
                          (read-file-name "Model: " "/bulk/llm/")
-                       "/bulk/llm/ggml-alpaca-13b-q4.model")))
+                       "/bulk/llm/ggml-alpaca-7b-q4.model")))
     (if (malb/window-has-popup-height-p window)
         (progn
           (select-window window)
@@ -11370,6 +11413,7 @@ Easily change the text size:
 (malb/set-menu-key "b" #'helm-bookmarks)
 (malb/set-menu-key "C" #'malb/calc-eval-region)
 (malb/set-menu-key "c" #'mu4e-compose-new)
+(malb/set-menu-key "d" #'malb/toggle-alpaca)
 (malb/set-menu-key "e" #'malb/toggle-eshell)
 (malb/set-menu-key "i" #'malb/helm-in-buffer)
 (malb/set-menu-key "j" #'avy-goto-char-timer)
