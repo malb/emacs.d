@@ -4335,9 +4335,12 @@ Working with source code in org-mode.
                (display-buffer-reuse-window
                 display-buffer-pop-up-frame)
                (dedicated . t)
-               (pop-up-frame-parameters .
-                                        ((height . 30)
-                                         (width . 160)))))
+               (window-parameters
+                (no-other-window . t)
+                (no-delete-other-windows . t))
+               (pop-up-frame-parameters . ((malb/special-frame . t)
+                                           (height . 30)
+                                           (width . 160)))))
 #+end_src
 
 *** Async
@@ -5853,7 +5856,8 @@ I often restart Python processes (Cython development), so let’s bind a key for
 #+begin_src emacs-lisp
 (use-package python
   :ensure nil
-  :mode (("\\.py\\'" . python-ts-mode))
+  ;; otherwise I get: Cannot modify an area being edited in a dedicated buffer with ob-jupyter
+  :mode (("\\.py\\'" . python-mode))
   :bind (:map python-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
               ("C-c C-r" . pyvenv-restart-python)
@@ -6529,8 +6533,10 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
             (defun malb/company-ispell-setup ()
               (when (boundp 'company-backends)
                 (make-local-variable 'company-backends)
-                (setq company-backends (delete 'company-dabbrev company-backends))
-                (add-to-list 'company-backends '(company-ispell :with company-yasnippet) t)
+                (setq company-backends '((company-capf :with company-yasnippet)
+                                         (company-math-symbols-unicode :with company-yasnippet)
+                                         (company-files :with company-yasnippet)
+                                         company-ispell))
                 ;; https://github.com/redguardtoo/emacs.d/issues/473
                 (if (and (boundp 'ispell-alternate-dictionary)
                          ispell-alternate-dictionary)
@@ -7015,8 +7021,13 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               (font-latex-add-keywords '(("mat" "{")
                                          ("vec" "{"))
                                        'bold-command)
-              (font-latex-add-keywords '(("malb" "*[{")
-                                         ("todo" "*[{")
+              (font-latex-add-keywords '(("malb" "*{[")
+                                         ("todo" "*{[")
+                                         ("cmnt" "*{{[")
+                                         ("bug" "*{[")
+                                         ("hltodo" "{")
+                                         ("hlcmnt" "{")
+                                         ("hlbug" "{")
                                          ("anonymous" "{{")
                                          ("fullversion" "{{"))
                                        'function))
@@ -7598,8 +7609,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 #+begin_src emacs-lisp
 (use-package oc
   :ensure nil
-  :after org
-  :config (setq org-cite-global-bibliography malb/bibtex-files))
+  :after org)
 
 (use-package oc-biblatex
   :ensure nil
@@ -10839,7 +10849,7 @@ Transparent encryption and decryption.
 A toggle shell for https://github.com/antimatter15/alpaca.cpp
 
 #+begin_src emacs-lisp
-(defun malb/toggle-alpaca (&optional arg)
+(defun malb/toggle-llm-chat (&optional arg)
   (interactive "P")
   (let* ((parent (if (buffer-file-name)
                      (file-name-directory (buffer-file-name))
@@ -10849,7 +10859,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
          (window (get-buffer-window (buffer-name)))
          (model-file (if arg
                          (read-file-name "Model: " "/bulk/llm/")
-                       "/bulk/llm/ggml-alpaca-7b-q4.model")))
+                       "/bulk/llm/wizardLM-7B.ggml.q4_0.model")))
     (if (malb/window-has-popup-height-p window)
         (progn
           (select-window window)
@@ -10871,7 +10881,9 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
             "--repeat_penalty" "1.1"
             "-t" "8"
             "-m" model-file)))
-        (pop-to-buffer buffer-name)))))
+        (pop-to-buffer buffer-name)
+        (visual-line-mode)
+        (malb/company-ispell-setup)))))
 
 (malb/register-popup-window (rx bos "*llama*" eos))
 #+end_src
@@ -11431,7 +11443,7 @@ Easily change the text size:
 (malb/set-menu-key "b" #'helm-bookmarks)
 (malb/set-menu-key "C" #'malb/calc-eval-region)
 (malb/set-menu-key "c" #'mu4e-compose-new)
-(malb/set-menu-key "d" #'malb/toggle-alpaca)
+(malb/set-menu-key "d" #'malb/toggle-llm-chat)
 (malb/set-menu-key "e" #'malb/toggle-eshell)
 (malb/set-menu-key "i" #'malb/helm-in-buffer)
 (malb/set-menu-key "j" #'avy-goto-char-timer)
