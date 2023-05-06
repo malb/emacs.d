@@ -67,7 +67,7 @@ Otherwise it returns the length of the start delimiter,
 e.g., 1 if $."
   (if (equal (char-after) 36) (list 1) ;; check if we are looking at $ first
     (-keep #'(lambda (pair)
-               (when (looking-at-p (regexp-quote (first pair))) (length (first pair))))
+               (when (looking-at-p (regexp-quote (car pair))) (length (car pair))))
            malb/math-display-delims)))
 
 (defun malb/latex-end-of-math-environment ()
@@ -77,9 +77,9 @@ e.g., 1 if $."
   (if (equal (char-before) 36) (list 1) ;; check if we are just after $ first
     (-keep #'(lambda (pair)
                (save-excursion (ignore-errors ;; backward-char will signal an error if we try to go back too far
-                                 (backward-char (length (second pair)))
-                                 (when (looking-at-p (regexp-quote (second pair)))
-                                   (length (second pair)))
+                                 (backward-char (length (cdr pair)))
+                                 (when (looking-at-p (regexp-quote (cdr pair)))
+                                   (length (cdr pair)))
                                  )))
            malb/math-display-delims)))
 
@@ -92,7 +92,7 @@ string. If it is, it is left there."
     (malb/first-nsp-after (point-min))
     (let ((x (malb/latex-start-of-math-environment)))
       (when x
-        (delete-char (first x))
+        (delete-char (car x))
         ;; remove the newlines as well (in case there is a newline). This
         ;; works better when removing \begin{...}, since otherwise there is
         ;; redundant space left.
@@ -100,7 +100,7 @@ string. If it is, it is left there."
     (malb/first-nsp-before (point-max))
     (let ((x (malb/latex-end-of-math-environment)))
       (when x
-        (delete-char (- (first x)))
+        (delete-char (- (car x)))
         (malb/remove-newline-backward)))
     (buffer-string)
     )
