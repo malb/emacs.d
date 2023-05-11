@@ -717,17 +717,32 @@ Find a frame not named qualified as “special” if there is any, make one othe
         (select-frame-set-input-focus other-frame)
       (select-frame-set-input-focus  (make-frame)))))
 
+;; (defun malb/switch-away-from-special-advice (old-function &rest arguments)
+;;   (malb/switch-away-from-special)
+;;   (apply old-function arguments))
 
-(defun malb/switch-away-from-special-advice (old-function &rest arguments)
-  (malb/switch-away-from-special)
-  (apply old-function arguments))
-
-(advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-special-advice)
+;; (advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-special-advice)
 #+end_src
 
 Main frame dispatch function:
 
 #+begin_src emacs-lisp
+;; (defun malb/switch-to-mu4e ()
+;;   (let ((other-frame (malb/mu4e-frame)))
+;;     (if other-frame
+;;         (select-frame-set-input-focus other-frame)
+;;       (progn
+;;         (select-frame (make-frame '((malb/special-frame . t))))
+;;         (set-frame-name "*mu4e*") ;; we use this in our window management
+;;         (mu4e)))))
+
+;; (defun malb/switch-to-mu4e-advice (old-function &rest arguments)
+;;   (malb/switch-to-mu4e)
+;;   (apply old-function arguments))
+
+;; (advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
+;; (advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
+
 (defun malb/frame-dispatch (buffer alist)
   "Assigning buffers to frames."
   (cond
@@ -740,7 +755,13 @@ Main frame dispatch function:
    ((or (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer))
         (memq (buffer-local-value 'major-mode buffer)
               '(mu4e-view-mode mu4e-headers-mode)))
-    (malb/switch-to-mu4e)
+    (let ((other-frame (malb/mu4e-frame)))
+      (if other-frame
+          (select-frame-set-input-focus other-frame)
+        (progn
+          (select-frame (make-frame '((malb/special-frame . t))))
+          (set-frame-name "*mu4e*") ;; we use this in our window management
+          (mu4e))))
     nil)
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
@@ -8813,22 +8834,6 @@ Find a frame which is the mu4e frame or create a fresh one.
                   (throw 'other-frame frame))))
             nil)
         nil))))
-
-(defun malb/switch-to-mu4e ()
-  (let ((other-frame (malb/mu4e-frame)))
-    (if other-frame
-        (select-frame-set-input-focus other-frame)
-      (progn
-        (select-frame (make-frame '((malb/special-frame . t))))
-        (set-frame-name "*mu4e*") ;; we use this in our window management
-        (mu4e)))))
-
-(defun malb/switch-to-mu4e-advice (old-function &rest arguments)
-  (malb/switch-to-mu4e)
-  (apply old-function arguments))
-
-(advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
-(advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
 #+end_src
 
 Kill the mu4e frame.
