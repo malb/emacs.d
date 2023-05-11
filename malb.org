@@ -7641,8 +7641,9 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 (use-package org-ref
   :after org
   :defer 2
-  :config (progn
-            (bind-key "<f2> ;" #'org-ref-bibtex-hydra/body bibtex-mode-map)))
+  :bind (:map bibtex-mode-map
+              ("<f2> ;" . org-ref-bibtex-hydra/body))
+  :config (setq org-ref-default-ref-type "cref"))
 #+end_src
 
 #+begin_src emacs-lisp
