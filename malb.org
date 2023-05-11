@@ -7236,7 +7236,13 @@ Run =latexmk -pvc= in async shell
               ((default-directory (file-name-directory main-file-name))
                (process (start-process "latexmk"
                                        buffer-name
-                                       "latexmk" "-pvc" "-pdfxe" "-shell-escape" "-interaction=nonstopmode"
+                                       "latexmk"
+                                       "-pvc"
+                                       "-pdfxe"
+                                       "-shell-escape"
+                                       "-interaction=nonstopmode"
+                                       "-halt-on-error"
+                                       "-f-"
                                        (format "%s.tex"
                                                (file-name-sans-extension main-file-name)))))
             (set-process-query-on-exit-flag process nil)
