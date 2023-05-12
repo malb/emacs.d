@@ -7113,8 +7113,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                            (dedicated . t)))
 
             (defun malb/reftex-toc-advice (old-function &rest arguments)
-              (apply old-function arguments)
-              (delete-window)
+              (save-window-excursion
+                (apply old-function arguments))
               (display-buffer "*toc*"))
 
             (advice-add #'reftex-toc :around #'malb/reftex-toc-advice)
