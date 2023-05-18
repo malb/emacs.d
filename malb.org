@@ -11159,8 +11159,8 @@ The result looks like this:
   (when (not malb/theme-loaded)
     (select-frame frame)
     (load-theme 'solarized-light-malb)
-    (eval-after-load "unicode-fonts"
-      '(unicode-fonts-setup))
+    ;; (eval-after-load "unicode-fonts"
+    ;;   '(unicode-fonts-setup))
     (doom-modeline-mode t)
     (setq malb/theme-loaded t)))
 
@@ -11190,7 +11190,7 @@ The result looks like this:
 Better unicode font support.
 
 #+begin_src emacs-lisp
-(use-package unicode-fonts)
+;; (use-package unicode-fonts)
 #+end_src
 
 - [[https://fonts.google.com/specimen/Cousine][Cousine]] is wide font which means glyphs rendered in different fonts (when Cousine doesn’t have the matching glyph) are too high. Thus, we scale those other fonts down when Cousine is the default face.
