@@ -727,21 +727,21 @@ Find a frame not named qualified as “special” if there is any, make one othe
 Main frame dispatch function:
 
 #+begin_src emacs-lisp
-;; (defun malb/switch-to-mu4e ()
-;;   (let ((other-frame (malb/mu4e-frame)))
-;;     (if other-frame
-;;         (select-frame-set-input-focus other-frame)
-;;       (progn
-;;         (select-frame (make-frame '((malb/special-frame . t))))
-;;         (set-frame-name "*mu4e*") ;; we use this in our window management
-;;         (mu4e)))))
+(defun malb/switch-to-mu4e ()
+  (let ((other-frame (malb/mu4e-frame)))
+    (if other-frame
+        (select-frame-set-input-focus other-frame)
+      (progn
+        (select-frame (make-frame '((malb/special-frame . t))))
+        (set-frame-name "*mu4e*") ;; we use this in our window management
+        (mu4e)))))
 
-;; (defun malb/switch-to-mu4e-advice (old-function &rest arguments)
-;;   (malb/switch-to-mu4e)
-;;   (apply old-function arguments))
+(defun malb/switch-to-mu4e-advice (old-function &rest arguments)
+  (malb/switch-to-mu4e)
+  (apply old-function arguments))
 
-;; (advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
-;; (advice-add #'mu4e-org-open :around #'malb/switch-to-mu4e-advice)
+;; TODO: It is not clear why this is needed
+(advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
 
 (defun malb/frame-dispatch (buffer alist)
   "Assigning buffers to frames."
