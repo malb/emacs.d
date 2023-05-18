@@ -8908,6 +8908,8 @@ We dispatch to our own display function in =malb/frame-dispatch=.
                                                              (malb/special-frame . t))))))
 #+end_src
 
+Update buffer treatment:
+
 #+begin_src emacs-lisp
 (add-to-list 'display-buffer-alist
              `(,(regexp-quote mu4e--update-name)
