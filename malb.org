@@ -9713,7 +9713,12 @@ Show dired histories you have visited.
             (setq-default ediff-auto-refine 'on
                           ediff-highlighting-style 'face
                           ediff-highlight-all-diffs t)
-            (add-hook 'ediff-after-quit-hook-internal 'winner-undo)))
+            (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
+
+            (malb/defadvice! malb/ignore-window-parameters (orig-function &rest args)
+              :around #'ediff-regions-wordwise
+              (let ((ignore-window-parameters t))
+                (apply orig-function args)))))
 #+end_src
 
 #+begin_src emacs-lisp
