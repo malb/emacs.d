@@ -10967,8 +10967,15 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 #+begin_src emacs-lisp
 (use-package nov
   :mode ("\\.epub$" . nov-mode)
-  :config (progn
-            (add-hook 'nov-mode-hook #'turn-on-visual-fill-column-mode)))
+  :bind (:map nov-mode-map
+              ("<end>" . forward-paragraph)
+              ("<home>" . backward-paragraph)
+              ("B" . nov-history-back)
+              ("F" . nov-history-forward))
+  :custom ((nov-variable-pitch nil "Don't use variable pitch font")
+           (nov-text-width t))
+  :config (progn (add-hook 'nov-mode-hook #'turn-on-visual-fill-column-mode)
+                 (add-hook 'nov-mode-hook #'turn-on-visual-line-mode)))
 #+end_src
 
 ** MailRC
