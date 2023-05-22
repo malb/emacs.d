@@ -397,8 +397,8 @@ The default tab-bar name uses the buffer name."
 
             (malb/defadvice! malb/switch-tab-1 (&rest arguments)
               "Switch to new tab 1."
-              :before 'malb/deft
               :before 'org-agenda
+              :before 'helm-org-goto-marker
               (tab-bar-select-tab 1))
 
             (defun malb/switch-tab (&rest arg)
@@ -713,9 +713,8 @@ Find a frame not named qualified as “special” if there is any, make one othe
                                   (or helm-is-okay (frame-parameter frame 'visibility)))
                              (throw 'other-frame frame)
                            nil)))))
-    (if other-frame
-        (select-frame-set-input-focus other-frame)
-      (select-frame-set-input-focus  (make-frame)))))
+    (select-frame-set-input-focus (or other-frame (make-frame)))
+    (malb/switch-tab-1)))
 
 ;; (defun malb/switch-away-from-special-advice (old-function &rest arguments)
 ;;   (malb/switch-away-from-special)
@@ -2482,7 +2481,7 @@ This library provides easy project management and navigation. The concept of a p
               :around 'helm-projectile-vc
               :around 'helm-projectile-switch-to-shell
 
-              (malb/switch-away-from-special) ;; doesn't really belong here but might as well
+              ;; (malb/switch-away-from-special) ;; doesn't really belong here but might as well
 
               (let* ((project-name (projectile-project-name project-to-switch))
                      (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-project-names))
