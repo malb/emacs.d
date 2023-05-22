@@ -5999,8 +5999,8 @@ Tweak sphinx-doc to fit my preferences
    (-filter
     (lambda (x) (not (equal x nil)))
 +    ;; malb: put summary on first proper line
-+    (list (s-format "\"\"\"$0\n" 'elt (list (sphinx-doc-doc-summary ds)))
--    (list (s-format "\"\"\"\n$0\n" 'elt (list (sphinx-doc-doc-summary ds)))
++    (list (s-format "\"\"\"\n$0\n" 'elt (list (sphinx-doc-doc-summary ds)))
+-    (list (s-format "\"\"\"$0\n" 'elt (list (sphinx-doc-doc-summary ds)))
           (when (and (sphinx-doc-doc-before-fields ds)
                      (not (string= (sphinx-doc-doc-before-fields ds) "")))
             (concat (sphinx-doc-doc-before-fields ds) "\n"))
