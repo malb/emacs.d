@@ -515,7 +515,6 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                                  (rx (seq bos "*helm projectile*" eos))
                                  (rx (seq bos "*Helm all the things*" eos))
                                  (rx (seq bos "*Helm Find Files*" eos))
-                                 (rx (seq bos "*Helm Swoop*" eos))
                                  (rx (seq bos "*Help*" eos))
                                  (rx (seq bos "*ielm*" eos))
                                  (rx (seq bos "*Synonyms List*" eos))
@@ -10433,6 +10432,24 @@ Create convenience functions to open a shell on my servers and “cd” into the
 (malb/register-popup-window (rx "*mosh:" (one-or-more any) "*") t)
 #+end_src
 
+* ISearch
+
+#+begin_quote
+In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, or 𝒶) when you search
+for ASCII characters (a in this example). To enable this feature, set the variable
+=search-default-mode= to =char-fold-to-regexp=. ([[http://endlessparentheses.com/new-in-emacs-25-1-easily-search-non-ascii-characters.html][source]])
+#+end_quote
+
+Also https://zck.org/improved-emacs-search
+
+#+begin_src emacs-lisp
+(setq search-default-mode 'char-fold-to-regexp
+      replace-char-fold t
+      isearch-lazy-count t
+      lazy-count-prefix-format nil
+      lazy-count-suffix-format "   (%s/%s)")
+#+end_src
+
 * Timezones
 
 #+begin_src emacs-lisp
@@ -10590,19 +10607,6 @@ Diminish =abbrev-mode=
 
 #+begin_src emacs-lisp
 (blackout 'abbrev-mode)
-#+end_src
-
-#+BEGIN_QUOTE
-
-In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, or 𝒶) when you search
-for ASCII characters (a in this example). To enable this feature, set the variable
-=search-default-mode= to =char-fold-to-regexp=. ([[http://endlessparentheses.com/new-in-emacs-25-1-easily-search-non-ascii-characters.html][source]])
-
-#+END_QUOTE
-
-#+begin_src emacs-lisp
-(setq search-default-mode 'char-fold-to-regexp
-      replace-char-fold t)
 #+end_src
 
 Don’t error when killing read-only text.
