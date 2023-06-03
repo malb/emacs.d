@@ -802,6 +802,20 @@ I prefer pop to the default, as I’d rather have it pop up the buffer somewhere
 (setq switch-to-buffer-in-dedicated-window 'pop)
 #+end_src
 
+We call this function when killing projectile project buffers.
+
+#+begin_src emacs-lisp
+(defun malb/filter-mu4e-buffers (buffers)
+  "Remove any mu4e buffer from `buffers`"
+  (seq-filter (lambda (buffer)
+                (not (memq (buffer-local-value 'major-mode buffer)
+                           '(mu4e-main-mode
+                             mu4e-view-mode
+                             mu4e-headers-mode
+                             mu4e-compose-mode))))
+              buffers))
+#+end_src
+
 ** Dedicated Mode
 
 ([[https://github.com/jwiegley/dot-emacs/blob/master/site-lisp/dedicated.el][source]])
@@ -2534,6 +2548,7 @@ This library provides easy project management and navigation. The concept of a p
                   projectile-ignored-projects malb/projectile-ignored-projects
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
                   projectile-globally-unignored-files '(".dir-locals.el")
+                  projectile-buffers-filter-function #'malb/filter-mu4e-buffers
                   projectile-mode-line '(:eval (format "{%s}" (projectile-project-name))))
 
             (projectile-mode)))
