@@ -1543,6 +1543,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     mu4e-headers-mode
                     org-mode
                     Man-mode
+                    helpful-mode
                     markdown-mode
                     latex-mode
                     sage-shell-mode
