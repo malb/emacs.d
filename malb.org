@@ -7642,7 +7642,9 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 
 (use-package oc-biblatex
   :ensure nil
-  :config (setq org-cite-biblatex-options "backend=bibtex")
+  :config
+  (setq org-cite-biblatex-options "backend=bibtex")
+  (add-to-list 'org-cite-biblatex-styles '("full" nil "fullcite" nil nil))
   :after oc)
 #+end_src
 
@@ -8609,51 +8611,56 @@ return the filename."
 Action to search messages by/to sender.
 
 #+begin_src emacs-lisp
-(defun malb/search-for-sender (msg)
-  "Search for messages sent by the sender of the message at point."
-  (mu4e-headers-search
-   (concat "from:" (cdar (mu4e-message-field msg :from)))))
+(use-package mu4e-message
+  :ensure nil
+  :defer t
+  :config
+  (defun malb/search-for-sender (msg)
+    "Search for messages sent by the sender of the message at point."
+    (mu4e-headers-search
+     (concat "from:" (cdar (mu4e-message-field msg :from)))))
 
-(defun malb/search-for-sender-extended (msg)
-  "Search for messages sent by the sender of the message at point."
-  (mu4e-headers-search
-   (concat "from:"  (mu4e-headers-search (cdar (mu4e-message-field msg :from)))
-           "OR to:" (mu4e-headers-search (cdar (mu4e-message-field msg :from)))
-           "OR cc:" (mu4e-headers-search (cdar (mu4e-message-field msg :from))))))
+  (defun malb/search-for-sender-extended (msg)
+    "Search for messages sent by the sender of the message at point."
+    (mu4e-headers-search
+     (concat "from:"  (mu4e-headers-search (cdar (mu4e-message-field msg :from)))
+             "OR to:" (mu4e-headers-search (cdar (mu4e-message-field msg :from)))
+             "OR cc:" (mu4e-headers-search (cdar (mu4e-message-field msg :from))))))
 
-(add-to-list 'mu4e-view-actions
-             '("from 🔍" . malb/search-for-sender) t)
-(add-to-list 'mu4e-headers-actions
-             '("from 🔍" . malb/search-for-sender) t)
-
-;; (add-to-list 'mu4e-view-actions
-;;              '("sender search" . malb/search-for-sender-extended) t)
+  (add-to-list 'mu4e-view-actions
+               '("from 🔍" . malb/search-for-sender) t)
+  (add-to-list 'mu4e-headers-actions
+               '("from 🔍" . malb/search-for-sender) t))
 #+end_src
 
 Action to search messages involving all correspondents.
 
 #+begin_src emacs-lisp
-(defun malb/find-correspondence (msg)
-  "Find messages involving all correspondents."
-  (let ((addresses (append (mapcar (lambda (x) (downcase (plist-get x :email)))
-                                   (mu4e-message-field msg :to))
-                           (mapcar (lambda (x) (downcase (plist-get x :email)))
-                                   (mu4e-message-field msg :cc))
-                           (mapcar (lambda (x) (downcase (plist-get x :email)))
-                                   (mu4e-message-field msg :from)))))
-    (helm :sources (helm-build-sync-source "Filter candidates:"
-                     :candidates (cl-remove-if (lambda (x)
-                                                 (member x (mu4e-personal-addresses)))
-                                               addresses)
-                     :after-init-hook (lambda () (with-helm-buffer
-                                                   (run-at-time 0.25 nil #'helm-mark-all)))
-                     :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
-                               ("Use all" . (lambda (x))))))
-    (mu4e-search (mapconcat (lambda (x) (format "contact:%s" x))
-                            addresses " AND "))))
+(use-package mu4e-message
+  :ensure nil
+  :defer t
+  :config
+  (defun malb/find-correspondence (msg)
+    "Find messages involving all correspondents."
+    (let ((addresses (append (mapcar (lambda (x) (downcase (plist-get x :email)))
+                                     (mu4e-message-field msg :to))
+                             (mapcar (lambda (x) (downcase (plist-get x :email)))
+                                     (mu4e-message-field msg :cc))
+                             (mapcar (lambda (x) (downcase (plist-get x :email)))
+                                     (mu4e-message-field msg :from)))))
+      (helm :sources (helm-build-sync-source "Filter candidates:"
+                       :candidates (cl-remove-if (lambda (x)
+                                                   (member x (mu4e-personal-addresses)))
+                                                 addresses)
+                       :after-init-hook (lambda () (with-helm-buffer
+                                                     (run-at-time 0.25 nil #'helm-mark-all)))
+                       :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
+                                 ("Use all" . (lambda (x))))))
+      (mu4e-search (mapconcat (lambda (x) (format "contact:%s" x))
+                              addresses " AND "))))
 
-(add-to-list 'mu4e-view-actions    '("interaction 🔍" . malb/find-correspondence) t)
-(add-to-list 'mu4e-headers-actions '("interaction 🔍" . malb/find-correspondence) t)
+  (add-to-list 'mu4e-view-actions    '("interaction 🔍" . malb/find-correspondence) t)
+  (add-to-list 'mu4e-headers-actions '("interaction 🔍" . malb/find-correspondence) t))
 #+end_src
 
 DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subject regexp" (lambda (msg) …))~ where the lambda is executed whenever both regexps match. Processing does not stop after the first match.
@@ -11025,6 +11032,15 @@ Using [[https://github.com/doublep/logview][logview]] mode.
               (ispell-change-dictionary "american"))
             ;; Her Majesty's English de-anonymises me
             (add-hook 'hotcrp-mode-hook #'malb/be-american)))
+#+end_src
+
+** CryptoVerif
+
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.cv[l]?$"  . cryptoverif-mode))
+(add-to-list 'auto-mode-alist '("\\.ocv[l]?$" . cryptoverifo-mode))
+(autoload 'cryptoverif-mode  "cryptoverif" "Major mode for editing CryptoVerif code." t)
+(autoload 'cryptoverifo-mode "cryptoverif" "Major mode for editing CryptoVerif code." t)
 #+end_src
 
 * Theme & Look
