@@ -536,7 +536,8 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                                  (rx (seq bos "*jupyter-traceback*" eos))
                                  (rx (seq bos "*jupyter-repl[" (zero-or-more nonl) "]*" eos))
                                  (rx (seq bos "*tzc-times*" eos))
-                                 (rx (seq bos "*batzenca*" eos))))
+                                 (rx (seq bos "*batzenca*" eos))
+                                 (rx (seq bos "*ggtags-global*" eos))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -655,14 +656,20 @@ Separate “special” frames from others ([[https://stackoverflow.com/questions
                                    )
   "Special frame names")
 
-(defun malb/frame-is-special-p (frame)
-  (or (frame-parameter frame 'malb/special-frame)
-      (seq-some (lambda (name)
-                  (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
-                malb/special-frame-names)))
+(defun malb/frame-is-special-p (frame &optional mu4e-is-not-special)
+  (let* ((frame (selected-frame))
+         (is-special (or (frame-parameter frame 'malb/special-frame)
+                         (seq-some
+                          (lambda (name)
+                            (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
+                          malb/special-frame-names)))
+         (is-mu4e (string-match-p "\\*mu4e\\*" (frame-parameter frame 'name))))
+    (if mu4e-is-not-special
+        (and is-special (not is-mu4e))
+      is-special)))
 
-(defun malb/frame-is-not-special-p (frame)
-  (not (malb/frame-is-special-p frame)))
+(defun malb/frame-is-not-special-p (frame &optional mu4e-is-not-special)
+  (not (malb/frame-is-special-p frame mu4e-is-not-special)))
 
 (defun malb/only-frame-p (frame)
   "Return t when the current frame is the only not special frame"
@@ -714,12 +721,6 @@ Find a frame not named qualified as “special” if there is any, make one othe
                            nil)))))
     (select-frame-set-input-focus (or other-frame (make-frame)))
     (malb/switch-tab-1)))
-
-;; (defun malb/switch-away-from-special-advice (old-function &rest arguments)
-;;   (malb/switch-away-from-special)
-;;   (apply old-function arguments))
-
-;; (advice-add #'helm-org-goto-marker :around #'malb/switch-away-from-special-advice)
 #+end_src
 
 Main frame dispatch function:
@@ -2679,7 +2680,8 @@ functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... 
 #+END_QUOTE
 
 #+begin_src emacs-lisp
-(use-package git-link)
+(use-package git-link
+  :bind (("C-c g" . git-link)))
 #+end_src
 
 ** Git Autocommit
@@ -4046,22 +4048,6 @@ replace the default prompt message."
                       "#+end_src"
                       "")
            :prepend t)
-          ;; (,(format "%s\tOffice Task"
-          ;;           (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
-          ;;  :keys "o"
-          ;;  :file malb/work-org
-          ;;  :headline "Admin"
-          ;;  :template ("* TODO %a (%:from) %^{tag|:@office:|:@train:}email:"
-          ;;             "SCHEDULED: %(org-insert-time-stamp (let ((tue (org-read-date nil t \"Tue\"))"
-          ;;             "                             (thu (org-read-date nil t \"Thu\")))"
-          ;;             "                         (if (time-less-p tue thu)"
-          ;;             "                             tue"
-          ;;             "                           thu)))"
-          ;;             ":PROPERTIES:"
-          ;;             ":CREATED: %U"
-          ;;             ":END:")
-          ;;  :immediate-finish t
-          ;;  :prepend t)
           ))
         (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
          :keys "y"
@@ -4112,16 +4098,6 @@ replace the default prompt message."
          :olp ("Daily")
          :type plain
          :template ,malb/journal-template)
-        (,(format "%s\tSandbox Weekly" (all-the-icons-faicon "tasks" :face 'all-the-icons :v-adjust 0.01))
-         :keys "w"
-         :file malb/sandbox-journal
-         :datetree t
-         :tree-type week
-         :olp ("Weekly")
-         :type plain
-         :template (""
-                    "- %?"
-                    "%(malb/org-toggle-todo-by-id \"4641f4bf-49b7-43a2-8966-715a107a0d68\")"))
         (,(format "%s\tMeeting" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
          :keys "m"
          :file malb/inbox-org
@@ -4161,7 +4137,6 @@ replace the default prompt message."
          :headline "Weight"
          :type table-line
          :template "| %u | %? | |")
-
         (,(format "%s\t[External] " (all-the-icons-faicon "firefox" :face 'all-the-icons :v-adjust 0.01))
          :keys "%"
          :children
@@ -4207,7 +4182,7 @@ replace the default prompt message."
           '(("er" ((in-mode . "mu4e-view-mode")))
             ("ef" ((in-mode . "mu4e-view-mode")))
             ("et" ((in-mode . "mu4e-view-mode")))
-            ("eo" ((in-mode . "mu4e-view-mode")))
+            ("ek" ((in-mode . "mu4e-view-mode")))
             ("ey" ((in-mode . "mu4e-view-mode")))
             ("es" ((in-mode . "mu4e-headers-mode")))))))
 #+end_src
@@ -5597,9 +5572,6 @@ Auto-format source code in many languages with one command – [[https://github.
                   (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
                     (kill-buffer))
                 (delete-char arg)))
-
-            ;; (defun jupyter-ansi-color-apply-on-region (begin end)
-            ;;   (ansi-color-apply-on-region begin end t))
 
             (defun malb/display-ansi-colors (&optional begin end)
               (let* ((preserve-sequence (and begin end))
