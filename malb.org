@@ -245,6 +245,13 @@ Key chords allow to execute actions by pressing one or two keys really fast. Som
 *Note:* =key-chord= can slow down typing but it works e.g. in =vterm= buffers which is quite handy.
 
 * Window Management
+
+https://github.com/emacs-helm/helm/issues/1976
+
+#+begin_src emacs-lisp
+(setq x-wait-for-event-timeout 0.1)
+#+end_src
+
 ** Splitting
 
 Ilist, dired-sidebar, reftex-toc etc.
@@ -902,7 +909,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("`" other-window :color blue)
   ("C-`" other-window :color blue))
 
-(key-chord-define-global "\\x" #'malb/hydra-window/body)
+;; (key-chord-define-global "\\x" #'malb/hydra-window/body)
 #+end_src
 
 ** Next/Previous Buffer
@@ -5421,6 +5428,14 @@ mouse-3: go to end")
                                        (t (:background "#859900" :foreground "black")))))
 #+end_src
 
+*** Highlight Stuff
+
+#+begin_src emacs-lisp
+(use-package hi-lock
+  :ensure nil
+  :config (setq hi-lock-auto-select-face t))
+#+end_src
+
 *** Looking Stuff Up (Devdocs)
 
 Browse [[https://devdocs.io][devdocs.io]] documents inside Emacs
@@ -5553,7 +5568,6 @@ Auto-format source code in many languages with one command – [[https://github.
   :init (eval-after-load 'jupyter-org-extensions
           '(unbind-key "C-c h" jupyter-org-interaction-mode-map))
   :config (progn
-
             (defun malb/jupyter-company-completion ()
               (setq-local company-backends
                           '((:separate company-files
@@ -5578,13 +5592,20 @@ Auto-format source code in many languages with one command – [[https://github.
                      (begin (or begin (point-min)))
                      (end (or end (point-max))))
                 (ansi-color-apply-on-region begin end preserve-sequence)))
-
             ;; when running a jupyter shell
             (advice-add 'jupyter-ansi-color-apply-on-region :override #'malb/display-ansi-colors)
             ;; in org-babel
             (add-hook 'org-babel-after-execute-hook #'malb/display-ansi-colors)
-            (require 'ob-jupyter)
-            (org-babel-jupyter-override-src-block "python")))
+
+            ;; TODO: workaround
+            (setq jupyter-use-zmq nil)))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package ob-jupyter
+  :ensure nil
+  :after (jupyter ob)
+  :init (org-babel-jupyter-override-src-block "python"))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -5851,7 +5872,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
 (use-package python
   :ensure nil
   ;; otherwise I get: Cannot modify an area being edited in a dedicated buffer with ob-jupyter
-  :mode (("\\.py\\'" . python-mode))
+  ;; :mode (("\\.py\\'" . python-mode))
   :bind (:map python-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
               ("C-c C-r" . pyvenv-restart-python)
@@ -5861,6 +5882,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
               :map inferior-python-mode-map
               ("C-c C-r" . pyvenv-restart-python))
   :commands (malb/python-mode-hook malb/inferior-python-mode-hook)
+  ;; :init (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
   :hook ((python-base-mode . outline-minor-mode)
          (python-base-mode . highlight-indentation-mode)
          (python-base-mode . malb/local-anaconda-mode)
@@ -11478,9 +11500,9 @@ Easily change the text size:
 (malb/set-menu-key "o" #'malb/helm-org-ql-agenda-files)
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
-(malb/set-menu-key "s" #'malb/toggle-sage)
+(malb/set-menu-key "S" #'malb/toggle-sage)
 (malb/set-menu-key "t" #'helm-tramp)
-(malb/set-menu-key "S" #'malb/switch-tab)
+(malb/set-menu-key "s" #'malb/switch-tab)
 (malb/set-menu-key "r" #'spray-mode)
 (malb/set-menu-key "z" #'malb/toggle-vterm)
 (malb/set-menu-key "Z" #'malb/ykcd)
