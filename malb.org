@@ -6981,6 +6981,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 (use-package tex
   :ensure auctex
   ;; :commands (malb/latex-add-environments malb/latex-add-font-lock malb/enable-cleveref)
+  :mode (("\\.tikz\\'" . LaTeX-mode)
+         ("\\.tex\\'" . LaTeX-mode))
   :bind (:map LaTeX-mode-map
               ("C-<tab>" . outline-cycle)
               ("M-." . malb/latex-jump)
