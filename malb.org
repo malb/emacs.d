@@ -664,8 +664,7 @@ Separate “special” frames from others ([[https://stackoverflow.com/questions
   "Special frame names")
 
 (defun malb/frame-is-special-p (frame &optional mu4e-is-not-special)
-  (let* ((frame (selected-frame))
-         (is-special (or (frame-parameter frame 'malb/special-frame)
+  (let* ((is-special (or (frame-parameter frame 'malb/special-frame)
                          (seq-some
                           (lambda (name)
                             (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
