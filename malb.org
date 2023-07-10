@@ -7365,7 +7365,7 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
 #+begin_src emacs-lisp
 (defvar malb/common-latex (concat (file-name-as-directory malb/projects-dir) "common-latex"))
 
-(defvar malb/crypto-bib (concat (file-name-as-directory malb/common-latex) "cryptobib"))
+(defvar malb/crypto-bib (concat (file-name-as-directory malb/common-latex) "cryptobib-crossref"))
 
 (defvar malb/bibtex-files (list (expand-file-name "abbrev3.bib" malb/crypto-bib)
                                 (expand-file-name "crypto_crossref.bib" malb/crypto-bib) ;; order matters
