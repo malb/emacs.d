@@ -1557,7 +1557,8 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     inferior-python-mode
                     ein:notebook-multilang-mode
                     imenu-list-major-mode
-                    messages-buffer-mode))
+                    messages-buffer-mode
+                    nov-mode))
 
             ;; I’m going back and forth what I prefer
             (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
@@ -10999,10 +11000,44 @@ Using [[https://github.com/doublep/logview][logview]] mode.
               ("<home>" . backward-paragraph)
               ("B" . nov-history-back)
               ("F" . nov-history-forward))
+  :hook ((nov-mode turn-on-visual-fill-column-mode)
+         (nov-mode turn-on-visual-line-mode))
   :custom ((nov-variable-pitch nil "Don't use variable pitch font")
            (nov-text-width t))
-  :config (progn (add-hook 'nov-mode-hook #'turn-on-visual-fill-column-mode)
-                 (add-hook 'nov-mode-hook #'turn-on-visual-line-mode)))
+  :config (progn
+            ;; https://codereview.stackexchange.com/questions/282497/nov-el-function-to-search-the-entire-epub-ebook
+            (defun nov-search (pattern)
+              (interactive "sEnter search pattern: ")
+              (let ((version nov-epub-version)
+                    (index 1)
+                    results)
+                (while (< index (1- (length nov-documents)))
+                  (seq-let (id &rest path) (aref nov-documents index)
+                    (let (;; HACK: this should be looked up in the manifest
+                          (imagep (seq-find (lambda (item) (string-match-p (car item) path))
+                                            image-type-file-name-regexps))
+                          ;; NOTE: allows resolving image references correctly
+                          (default-directory (file-name-directory path)))
+                      (unless imagep
+                        (with-temp-buffer
+                          (if (and (version< version "3.0") (eq id nov-toc-id))
+                              (insert (nov-ncx-to-html path))
+                            (insert (nov-slurp path)))
+                          (goto-char (point-min))
+                          (when (search-forward pattern nil t)
+                            (nov-render-html)
+                            (goto-char (point-min))
+                            (while (search-forward pattern nil t)
+                              (push (list (format "%d %s" index
+                                                  (replace-regexp-in-string "\n" " "
+                                                                            (thing-at-point 'line)))
+                                          index (point))
+                                    results)))))
+                      (setq index (1+ index)))))
+                (seq-let (index point) (alist-get (completing-read "Jump to: " (reverse results)) results
+                                                  nil nil #'string=)
+                  (nov-goto-document index)
+                  (goto-char point))))))
 #+end_src
 
 ** MailRC
