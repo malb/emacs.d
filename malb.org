@@ -727,6 +727,12 @@ Find a frame not named qualified as “special” if there is any, make one othe
                            nil)))))
     (select-frame-set-input-focus (or other-frame (make-frame)))
     (malb/switch-tab-1)))
+
+
+(defun malb/switch-away-from-special-advice (old-function &rest arguments)
+  (malb/switch-away-from-special)
+  (apply old-function arguments))
+
 #+end_src
 
 Main frame dispatch function:
@@ -1617,8 +1623,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
             (defun malb/helm-ag (dir)
               "run helm-ag in DIR."
-              (let* ((helm-ag-base-command "rg -S --no-heading")
-                     (ignored (mapconcat (lambda (i)
+              (let* ((ignored (mapconcat (lambda (i)
                                            (if (string-prefix-p "ag" helm-ag-base-command)
                                                (concat "--ignore " i)
                                              (concat "-g !" i)))
@@ -3350,9 +3355,7 @@ iCal export is triggered after 600 seconds of inactivity.
 (defun malb/ox-export-after-save-hook ()
   "Save after 600 seconds of no changes."
   (if (eq major-mode 'org-mode)
-      (malb/org-icalendar-export-with-delay 600)))
-
-(add-hook 'after-save-hook 'malb/ox-export-after-save-hook)
+      (malb/org-icalendar-export-with-delay 30)))
 #+end_src
 
 *** Org LaTeX
@@ -8634,26 +8637,32 @@ Action to search messages involving all correspondents.
 #+begin_src emacs-lisp
 (use-package mu4e-message
   :ensure nil
+  :after helm
   :defer t
   :config
-  (defun malb/find-correspondence (msg)
-    "Find messages involving all correspondents."
-    (let ((addresses (append (mapcar (lambda (x) (downcase (plist-get x :email)))
-                                     (mu4e-message-field msg :to))
-                             (mapcar (lambda (x) (downcase (plist-get x :email)))
-                                     (mu4e-message-field msg :cc))
-                             (mapcar (lambda (x) (downcase (plist-get x :email)))
-                                     (mu4e-message-field msg :from)))))
-      (helm :sources (helm-build-sync-source "Filter candidates:"
-                       :candidates (cl-remove-if (lambda (x)
-                                                   (member x (mu4e-personal-addresses)))
-                                                 addresses)
-                       :after-init-hook (lambda () (with-helm-buffer
-                                                     (run-at-time 0.25 nil #'helm-mark-all)))
-                       :action '(("Filter" . (lambda (x) (setq addresses (helm-marked-candidates))))
-                                 ("Use all" . (lambda (x))))))
-      (mu4e-search (mapconcat (lambda (x) (format "contact:%s" x))
-                              addresses " AND "))))
+  (progn
+    (require 'mu4e-search)
+    (defun malb/find-correspondence (msg)
+      "Find messages involving all correspondents."
+      (let* ((addresses (append (mapcar (lambda (x) (downcase (plist-get x :email)))
+                                        (mu4e-message-field msg :to))
+                                (mapcar (lambda (x) (downcase (plist-get x :email)))
+                                        (mu4e-message-field msg :cc))
+                                (mapcar (lambda (x) (downcase (plist-get x :email)))
+                                        (mu4e-message-field msg :from))))
+             (addresses (cl-remove-if (lambda (x)
+                                        (member x (mu4e-personal-addresses)))
+                                      addresses))
+             (selected-addresses (helm :sources
+                                       (helm-build-sync-source "Filter candidates:"
+                                         :candidates addresses
+                                         :after-init-hook (lambda ()
+                                                            (with-helm-buffer
+                                                              (run-at-time 0.25 nil #'helm-mark-all)))
+                                         :action '(("Filter" . (lambda (x)
+                                                                 (helm-marked-candidates))))))))
+        (mu4e-search (mapconcat (lambda (x) (format "contact:%s" x))
+                                selected-addresses" AND ")))))
 
   (add-to-list 'mu4e-view-actions    '("interaction 🔍" . malb/find-correspondence) t)
   (add-to-list 'mu4e-headers-actions '("interaction 🔍" . malb/find-correspondence) t))
@@ -10033,7 +10042,7 @@ exports.boxes = [ "INBOX"];
 #+begin_src emacs-lisp
 (use-package kodi
   :ensure nil
-  :commands ambient/body
+  :commands malb/ambient/body
   :after all-the-icons
   :ensure-system-package (brightnessctl . brightnessctl)
   :config (progn
@@ -10070,7 +10079,7 @@ exports.boxes = [ "INBOX"];
                   (call-process "brightnessctl" nil nil nil "-d" device "s" (format "%d" brightness-new))
                   (message "brightness %d" (malb/external-brightness)))))
 
-            (defhydra ambient nil
+            (defhydra malb/ambient nil
               "ambient"
               ("<up>" kodi-volume-up (concat
                                       (all-the-icons-faicon "music" :face 'all-the-icons :v-adjust 0.01)
@@ -10108,7 +10117,9 @@ exports.boxes = [ "INBOX"];
                                                   (all-the-icons-faicon "desktop" :face 'all-the-icons :v-adjust 0.01)
                                                   " "
                                                   (all-the-icons-faicon "moon-o" :face 'all-the-icons :v-adjust 0.01)))
-              ("q" nil))))
+              ("q" nil))
+
+            (advice-add #'malb/ambient/body :around  #'malb/switch-away-from-special-advice)))
 #+end_src
 
 * Browsing
@@ -11542,7 +11553,7 @@ Easily change the text size:
 (malb/set-menu-key "r" #'spray-mode)
 (malb/set-menu-key "z" #'malb/toggle-vterm)
 (malb/set-menu-key "Z" #'malb/ykcd)
-(malb/set-menu-key "<f3>" #'ambient/body)
+(malb/set-menu-key "<f3>" #'malb/ambient/body)
 (malb/set-menu-key "<f4>" #'emms-previous)
 (malb/set-menu-key "<f5>" #'emms-pause)
 (malb/set-menu-key "<f6>" #'emms-next)
