@@ -10891,41 +10891,31 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
 #+begin_src emacs-lisp
 (defun malb/toggle-llm-chat (&optional arg)
   (interactive "P")
-  (let* ((parent (if (buffer-file-name)
-                     (file-name-directory (buffer-file-name))
-                   default-directory))
-         (name "llama")
-         (buffer-name "*llama*")
-         (window (get-buffer-window (buffer-name)))
-         (model-file (if arg
-                         (read-file-name "Model: " "/bulk/llm/")
-                       "/bulk/llm/wizardLM-7B.ggml.q4_0.model")))
+  (let* ((buffer-name "*llama*")
+         (window (get-buffer-window buffer-name))
+         (script-name (if arg
+                          (read-file-name "Model: " "/home/malb/.local/bin/" "" t nil
+                                          (lambda (name) (s-starts-with-p
+                                                          "llm-"
+                                                          (file-name-nondirectory name))))
+                        "/home/malb/.local/bin/llm-alpaca-7b.sh"))
+         (buffer (get-buffer-create buffer-name))
+         (proc-alive (comint-check-proc buffer))
+         (process (get-buffer-process buffer)))
     (if (malb/window-has-popup-height-p window)
         (progn
           (select-window window)
           (delete-window))
       (progn
-        (when (not (get-buffer buffer-name))
-          (comint-run
-           name
-           (list
-            "--color"
-            "-p"
-            "\"Below is an instruction that describes a task. Write a response that appropriately completes the request.\""
-            "--ctx_size" "2048"
-            "-n" "-1"
-            "-ins"
-            "-b" "256"
-            "--top_k" "10000"
-            "--temp" "0.2"
-            "--repeat_penalty" "1.1"
-            "-t" "8"
-            "-m" model-file)))
-        (pop-to-buffer buffer-name)
-        (visual-line-mode)
-        (malb/company-ispell-setup)))))
+        (unless proc-alive
+          (with-current-buffer buffer
+            (apply 'make-comint-in-buffer "llama" buffer
+                   script-name nil '())
+            (visual-line-mode)
+            (malb/company-ispell-setup)))
+        (pop-to-buffer buffer-name)))))
 
-(malb/register-popup-window (rx bos "*llama*" eos))
+(malb/register-popup-window (rx bos "*llm-" (* anychar) "*" eos))
 #+end_src
 
 ** Upcase, Downcase, Capitalise
