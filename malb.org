@@ -725,14 +725,19 @@ Find a frame not named qualified as “special” if there is any, make one othe
                                   (or helm-is-okay (frame-parameter frame 'visibility)))
                              (throw 'other-frame frame)
                            nil)))))
-    (select-frame-set-input-focus (or other-frame (make-frame)))
-    (malb/switch-tab-1)))
+    (select-frame-set-input-focus (or other-frame (make-frame)))))
 
+(defun malb/switch-away-from-special-and-tab (&optional helm-is-okay)
+  (malb/switch-away-from-special helm-is-okay)
+  (malb/switch-tab-1))
 
 (defun malb/switch-away-from-special-advice (old-function &rest arguments)
   (malb/switch-away-from-special)
   (apply old-function arguments))
 
+(defun malb/switch-away-from-special-and-tab-advice (old-function &rest arguments)
+  (malb/switch-away-from-special-and-tab)
+  (apply old-function arguments))
 #+end_src
 
 Main frame dispatch function:
@@ -779,7 +784,7 @@ Main frame dispatch function:
    ((and (string-match "mu4e" (frame-parameter nil 'name))
          (not (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer)))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
-    (malb/switch-away-from-special (string-match-p ".*helm.*" (buffer-name buffer)))
+    (malb/switch-away-from-special-and-tab (string-match-p ".*helm.*" (buffer-name buffer)))
     nil)
 
    (t nil)))
@@ -2507,8 +2512,6 @@ This library provides easy project management and navigation. The concept of a p
               :around 'projectile-switch-project-by-name
               :around 'helm-projectile-vc
               :around 'helm-projectile-switch-to-shell
-
-              ;; (malb/switch-away-from-special) ;; doesn't really belong here but might as well
 
               (let* ((project-name (projectile-project-name project-to-switch))
                      (project-short-name (or (cdr (assoc project-name malb/projectile-switch-tab-project-names))
