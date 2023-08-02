@@ -5611,6 +5611,13 @@ Auto-format source code in many languages with one command – [[https://github.
             ;; in org-babel
             (add-hook 'org-babel-after-execute-hook #'malb/display-ansi-colors)
 
+            (add-to-list 'display-buffer-alist
+                         `(,(rx "*jupyter-pager*")
+                           (display-buffer-in-side-window)
+                           (side . right)
+                           (slot . 0)
+                           (window-width . 100)))
+
             ;; TODO: workaround
             (setq jupyter-use-zmq nil)))
 #+end_src
