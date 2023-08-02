@@ -2967,6 +2967,14 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                                       (:family "Material Icons" :height 1.0)
                                       face
                                       (:family "Material Icons" :height 1.0))))
+           nil nil :ascent center)
+          ("\\`Meeting\\'"
+           (#("" 0 1 (rear-nonsticky t display
+                                      (raise 0.0)
+                                      font-lock-face
+                                      (:family "Material Icons" :height 1.0)
+                                      face
+                                      (:family "Material Icons" :height 1.0))))
            nil nil :ascent center))))
 #+end_src
 
