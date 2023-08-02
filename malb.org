@@ -10933,7 +10933,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
             (malb/company-ispell-setup)))
         (pop-to-buffer buffer-name)))))
 
-(malb/register-popup-window (rx bos "*llm-" (* anychar) "*" eos))
+(malb/register-popup-window (rx bos "*llama*" eos))
 #+end_src
 
 ** Upcase, Downcase, Capitalise
