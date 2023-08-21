@@ -8003,12 +8003,13 @@ Canonicalise contacts as they appear from mu4e.
                                (seq "replyto-" (one-or-more anychar) "@plus.google.com")
                                (seq "@" (one-or-more anychar) ".twitter.com")
                                (seq "do-not-reply" (zero-or-more anychar) "@")
-                               (seq "bounce-" (one-or-more anychar) "@")))
+                               (seq "bounce-" (one-or-more anychar) "@")
+                               "@reply.github.com"))
                       contact)
       nil)
      ;; ignore a bunch of invalid addresses
      ((seq-some (lambda (invalid-address)
-                  (s-contains-p  (downcase invalid-address) (downcase contact)))
+                  (s-contains-p  invalid-address contact t))
                 malb/invalid-email-addresses)
       nil)
      ;; full "Name <e-mail>"
