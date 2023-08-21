@@ -6538,7 +6538,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
 #+begin_src emacs-lisp
 (use-package ispell
-  :hook ((message-mode) . malb/company-ispell-setup)
+  :hook ((message-mode) . malb/company-prose-setup)
   :config (progn
             (setq ispell-dictionary "en_GB"
                   ispell-silently-savep t)
@@ -6567,7 +6567,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
                        "'" "’" (car args))
                       (cdr args))))
 
-            (defun malb/company-ispell-setup ()
+            (defun malb/company-prose-setup ()
               (when (boundp 'company-backends)
                 (make-local-variable 'company-backends)
                 (setq company-backends '((company-capf :with company-yasnippet)
@@ -10930,7 +10930,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
             (apply 'make-comint-in-buffer "llama" buffer
                    script-name nil '())
             (visual-line-mode)
-            (malb/company-ispell-setup)))
+            (malb/company-prose-setup)))
         (pop-to-buffer buffer-name)))))
 
 (malb/register-popup-window (rx bos "*llama*" eos))
