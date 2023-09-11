@@ -5599,16 +5599,6 @@ Auto-format source code in many languages with one command – [[https://github.
                     (kill-buffer))
                 (delete-char arg)))
 
-            (defun malb/display-ansi-colors (&optional begin end)
-              (let* ((preserve-sequence (and begin end))
-                     (begin (or begin (point-min)))
-                     (end (or end (point-max))))
-                (ansi-color-apply-on-region begin end preserve-sequence)))
-            ;; ;; when running a jupyter shell
-            ;; (advice-add 'jupyter-ansi-color-apply-on-region :override #'malb/display-ansi-colors)
-            ;; ;; in org-babel
-            ;; (add-hook 'org-babel-after-execute-hook #'malb/display-ansi-colors)
-
             (add-to-list 'display-buffer-alist
                          `(,(rx "*jupyter-pager*")
                            (display-buffer-in-side-window)
