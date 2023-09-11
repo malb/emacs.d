@@ -4003,8 +4003,6 @@ replace the default prompt message."
                       ":CREATED: %U"
                       ":END:"
                       ""
-                      "%i"
-                      ""
                       "See %a by %:fromname"
                       "")
            ;; :after-finalize malb/org-capture-mu4e-after-finalize
@@ -5606,10 +5604,10 @@ Auto-format source code in many languages with one command – [[https://github.
                      (begin (or begin (point-min)))
                      (end (or end (point-max))))
                 (ansi-color-apply-on-region begin end preserve-sequence)))
-            ;; when running a jupyter shell
-            (advice-add 'jupyter-ansi-color-apply-on-region :override #'malb/display-ansi-colors)
-            ;; in org-babel
-            (add-hook 'org-babel-after-execute-hook #'malb/display-ansi-colors)
+            ;; ;; when running a jupyter shell
+            ;; (advice-add 'jupyter-ansi-color-apply-on-region :override #'malb/display-ansi-colors)
+            ;; ;; in org-babel
+            ;; (add-hook 'org-babel-after-execute-hook #'malb/display-ansi-colors)
 
             (add-to-list 'display-buffer-alist
                          `(,(rx "*jupyter-pager*")
@@ -7215,7 +7213,8 @@ When pressed twice, make the sub/superscript roman."
             (setq cdlatex-math-modify-alist '((?a "\\alert" "\\alert" t nil nil)
                                               (?m "\\mat" nil t nil nil)
                                               (?o "\\operatorname" nil t nil nil)
-                                              (?v "\\vec" nil t nil nil))
+                                              (?v "\\vec" nil t nil nil)
+                                              (?F "\\mathfrak" nil t nil nil))
                   cdlatex-command-alist
                   '(("ZZ"  	"\\ZZ" 		"\\ZZ?" 				cdlatex-position-cursor nil nil t)
                     ("QQ"  	"\\QQ" 		"\\QQ?" 				cdlatex-position-cursor nil nil t)
@@ -7859,7 +7858,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%direct" . "%inbox AND NOT flag:list AND (to:martinralbrecht@* OR to:martin.albrecht@*)")
                   ("%doc"    . ,(concat "mime:application/* "
                                         "AND NOT (mime:application/pgp* or mime:application/ics) "
-                                        "AND size:5k..1024M "
+                                        "AND size:5k.. "
                                         "AND NOT %hidden"))
                   ("%bulk"   . ,(concat "(" "flag:list "
                                         "OR from:trac@sagemath.org "
@@ -10046,13 +10045,7 @@ exports.boxes = [ "INBOX"];
   :ensure nil
   :after emms-setup
   :config (progn (emms-standard)
-                 (emms-default-players)
-                 ;; (define-emms-simple-player mplayer '(file url)
-                 ;;   (regexp-opt '(".ogg" ".mp3" ".wav" ".mpg" ".mpeg" ".wmv" ".wma"
-                 ;;                 ".mov" ".avi" ".divx" ".ogm" ".asf" ".mkv" "http://" "mms://"
-                 ;;                 ".rm" ".rmvb" ".mp4" ".flac" ".vob" ".m4a" ".flv" ".ogv" ".pls"))
-                 ;;   "mplayer" "-slave" "-quiet" "-really-quiet" "-fullscreen")
-                 ))
+                 (emms-default-players)))
 #+end_src
 
 
