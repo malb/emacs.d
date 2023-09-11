@@ -6391,6 +6391,22 @@ Code manipulation:
             (add-to-list 'pandoc-major-modes '(web-mode . "html"))))
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package typescript-ts-mode
+  :ensure nil
+  :mode "\\\.js\\\'"
+)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package tide
+  :after (company flycheck)
+  :hook ((typescript-ts-mode . tide-setup)
+         (tsx-ts-mode . tide-setup)
+         (typescript-ts-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+#+end_src
+
 * Prose
 ** General
 *** Tab Completion
