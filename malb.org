@@ -770,7 +770,7 @@ Main frame dispatch function:
    ;; an mu4e buffer
    ((or (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer))
         (memq (buffer-local-value 'major-mode buffer)
-              '(mu4e-view-mode mu4e-headers-mode)))
+              '(mu4e-view-mode mu4e-raw-view-mode mu4e-headers-mode)))
     (let ((other-frame (malb/mu4e-frame)))
       (if other-frame
           (select-frame-set-input-focus other-frame)
@@ -829,6 +829,7 @@ We call this function when killing projectile project buffers.
                 (not (memq (buffer-local-value 'major-mode buffer)
                            '(mu4e-main-mode
                              mu4e-view-mode
+                             mu4e-raw-view-mode
                              mu4e-headers-mode
                              mu4e-compose-mode))))
               buffers))
@@ -8972,6 +8973,15 @@ Update buffer treatment:
                 (no-other-window . t)
                 (no-delete-other-windows . t))
                (window-height   . 0.2)))
+#+end_src
+
+Open raw view in message view or below.
+
+#+begin_src emacs-lisp
+(add-to-list 'display-buffer-alist
+             `(,(rx "*mu4e-raw-view*")
+               (display-buffer-reuse-window
+                display-buffer-below-selected)))
 #+end_src
 
 ** PGP
