@@ -4321,6 +4321,7 @@ Working with source code in org-mode.
                (shell . t)
                (latex . t)
                (ditaa . t)
+               (sqlite . t)
                (C . t)
                (dot . t)
                (plantuml . t)
