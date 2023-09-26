@@ -2176,9 +2176,11 @@ Inverse of =rx=.
 ** Undo
 
 #+begin_src emacs-lisp
-(use-package undo-fu
-  :bind (("C-_" . undo-fu-only-undo)
-         ("M-_" . undo-fu-only-redo)))
+;; (use-package undo-fu
+;;   :bind (("C-_" . undo-fu-only-undo)
+;;          ("M-_" . undo-fu-only-redo)))
+(use-package undo-tree
+  :init (global-undo-tree-mode))
 #+end_src
 
 ** Multiple Cursors
