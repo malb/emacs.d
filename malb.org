@@ -4674,6 +4674,7 @@ When `exit' from shell buffer."
 #+begin_src emacs-lisp
 (use-package eshell
   :config (progn
+
             ;; -------------
             ;; TOGGLE ESHELL
             ;; -------------
@@ -4684,6 +4685,7 @@ When `exit' from shell buffer."
                                           '(progn (insert "ls") (eshell-send-input)) t))
 
             (malb/register-popup-window (rx "*eshell["  (0+ any) "*") t)
+
             ;; ------------
             ;; KEY BINDINGS
             ;; ------------
