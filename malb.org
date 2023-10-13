@@ -7035,7 +7035,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
          (LaTeX-mode . malb/latex-add-environments)
          (LaTeX-mode . malb/latex-add-font-lock)
          (LaTeX-mode . malb/enable-cleveref))
-  :custom ((texmathp-tex-commands '(("pcvstack" env-on) ("pchstack" env-on))))
+  :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
+                                    ("\\sendmessageleft*" arg-on)
+                                    ("\\sendmessagerightleft*" arg-on))))
   :config (progn
             (require 'tex-mode)
             ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
@@ -7126,8 +7128,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (font-lock-add-keywords
              'latex-mode
              `((,(rx "\\" (or (any ",.!;@")
-                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
-                                  symbol-end)))
+                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
+                                   symbol-end)))
                 0 'malb/unimportant-latex-face prepend))
              'end)
 
