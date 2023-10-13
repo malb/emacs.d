@@ -2180,7 +2180,10 @@ Inverse of =rx=.
 ;;   :bind (("C-_" . undo-fu-only-undo)
 ;;          ("M-_" . undo-fu-only-redo)))
 (use-package undo-tree
-  :init (global-undo-tree-mode))
+  :init (global-undo-tree-mode)
+  :config (setq undo-tree-auto-save-history t
+                undo-tree-history-directory-alist
+                `(("." . ,(locate-user-emacs-file "undo-tree-cache")))))
 #+end_src
 
 ** Multiple Cursors
