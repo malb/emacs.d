@@ -1,8 +1,6 @@
-\RequirePackage{etex}
 \RequirePackage[l2tabu,orthodox]{nag}            %% Warn about obsolete commands and packages
 \RequirePackage{amsmath,amsfonts,amssymb,amsthm} %% Math
 \RequirePackage{ifxetex,ifluatex}                %% Detect XeTeX and LuaTeX
-\RequirePackage{fixltx2e}                        %% provides \textsubscript
 \RequirePackage{xspace}
 \RequirePackage{graphicx}
 \RequirePackage{comment}
@@ -201,6 +199,7 @@
 
 \IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
 \IfFileExists{microtype.sty}{\RequirePackage{microtype}}{}
+\IfFileExists{microtype.sty}{\PassOptionsToPackage{verbose=silent}{microtype}}{}
 
 \setlength{\parindent}{0pt}                   %%
 \setlength{\parskip}{6pt plus 2pt minus 1pt}  %%
@@ -218,4 +217,3 @@
 \providecommand{\mat}[1]{\ensuremath{\vec{#1}}\xspace}
 \providecommand{\ring}[0]{\ensuremath{\mathcal{R}}\xspace}
 
-\PassOptionsToPackage{verbose=silent}{microtype}
