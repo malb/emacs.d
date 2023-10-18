@@ -374,6 +374,8 @@ it will restore the window configuration to prior to full-framing."
 #+begin_src emacs-lisp
 (use-package tab-bar
   :ensure nil
+  :bind (("C-<next>" . tab-next)
+         ("C-<prior>" . tab-previous))
   :custom ((tab-bar-mode t "Enable tab-bar-mode")
            (tab-bar-show nil "But don't show tabs")
            (tab-bar-new-tab-to 'rightmost "Open new tabs at the end"))
