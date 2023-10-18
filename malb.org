@@ -4669,12 +4669,19 @@ When `exit' from shell buffer."
             (malb/register-popup-window (rx "*shell["  (0+ any) "*") t)))
 #+end_src
 
+** EAT
+
+#+begin_src emacs-lisp
+(use-package eat)
+#+end_src
+
 ** EShell
 
 ([[https://github.com/howardabrams/dot-files/blob/master/emacs-eshell.org][source]])
 
 #+begin_src emacs-lisp
 (use-package eshell
+  :after (eat)
   :config (progn
 
             ;; -------------
@@ -4707,8 +4714,8 @@ When `exit' from shell buffer."
             ;; VISUAL COMMANDS
             ;; ---------------
 
-            (setq eshell-visual-subcommands '(("git" "diff" "show")
-                                              ("tmux" "attach" "new")))
+            ;; (setq eshell-visual-subcommands '(("git" "diff" "show")
+            ;;                                   ("tmux" "attach" "new")))
 
             (defun malb/eshell-add-visual-commands ()
               (add-to-list 'eshell-visual-commands "htop")
@@ -4717,7 +4724,10 @@ When `exit' from shell buffer."
               (add-to-list 'eshell-visual-commands "mscdb.sh")
               (add-to-list 'eshell-visual-commands "vim"))
 
-            (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
+            ;; (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
+            (eat-eshell-mode)
+            (eat-eshell-visual-command-mode)
+            (setq eshell-visual-commands nil)
 
             (defun malb/visual-command-frame (old-function &rest arguments)
               (let  ((frame (make-frame '((width . 160) (height . 40)))))
