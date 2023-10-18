@@ -5698,6 +5698,10 @@ A generator for pop-up Jupyter repls.
 [[https://blog.markhepburn.com/posts/experimenting-with-the-built-in-treesitter-support-in-emacs/][Experimenting With the Built-in Tree-sitter Support in Emacs]]
 [[https://archive.casouri.cc/note/2023/tree-sitter-in-emacs-29/index.html?utm_source=pocket_reader][Tree-sitter in Emacs 29 and Beyond]]
 
+#+begin_src emacs-lisp
+(use-package tree-sitter-langs)
+#+end_src
+
 *** Language Server Protocol (LSP)
 
 #+BEGIN_QUOTE
