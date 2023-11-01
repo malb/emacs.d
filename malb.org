@@ -567,6 +567,7 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
 ;; (setq display-buffer-alist nil)
 
 (defvar malb/popup-window-height 0.381966011250145)
+(defvar malb/right-side-window-width 80)
 
 (defun malb/window-has-popup-height-p (window)
   (and window
@@ -604,6 +605,22 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                    (lambda () (when (string-match-p buffer-name-rx (buffer-name)) 10)))))
 
 (dolist (name-rx malb/popup-windows) (malb/register-popup-window name-rx nil))
+#+end_src
+
+#+begin_src emacs-lisp
+(defun malb/register-right-side-window (buffer-name-rx &optional winum-9)
+  (add-to-list 'display-buffer-alist
+             `(,buffer-name-rx
+               (malb/frame-dispatch
+                  display-buffer-reuse-window
+                  display-buffer-in-side-window)
+               (side . right)
+               (slot . 0)
+               (window-width . ,malb/right-side-window-width)))
+
+  (if winum-9
+      (add-to-list 'winum-assign-functions
+                   (lambda () (when (string-match-p buffer-name-rx (buffer-name)) 9)))))
 #+end_src
 
 ** Closing/Promoting Pop-up-style Windows
@@ -2441,12 +2458,7 @@ Helpful is an alternative to the built-in Emacs help that provides much more con
          ("C-h k" . helpful-key)
          ("C-h ," . helpful-at-point))
   :config (progn
-            (add-to-list 'display-buffer-alist
-                         `(,(rx "*helpful")
-                           (display-buffer-in-side-window)
-                           (side . right)
-                           (slot . 0)
-                           (window-width . 80)))
+            (malb/register-right-side-window (rx "*helpful") t)
             (malb/defadvice! malb/helpful-go-back (orig-function button)
               :before #'helpful--follow-link
               (push-mark))))
@@ -6736,12 +6748,7 @@ To use:
 #+begin_src emacs-lisp
 (use-package powerthesaurus
   :bind ("C-c w p" . powerthesaurus-lookup-dwim)
-  :config (add-to-list 'display-buffer-alist
-                       `(,(rx bos "*Powerthesaurus - " (0+ any) "*" eos)
-                         (display-buffer-in-side-window)
-                         (side . right)
-                         (slot . 0)
-                         (window-width . 80))))
+  :config (malb/register-right-side-window (rx bos "*Powerthesaurus - " (0+ any) "*" eos) t))
 #+end_src
 
 *** Dictionary
@@ -6777,12 +6784,7 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
                          (lambda (&optional arg)) nil))
                 (lexic-search identifier nil nil t)))
 
-            (add-to-list 'display-buffer-alist
-                         `(,(rx bos "*lexic*" eos)
-                           (display-buffer-in-side-window)
-                           (side . right)
-                           (slot . 0)
-                           (window-width . 80)))))
+            (malb/register-right-side-window (rx bos "*lexic*" eos))))
 #+end_src
 
 *** Translating
@@ -10970,7 +10972,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
          (buffer (get-buffer-create buffer-name))
          (proc-alive (comint-check-proc buffer))
          (process (get-buffer-process buffer)))
-    (if (malb/window-has-popup-height-p window)
+    (if window
         (progn
           (select-window window)
           (delete-window))
@@ -10979,11 +10981,14 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
           (with-current-buffer buffer
             (apply 'make-comint-in-buffer "llama" buffer
                    script-name nil '())
+            (setq-local comint-prompt-regexp (rx bol ">")
+                        comint-use-prompt-regexp nil
+                        comint-process-echoes t)
             (visual-line-mode)
             (malb/company-prose-setup)))
         (pop-to-buffer buffer-name)))))
 
-(malb/register-popup-window (rx bos "*llama*" eos))
+(malb/register-right-side-window (rx bos "*llama*" eos) t)
 #+end_src
 
 ** Upcase, Downcase, Capitalise
