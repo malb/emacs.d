@@ -1815,9 +1815,28 @@ Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-c
 ** Bookmarks
 
 #+begin_src emacs-lisp
-(setq bookmark-save-flag 1
-      bookmark-fontify nil
-      bookmark-set-fringe-mark nil)
+(use-package bookmark
+  :ensure nil
+  :defer nil
+  :init (setq bookmark-save-flag 1
+              bookmark-fontify nil
+              bookmark-set-fringe-mark nil)
+  :config (malb/defadvice! malb/open-bookmarks-in-tab (orig-function bookmark &optional display-func)
+            :around #'bookmark-jump
+            (let ((tab-created nil)
+                  (tab-name bookmark))
+              (if (member tab-name (mapcar (lambda (tab) (cdr (assq 'name tab)))
+                                           (tab-bar-tabs)))
+                  (tab-bar-switch-to-tab tab-name)
+                (progn
+                  (tab-new)
+                  (setq tab-created t)
+                  (tab-rename tab-name)))
+
+              (apply orig-function bookmark display-func)
+
+              (when tab-created
+                (delete-other-windows)))))
 #+end_src
 
 * IMenu
