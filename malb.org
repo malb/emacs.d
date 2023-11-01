@@ -421,7 +421,21 @@ The default tab-bar name uses the buffer name."
                       ((equal ntabs 2) (tab-bar-switch-to-tab (if (equal current-tab (car tabs))
                                                                   (cadr tabs)
                                                                 (car tabs))))
-                      (t (tab-switcher)))))))
+                      (t (tab-switcher)))))
+
+            (defun malb/close-remote-tabs (tab single)
+              (let ((tab-name (alist-get 'name tab)))
+                (when (string-prefix-p "@" tab-name)
+
+                  (tramp-cleanup-this-connection)
+
+                  (dolist (buffer (tramp-list-remote-buffers))
+                    (when (and  (s-contains-p (substring tab-name 1)
+                                              (with-current-buffer buffer default-directory))
+                                (bufferp (get-buffer buffer)))
+                      (kill-buffer buffer))))))
+
+            (add-to-list 'tab-bar-tab-pre-close-functions #'malb/close-remote-tabs)))
 #+end_src
 
 ** Switching
@@ -2505,20 +2519,22 @@ This library provides easy project management and navigation. The concept of a p
 
 #+begin_src emacs-lisp
 (use-package projectile
-  :after tab-bar
+  :after (tab-bar)
+  :defer nil
   :bind (("<f5>" . projectile-compile-project)
          ("<f6>" . next-error)
          :map projectile-command-map
          ("#" . #'malb/projectile-repl))
   :init  (setq projectile-keymap-prefix (kbd "C-c p"))
   :config (progn
-            (use-package magit :ensure t)
-            (require 'helm-projectile)
-            (helm-projectile-on)
+            (setq projectile-indexing-method 'hybrid
+                  projectile-make-test-cmd "make check"
+                  projectile-ignored-projects malb/projectile-ignored-projects
+                  projectile-ignored-project-function #'malb/projectile-ignore-projects
+                  projectile-globally-unignored-files '(".dir-locals.el")
+                  projectile-buffers-filter-function #'malb/filter-mu4e-buffers
+                  projectile-mode-line '(:eval (format "{%s}" (projectile-project-name))))
 
-            (add-to-list 'helm-commands-using-frame #'helm-projectile-switch-project)
-
-            (setq projectile-indexing-method 'hybrid)
             (defun malb/projectile-ignore-projects (project-root)
               (progn
                 (or (file-remote-p project-root)
@@ -2535,6 +2551,7 @@ This library provides easy project management and navigation. The concept of a p
 
             (when (not (boundp 'malb/projectile-switch-tab-project-names))
               (defvar malb/projectile-switch-tab-project-names nil))
+
             (when (not (boundp 'malb/projectile-switch-tab-project-deny-list))
               (defvar malb/projectile-switch-tab-project-deny-list nil))
 
@@ -2572,34 +2589,14 @@ This library provides easy project management and navigation. The concept of a p
                 (when tab-created
                   (delete-other-windows))))
 
-            (defun malb/close-remote-tabs (tab single)
-              (let ((tab-name (alist-get 'name tab)))
-                (when (string-prefix-p "@" tab-name)
-
-                  (tramp-cleanup-this-connection)
-
-                  (dolist (buffer (tramp-list-remote-buffers))
-                    (when (and  (s-contains-p (substring tab-name 1)
-                                              (with-current-buffer buffer default-directory))
-                                (bufferp (get-buffer buffer)))
-                      (kill-buffer buffer))))))
-
-            (add-to-list 'tab-bar-tab-pre-close-functions #'malb/close-remote-tabs)
-
             (malb/defadvice! malb/projectile-kill-tab ()
               "Kill tab too if it's not the first."
               :after 'projectile-kill-buffers
               (when (> (tab-bar--current-tab-index) 0)
                 (tab-bar-close-tab nil 1)))
 
-            (setq projectile-make-test-cmd "make check"
-                  projectile-ignored-projects malb/projectile-ignored-projects
-                  projectile-ignored-project-function #'malb/projectile-ignore-projects
-                  projectile-globally-unignored-files '(".dir-locals.el")
-                  projectile-buffers-filter-function #'malb/filter-mu4e-buffers
-                  projectile-mode-line '(:eval (format "{%s}" (projectile-project-name))))
-
-            (projectile-mode)))
+            (projectile-mode)
+            (helm-projectile-on)))
 #+end_src
 
 [[https://tuhdo.github.io/helm-projectile.html][Helm]] integration
@@ -2613,21 +2610,15 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 
 #+begin_src emacs-lisp
 (use-package helm-projectile
+  :after (projectile)
+  :init (setq helm-projectile-fuzzy-match nil)
+  :commands (helm-projectile-on helm-projectile-switch-project)
   :config (progn
             (defvar malb/helm-source-file-not-found
-              (helm-build-dummy-source
-                  "Create file"
-                :action 'find-file))
-
+              (helm-build-dummy-source "Create file" :action 'find-file))
             (add-to-list 'helm-projectile-sources-list malb/helm-source-file-not-found t)
-
-            (setq projectile-switch-project-action 'helm-projectile)
-
-            ;; (helm-delete-action-from-source "Grep in projects `C-s'" helm-source-projectile-projects)
-            ;; (helm-delete-action-from-source "Grep in projects `C-s'" helm-source-projectile-dirty-projects)
-            ;; (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-projects 4)
-            ;; (helm-add-action-to-source "Grep in projects `C-s'" 'helm-do-ag helm-source-projectile-dirty-projects 4)
-            ))
+            (add-to-list 'helm-commands-using-frame #'helm-projectile-switch-project)
+            (setq projectile-switch-project-action 'helm-projectile)))
 #+end_src
 
 * Git
