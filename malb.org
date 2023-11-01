@@ -658,6 +658,16 @@ In case we just want to kill the bottom window, set a shortcut do to this.
 (key-chord-define-global "qw" #'malb/promote-disposable-window-or-to-frame)
 #+end_src
 
+** Display Management Hammer
+
+#+begin_src emacs-lisp
+(malb/defadvice! malb/display-buffer-alist-nil (orig-function &rest args)
+  "Run ORIG-FUNCTION with empty `display-buffer-alist`"
+  :around #'lv-message
+  (let ((display-buffer-alist nil))
+    (apply orig-function args)))
+#+end_src
+
 ** Compilation Window
 
 If there was no error the window closes automatically.
