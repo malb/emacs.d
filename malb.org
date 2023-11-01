@@ -2431,7 +2431,10 @@ Helpful is an alternative to the built-in Emacs help that provides much more con
                            (display-buffer-in-side-window)
                            (side . right)
                            (slot . 0)
-                           (window-width . 80)))))
+                           (window-width . 80)))
+            (malb/defadvice! malb/helpful-go-back (orig-function button)
+              :before #'helpful--follow-link
+              (push-mark))))
 #+end_src
 
 ** Refine
