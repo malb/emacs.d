@@ -2203,6 +2203,7 @@ Inverse of =rx=.
 (use-package undo-tree
   :init (global-undo-tree-mode)
   :config (setq undo-tree-auto-save-history t
+                undo-tree-enable-undo-in-region t
                 undo-tree-history-directory-alist
                 `(("." . ,(locate-user-emacs-file "undo-tree-cache")))))
 #+end_src
