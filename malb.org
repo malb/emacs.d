@@ -407,7 +407,6 @@ The default tab-bar name uses the buffer name."
             (malb/defadvice! malb/switch-tab-1 (&rest arguments)
               "Switch to new tab 1."
               :before 'org-agenda
-              :before 'helm-org-goto-marker
               (tab-bar-select-tab 1))
 
             (defun malb/switch-tab (&rest arg)
