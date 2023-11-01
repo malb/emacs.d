@@ -6170,12 +6170,12 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (setq conda-env-home-directory (expand-file-name "~/.conda/")
                   conda-message-on-environment-switch nil)
 
-            (malb/defadvice! conda-no-more-nil (fn name)
+            (malb/defadvice! malb/conda-no-more-nil (fn name)
               "Don't throw an error if there's no conda env"
               :around #'conda-env-name-to-dir
               (if name (apply fn (list name))))
 
-            (malb/defadvice! conda-shut-up (fn params)
+            (malb/defadvice! malb/conda-shut-up (fn params)
               :around #'conda-env-activate-path
               (cl-letf (((symbol-function 'message) (lambda (msg &rest args)) nil))
                 (apply fn (list params))))))
