@@ -5656,12 +5656,7 @@ Auto-format source code in many languages with one command – [[https://github.
                     (kill-buffer))
                 (delete-char arg)))
 
-            (add-to-list 'display-buffer-alist
-                         `(,(rx "*jupyter-pager*")
-                           (display-buffer-in-side-window)
-                           (side . right)
-                           (slot . 0)
-                           (window-width . 100)))
+            (malb/register-right-side-window (rx "*jupyter-pager*") t)
 
             ;; TODO: workaround
             (setq jupyter-use-zmq nil)))
