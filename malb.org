@@ -537,7 +537,6 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                                  (rx (seq bos "*helm projectile*" eos))
                                  (rx (seq bos "*Helm all the things*" eos))
                                  (rx (seq bos "*Helm Find Files*" eos))
-                                 (rx (seq bos "*Help*" eos))
                                  (rx (seq bos "*ielm*" eos))
                                  (rx (seq bos "*Synonyms List*" eos))
                                  (rx (seq bos "*anaconda-doc*" eos))
@@ -2469,6 +2468,7 @@ Helpful is an alternative to the built-in Emacs help that provides much more con
          ("C-h ," . helpful-at-point))
   :config (progn
             (malb/register-right-side-window (rx "*helpful") t)
+            (malb/register-right-side-window (rx (seq bos "*Help*" eos)) t) ; sometimes Help is called
             (malb/defadvice! malb/helpful-go-back (orig-function button)
               :before #'helpful--follow-link
               (push-mark))))
