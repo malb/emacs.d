@@ -2237,15 +2237,14 @@ Inverse of =rx=.
 ** Undo
 
 #+begin_src emacs-lisp
-;; (use-package undo-fu
-;;   :bind (("C-_" . undo-fu-only-undo)
-;;          ("M-_" . undo-fu-only-redo)))
 (use-package undo-tree
   :init (global-undo-tree-mode)
-  :config (setq undo-tree-auto-save-history t
-                undo-tree-enable-undo-in-region t
-                undo-tree-history-directory-alist
-                `(("." . ,(locate-user-emacs-file "undo-tree-cache")))))
+  :config (progn
+            (unbind-key "C-M-_")
+            (setq undo-tree-auto-save-history t
+                  undo-tree-enable-undo-in-region t
+                  undo-tree-history-directory-alist
+                  `(("." . ,(locate-user-emacs-file "undo-tree-cache"))))))
 #+end_src
 
 ** Multiple Cursors
