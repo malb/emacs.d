@@ -10963,6 +10963,11 @@ Transparent encryption and decryption.
 A toggle shell for https://github.com/antimatter15/alpaca.cpp
 
 #+begin_src emacs-lisp
+(defun malb/llm-send-multiline ()
+  (interactive)
+  (comint-send-input)
+  (comint-send-string "*llama*" "\n\\\n"))
+
 (defun malb/toggle-llm-chat (&optional arg)
   (interactive "P")
   (let* ((buffer-name "*llama*")
@@ -10987,7 +10992,10 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
                    script-name nil '())
             (setq-local comint-prompt-regexp (rx bol ">")
                         comint-use-prompt-regexp nil
-                        comint-process-echoes t)
+                        comint-process-echoes t
+                        comint-preoutput-filter-functions (list #'ansi-color-apply))
+            (use-local-map (copy-keymap comint-mode-map))
+            (local-set-key (kbd "C-<return>") #'malb/llm-send-multiline)
             (visual-line-mode)
             (malb/company-prose-setup)))
         (pop-to-buffer buffer-name)))))
