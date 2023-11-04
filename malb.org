@@ -4355,7 +4355,6 @@ Working with source code in org-mode.
 #+begin_src emacs-lisp
 (use-package ob
   :ensure nil
-  :after jupyter
   :config (progn
             ;; load more languages for org-babel
             (org-babel-do-load-languages
@@ -4387,7 +4386,9 @@ Working with source code in org-mode.
                   org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
 
-            (add-to-list 'org-src-lang-modes (quote ("plantuml" . plantuml)))))
+            (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+            ;; TODO this should not be necessary
+            (add-to-list 'org-src-lang-modes '("python" . python-ts))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -5665,7 +5666,6 @@ Auto-format source code in many languages with one command – [[https://github.
 #+begin_src emacs-lisp
 (use-package ob-jupyter
   :ensure nil
-  :after (jupyter ob)
   :init (org-babel-jupyter-override-src-block "python"))
 #+end_src
 
@@ -5947,7 +5947,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
               :map inferior-python-mode-map
               ("C-c C-r" . pyvenv-restart-python))
   :commands (malb/python-mode-hook malb/inferior-python-mode-hook)
-  ;; :init (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+  :init (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
   :hook ((python-base-mode . outline-minor-mode)
          (python-base-mode . highlight-indentation-mode)
          (python-base-mode . malb/local-anaconda-mode)
