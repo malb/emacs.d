@@ -1847,7 +1847,7 @@ Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-c
 #+begin_src emacs-lisp
 (setq history-length 1024
       history-delete-duplicates t
-      savehist-save-minibuffer-history t
+      savehist-save-minibuffer-history nil
       savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
 (savehist-mode t)
 #+end_src
