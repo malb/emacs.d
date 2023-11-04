@@ -2242,7 +2242,7 @@ Inverse of =rx=.
   :init (global-undo-tree-mode)
   :config (progn
             (unbind-key "C-M-_")
-            (setq undo-tree-auto-save-history t
+            (setq undo-tree-auto-save-history nil
                   undo-tree-enable-undo-in-region t
                   undo-tree-history-directory-alist
                   `(("." . ,(locate-user-emacs-file "undo-tree-cache"))))))
