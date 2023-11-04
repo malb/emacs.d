@@ -2730,6 +2730,14 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
 (use-package git-timemachine)
 #+end_src
 
+** Snapper Timemachine
+
+[[https://github.com/mrBliss/snapshot-timemachine][snapshot-timemachine: Emacs-mode to step through (Btrfs, ZFS, ...) snapshots of files]]
+
+#+begin_src emacs-lisp
+(use-package snapshot-timemachine :ensure nil)
+#+end_src
+
 ** Git Link
 
 [[https://github.com/sshaw/git-link][git-link]]:
