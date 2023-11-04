@@ -1192,7 +1192,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
             (bind-key "C-n"   #'company-select-next company-active-map)
             (bind-key "C-p"   #'company-select-previous company-active-map)
-            (bind-key "<tab>" #'company-complete company-active-map)
+            (bind-key "TAB" #'company-complete company-active-map)
             (bind-key "M-?"   #'company-show-doc-buffer company-active-map)
             (bind-key "M-."   #'company-show-location company-active-map)))
 #+end_src
@@ -1369,7 +1369,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
         (setq this-command fn)
         (call-interactively fn))))))
 
-(bind-key "<tab>" #'malb/indent-fold-or-complete)
+(bind-key "TAB" #'malb/indent-fold-or-complete)
 #+end_src
 
 Sometimes, you just want to fold.
@@ -1460,7 +1460,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
          ("C-c h"     . helm-command-prefix)
 
          :map helm-map
-         ("<tab>" . helm-execute-persistent-action) ;; rebind tab to do persistent action
+         ("TAB" . helm-execute-persistent-action) ;; rebind tab to do persistent action
          ("C-i"   . helm-execute-persistent-action) ;; make TAB works in terminal
          ("C-z"   . helm-select-action)             ;; list actions using C-z
          ("C-<right>" . helm-next-source)
@@ -4646,7 +4646,7 @@ The function behaves as follows:
 
             (add-to-list 'term-bind-key-alist '("S-<left>"  . multi-term-prev))
             (add-to-list 'term-bind-key-alist '("S-<right>" . multi-term-next))
-            (add-to-list 'term-bind-key-alist '("<tab>" . malb/term-send-tab))
+            (add-to-list 'term-bind-key-alist '("TAB" . malb/term-send-tab))
             (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
 
             (bind-key "C-y" #'term-paste term-raw-map)
@@ -9645,7 +9645,7 @@ Show dired histories you have visited.
               (when all-the-icons-dired-mode (revert-buffer)))
             (advice-add 'dired-subtree-toggle :after #'malb/dired-subtree-all-the-icons))
   :bind (:map dired-mode-map
-              ("<tab>" . dired-subtree-toggle)
+              ("TAB" . dired-subtree-toggle)
               ("<backtab>" . dired-subtree-cycle)))
 #+end_src
 
@@ -11441,7 +11441,7 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
   :ensure nil
   :after shrface
   :bind (:map eww-mode-map
-              ("<tab>" .  org-cycle)
+              ("TAB" .  org-cycle)
               ("<backtab>" . org-shifttab))
   :config (progn
             (add-hook 'eww-mode-hook #'turn-on-visual-fill-column-mode)
