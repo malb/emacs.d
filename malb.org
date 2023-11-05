@@ -10676,14 +10676,6 @@ Smoother mouse scrolling.
       mouse-wheel-follow-mouse 't)                 ; scroll window under mouse
 #+end_src
 
-Pixel-smooth scrolling.
-
-#+begin_src emacs-lisp
-(pixel-scroll-mode)
-(setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
-(setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
-#+end_src
-
 Use ~kill -pUSR1~ to kill Emacs. ([[https://github.com/wasamasa/dotemacs/blob/master/init.org][source]])
 
 #+begin_src emacs-lisp
