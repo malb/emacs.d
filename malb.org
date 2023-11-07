@@ -5676,7 +5676,9 @@ Auto-format source code in many languages with one command – [[https://github.
 #+begin_src emacs-lisp
 (use-package ob-jupyter
   :ensure nil
-  :init (org-babel-jupyter-override-src-block "python"))
+  :init (progn
+          (org-babel-jupyter-override-src-block "python")
+          (setq org-babel-jupyter-resource-directory "/tmp/org-babel-jupyter-resource-directory/")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -7103,6 +7105,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             ;; :- vs :=
             (setq tex--prettify-symbols-alist (remove '("\\coloneq" . ?≔) tex--prettify-symbols-alist))
             (push '("\\coloneqq" . ?≔) tex--prettify-symbols-alist)
+            (push '("\\lvert" . ?|) tex--prettify-symbols-alist)
+            (push '("\\rvert" . ?|) tex--prettify-symbols-alist)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
@@ -7293,7 +7297,8 @@ When pressed twice, make the sub/superscript roman."
                     ("RR"  	"\\RR" 		"\\RR?" 				cdlatex-position-cursor nil nil t)
                     ("OO"  	"\\mathcal{O}()" "\\mathcal{O}\\left({?}\\right)" cdlatex-position-cursor nil nil t)
                     ("Rq"  	"\\ring_q" "\\ring_q?" 	  	cdlatex-position-cursor nil nil t)
-                    ("nrm" 	"||x||" 	"\\|?\\|" 	cdlatex-position-cursor nil nil t))
+                    ("nrm" 	"||x||" 	"\\|?\\|" 	cdlatex-position-cursor nil nil t)
+                    ("abs" 	"|x|" 	"\\lvert ? \\rvert" 	cdlatex-position-cursor nil nil t))
                   cdlatex-math-symbol-alist '(( ?a  ("\\alpha" "\\alert{?}"))
                                               ( ?c  ("\\circ"  "" "\\cos"))
                                               ( ?R  ("\\ring" "\\ring_q"))
