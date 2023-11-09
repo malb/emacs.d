@@ -11010,7 +11010,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
                                           (lambda (name) (s-starts-with-p
                                                           "llm-"
                                                           (file-name-nondirectory name))))
-                        "/home/malb/.local/bin/llm-nous-hermes-llama2.sh"))
+                        malb/llm-default))
          (buffer (get-buffer-create buffer-name))
          (proc-alive (comint-check-proc buffer))
          (process (get-buffer-process buffer)))
