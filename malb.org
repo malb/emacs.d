@@ -9620,6 +9620,13 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (add-hook 'dired-mode-hook #'dired-dim-git-ignores)))
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package image-dired
+  :ensure nil
+  :config (setq image-dired-thumbnail-storage 'standard-x-large
+                image-dired-thumb-margin 16))
+#+end_src
+
 Show dired histories you have visited.
 
 #+begin_src emacs-lisp
