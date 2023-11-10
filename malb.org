@@ -4749,7 +4749,8 @@ When `exit' from shell buffer."
               (bind-key "M-r" #'helm-eshell-history eshell-mode-map)
               (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map)
               (bind-key "M-w" #'malb/eshell-kill-ring-save eshell-mode-map)
-              (bind-key "ESC ." #'malb/eshell-insert-last-word eshell-mode-map))
+              (bind-key "ESC ." #'malb/eshell-insert-last-word eshell-mode-map)
+              (unbind-key "TAB" eshell-cmpl-mode-map))
 
             ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
             ;; for some reason this needs to be a hook
@@ -7261,7 +7262,8 @@ We do fast mathematics entry using a mix of [[https://github.com/cdominik/cdlate
            (cdlatex-takeover-dollar nil)
            (cdlatex-simplify-sub-super-scripts nil))
   :config (progn
-            (unbind-key "C-c ?" 'cdlatex-mode-map) ;; TeX-doc
+            (unbind-key "C-c ?" 'cdlatex-mode-map)
+            (unbind-key "TAB" 'cdlatex-mode-map) ;; TeX-doc
 
             (defun malb/cdlatex-sub-superscript ()
               "Insert ^{} or _{} unless the number of backslashes before point is odd.
