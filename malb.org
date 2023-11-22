@@ -4286,6 +4286,7 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
 
 #+begin_src emacs-lisp
 (add-to-list 'helm-commands-using-frame 'org-refile)
+(add-to-list 'helm-commands-using-frame 'org-agenda-refile)
 #+end_src
 
 ** Web Tools
