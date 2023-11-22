@@ -7744,6 +7744,7 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
   :config
   (setq org-cite-biblatex-options "backend=bibtex")
   (add-to-list 'org-cite-biblatex-styles '("full" nil "fullcite" nil nil))
+  (add-to-list 'org-cite-biblatex-styles '("footfull" nil "footfullcite" nil nil))
   :after oc)
 #+end_src
 
