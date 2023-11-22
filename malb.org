@@ -4044,7 +4044,6 @@ replace the default prompt message."
            :type item
            :prepend t
            :function malb/org-get-target-headline
-           ;; :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish nil
            :empty-lines 0)
           (,(format "%s\tFile Email Search" (all-the-icons-faicon "search" :face 'all-the-icons :v-adjust 0.01))
@@ -4071,7 +4070,7 @@ replace the default prompt message."
           (,(format "%s\tKCL Herrschaftswissen" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01))
            :keys "k"
            :file malb/work-org
-           :headline "King’s College London (KCL)"
+           :headline "King's College London (KCL)"
            :template ("* %?"
                       ":PROPERTIES:"
                       ":CREATED: %U"
@@ -4088,8 +4087,7 @@ replace the default prompt message."
            :prepend t)
           (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
            :keys "y"
-           :file malb/work-org
-           :headline "Admin"
+           :file malb/inbox-org
            :template ("* TODO %a (%:fromname) :email:"
                       "SCHEDULED: %(let ((hour (nth 2 (decode-time (current-time)))))"
                       "                  (if (< hour 16)"
@@ -4098,13 +4096,11 @@ replace the default prompt message."
                       ":PROPERTIES:"
                       ":CREATED: %U"
                       ":END:")
-           ;; :after-finalize malb/org-capture-mu4e-after-finalize
            :immediate-finish t
            :prepend t)
           (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01))
            :keys "m"
-           :file malb/work-org
-           :headline "Admin"
+           :file malb/inbox-org
            :template ("* MAIL %?"
                       "SCHEDULED: %^t"
                       ":PROPERTIES:"
@@ -4130,8 +4126,7 @@ replace the default prompt message."
           ))
         (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
          :keys "y"
-         :file malb/work-org
-         :headline "Admin"
+         :file malb/inbox-org
          :template ("* TODO %?"
                     "SCHEDULED: %(let ((hour (nth 2 (decode-time (current-time)))))"
                     "                  (if (< hour 16)"
@@ -4169,14 +4164,14 @@ replace the default prompt message."
                     "%i")
          :prepend t
          :empty-lines 1)
-        (,(format "%s\tJournal" (all-the-icons-faicon "clipboard" :face 'all-the-icons :v-adjust 0.01))
-         :keys "j"
-         :file (lambda () (expand-file-name "journal.org.gpg"
-                                            malb/org-files-dir))
-         :datetree t
-         :olp ("Daily")
-         :type plain
-         :template ,malb/journal-template)
+        ;; (,(format "%s\tJournal" (all-the-icons-faicon "clipboard" :face 'all-the-icons :v-adjust 0.01))
+        ;;  :keys "j"
+        ;;  :file (lambda () (expand-file-name "journal.org.gpg"
+        ;;                                     malb/org-files-dir))
+        ;;  :datetree t
+        ;;  :olp ("Daily")
+        ;;  :type plain
+        ;;  :template ,malb/journal-template)
         (,(format "%s\tMeeting" (all-the-icons-faicon "university" :face 'all-the-icons :v-adjust 0.01))
          :keys "m"
          :file malb/inbox-org
