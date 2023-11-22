@@ -706,7 +706,8 @@ Separate “special” frames from others ([[https://stackoverflow.com/questions
   "Special frame names")
 
 (defun malb/frame-is-special-p (frame &optional mu4e-is-not-special)
-  (let* ((is-special (or (frame-parameter frame 'malb/special-frame)
+  (let* ((is-special (or (s-equals-p (frame-parameter frame 'title) "Helm")
+                         (frame-parameter frame 'malb/special-frame)
                          (seq-some
                           (lambda (name)
                             (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
@@ -759,14 +760,17 @@ If FRAME is a frame, it is returned."
 Find a frame not named qualified as “special” if there is any, make one otherwise.
 
 #+begin_src emacs-lisp
-(defun malb/switch-away-from-special (&optional helm-is-okay)
+(defun malb/switch-away-from-special (&optional is-okay)
   (let ((other-frame (catch 'other-frame
                        (dolist (frame (frame-list))
-                         (if (and (malb/frame-is-not-special-p frame)
-                                  ;; handle leftover helm frames
-                                  (or helm-is-okay (frame-parameter frame 'visibility)))
-                             (throw 'other-frame frame)
-                           nil)))))
+                         (cond
+                          ;; we allow it (e.g. inline helm)
+                          ((and (malb/frame-is-special-p frame)
+                                is-okay)
+                           (throw 'other-frame frame))
+                          ;; a plain frame
+                          ((malb/frame-is-not-special-p frame)
+                           (throw 'other-frame frame)))))))
     (select-frame-set-input-focus (or other-frame (make-frame)))))
 
 (defun malb/switch-away-from-special-and-tab (&optional helm-is-okay)
@@ -807,6 +811,10 @@ Main frame dispatch function:
    ;; a mu4e compose buffer
    ((eq (buffer-local-value 'major-mode buffer) 'mu4e-compose-mode)
     (malb/display-mu4e-draft-buffer buffer alist)
+    nil)
+
+   ((eq (buffer-local-value 'major-mode (current-buffer)) 'mu4e-compose-mode)
+    (malb/switch-away-from-special-and-tab (string-match-p ".*helm.*" (buffer-name buffer)))
     nil)
 
    ;; an mu4e buffer
