@@ -4424,7 +4424,8 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 #+begin_src emacs-lisp
 (use-package ob-async
   :after ob
-  :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia"))
+  :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia")
+              ob-async-inject-variables "\\`org-babel-[^j].+")
   :config (progn
             (malb/defadvice! malb/no-hide-overlays (orig-fun &rest args)
               :before #'ob-async-org-babel-execute-src-block
