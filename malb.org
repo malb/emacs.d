@@ -6290,7 +6290,8 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
       (malb/make-jupyter-shell "*Sage*" "sagemath"
                                '(list
                                  "%load_ext autoreload"
-                                 "%autoreload 2")))
+                                 "%autoreload 2"
+                                 (concat "%cd " default-directory))))
 #+end_src
 
 org babel for Sage can be quite handy for writing talks etc. ([[https://github.com/stakemori/ob-sagemath][source]])
