@@ -3048,7 +3048,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-src-fontify-natively t        ; fontify code blocks
       org-startup-with-inline-images t  ; show images when opening a file.
       org-startup-with-latex-preview nil
-      org-preview-latex-default-process 'imagemagick
+      org-preview-latex-default-process 'dvisvgm
       org-pretty-entities nil
       org-image-actual-width 800)
 #+end_src
