@@ -11720,8 +11720,7 @@ I never use ~list-directory~, I only mistype it.
 #+begin_src emacs-lisp
 (use-package which-key
   :blackout which-key-mode
-  :config (progn
-            (which-key-mode 1)))
+  :config (which-key-mode 1))
 #+end_src
 
 * Technical Artefacts
