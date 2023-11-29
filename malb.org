@@ -11728,6 +11728,12 @@ I never use ~list-directory~, I only mistype it.
 (unbind-key "C-x C-d")
 #+end_src
 
+I hardly use it but my fat fingers hit it on some keyboards.
+
+#+begin_src emacs-lisp
+(unbind-key "<insert>")
+#+end_src
+
 ** Toggle Map
 
 ([[http://endlessparentheses.com/the-toggle-map-and-wizardry.html][source]])
