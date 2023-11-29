@@ -11044,6 +11044,29 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
 (malb/register-right-side-window (rx bos "*llama*" eos) t)
 #+end_src
 
+*** Ellama
+
+#+begin_src emacs-lisp
+(use-package ellama
+  :config (progn
+            (setopt ellama-language "German")
+            (require 'llm-ollama)
+            (setopt ellama-provider (make-llm-ollama
+		                             :chat-model malb/ollama-default
+                                     :embedding-model malb/ollama-default))
+
+            (fset 'malb/ollama-run
+                  (malb/make-toggle-shell
+                   "*ollama*"
+                   '(let ((current-prefix-arg nil)) (vterm))
+                   '(progn
+                      (vterm-send-string (concat "ollama run " malb/ollama-default))
+                      (vterm-send-return)
+                      (vterm-clear))))
+
+            (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
+#+end_src
+
 ** Upcase, Downcase, Capitalise
 
 #+begin_src emacs-lisp
@@ -11649,7 +11672,6 @@ Easily change the text size:
 (malb/set-menu-key "b" #'helm-bookmarks)
 (malb/set-menu-key "C" #'malb/calc-eval-region)
 (malb/set-menu-key "c" #'mu4e-compose-new)
-(malb/set-menu-key "d" #'malb/toggle-llm-chat)
 (malb/set-menu-key "e" #'malb/toggle-eshell)
 (malb/set-menu-key "i" #'malb/helm-in-buffer)
 (malb/set-menu-key "j" #'avy-goto-char-timer)
@@ -11663,9 +11685,11 @@ Easily change the text size:
 (malb/set-menu-key "o" #'malb/helm-org-ql-agenda-files)
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
+(malb/set-menu-key "Q" #'malb/toggle-llm-chat)
+(malb/set-menu-key "q" #'malb/ollama-run)
 (malb/set-menu-key "S" #'malb/toggle-sage-jupyter)
-(malb/set-menu-key "t" #'helm-tramp)
 (malb/set-menu-key "s" #'malb/switch-tab)
+(malb/set-menu-key "t" #'helm-tramp)
 (malb/set-menu-key "r" #'spray-mode)
 (malb/set-menu-key "z" #'malb/toggle-vterm)
 (malb/set-menu-key "Z" #'malb/ykcd)
