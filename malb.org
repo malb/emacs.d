@@ -5634,7 +5634,6 @@ Auto-format source code in many languages with one command – [[https://github.
 ****** TODO It would be nice to use this to replace the various other modes floating around
 ****** END
 
-
 *** Jupyter
 
 [[https://github.com/dzop/emacs-jupyter][emacs-jupyter]] is an Emacs frontend to Jupyter kernels
@@ -7112,6 +7111,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (push '("\\coloneqq" . ?≔) tex--prettify-symbols-alist)
             (push '("\\lvert" . ?|) tex--prettify-symbols-alist)
             (push '("\\rvert" . ?|) tex--prettify-symbols-alist)
+            (push '("\\concat" . ?‖) tex--prettify-symbols-alist)
+            (push '("\\mhyphen " . ?-) tex--prettify-symbols-alist)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
@@ -7187,16 +7188,23 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             ;; http://endlessparentheses.com/improving-latex-equations-with-font-lock.html
             (defface malb/unimportant-latex-face
-              '((t :height 0.8
+              '((t :height 1.0
                    :inherit font-lock-comment-face))
               "Face used on less relevant math commands.")
 
             (font-lock-add-keywords
              'latex-mode
              `((,(rx "\\" (or (any ",.!;@")
-                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg")
-                                   symbol-end)))
+                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
+                                  symbol-end)))
                 0 'malb/unimportant-latex-face prepend))
+             'end)
+
+            (font-lock-add-keywords
+             'latex-mode
+             `((,(rx "\\pc" (and (or "if" "then" "else" "for" "do" "return" "const" "and" "linecomment" "assert" "in")
+                                symbol-end))
+                0 'font-latex-bold-face prepend))
              'end)
 
             (setq TeX-auto-save t
