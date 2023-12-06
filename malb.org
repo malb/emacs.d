@@ -8103,7 +8103,7 @@ Canonicalise contacts as they appear from mu4e.
       nil)
      ;; ignore a bunch of invalid addresses
      ((seq-some (lambda (invalid-address)
-                  (s-contains-p  invalid-address contact t))
+                  (s-contains-p invalid-address contact t))
                 malb/invalid-email-addresses)
       nil)
      ;; full "Name <e-mail>"
