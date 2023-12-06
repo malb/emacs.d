@@ -3124,6 +3124,10 @@ delete SCHEDULED if new state is a WAITing state
 (add-hook 'org-after-todo-state-change-hook 'malb/org-after-todo-state-change)
 #+end_src
 
+#+begin_src emacs-lisp
+(malb/register-popup-window (rx "*Org Note*"))
+#+end_src
+
 ** Tags
 
 #+begin_src emacs-lisp
