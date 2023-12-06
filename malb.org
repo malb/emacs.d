@@ -4205,7 +4205,6 @@ replace the default prompt message."
                     ":CREATED: %U"
                     ":END:"
                     ""
-                    "%(malb/org-capture-code-snippet \"%F\")"
                     "")
          :prepend t
          :empty-lines 1)
