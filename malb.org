@@ -7079,9 +7079,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 #+begin_src emacs-lisp
 (use-package tex
   :ensure auctex
-  ;; :commands (malb/latex-add-environments malb/latex-add-font-lock malb/enable-cleveref)
-  :mode (("\\.tikz\\'" . LaTeX-mode)
-         ("\\.tex\\'" . LaTeX-mode))
+  :mode (("\\.tikz\\'" . latex-mode))
   :bind (:map LaTeX-mode-map
               ("C-<tab>" . outline-cycle)
               ("M-." . malb/latex-jump)
@@ -7100,12 +7098,28 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
          (LaTeX-mode . prettify-symbols-mode)
          (LaTeX-mode . malb/latex-add-environments)
          (LaTeX-mode . malb/latex-add-font-lock)
-         (LaTeX-mode . malb/enable-cleveref))
+         (LaTeX-mode . malb/enable-cleveref)
+         (LaTeX-mode . malb/expand-region-setup))
   :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
                                     ("\\sendmessageleft*" arg-on)
                                     ("\\sendmessagerightleft*" arg-on))))
   :config (progn
             (require 'tex-mode)
+
+            (setq TeX-auto-save t
+                  TeX-parse-self t
+                  reftex-plug-into-AUCTeX t
+                  LaTeX-math-menu-unicode t
+                  TeX-PDF-mode t
+                  TeX-source-correlate-mode t
+                  TeX-save-query nil
+                  TeX-error-overview-open-after-TeX-run t
+                  TeX-electric-sub-and-superscript t
+                  TeX-quote-after-quote nil
+                  reftex-toc-split-windows-fraction 0.15
+                  reftex-toc-split-windows-horizontally t
+                  font-latex-fontify-sectioning 1.0)
+
             ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
             (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
 
@@ -7210,20 +7224,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                 0 'font-latex-bold-face prepend))
              'end)
 
-            (setq TeX-auto-save t
-                  TeX-parse-self t
-                  reftex-plug-into-AUCTeX t
-                  LaTeX-math-menu-unicode t
-                  TeX-PDF-mode t
-                  TeX-source-correlate-mode t
-                  TeX-save-query nil
-                  TeX-error-overview-open-after-TeX-run t
-                  TeX-electric-sub-and-superscript t
-                  TeX-quote-after-quote nil
-                  reftex-toc-split-windows-fraction 0.15
-                  reftex-toc-split-windows-horizontally t
-                  font-latex-fontify-sectioning 1.0)
-
             (add-to-list 'display-buffer-alist
                          '("^\\*toc\\*$" display-buffer-in-side-window
                            (window-parameters
@@ -7253,6 +7253,24 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             (setq-default TeX-master 'dwim
                           TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
+
+            (defun malb/expand-region-setup ()
+              "Setup LaTeX expansions."
+              (set (make-local-variable 'er/try-expand-list)
+                   '(er/mark-word
+                     er/mark-symbol
+                     er/mark-symbol-with-prefix
+                     er/mark-next-accessor
+                     er/mark-inside-quotes
+                     er/mark-outside-quotes
+                     er/mark-inside-pairs
+                     er/mark-outside-pairs
+                     er/mark-LaTeX-math
+                     er/mark-text-sentence
+                     er/mark-paragraph
+                     er/mark-LaTeX-inside-environment
+                     LaTeX-mark-environment
+                     LaTeX-mark-section)))
 
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+end_src
@@ -7598,7 +7616,6 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
             (defvar malb/bibtex-completion-get-value-replacements  '((".*\\url{\\(.*?\\)" . "\\1")
                                                                      ("{\\\\\"a}" . "ä")
                                                                      ("{\\\\\"u}" . "ü")
-                                                                     ("{\\\\\"o}" . "ö")
                                                                      ("{\\\\\"o}" . "ö")
                                                                      ("{\\\\'{a}}" . "á")
                                                                      ("{\\\\'a$" . "á")
