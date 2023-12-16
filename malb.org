@@ -11103,16 +11103,50 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
 		                             :chat-model malb/ollama-default
                                      :embedding-model malb/ollama-default))
 
-            (fset 'malb/ollama-run
-                  (malb/make-toggle-shell
-                   "*ollama*"
-                   '(let ((current-prefix-arg nil)) (vterm))
-                   '(progn
-                      (vterm-send-string (concat "ollama run " malb/ollama-default))
-                      (vterm-send-return)
-                      (vterm-clear))))
+            (define-derived-mode ellama-mode markdown-mode
+              "ellama-mode")
 
-            (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
+            ;;  we're injecting our mode
+            (defun ellama-instant (prompt)
+              "Prompt ellama for PROMPT to reply instantly."
+              (let ((buffer (get-buffer-create (make-temp-name ellama-buffer))))
+                (display-buffer buffer)
+                (with-current-buffer buffer
+                  (ellama-mode))
+                (ellama-stream prompt :buffer buffer (point-min))))
+
+            (defun ellama-expand-notes ()
+              "Enhance the grammar and spelling in the currently selected region or buffer."
+              (interactive)
+              (ellama-change "expand the notes into well written paragraphs"))
+
+            (defun malb/toggle-ollama-chat (&optional arg)
+              (interactive "P")
+              (let* ((buffer-name "*ollama*")
+                     (window (get-buffer-window buffer-name))
+                     (buffer (get-buffer-create buffer-name))
+                     (proc-alive (term-check-proc buffer))
+                     (process (get-buffer-process buffer)))
+                (if window
+                    (progn
+                      (select-window window)
+                      (delete-window))
+                  (progn
+                    (unless proc-alive
+                      (let ((ollama-service (prodigy-find-service "ollama")))
+                        (when (not (prodigy-service-started-p ollama-service))
+                          (prodigy-start-service ollama-service)
+                          (sit-for 2)))
+                      (with-current-buffer buffer
+                        (apply 'make-term "ollama" "ollama" nil `("run" ,malb/ollama-default))
+                        (term-char-mode)
+                        ;; (malb/company-prose-setup)
+                        ;; (visual-line-mode)
+                        ))
+                    (pop-to-buffer buffer-name)))))
+
+            (malb/register-right-side-window (rx bos "*ollama*" eos) t)
+            (malb/register-right-side-window (rx bos "*ellama*") t)))
 #+end_src
 
 ** Upcase, Downcase, Capitalise
@@ -11734,7 +11768,7 @@ Easily change the text size:
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
 (malb/set-menu-key "Q" #'malb/toggle-llm-chat)
-(malb/set-menu-key "q" #'malb/ollama-run)
+(malb/set-menu-key "q" #'malb/toggle-ollama-chat)
 (malb/set-menu-key "S" #'malb/toggle-sage-jupyter)
 (malb/set-menu-key "s" #'malb/switch-tab)
 (malb/set-menu-key "t" #'helm-tramp)
