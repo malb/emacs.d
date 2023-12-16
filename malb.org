@@ -3435,7 +3435,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
 *** Org LaTeX
 
-- Use [[http://www.xelatex.org][XeLaTeX]] because UTF-8 and fonts.
+- Use LuaTeX because UTF-8 and fonts.
 - Add some standard (to us) packages
 - Handouts are done via [[https://www.ctan.org/pkg/tufte-latex?lang=en][tufte-handout]], letters via =ox-koma-letter=.
 
@@ -3475,7 +3475,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
 
             (setq org-latex-listings 't
-                  org-latex-compiler "xelatex"
+                  org-latex-compiler "lualatex"
                   org-latex-prefer-user-labels t
                   org-latex-caption-above nil
                   org-latex-hyperref-template  (concat "\\hypersetup{\n"
@@ -3511,10 +3511,11 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "[DEFAULT-PACKAGES]"
                                         "[PACKAGES]"
                                         ,(malb/org-latex-default)
-                                        "\\usepackage{ifxetex}"
-                                        "\\ifxetex"
-                                        " \\renewcommand{\\textls}[2][5]{%"
-                                        " \\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup"
+                                        "\\usepackage{ifpdf}"
+                                        "\\ifpdf%"
+                                        "\\else%"
+                                        "\\renewcommand{\\textls}[2][5]{%"
+                                        "\\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup"
                                         "}"
                                         "\\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}"
                                         "\\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}"
@@ -3522,7 +3523,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}"
                                         "\\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}"
                                         "\\usepackage{fontspec}"
-                                        "\\fi"
+                                        "\\fi%"
                                         "\\lstset{showstringspaces=false,"
                                         "aboveskip=0.75em,"
                                         "basicstyle=\\footnotesize\ttfamily,"
@@ -3545,10 +3546,11 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "[DEFAULT-PACKAGES]"
                                         "[PACKAGES]"
                                         ,(malb/org-latex-default)
-                                        "\\usepackage{ifxetex}"
-                                        "\\ifxetex"
-                                        " \\renewcommand{\\textls}[2][5]{%"
-                                        " \\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup"
+                                        "\\usepackage{ifpdf}"
+                                        "\\ifpdf%"
+                                        "\\else%"
+                                        "\\renewcommand{\\textls}[2][5]{%"
+                                        "\\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup"
                                         "}"
                                         "\\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}"
                                         "\\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}"
@@ -3580,10 +3582,11 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "[DEFAULT-PACKAGES]"
                                         "[PACKAGES]"
                                         ,(malb/org-latex-default)
-                                        "\\usepackage{ifxetex}"
-                                        "\\ifxetex"
-                                        " \\renewcommand{\\textls}[2][5]{%"
-                                        " \\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup"
+                                        "\\usepackage{ifpdf}"
+                                        "\\ifpdf%"
+                                        "\\else%"
+                                        "\\renewcommand{\\textls}[2][5]{%"
+                                        "\\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup"
                                         "}"
                                         "\\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}"
                                         "\\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}"
@@ -3591,7 +3594,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                         "\\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}"
                                         "\\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}"
                                         "\\usepackage{fontspec}"
-                                        "\\fi"
+                                        "\\fi%"
                                         "\\lstset{showstringspaces=false,"
                                         "aboveskip=0.75em,"
                                         "basicstyle=\\footnotesize\\ttfamily,"
@@ -7381,7 +7384,7 @@ Run =latexmk -pvc= in async shell
                                        buffer-name
                                        "latexmk"
                                        "-pvc"
-                                       "-pdfxe"
+                                       "-pdflua"
                                        "-shell-escape"
                                        "-interaction=nonstopmode"
                                        "-halt-on-error"
