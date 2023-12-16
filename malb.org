@@ -5543,7 +5543,8 @@ Browse [[https://devdocs.io][devdocs.io]] documents inside Emacs
 
 #+begin_src emacs-lisp
 (use-package devdocs-browser
-  :bind ("C-c h ." . devdocs-browser-open))
+  :bind ("C-c h ." . devdocs-browser-open)
+  :config (malb/register-right-side-window (rx "*devdocs") t))
 #+end_src
 
 *** GNU Global
