@@ -10854,6 +10854,13 @@ Use ~(copyright-update)~ to update copyright info
 (setq copyright-names-regexp "Martin Albrecht\\|Martin R. Albrecht")
 #+end_src
 
+** Async
+
+#+begin_src emacs-lisp
+(use-package async
+  :custom (async-prompt-for-password nil "Otherwise: Stack overflow in regexp matcher"))
+#+end_src
+
 ** Functions
 
 Add a function for renaming the file being edited ([[https://github.com/bodil/ohai-emacs][source]])
