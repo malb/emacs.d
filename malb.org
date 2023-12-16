@@ -4655,6 +4655,15 @@ The function behaves as follows:
             (advice-add #'vterm-send-C-d :around #'malb/vterm-send-C-d-advive)))
 #+end_src
 
+** Term
+
+#+begin_src emacs-lisp
+(malb/defadvice! malb/term-handle-exit (&optional process-name msg)
+  :after 'term-handle-exit
+  (message "%s | %s" process-name msg)
+  (kill-buffer (current-buffer)))
+#+end_src
+
 ** COMMENT [#B] Multi-Term
 
 [[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs.
