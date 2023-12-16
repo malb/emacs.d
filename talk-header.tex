@@ -1,6 +1,6 @@
 \RequirePackage[l2tabu,orthodox]{nag}            %% Warn about obsolete commands and packages
 \RequirePackage{amsmath,amsfonts,amssymb,amsthm} %% Math
-\RequirePackage{ifxetex,ifluatex}                %% Detect XeTeX and LuaTeX
+\RequirePackage{ifpdf,ifxetex,ifluatex}                %% Detect XeTeX and LuaTeX
 \RequirePackage{xspace}
 \RequirePackage{graphicx}
 \RequirePackage{comment}
@@ -9,7 +9,10 @@
 \RequirePackage{booktabs}
 \RequirePackage{tabularx}
 \RequirePackage[normalem]{ulem}
-\RequirePackage[all]{xy}
+\ifluatex%
+\else%
+  \RequirePackage[all]{xy}
+\fi%
 \RequirePackage{etoolbox}
 \RequirePackage{csquotes}
 
@@ -129,18 +132,18 @@
 %%% SVG (Inkscape)
 %%%
 
-\ifxetex % chktex 1
-\providecommand{\executeiffilenewer}[3]{%
-  {\immediate\write18{#3}} % hack
-}
-\else
+\ifpdf% 
 \providecommand{\executeiffilenewer}[3]{%
   \ifnum\pdfstrcmp{\pdffilemoddate{#1}}%
     {\pdffilemoddate{#2}}>0%
     {\immediate\write18{#3}}
   \fi%
 }
-\fi
+\else%
+\providecommand{\executeiffilenewer}[3]{%
+  {\immediate\write18{#3}} % hack
+}
+\fi%
 
 \providecommand{\includesvg}[2][1.0\textwidth]{%
  \executeiffilenewer{#1.svg}{#1.pdf}%
@@ -180,10 +183,14 @@
 
 \RequirePackage{unicodesymbols} % after metropolis which loads fontspec
 
+\ifboolexpr{bool{xetex} or bool{luatex}}{%
 \setmonofont[BoldFont={Cousine Bold},
              ItalicFont={Cousine Italic},
              BoldItalicFont={Cousine Bold Italic},
              Scale=0.9]{Cousine}             
+}{%
+}
+
 %%%
 %%% BibLaTeX
 %%%
