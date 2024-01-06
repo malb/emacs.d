@@ -2946,9 +2946,11 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                                 (not (priority "B"))
                                 (not (priority "C"))
                                 (todo)
-                                (not (tags "entertainment")))
+                                (not (tags "entertainment"))
+                                (not (tags "ARCHIVE")))
                           ((org-ql-block-header "TODOs\n")))
             (org-ql-block '(and (tags "entertainment")
+                                (not (tags "ARCHIVE"))
                                 (todo))
                           ((org-ql-block-header "FUN STUFF\n")))))))
 
