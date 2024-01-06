@@ -56,14 +56,16 @@
              Scale=0.90]{Cousine}
 }{}
 
+\usepackage{unicode-math}
+
 \IfFontExistsTF{TeX Gyre Pagella}{
 \setmainfont{TeX Gyre Pagella}
 }{}
 
-\linespread{1.04}
-
-\IfFileExists{unicodesymbols.sty}{
-\RequirePackage{unicodesymbols} % after metropolis which loads fontspec
+\IfFontExistsTF{TeX Gyre Pagella Math}{
+\setmathfont{TeX Gyre Pagella Math}
 }{}
+
+\linespread{1.04}
 
 \PassOptionsToPackage{verbose=silent}{microtype}
