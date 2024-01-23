@@ -7905,7 +7905,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 (setq mu4e-maildir-shortcuts
       '((:maildir "/gmail/Inbox"    :key ?G)
-        (:maildir "/gmail/sandbox"    :key ?S)
+        (:maildir "/sandbox/Inbox"    :key ?S)
         (:maildir "/kcl/INBOX"    :key ?K)
         (:maildir "/gmail/[Google Mail]/Drafts"    :key ?d)
         (:maildir "/gmail/[Google Mail]/Sent Mail" :key ?s)
@@ -7969,6 +7969,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                         '("flag:trashed"
                                           "maildir:\"/gmail/[Google Mail]/Spam\""
                                           "maildir:\"/gmail/[Google Mail]/Bin\""
+                                          "maildir:\"/sandbox/[Gmail]/Spam\""
+                                          "maildir:\"/sandbox/[Gmail]/Trash\""
                                           "maildir:\"/kcl/Deleted Items\""
                                           "maildir:\"/kcl/Junk Email\"")))
                   ("%unread" . "flag:unread AND NOT %hidden  ")
@@ -7976,17 +7978,17 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%week"   . "date:7d..now AND NOT %hidden")
                   ("%month"  . "date:31d..now AND NOT %hidden")
                   ("%inbox"  . ,(concat "(" (s-join " OR "
-                                                    '("maildir:/gmail/INBOX"
-                                                      "maildir:/gmail/sandbox"
+                                                    '("maildir:/gmail/Inbox"
+                                                      "maildir:/sandbox/Inbox"
                                                       "maildir:/kcl/INBOX")
                                                     )
                                         ")"
                                         " AND NOT %hidden"))
                   ("%sent"   . ,(concat "(" (s-join " OR "
                                                     '("maildir:\"/gmail/[Google Mail]/Sent Mail\""
+                                                      "maildir:\"/sendmail/[Gmail]/Sent Mail\""
                                                       "maildir:\"/gmail/royal holloway/sent\""
-                                                      "maildir:\"/kcl/Sent Items\""
-                                                      "maildir:\"/gmail/sandbox/sent\""))
+                                                      "maildir:\"/kcl/Sent Items\""))
                                         ")"))
                   ("%direct" . "%inbox AND NOT flag:list AND (to:martinralbrecht@* OR to:martin.albrecht@*)")
                   ("%doc"    . ,(concat "mime:application/* "
