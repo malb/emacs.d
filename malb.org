@@ -7665,12 +7665,12 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
                       (t
                        (apply old-function (list key))))))
 
-
             (if (and (not malb/startup-quick)
                      (daemonp))
                 (let ((async-prompt-for-password nil))
                   (async-start `(lambda ()
                                   (add-to-list 'load-path (expand-file-name "local/" user-emacs-directory))
+                                  (setq load-prefer-newer t)
                                   (package-initialize)
                                   (require 'bibtex-completion-overrides)
                                   ,(async-inject-variables "\\`\\(bibtex-completion\\)")
