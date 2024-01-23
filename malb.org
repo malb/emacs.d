@@ -7609,6 +7609,8 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
 (use-package bibtex-completion-overrides
   :demand t
   :ensure nil
+  :custom ((helm-bibtex-ignore-diacritics t "Fold e.g. é to e")
+           (bibtex-completion-replace-tex t "Parse as unicode"))
   :after bibtex-completion
   :config (progn
 
@@ -7634,15 +7636,6 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
             (require 'async)
 
             (defvar malb/bibtex-completion-get-value-replacements  '((".*\\url{\\(.*?\\)" . "\\1")
-                                                                     ("{\\\\\"a}" . "ä")
-                                                                     ("{\\\\\"u}" . "ü")
-                                                                     ("{\\\\\"o}" . "ö")
-                                                                     ("{\\\\'{a}}" . "á")
-                                                                     ("{\\\\'a$" . "á")
-                                                                     ("{\\\\'e}" . "é")
-                                                                     ("{\\\\`a}" . "à")
-                                                                     ("{\\\\`e}" . "è")
-                                                                     ("\\\\&" . "&")
                                                                      ("~" . " ")))
 
             (malb/defadvice! malb/bibtex-completion-get-value (old-function &rest args)
