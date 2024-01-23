@@ -131,7 +131,7 @@ string. If it is, it is left there."
 
 
 (defun malb/latex-remove-math-delimiters (beg end)
-  "Remove delimiters $ ... $, \[ ... \] and/or \( \) in an active region `BEG` and `END."
+  "Remove delimiters $ ... $, \\[ ... \\] and/or \\( \\) in an active region `BEG` and `END."
   (interactive "r")
   (save-excursion
     (save-restriction
