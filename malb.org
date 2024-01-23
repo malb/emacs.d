@@ -1162,6 +1162,10 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
                     gnus-article-mode
                     mu4e-view-mode))
 
+            (defun malb/yp-date (fmt &optional read)
+              (unless yas-modified-p
+                (format-time-string fmt (org-read-date nil t read))))
+
             (define-advice yankpad-local-category-to-major-mode
                 (:around (old-function &rest args) malb/disable-yankpad-maybe)
               (if (member major-mode malb/disable-yankpad-major-modes)
