@@ -10704,7 +10704,7 @@ but if they happen to be there (I’m looking at you Go)
 Pressing =y= or =n= is sufficient.
 
 #+begin_src emacs-lisp
-(defalias 'yes-or-no-p 'y-or-n-p)
+(setopt use-short-answers t)
 #+end_src
 
 Kill whole line not just content on =C-k=.
