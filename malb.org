@@ -7638,8 +7638,30 @@ In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
 
             (require 'async)
 
-            (defvar malb/bibtex-completion-get-value-replacements  '((".*\\url{\\(.*?\\)" . "\\1")
+            (defvar malb/bibtex-completion-get-value-replacements  `((,(rx (0+ any) "\\url{" (group (+? any)) "}") . "\\1")
+
+                                                                     (,(rx (opt "{") "\\\"a" (opt "}")) . "ä")
+                                                                     (,(rx (opt "{") "\\\"e" (opt "}")) . "ë")
+                                                                     (,(rx (opt "{") "\\\"i" (opt "}")) . "ï")
+                                                                     (,(rx (opt "{") "\\\"o" (opt "}")) . "ö")
+                                                                     (,(rx (opt "{") "\\\"u" (opt "}")) . "ü")
+
+                                                                     (,(rx (opt "{") "\\'a" (opt "}")) . "á")
+                                                                     (,(rx (opt "{") "\\'e" (opt "}")) . "é")
+                                                                     (,(rx (opt "{") "\\'i" (opt "}")) . "í")
+                                                                     (,(rx (opt "{") "\\'o" (opt "}")) . "ó")
+                                                                     (,(rx (opt "{") "\\'u" (opt "}")) . "ú")
+
+                                                                     (,(rx (opt "{") "\\`a" (opt "}")) . "à")
+                                                                     (,(rx (opt "{") "\\`e" (opt "}")) . "è")
+                                                                     (,(rx (opt "{") "\\`i" (opt "}")) . "ì")
+                                                                     (,(rx (opt "{") "\\`o" (opt "}")) . "ò")
+                                                                     (,(rx (opt "{") "\\`u" (opt "}")) . "ù")
+
+                                                                     ("\\\\&" . "&")
                                                                      ("~" . " ")))
+
+
 
             (malb/defadvice! malb/bibtex-completion-get-value (old-function &rest args)
               :around 'bibtex-completion-get-value
