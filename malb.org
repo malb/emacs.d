@@ -1877,7 +1877,8 @@ Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-c
   :config (malb/defadvice! malb/open-bookmarks-in-tab (orig-function bookmark &optional display-func)
             :around #'bookmark-jump
             (let ((tab-created nil)
-                  (tab-name bookmark))
+                  (tab-name (or (cdr (assoc bookmark malb/projectile-switch-tab-bookmark-names))
+                                bookmark)))
               (if (member tab-name (mapcar (lambda (tab) (cdr (assq 'name tab)))
                                            (tab-bar-tabs)))
                   (tab-bar-switch-to-tab tab-name)
