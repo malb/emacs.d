@@ -11138,20 +11138,13 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
 		                             :chat-model malb/ollama-default
                                      :embedding-model malb/ollama-default))
 
-            (define-derived-mode ellama-mode markdown-mode
-              "ellama-mode")
-
-            ;;  we're injecting our mode
-            (defun ellama-instant (prompt)
-              "Prompt ellama for PROMPT to reply instantly."
-              (let ((buffer (get-buffer-create (make-temp-name ellama-buffer))))
-                (display-buffer buffer)
-                (with-current-buffer buffer
-                  (ellama-mode))
-                (ellama-stream prompt :buffer buffer (point-min))))
+            (defun ellama-rewrite-email ()
+              "Turn into polite e-mail"
+              (interactive)
+              (ellama-change "rewrite as a polite well written e-mail"))
 
             (defun ellama-expand-notes ()
-              "Enhance the grammar and spelling in the currently selected region or buffer."
+              "Expand notes"
               (interactive)
               (ellama-change "expand the notes into well written paragraphs"))
 
