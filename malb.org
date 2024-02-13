@@ -11179,7 +11179,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
                     (pop-to-buffer buffer-name)))))
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)
-            (malb/register-right-side-window (rx bos "*ellama*") t)))
+            (malb/register-right-side-window (rx bos "ellama ") t)))
 #+end_src
 
 ** Upcase, Downcase, Capitalise
