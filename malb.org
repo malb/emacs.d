@@ -7926,9 +7926,10 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
         (:maildir "/sandbox/Inbox"    :key ?S)
         (:maildir "/kcl/INBOX"    :key ?K)
         (:maildir "/gmail/[Google Mail]/Drafts"    :key ?d)
-        (:maildir "/gmail/[Google Mail]/Sent Mail" :key ?s)
-        (:maildir "/gmail/[Google Mail]/Spam"      :key ?j)
-        (:maildir "/gmail/[Google Mail]/Bin"       :key ?t)))
+        ;; (:maildir "/gmail/[Google Mail]/Sent Mail" :key ?s)
+        ;; (:maildir "/gmail/[Google Mail]/Spam"      :key ?j)
+        ;; (:maildir "/gmail/[Google Mail]/Bin"       :key ?t)
+        ))
 #+end_src
 
 ** Retrieving
@@ -7983,14 +7984,16 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 #+begin_src emacs-lisp
 (use-package mu4e-query-fragments
   :config (setq mu4e-query-fragments-list
-                `(("%hidden" . ,(s-join " OR "
-                                        '("flag:trashed"
-                                          "maildir:\"/gmail/[Google Mail]/Spam\""
-                                          "maildir:\"/gmail/[Google Mail]/Bin\""
-                                          "maildir:\"/sandbox/[Gmail]/Spam\""
-                                          "maildir:\"/sandbox/[Gmail]/Trash\""
-                                          "maildir:\"/kcl/Deleted Items\""
-                                          "maildir:\"/kcl/Junk Email\"")))
+                `(("%trash" . ,(s-join " OR "
+                                       '("flag:trashed"
+                                         "maildir:\"/gmail/[Google Mail]/Bin\""
+                                         "maildir:\"/sandbox/[Gmail]/Trash\""
+                                         "maildir:\"/kcl/Deleted Items\"")))
+                  ("%junk" . ,(s-join " OR "
+                                      '("maildir:\"/gmail/[Google Mail]/Spam\""
+                                        "maildir:\"/sandbox/[Gmail]/Spam\""
+                                        "maildir:\"/kcl/Junk Email\"")))
+                  ("%hidden" . "%trash OR %junk")
                   ("%unread" . "flag:unread AND NOT %hidden  ")
                   ("%today"  . "date:today..now AND NOT %hidden")
                   ("%week"   . "date:7d..now AND NOT %hidden")
@@ -8058,6 +8061,8 @@ Canned queries.
                       :key ?R)
              t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%sent AND %week") :name "Last 7 days (sent)" :key ?s) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%trash") :name "Bin" :key ?b) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%junk") :name "Junk" :key ?j) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
 #+end_src
 
