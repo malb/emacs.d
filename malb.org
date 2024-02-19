@@ -1,6 +1,6 @@
 #+TITLE: My Emacs Config
-#+STARTUP: overview indent
 #+CATEGORY: IT
+#+STARTUP: overview indent
 #+FILETAGS: :emacs:
 #+TYP_TODO: TRY(y) TEST(t) IMPLEMENT(i) TODO(o) | DONE(d)
 #+PROPERTY: header-args :tangle malb.el
