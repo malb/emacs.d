@@ -11151,9 +11151,17 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
   :config (progn
             (setopt ellama-language "German")
             (require 'llm-ollama)
+
+            (defun malb/ellama-generate-name-by-time (_provider _action _prompt)
+              "Generate name for ellama session by current time."
+              (concat "ellama-session-" (ellama-get-current-time)))
+
             (setopt ellama-provider (make-llm-ollama
 		                             :chat-model malb/ollama-default
-                                     :embedding-model malb/ollama-default))
+                                     :embedding-model malb/ollama-default)
+                    ellama-long-lines-length 1000000
+                    ellama-fill-paragraphs nil
+                    ellama-naming-scheme #'malb/ellama-generate-name-by-time)
 
             (defun ellama-rewrite-email ()
               "Turn into polite e-mail"
@@ -11191,7 +11199,7 @@ A toggle shell for https://github.com/antimatter15/alpaca.cpp
                     (pop-to-buffer buffer-name)))))
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)
-            (malb/register-right-side-window (rx bos "ellama ") t)))
+            (malb/register-right-side-window (rx bos "ellama-session") t)))
 #+end_src
 
 ** Upcase, Downcase, Capitalise
