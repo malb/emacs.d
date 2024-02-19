@@ -2811,8 +2811,9 @@ Dired additions for git-annex.
                   (require 'git-annex)
                   (require 'dired-aux)
                   ,(async-inject-variables "file-list")
-                  (git-annex-dired--apply "get" file-list))
-               (lambda (result)
+                  (git-annex-dired--apply "get" file-list)
+                  file-list)
+               (lambda (file-list)
                  (let ((here (point)))
                    (unwind-protect
                        (mapc #'(lambda (file)
