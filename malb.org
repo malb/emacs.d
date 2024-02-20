@@ -571,7 +571,7 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
 (defun malb/window-has-popup-height-p (window)
   (and window
        (<= (window-height window)
-           (* (frame-height) malb/popup-window-height))))
+           (ceiling (* (frame-height) malb/popup-window-height)))))
 
 (defun malb/display-buffer-in-popup-window (buffer alist)
   (let ((window (catch 'window
