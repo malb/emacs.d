@@ -1340,7 +1340,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 
    ;; leave the math env
    ((and (or (and (eq major-mode 'org-mode) (bound-and-true-p org-cdlatex-mode))
-             (and (eq major-mode 'latex-mode) (bound-and-true-p cdlatex-mode)))
+             (and (eq major-mode 'LaTeX-mode) (bound-and-true-p cdlatex-mode)))
          (texmathp)
          ;; (or (looking-at "\\\\)")
          ;;     (looking-at "\\]")
@@ -1351,7 +1351,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
    ;; arg triggers cdlatex
    ((or
      (and (eq major-mode 'org-mode) (bound-and-true-p org-cdlatex-mode) arg)
-     (and (eq major-mode 'latex-mode) (bound-and-true-p cdlatex-mode) arg))
+     (and (eq major-mode 'LaTeX-mode) (bound-and-true-p cdlatex-mode) arg))
     (cdlatex-tab))
 
    ;; if the next char is space or eol, but prev char not whitespace
@@ -1618,7 +1618,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     Man-mode
                     helpful-mode
                     markdown-mode
-                    latex-mode
+                    LaTeX-mode
                     sage-shell-mode
                     inferior-python-mode
                     ein:notebook-multilang-mode
@@ -2096,7 +2096,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (let ((bracket-qualifiers '(sp-point-before-word-p
                                         sp-point-before-same-p
                                         sp-latex-point-after-backslash)))
-              (sp-with-modes '(tex-mode plain-tex-mode latex-mode)
+              (sp-with-modes '(tex-mode plain-tex-mode latex-mode LaTeX-mode)
                 (sp-local-pair "\\(" "\\)" :unless bracket-qualifiers
                                :trigger-wrap "\$" :trigger "\$"
                                )
@@ -5495,6 +5495,7 @@ Show function in mode-line ([[https://github.com/howardabrams/dot-files/blob/mas
             (setq which-func-unknown ""
                   which-func-maxout 1024
                   which-func-modes '(latex-mode
+                                     LaTeX-mode
                                      markdown-mode
                                      c-mode
                                      c-ts-mode
@@ -7018,6 +7019,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (add-hook 'markdown-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
             (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
+            (add-to-list 'pandoc-major-modes '(LaTeX-mode . "latex"))
 
             (defun malb/pandoc-convert (writer &optional buffer beginning end reader)
               (let* ((buffer (or buffer (current-buffer)))
@@ -7100,7 +7102,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 #+begin_src emacs-lisp
 (use-package tex
   :ensure auctex
-  :mode (("\\.tikz\\'" . latex-mode))
+  :mode (("\\.tikz\\'" . LaTeX-mode))
   :bind (:map LaTeX-mode-map
               ("C-<tab>" . outline-cycle)
               ("M-." . malb/latex-jump)
@@ -7231,7 +7233,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               "Face used on less relevant math commands.")
 
             (font-lock-add-keywords
-             'latex-mode
+             'LaTeX-mode
              `((,(rx "\\" (or (any ",.!;@")
                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
                                   symbol-end)))
@@ -7239,7 +7241,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
              'end)
 
             (font-lock-add-keywords
-             'latex-mode
+             'LaTeX-mode
              `((,(rx "\\pc" (and (or "if" "then" "else" "for" "do" "return" "const" "and" "linecomment" "assert" "in")
                                 symbol-end))
                 0 'font-latex-bold-face prepend))
@@ -7775,7 +7777,7 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
   (cl-case command
     (interactive (company-begin-backend 'company-bibtex-completion))
     (prefix (let ((prefixes
-                   (cond ((derived-mode-p 'latex-mode)
+                   (cond ((derived-mode-p 'LaTeX-mode)
                           (company-auctex-prefix "\\\\cite[^[{]*\\(?:\\[[^]]*\\]\\)?{\\([^}]*\\)\\="))
                          ((and (derived-mode-p 'org-mode)
                                (not (org-in-src-block-p))
