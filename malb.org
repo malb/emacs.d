@@ -2801,6 +2801,19 @@ Dired additions for git-annex.
                   (goto-char here)))
               (message (format "Deleted %d file(s)." (length file-list))))
 
+            (malb/defadvice! malb/git-annex-dired-drop-files (file-list &optional arg)
+              :override #'git-annex-dired-drop-files
+              (interactive (let ((files (dired-get-marked-files t current-prefix-arg)))
+                             (list files current-prefix-arg)))
+              (let ((here (point)))
+                (unwind-protect
+                    (mapc #'(lambda (file)
+                              (git-annex "drop" "--force" file)
+                              (dired-relist-file (expand-file-name file)))
+                          file-list)
+                  (goto-char here)))
+              (message (format "Annex: dropped %d file(s)" (length file-list))))
+
             (malb/defadvice! malb/git-annex-dired-get-files (file-list &optional arg)
               :override #'git-annex-dired-get-files
               (interactive (let ((files (dired-get-marked-files t current-prefix-arg)))
