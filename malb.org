@@ -11111,80 +11111,90 @@ Transparent encryption and decryption.
 
 ** LLM
 
-A toggle shell for https://github.com/antimatter15/alpaca.cpp
-
-#+begin_src emacs-lisp
-(defvar malb/llm-input-ring (make-ring 1024))
-
-(defun malb/llm-send-multiline ()
-  (interactive)
-  (comint-send-input)
-  (comint-send-string "*llama*" "\n\\\n"))
-
-(defun malb/toggle-llm-chat (&optional arg)
-  (interactive "P")
-  (let* ((buffer-name "*llama*")
-         (window (get-buffer-window buffer-name))
-         (script-name (if arg
-                          (read-file-name "Model: " "/home/malb/.local/bin/" "" t nil
-                                          (lambda (name) (s-starts-with-p
-                                                          "llm-"
-                                                          (file-name-nondirectory name))))
-                        malb/llm-default))
-         (buffer (get-buffer-create buffer-name))
-         (proc-alive (comint-check-proc buffer))
-         (process (get-buffer-process buffer)))
-    (if window
-        (progn
-          (select-window window)
-          (delete-window))
-      (progn
-        (unless proc-alive
-          (with-current-buffer buffer
-            (apply 'make-comint-in-buffer "llama" buffer
-                   script-name nil '())
-            (setq-local comint-prompt-regexp (rx bol ">")
-                        comint-use-prompt-regexp nil
-                        comint-process-echoes t
-                        comint-preoutput-filter-functions (list #'ansi-color-apply)
-                        comint-input-ring malb/llm-input-ring)
-            (use-local-map (copy-keymap comint-mode-map))
-            (local-set-key (kbd "C-<return>") #'malb/llm-send-multiline)
-            (visual-line-mode)
-            (malb/company-prose-setup)))
-        (pop-to-buffer buffer-name)))))
-
-(malb/register-right-side-window (rx bos "*llama*" eos) t)
-#+end_src
-
-*** Ellama
-
 #+begin_src emacs-lisp
 (use-package ellama
   :config (progn
-            (setopt ellama-language "German")
             (require 'llm-ollama)
 
-            (defun malb/ellama-generate-name-by-time (_provider _action _prompt)
+            (defun malb/ellama-static-name (_provider _action _prompt)
               "Generate name for ellama session by current time."
-              (concat "ellama-session-" (ellama-get-current-time)))
+              "ellama-session")
 
-            (setopt ellama-provider (make-llm-ollama
+            (setopt ellama-language "German"
+                    ellama-provider (make-llm-ollama
 		                             :chat-model malb/ollama-default
                                      :embedding-model malb/ollama-default)
                     ellama-long-lines-length 1000000
                     ellama-fill-paragraphs nil
-                    ellama-naming-scheme #'malb/ellama-generate-name-by-time)
+                    ellama-enable-keymap nil
+                    ellama-naming-scheme #'malb/ellama-static-name)
 
-            (defun ellama-rewrite-email ()
-              "Turn into polite e-mail"
+            (defun malb/translate-llm ()
+              "Translate selected region or sentence at point and replace."
               (interactive)
-              (ellama-change "rewrite as a polite well written e-mail"))
+              (let* ((text (if (region-active-p)
+                               (buffer-substring-no-properties (region-beginning) (region-end))
+                             (thing-at-point 'sentence)))
+                     (from-language (with-temp-buffer
+                                      (insert text)
+                                      (nth 2 (assq
+                                              (guess-language-buffer)
+                                              guess-language-langcodes))))
+                     (to-language (if (s-equals-p from-language ellama-language)
+                                      "English"
+                                    ellama-language))
+                     ;; TODO does this work?
+                     (ellama-provider (make-llm-ollama
+		                               :chat-model malb/ollama-translate-default
+                                       :embedding-model malb/ollama-translate-default)))
+                ;; TODO add inline variant
+                (ellama-instant
+                 (format ellama-translate-region-prompt-template to-language text))))
 
-            (defun ellama-expand-notes ()
-              "Expand notes"
-              (interactive)
-              (ellama-change "expand the notes into well written paragraphs"))
+            (defmacro malb/llm-do-task (cmd task &rest args)
+              `(defun ,(intern (concat "malb/" cmd "-llm")) nil
+                 ,(plist-get args :docstring)
+                 (interactive)
+                 (let ((ollama-service (prodigy-find-service "ollama")))
+                   (when (not (prodigy-service-started-p ollama-service))
+                     (prodigy-start-service ollama-service)
+                     (sit-for 2)))
+                 (if ,(plist-get args :change)
+                     (ellama-change (apply 'concat ,task))
+                   (let ((text (if (region-active-p)
+		                           (buffer-substring-no-properties (region-beginning) (region-end))
+		                         (buffer-substring-no-properties (point-min) (point-max)))))
+                     (ellama-instant
+                      (format (concat (apply 'concat ,task) "\n" "%s")
+                              text))))))
+
+            (malb/llm-do-task "summarize"
+                              '("Act as a writer. "
+                                "Summarize the following text in a few sentences highlighting the key takeaways. "
+                                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
+                              :docstring "Summarize selected region or current buffer."
+                              :change nil)
+
+            (malb/llm-do-task "explain"
+                              '("Act as a writer. "
+                                "Explain the following text in simple and concise terms keeping the same meaning. "
+                                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
+                              :docstring "Explain selected region or current buffer."
+                              :change nil)
+
+            (malb/llm-do-task "caption"
+                              '("Create a single headline for the following text that summarizes what the reader can expect. "
+                                "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point."
+                                "Your output format is ## HEADLINE.")
+                              :docstring "Caption selected region or current buffer."
+                              :change nil)
+
+            (malb/llm-do-task "formalize-email"
+                              '("Rewrite the text in a business e-mail style while keeping the same meaning. "
+                                "Don't be overly formal. "
+                                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
+                              :docstring "Rewrite e-mail more formally."
+                              :change t)
 
             (defun malb/toggle-ollama-chat (&optional arg)
               (interactive "P")
