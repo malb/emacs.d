@@ -11163,46 +11163,51 @@ Transparent encryption and decryption.
               `(defun ,(intern (concat "malb/" cmd "-llm")) nil
                  ,(plist-get args :docstring)
                  (interactive)
-                 (let ((ollama-service (prodigy-find-service "ollama")))
+                 (let* ((beg (if (region-active-p) (region-beginning) (point-min)))
+                        (end (if (region-active-p) (region-end) (point-max)))
+                        (text (buffer-substring-no-properties beg end))
+                        (ollama-service (prodigy-find-service "ollama"))
+                        (task-descr (format (concat (apply 'concat ,task) "\n" "%s") text)))
+
                    (when (not (prodigy-service-started-p ollama-service))
                      (prodigy-start-service ollama-service)
-                     (sit-for 2)))
-                 (if ,(plist-get args :change)
-                     (ellama-change (apply 'concat ,task))
-                   (let ((text (if (region-active-p)
-		                           (buffer-substring-no-properties (region-beginning) (region-end))
-		                         (buffer-substring-no-properties (point-min) (point-max)))))
-                     (ellama-instant
-                      (format (concat (apply 'concat ,task) "\n" "%s")
-                              text))))))
+                     (sit-for 2))
 
-            (malb/llm-do-task "summarize"
-                              '("Act as a writer. "
-                                "Summarize the following text in a few sentences highlighting the key takeaways. "
-                                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
-                              :docstring "Summarize selected region or current buffer."
-                              :change nil)
+                   (cond (,(equal (plist-get args :mode) 'change)
+                          (progn
+                            (kill-region beg end)
+                            (ellama-stream task-descr :point beg)))
+                         (t
+                          (ellama-instant task-descr))))))
 
-            (malb/llm-do-task "explain"
-                              '("Act as a writer. "
-                                "Explain the following text in simple and concise terms keeping the same meaning. "
-                                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
-                              :docstring "Explain selected region or current buffer."
-                              :change nil)
+            (malb/llm-do-task
+             "summarize"
+             '("Act as a writer. "
+               "Summarize the following text in a few sentences highlighting the key takeaways. "
+               "Output only the text and nothing else, do not chat, no preamble, get to the point.")
+             :docstring "Summarize selected region or current buffer.")
 
-            (malb/llm-do-task "caption"
-                              '("Create a single headline for the following text that summarizes what the reader can expect. "
-                                "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point."
-                                "Your output format is ## HEADLINE.")
-                              :docstring "Caption selected region or current buffer."
-                              :change nil)
+            (malb/llm-do-task
+             "explain"
+             '("Act as a writer. "
+               "Explain the following text in simple and concise terms keeping the same meaning. "
+               "Output only the text and nothing else, do not chat, no preamble, get to the point.")
+             :docstring "Explain selected region or current buffer.")
 
-            (malb/llm-do-task "formalize-email"
-                              '("Rewrite the text in a business e-mail style while keeping the same meaning. "
-                                "Don't be overly formal. "
-                                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
-                              :docstring "Rewrite e-mail more formally."
-                              :change t)
+            (malb/llm-do-task
+             "caption"
+             '("Create a single headline for the following text that summarizes what the reader can expect. "
+               "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point."
+               "Your output format is ## HEADLINE.")
+             :docstring "Caption selected region or current buffer.")
+
+            (malb/llm-do-task
+             "formalize-email"
+             '("Rewrite the text in a business e-mail style while keeping the same meaning. "
+               "Don't be overly formal. "
+               "Output only the text and nothing else, do not chat, no preamble, get to the point.")
+             :docstring "Rewrite e-mail more formally."
+             :mode 'change)
 
             (defun malb/toggle-ollama-chat (&optional arg)
               (interactive "P")
