@@ -11173,10 +11173,16 @@ Transparent encryption and decryption.
                      (prodigy-start-service ollama-service)
                      (sit-for 2))
 
-                   (cond (,(equal (plist-get args :mode) 'change)
+                   (cond ((equal ,(plist-get args :mode) 'change)
                           (progn
                             (kill-region beg end)
                             (ellama-stream task-descr :point beg)))
+                         ((equal ,(plist-get args :mode) 'append)
+                          (progn
+                            (goto-char end)
+                            (insert "\n\n-----\n\n")
+                            (sit-for 1)
+                            (ellama-stream task-descr :point (+ end 9))))
                          (t
                           (ellama-instant task-descr))))))
 
@@ -11197,8 +11203,7 @@ Transparent encryption and decryption.
             (malb/llm-do-task
              "caption"
              '("Create a single headline for the following text that summarizes what the reader can expect. "
-               "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point."
-               "Your output format is ## HEADLINE.")
+               "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point.")
              :docstring "Caption selected region or current buffer.")
 
             (malb/llm-do-task
