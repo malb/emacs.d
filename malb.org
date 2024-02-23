@@ -11109,7 +11109,15 @@ Transparent encryption and decryption.
   :config (setq alert-default-style 'libnotify))
 #+end_src
 
-** LLM
+** Upcase, Downcase, Capitalise
+
+#+begin_src emacs-lisp
+(bind-key "M-l" #'downcase-dwim)
+(bind-key "M-c" #'capitalize-dwim)
+(bind-key "M-u" #'upcase-dwim)
+#+end_src
+
+* LLM
 
 #+begin_src emacs-lisp
 (use-package ellama
@@ -11223,14 +11231,6 @@ Transparent encryption and decryption.
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)
             (malb/register-right-side-window (rx bos "ellama-session") t)))
-#+end_src
-
-** Upcase, Downcase, Capitalise
-
-#+begin_src emacs-lisp
-(bind-key "M-l" #'downcase-dwim)
-(bind-key "M-c" #'capitalize-dwim)
-(bind-key "M-u" #'upcase-dwim)
 #+end_src
 
 * File Types
