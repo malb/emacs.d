@@ -7954,10 +7954,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
         (:maildir "/sandbox/Inbox"    :key ?S)
         (:maildir "/kcl/INBOX"    :key ?K)
         (:maildir "/gmail/[Google Mail]/Drafts"    :key ?d)
-        ;; (:maildir "/gmail/[Google Mail]/Sent Mail" :key ?s)
-        ;; (:maildir "/gmail/[Google Mail]/Spam"      :key ?j)
-        ;; (:maildir "/gmail/[Google Mail]/Bin"       :key ?t)
-        ))
+        (:maildir "/gmail/research/ec24artifacts" :key ?a)
+))
 #+end_src
 
 ** Retrieving
@@ -8095,7 +8093,6 @@ Canned queries.
 #+end_src
 
 #+begin_src emacs-lisp
-(add-to-list 'mu4e-bookmarks `(:query "(contact:eurocrypt2024programchairs@iacr.org)"  :name "EUROCRYPT'24" :key ?E) t)
 (add-to-list 'mu4e-bookmarks `(:query "(contact:eurocrypt2024artifacts@iacr.org)"  :name "EUROCRYPT'24 Artifacts" :key ?A) t)
 #+end_src
 
