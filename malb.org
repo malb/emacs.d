@@ -8960,6 +8960,8 @@ Various shortcuts to jump to/create headers.
 (bind-key "C-c g b" #'message-goto-bcc mu4e-compose-mode-map)
 (bind-key "C-c g f" #'message-goto-from mu4e-compose-mode-map)
 (bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
+(bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
+(bind-key "C-c z" #'malb/fixup-email mu4e-compose-mode-map)
 #+end_src
 
 Don’t ask me to remove the backup file, I do want to remove the backup file, too.
@@ -11230,15 +11232,13 @@ Transparent encryption and decryption.
 
             (malb/llm-do-task
              "summarize"
-             '("Act as a writer. "
-               "Summarize the following text in a few sentences highlighting the key takeaways. "
+             '("Summarize the following text in a few sentences highlighting the key takeaways. "
                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
              :docstring "Summarize selected region or current buffer.")
 
             (malb/llm-do-task
              "explain"
-             '("Act as a writer. "
-               "Explain the following text in simple and concise terms keeping the same meaning. "
+             '("Explain the following text in simple and concise terms keeping the same meaning. "
                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
              :docstring "Explain selected region or current buffer.")
 
