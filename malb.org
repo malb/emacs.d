@@ -6759,11 +6759,11 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]]) for offlin
 
 #+begin_src emacs-lisp
 (use-package langtool
-  :bind (("C-c w l c" . langtool-check)
-         ("C-c w l d" . langtool-check-done)
-         ("C-c w l l" . langtool-switch-default-language)
-         ("C-c w l m" . langtool-show-message-at-point)
-         ("C-c w l C" . langtool-correct-buffer))
+  :bind (("C-c w L c" . langtool-check)
+         ("C-c w L d" . langtool-check-done)
+         ("C-c w L l" . langtool-switch-default-language)
+         ("C-c w L m" . langtool-show-message-at-point)
+         ("C-c w L C" . langtool-correct-buffer))
   :config (progn
             (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
                                                                (concat user-emacs-directory "langtool"))
