@@ -5706,7 +5706,7 @@ Auto-format source code in many languages with one command – [[https://github.
               (interactive "p")
               (if (eobp)
                   ;; kill client and kernel
-                  (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
+                  (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
                     (kill-buffer))
                 (delete-char arg)))
 
@@ -8628,7 +8628,7 @@ Attachments are mostly handled using the helm baloo interface, but sometimes we 
       "Attack the file visited by the current buffer to an e-mail."
       (interactive)
       (if (buffer-file-name)
-          (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
+          (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
             (gnus-dired-attach (list (buffer-file-name))))
         (error "Buffer is not visiting a file")))))
 #+end_src
@@ -8660,7 +8660,7 @@ Automate standard “form filling“ workflow
         ;; 1. save
         (mm-save-part-to-file (cdr part) path)
         ;; 4. attach
-        (cl-letf (((symbol-function 'y-or-n-p) (lambda (prompt) t)))
+        (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
           (gnus-dired-attach (list path)))
         ;; 2. edit
         (helm-open-file-with-default-tool path))))
@@ -9008,7 +9008,7 @@ message from the wrong account"
                       (mu4e~draft-from-construct)))
     (let ((context (mu4e-context-determine nil nil)))
       (cond ((and context
-                  (y-or-n-p
+                  (yes-or-no-p
                    (format
                     "Attempt to send via mismatching context. Switch to [%s] and send? "
                     (mu4e-context-name context))))
