@@ -8973,6 +8973,37 @@ Don’t ask me to remove the backup file, I do want to remove the backup file, t
 (advice-add #'yes-or-no-p :around #'malb/yes-no-skip-remove-backup)
 #+end_src
 
+#+begin_src emacs-lisp
+(defun malb/fixup-email (&optional formalize)
+  (interactive "P")
+  (save-excursion
+    (let ((beg (save-excursion
+                 (message-goto-body)
+                 (when (or (looking-at-p (rx bol "Hi"))
+                           (looking-at-p (rx bol "Dear")))
+                   (forward-line))
+                 (insert "\n")
+                 (point)))
+          (end (save-excursion
+                 (message-goto-body)
+                 (while (not (or (looking-at-p (rx bol "On .* wrote:" eol))
+                                 (looking-at-p (rx bol "Cheers," eol))
+                                 (looking-at-p (rx bol "Best," eol))
+                                 (looking-at-p (rx bol "Martin" eol))
+                                 (looking-at-p message-signature-separator)))
+                   (forward-line))
+                 (forward-line -1)
+                 (point))))
+      (push-mark beg)
+      (goto-char end)
+      (insert "\n")
+      (goto-char end)
+      (setq mark-active t)
+      (if formalize
+          (malb/formalize-email-llm)
+        (malb/fix-grammar-llm)))))
+#+end_src
+
 ** Context Switching
 
 Update "From:" and signature on context switch.
@@ -11128,12 +11159,18 @@ Transparent encryption and decryption.
                     ellama-enable-keymap nil
                     ellama-naming-scheme #'malb/ellama-static-name)
 
-            (defun malb/translate-llm ()
+            (defun malb/translate-llm (&optional change)
               "Translate selected region or sentence at point and replace."
-              (interactive)
-              (let* ((text (if (region-active-p)
-                               (buffer-substring-no-properties (region-beginning) (region-end))
-                             (thing-at-point 'sentence)))
+              (interactive "P")
+              (let* ((beg (if (region-active-p) (region-beginning) (beginning-of-thing 'sentence)))
+                     (end (if (region-active-p) (region-end) (end-of-thing 'sentence)))
+                     (filter (lambda (text) (concat
+                                             (string-trim
+                                              (replace-regexp-in-string
+                                               (rx bol "Sure, here is the translated text in" (one-or-more any) ":" eol)
+                                               "" text))
+                                             "\n")))
+                     (text (buffer-substring-no-properties beg end))
                      (from-language (with-temp-buffer
                                       (insert text)
                                       (nth 2 (assq
@@ -11142,13 +11179,26 @@ Transparent encryption and decryption.
                      (to-language (if (s-equals-p from-language ellama-language)
                                       "English"
                                     ellama-language))
-                     ;; TODO does this work?
+                     (task-descr (format (concat "Translate the following text to %s. "
+                                                 "Output only the text and nothing else, do not chat, no preamble:\n%s")
+                                         to-language text))
+                     (ollama-service (prodigy-find-service "ollama"))
                      (ellama-provider (make-llm-ollama
 		                               :chat-model malb/ollama-translate-default
                                        :embedding-model malb/ollama-translate-default)))
-                ;; TODO add inline variant
-                (ellama-instant
-                 (format ellama-translate-region-prompt-template to-language text))))
+
+                (when (not (prodigy-service-started-p ollama-service))
+                  (prodigy-start-service ollama-service)
+                  (sit-for 2))
+
+                (if change
+                    (progn
+                      (progn
+                        (kill-region beg end)
+                        (ellama-stream task-descr :point beg :filter filter)))
+                  (ellama-instant task-descr))))
+
+            (bind-key "C-c w l" #'malb/translate-llm)
 
             (defmacro malb/llm-do-task (cmd task &rest args)
               `(defun ,(intern (concat "malb/" cmd "-llm")) nil
@@ -11156,6 +11206,7 @@ Transparent encryption and decryption.
                  (interactive)
                  (let* ((beg (if (region-active-p) (region-beginning) (point-min)))
                         (end (if (region-active-p) (region-end) (point-max)))
+                        (filter (lambda (text) (string-trim text)))
                         (text (buffer-substring-no-properties beg end))
                         (ollama-service (prodigy-find-service "ollama"))
                         (task-descr (format (concat (apply 'concat ,task) "\n" "%s") text)))
@@ -11167,13 +11218,13 @@ Transparent encryption and decryption.
                    (cond ((equal ,(plist-get args :mode) 'change)
                           (progn
                             (kill-region beg end)
-                            (ellama-stream task-descr :point beg)))
+                            (ellama-stream task-descr :point beg :filter filter)))
                          ((equal ,(plist-get args :mode) 'append)
                           (progn
                             (goto-char end)
                             (insert "\n\n-----\n\n")
                             (sit-for 1)
-                            (ellama-stream task-descr :point (+ end 9))))
+                            (ellama-stream task-descr :point (+ end 9) :filter filter)))
                          (t
                           (ellama-instant task-descr))))))
 
@@ -11204,6 +11255,19 @@ Transparent encryption and decryption.
                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
              :docstring "Rewrite e-mail more formally."
              :mode 'change)
+
+            (malb/llm-do-task
+             "fix-grammar"
+             '("Change the following text, improve grammar and spelling while keeping the same meaning, "
+               "just output the final text without additional quotes around it:")
+             :docstring "Fix grammar and spelling."
+             :mode 'change)
+
+            (malb/llm-do-task
+             "decline"
+             '("Politely decline the following invitation. "
+               "Output only the text and nothing else, do not chat, no preamble, get to the point. ")
+             :docstring "Decline an invitiation.")
 
             (defun malb/toggle-ollama-chat (&optional arg)
               (interactive "P")
