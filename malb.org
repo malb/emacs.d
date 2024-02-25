@@ -11462,21 +11462,46 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
                   doom-modeline-minor-modes nil)
 
             (doom-modeline-def-modeline 'main
-              '(bar workspace-name window-number modals
-                    matches buffer-info remote-host
-                    buffer-position word-count parrot selection-info
-                    conda-env)
-              '(objed-state misc-info persp-name battery grip irc mu4e
-                            gnus github debug lsp minor-modes input-method
-                            indent-info buffer-encoding major-mode process vcs checker))
+              '(eldoc
+                bar
+                workspace-name
+                window-number
+                modals
+                matches
+                follow
+                buffer-info
+                remote-host
+                buffer-position
+                word-count
+                parrot
+                selection-info
+                conda-env)
+              '(compilation
+                objed-state
+                misc-info
+                grip
+                github
+                debug
+                repl
+                lsp
+                minor-modes
+                input-method
+                indent-info
+                buffer-encoding
+                major-mode
+                process
+                vcs
+                check
+                time))
 
             (doom-modeline-def-modeline 'pdf
-              '(bar workspace-name window-number matches buffer-info pdf-pages)
-              '(misc-info major-mode process vcs))
+              '(bar workspace-name window-number modals matches buffer-info pdf-pages)
+              '(compilation misc-info major-mode process vcs time))
+
 
             (doom-modeline-def-modeline 'project
-              '(bar workspace-name window-number modals buffer-default-directory)
-              '(misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process))
+              '(bar workspace-name window-number modals buffer-default-directory remote-host buffer-position)
+              '(compilation misc-info github debug minor-modes input-method major-mode process time))
 
             (if (bound-and-true-p imenu-list-mode-line-format)
                 (setq imenu-list-mode-line-format
