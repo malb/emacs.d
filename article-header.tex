@@ -46,7 +46,8 @@
         basicstyle=\tt\scriptsize\relax,
         inputencoding=utf8,
         literate={…}{{\ldots}}1,
-        belowskip=0.0em,}
+        belowskip=0.0em,
+}
 
 
 \IfFontExistsTF{Cousine}{
@@ -58,13 +59,8 @@
 
 \usepackage{unicode-math}
 
-\IfFontExistsTF{TeX Gyre Pagella}{
-\setmainfont{TeX Gyre Pagella}
-}{}
-
-\IfFontExistsTF{TeX Gyre Pagella Math}{
-\setmathfont{TeX Gyre Pagella Math}
-}{}
+\IfFontExistsTF{TeX Gyre Pagella}{\setmainfont{TeX Gyre Pagella}}{}
+\IfFontExistsTF{TeX Gyre Pagella Math}{\setmathfont{TeX Gyre Pagella Math}}{}
 
 \linespread{1.04}
 
