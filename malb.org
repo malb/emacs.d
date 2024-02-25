@@ -9114,48 +9114,6 @@ Kill the mu4e frame.
 (bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map)
 #+end_src
 
-We patch mu4e to be way less clever about window management after sending an e-mail. That is, we drop all code for handling deleting the frame or the window when a compose buffer is killed. Instead, we mark the compose buffer as special so that when it is killed, its window and frame are deleted, too.
-
-#+begin_src diff :tangle no
-@@ -591,12 +591,6 @@ are optional."
-     ;; don't allow undoing anything before this.
-     (setq buffer-undo-list nil)
-
--    (when mu4e-compose-in-new-frame
--      ;; make sure to close the frame when we're done with the message these are
--      ;; all buffer-local;
--      (push 'delete-frame message-exit-actions)
--      (push 'delete-frame message-postpone-actions))
--
-     ;; buffer is not user-modified yet
-     (set-buffer-modified-p nil)
-     (mu4e-display-buffer draft-buffer t)))
-@@ -662,7 +656,6 @@ appropriate flag at the message forwarded or replied-to."
-       (and (buffer-file-name buf)
-            (string= (buffer-file-name buf) path)
-            (kill-buffer buf))))
--  (mu4e~switch-back-to-mu4e-buffer)
-   (mu4e-message "Message sent"))
-
- (defun mu4e-message-kill-buffer ()
-@@ -672,14 +665,7 @@ It restores mu4e window layout after killing the compose-buffer."
-   (let ((current-buffer (current-buffer))
-         (win (selected-window)))
-     (message-kill-buffer)
--    (when (window-live-p win)
--      (delete-window win))
--    ;; Compose buffer killed
--    (when (not (equal current-buffer (current-buffer)))
--      ;; Restore mu4e
--      (if mu4e-compose-in-new-frame
--          (delete-frame)
--        (mu4e~switch-back-to-mu4e-buffer)))))
-+    ))
-
- (defun mu4e~compose-set-parent-flag (path)
-   "Set flags for replied-to and forwarded for the message at PATH.
-#+end_src
-
 We dispatch to our own display function in =malb/frame-dispatch=.
 
 #+begin_src emacs-lisp
