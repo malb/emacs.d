@@ -164,17 +164,10 @@
 \metroset{titleformat=smallcaps}
 
 \setbeamercolor{description item}{fg=mLightBrown}
-% \setbeamerfont{alerted text}{series=\bfseries}
 \setbeamerfont{footnote}{size=\scriptsize}
 \setbeamercolor{example text}{fg=mDarkBrown}
 \setbeamercolor{block title alerted}{fg=white, bg=mDarkBrown}
-\setbeamertemplate{bibliography item}[text]
-% https://tex.stackexchange.com/questions/683533/beamer-theme-metropolis-does-not-allow-different-font-size-for-fullcite
-\setbeamerfont{bibliography entry title}{size=}
-\setbeamerfont{bibliography entry author}{size=}
-\setbeamerfont{bibliography entry location}{size=}
-\setbeamerfont{bibliography entry note}{size=}
-
+\setbeamerfont{alerted text}{series=\ifmmode\boldmath\else\bfseries\fi}
 
 \renewcommand*{\UrlFont}{\ttfamily\relax}
 
@@ -202,6 +195,13 @@
             citestyle=alphabetic]{biblatex}
 
 \bibliography{local.bib,abbrev3.bib,crypto_crossref.bib,rfc.bib,jacm.bib,dcc.bib}
+
+\setbeamertemplate{bibliography item}[text]
+% https://tex.stackexchange.com/questions/683533/beamer-theme-metropolis-does-not-allow-different-font-size-for-fullcite
+\setbeamerfont{bibliography entry title}{size=}
+\setbeamerfont{bibliography entry author}{size=}
+\setbeamerfont{bibliography entry location}{size=}
+\setbeamerfont{bibliography entry note}{size=}
 
 \DeclareFieldFormat{title}{\alert{#1}}
 \DeclareFieldFormat[book]{title}{\alert{#1}}
