@@ -821,8 +821,8 @@ Main frame dispatch function:
           (select-frame-set-input-focus other-frame)
         (progn
           (select-frame (make-frame '((malb/special-frame . t))))
-          (set-frame-name "*mu4e*") ;; we use this in our window management)))
-    nil)
+          (set-frame-name "*mu4e*") ;; we use this in our window management
+    nil))))
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
    ((and (string-match "mu4e" (frame-parameter nil 'name))
