@@ -7912,9 +7912,9 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  message-kill-buffer-on-exit t
                  mu4e-hide-index-messages t
                  mu4e-auto-retrieve-keys t
-                 mu4e-compose-dont-reply-to-self t
+                 message-dont-reply-to-names #'mu4e-personal-or-alternative-address-p
                  mu4e-completing-read-function 'completing-read
-                 mu4e-compose-in-new-frame t
+                 mu4e-compose-switch 'frame
                  mu4e-split-view 'vertical
                  mu4e-headers-visible-columns 134
                  mu4e-headers-visible-lines 16
@@ -9016,8 +9016,9 @@ Update "From:" and signature on context switch.
 (defun malb/mu4e-compose-context-switch (&rest _ignore)
   "When switching context in a compose buffer, switch “from” and signature."
   (when (eq major-mode 'mu4e-compose-mode)
-    (message-replace-header "From" (mu4e~draft-from-construct))
-    (setq-local message-signature mu4e-compose-signature)
+    (message-replace-header "From" (mu4e-contact-full (mu4e-contact-make
+                                                       user-full-name
+                                                       user-mail-address)))
     (setq malb/message-sig-cycle 0)
     (malb/message-remove-signature)
     (save-excursion (message-insert-signature))))
@@ -9038,7 +9039,9 @@ This is to avoid making mistakes in trying to send the current
 message from the wrong account"
   ;; this may be a too strict check
   (when (not (string= (message-fetch-field "from")
-                      (mu4e~draft-from-construct)))
+                      (mu4e-contact-full (mu4e-contact-make
+                                          user-full-name
+                                          user-mail-address))))
     (let ((context (mu4e-context-determine nil nil)))
       (cond ((and context
                   (yes-or-no-p
