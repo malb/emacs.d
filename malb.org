@@ -808,11 +808,6 @@ Main frame dispatch function:
 (defun malb/frame-dispatch (buffer alist)
   "Assigning buffers to frames."
   (cond
-   ;; a mu4e compose buffer
-   ((eq (buffer-local-value 'major-mode buffer) 'mu4e-compose-mode)
-    (malb/display-mu4e-draft-buffer buffer alist)
-    nil)
-
    ((eq (buffer-local-value 'major-mode (current-buffer)) 'mu4e-compose-mode)
     (malb/switch-away-from-special-and-tab (string-match-p ".*helm.*" (buffer-name buffer)))
     nil)
@@ -826,8 +821,7 @@ Main frame dispatch function:
           (select-frame-set-input-focus other-frame)
         (progn
           (select-frame (make-frame '((malb/special-frame . t))))
-          (set-frame-name "*mu4e*") ;; we use this in our window management
-          (mu4e))))
+          (set-frame-name "*mu4e*") ;; we use this in our window management)))
     nil)
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
@@ -9120,12 +9114,21 @@ Kill the mu4e frame.
 We dispatch to our own display function in =malb/frame-dispatch=.
 
 #+begin_src emacs-lisp
-(defun malb/display-mu4e-draft-buffer (buffer alist)
-  (display-buffer-pop-up-frame buffer
-                               '((window-parameters . ((no-other-window . t)))
-                                 (dedicated . t)
-                                 (pop-up-frame-parameters . ((width . 82)
-                                                             (malb/special-frame . t))))))
+;; (defun malb/display-mu4e-draft-buffer (buffer alist)
+;;   (display-buffer-pop-up-frame buffer
+;;                                '((window-parameters . ((no-other-window . t)))
+;;                                  (dedicated . t)
+;;                                  (pop-up-frame-parameters . ((width . 82)
+;;                                                              (malb/special-frame . t))))))
+
+(malb/defadvice! malb/mu4e--compose-setup (orig-fn compose-type compose-func &optional switch)
+  :around #'mu4e--compose-setup
+  (apply orig-fn compose-type compose-func switch)
+  (set-frame-width nil 82)
+  (set-frame-parameter nil 'malb/special-frame t)
+  (dedicated-mode t)
+  (set-window-parameter nil 'no-other-window t)
+)
 #+end_src
 
 Update buffer treatment:
