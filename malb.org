@@ -8936,7 +8936,7 @@ Don’t add an empty line after “On bla” line but add one before.
 
 (malb/defadvice! malb/message-insert-formatted-citation-line (fn &rest args)
   :around 'message-insert-formatted-citation-line
-  (insert "\n")
+  (insert "\n\n")
   (insert (with-temp-buffer
             (apply fn args)
             (goto-char (- (point-max) 1))
