@@ -726,13 +726,6 @@ Separate “special” frames from others ([[https://stackoverflow.com/questions
        (< (length (seq-filter 'malb/frame-is-not-special-p (frame-list))) 2)))
 #+end_src
 
-We allow helm buffers in the mu4e frame, e.g. to pick attachments.
-
-#+begin_src emacs-lisp
-(defvar malb/mu4e-buffer-allowed-regexps (append malb/popup-windows '("\\`\\*helm.*\\*\\'"))
-  "Buffer names allowed in mu4e frame.")
-#+end_src
-
 Get frame by name or return passed frame.
 
 #+begin_src emacs-lisp
@@ -789,44 +782,26 @@ Find a frame not named qualified as “special” if there is any, make one othe
 Main frame dispatch function:
 
 #+begin_src emacs-lisp
-(defun malb/switch-to-mu4e ()
-  (let ((other-frame (malb/mu4e-frame)))
-    (if other-frame
-        (select-frame-set-input-focus other-frame)
-      (progn
-        (select-frame (make-frame '((malb/special-frame . t))))
-        (set-frame-name "*mu4e*") ;; we use this in our window management
-        (mu4e)))))
-
-(defun malb/switch-to-mu4e-advice (old-function &rest arguments)
-  (malb/switch-to-mu4e)
-  (apply old-function arguments))
-
-;; TODO: It is not clear why this is needed
-(advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
-
 (defun malb/frame-dispatch (buffer alist)
   "Assigning buffers to frames."
   (cond
+   ;; a mu4e compose buffer
+   ((eq (buffer-local-value 'major-mode buffer) 'mu4e-compose-mode)
+    (malb/display-mu4e-draft-buffer buffer alist)
+    nil)
+
    ((eq (buffer-local-value 'major-mode (current-buffer)) 'mu4e-compose-mode)
     (malb/switch-away-from-special-and-tab (string-match-p ".*helm.*" (buffer-name buffer)))
     nil)
 
    ;; an mu4e buffer
-   ((or (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer))
-        (memq (buffer-local-value 'major-mode buffer)
-              '(mu4e-view-mode mu4e-raw-view-mode mu4e-headers-mode)))
-    (let ((other-frame (malb/mu4e-frame)))
-      (if other-frame
-          (select-frame-set-input-focus other-frame)
-        (progn
-          (select-frame (make-frame '((malb/special-frame . t))))
-          (set-frame-name "*mu4e*") ;; we use this in our window management
-    nil))))
+   ((or (malb/mu4e-buffer-p buffer nil))
+    (malb/switch-to-mu4e)
+    nil)
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
-   ((and (string-match "mu4e" (frame-parameter nil 'name))
-         (not (string-match-p "\\`\\*mu4e-.*\\*" (buffer-name buffer)))
+   ((and (string-match "*mu4e*" (frame-parameter nil 'name))
+         (not (malb/mu4e-buffer-p buffer nil))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
     (malb/switch-away-from-special-and-tab (string-match-p ".*helm.*" (buffer-name buffer)))
     nil)
@@ -9055,6 +9030,67 @@ message from the wrong account"
 
 ** Window Management
 
+We patch some hardcoded behaviour out of Mu4e:
+
+#+begin_src diff
+diff --git a/mu4e/mu4e-compose.el b/mu4e/mu4e-compose.el
+index 082665a0..2830f9c9 100644
+--- a/mu4e/mu4e-compose.el
++++ b/mu4e/mu4e-compose.el
+@@ -776,13 +776,13 @@ Optionally, SWITCH determines how to find a buffer for the message
+     (mu4e--context-autoswitch parent mu4e-compose-context-policy)
+     (with-current-buffer
+         (mu4e--compose-setup-buffer compose-type compose-func parent)
+-      (funcall (or switch (mu4e--compose-switch-function)) (current-buffer))
++      ;; (funcall (or switch (mu4e--compose-switch-function)) (current-buffer))
+       (unless (eq compose-type 'edit)
+         (set-visited-file-name ;; make it a draft file
+          (mu4e--draft-message-path (mu4e--message-basename) parent)))
+       (mu4e--compose-setup-post compose-type parent)
+       (setq buf (current-buffer))
+-      (switch-to-buffer buf)
++      (display-buffer buf)
+       (let* ((msgframe (selected-frame))
+              (actions (list
+                        (lambda () ;; kill frame when it was created for this
+#+end_src
+
+We allow helm buffers in the mu4e frame, e.g. to pick attachments.
+
+#+begin_src emacs-lisp
+(defvar malb/mu4e-buffer-allowed-regexps (append malb/popup-windows '("\\`\\*helm.*\\*\\'"))
+  "Buffer names allowed in mu4e frame.")
+#+end_src
+
+#+begin_src emacs-lisp
+(defun malb/switch-to-mu4e ()
+  (let ((other-frame (malb/mu4e-frame)))
+    (if other-frame
+        (select-frame-set-input-focus other-frame)
+      (progn
+        (select-frame (make-frame '((malb/special-frame . t))))
+        (set-frame-name "*mu4e*")))))
+
+(defun malb/switch-to-mu4e-advice (old-function &rest arguments)
+  (malb/switch-to-mu4e)
+  (apply old-function arguments))
+
+;; TODO: It is not clear why this is needed
+(advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
+#+end_src
+
+#+begin_src emacs-lisp
+(defun malb/mu4e-buffer-p(buffer &optional compose-too)
+  "Return t if BUFFER is a mu4e buffer."
+  (let ((major-mode (buffer-local-value 'major-mode buffer)))
+    (or (memq major-mode
+              '(mu4e-main-mode
+                mu4e-headers-mode
+                mu4e-view-mode
+                mu4e-raw-view-mode))
+        (and compose-too (eq major-mode 'mu4e-compose-mode)))))
+#+end_src
+
 Find a frame which is the mu4e frame or create a fresh one.
 
 #+begin_src emacs-lisp
@@ -9087,21 +9123,12 @@ Kill the mu4e frame.
 We dispatch to our own display function in =malb/frame-dispatch=.
 
 #+begin_src emacs-lisp
-;; (defun malb/display-mu4e-draft-buffer (buffer alist)
-;;   (display-buffer-pop-up-frame buffer
-;;                                '((window-parameters . ((no-other-window . t)))
-;;                                  (dedicated . t)
-;;                                  (pop-up-frame-parameters . ((width . 82)
-;;                                                              (malb/special-frame . t))))))
-
-(malb/defadvice! malb/mu4e--compose-setup (orig-fn compose-type compose-func &optional switch)
-  :around #'mu4e--compose-setup
-  (apply orig-fn compose-type compose-func switch)
-  (set-frame-width nil 82)
-  (set-frame-parameter nil 'malb/special-frame t)
-  (dedicated-mode t)
-  (set-window-parameter nil 'no-other-window t)
-)
+(defun malb/display-mu4e-draft-buffer (buffer alist)
+  (display-buffer-pop-up-frame buffer
+                               '((window-parameters . ((no-other-window . t)))
+                                 (dedicated . t)
+                                 (pop-up-frame-parameters . ((width . 82)
+                                                             (malb/special-frame . t))))))
 #+end_src
 
 Update buffer treatment:
