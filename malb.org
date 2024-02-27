@@ -785,17 +785,19 @@ Main frame dispatch function:
 (defun malb/frame-dispatch (buffer alist)
   "Assigning buffers to frames."
   (cond
-   ;; a mu4e compose buffer
+   ;; target a mu4e compose buffer
    ((eq (buffer-local-value 'major-mode buffer) 'mu4e-compose-mode)
     (malb/display-mu4e-draft-buffer buffer alist)
     nil)
 
+   ;; we are in a compose buffer
    ((eq (buffer-local-value 'major-mode (current-buffer)) 'mu4e-compose-mode)
     (malb/switch-away-from-special-and-tab (string-match-p ".*helm.*" (buffer-name buffer)))
     nil)
 
    ;; an mu4e buffer
    ((or (malb/mu4e-buffer-p buffer nil))
+    (message "%s -> MU4E" buffer)
     (malb/switch-to-mu4e)
     nil)
 
@@ -806,7 +808,8 @@ Main frame dispatch function:
     (malb/switch-away-from-special-and-tab (string-match-p ".*helm.*" (buffer-name buffer)))
     nil)
 
-   (t nil)))
+   (t
+    nil)))
 #+end_src
 
 #+begin_src emacs-lisp
