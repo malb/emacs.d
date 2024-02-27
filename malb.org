@@ -7112,9 +7112,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
 
-            (setq TeX-view-program-selection '(((output-dvi style-pstricks) "dvips and gv")
-                                               (output-dvi "Okular")
-                                               (output-pdf "PDF Tools")
+            (setq TeX-view-program-selection '((output-pdf "PDF Tools")
                                                (output-html "xdg-open")))
 
             (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
