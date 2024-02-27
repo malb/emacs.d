@@ -7234,6 +7234,14 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (setq-default TeX-master 'dwim
                           TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
 
+            (add-to-list 'TeX-command-list
+                         '("HTLaTeX"
+                           "htlatex %s \"xhtml,html5,mathml,charset=utf-8\" \" -cunihtf -utf8\""
+                           TeX-run-TeX nil
+                           (LaTeX-mode docTeX-mode)
+                           :help "Run HTLaTeX")
+                         t)
+
             (defun malb/expand-region-setup ()
               "Setup LaTeX expansions."
               (set (make-local-variable 'er/try-expand-list)
