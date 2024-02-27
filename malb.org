@@ -257,7 +257,7 @@ https://github.com/emacs-helm/helm/issues/1976
 Ilist, dired-sidebar, reftex-toc etc.
 
 #+begin_src emacs-lisp
-(defconst malb/side-window-width 40)
+(defconst malb/left-side-window-width 40)
 #+end_src
 
 One side-window per direction.
@@ -295,14 +295,15 @@ Don’t split horizontally.
       split-height-threshold nil)
 
 (defun malb/split-window-sensibly (&optional window)
-  (let ((window (or window (selected-window))))
+  (let ((side-window-width (max malb/left-side-window-width malb/right-side-window-width))
+        (window (or window (selected-window))))
     ;; DIFF: prefer horizontal split
     (or (and (window-splittable-p window t)
              ;; DIFF: restrict to two windows or two windows + side-window
              ;; (or  (= (length (window-list)) 1)
              ;;      (and (= (length (window-list)) 2)
              ;;           (seq-filter (lambda (x) (<= (window-width x) 40)) (window-list))))
-             (= (length (seq-filter (lambda (x) (> (window-width x) malb/side-window-width)) (window-list))) 1)
+             (= (length (seq-filter (lambda (x) (> (window-width x) side-window-width)) (window-list))) 1)
              ;; Split window horizontally.
              (with-selected-window window
                (split-window-right)))
@@ -360,7 +361,7 @@ it will restore the window configuration to prior to full-framing."
               (interactive)
               (if (and (= (length (seq-filter
                                    (lambda (x)
-                                     (> (window-width x) malb/side-window-width))
+                                     (> (window-width x) malb/left-side-window-width))
                                    (window-list)))
                           1)
                        (equal (selected-window) zygospore-last-full-frame-window)
@@ -566,7 +567,7 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
 ;; (setq display-buffer-alist nil)
 
 (defvar malb/popup-window-height 0.381966011250145)
-(defvar malb/right-side-window-width 80)
+(defconst malb/right-side-window-width 80)
 
 (defun malb/window-has-popup-height-p (window)
   (and window
@@ -9893,7 +9894,7 @@ Show dired histories you have visited.
                  (setq dired-sidebar-theme 'icons
                        dired-sidebar-should-follow-file t
                        dired-sidebar-use-term-integration t
-                       dired-sidebar-width malb/side-window-width
+                       dired-sidebar-width malb/left-side-window-width
                        dired-sidebar-display-alist '((side . left)
                                                      (slot . -1)
                                                      (window-parameters
