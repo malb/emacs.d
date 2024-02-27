@@ -7100,6 +7100,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   reftex-toc-split-windows-fraction 0.15
                   reftex-toc-split-windows-horizontally t
                   font-latex-fontify-sectioning 1.0)
+            (setq-default TeX-engine 'luatex)
 
             ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
             (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
