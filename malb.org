@@ -11281,6 +11281,14 @@ Transparent encryption and decryption.
                "Output only the text and nothing else, do not chat, no preamble, get to the point. ")
              :docstring "Decline an invitiation.")
 
+            (malb/llm-do-task
+             "expand-bullet-points"
+             '("Turn the following bullet points into an informative and clear text. Expand but keep the same meaning. "
+               "Write several paragraphs if appropriate. "
+               "Output only the text and nothing else, do not chat, no preamble, get to the point. ")
+             :docstring "Expand bullet points into prose."
+             :mode 'append)
+
             (defun malb/toggle-ollama-chat (&optional arg)
               (interactive "P")
               (let* ((buffer-name "*ollama*")
