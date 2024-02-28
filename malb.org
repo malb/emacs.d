@@ -7982,7 +7982,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                                       "maildir:\"/gmail/royal holloway/sent\""
                                                       "maildir:\"/kcl/Sent Items\""))
                                         ")"))
-                  ("%direct" . "%inbox AND NOT flag:list")
+                  ("%direct" . "%inbox AND NOT flag:list  AND (to:martinralbrecht@* OR to:martin.albrecht@*)")
                   ("%doc"    . ,(concat "mime:application/* "
                                         "AND NOT (mime:application/pgp* or mime:application/ics) "
                                         "AND size:5k.. "
