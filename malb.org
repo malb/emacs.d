@@ -6704,31 +6704,15 @@ Automatically pick dictionary.
 Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]]) for offline grammar checking.
 
 #+begin_src emacs-lisp
-(use-package langtool
-  :bind (("C-c w L c" . langtool-check)
-         ("C-c w L d" . langtool-check-done)
-         ("C-c w L l" . langtool-switch-default-language)
-         ("C-c w L m" . langtool-show-message-at-point)
-         ("C-c w L C" . langtool-correct-buffer))
-  :config (progn
-            (setq langtool-language-tool-jar (expand-file-name "languagetool-commandline.jar"
-                                                               (concat user-emacs-directory "langtool"))
-                  langtool-default-language "en-GB"
-                  langtool-disabled-rules '("WHITESPACE_RULE"
-                                            "EN_QUOTES"
-                                            "DASH_RULE"
-                                            "OXFORD_SPELLING_ISE_VERBS"
-                                            "OXFORD_SPELLING_NOUNS"))))
-#+end_src
-
-To use:
-
-1. enable flycheck =flycheck-mode=
-2. enable flycheck-languagetool =flycheck-select-checker=
-
-#+begin_src emacs-lisp
 (use-package flycheck-languagetool
-  :ensure nil)
+  :ensure t
+  :hook (text-mode . flycheck-languagetool-setup)
+  :init (setq flycheck-languagetool-server-jar
+              (expand-file-name "languagetool-server.jar"
+                                (concat user-emacs-directory "LanguageTool-6.3"))
+              flycheck-languagetool-language "en-GB"
+              flycheck-languagetool-active-modes
+              '(text-mode LaTeX-mode org-mode markdown-mode message-mode mu4e-compose-mode)))
 #+end_src
 
 *** Synonyms
