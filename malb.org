@@ -9069,7 +9069,7 @@ We patch some hardcoded behaviour out of Mu4e:
 
 #+begin_src diff
 diff --git a/mu4e/mu4e-compose.el b/mu4e/mu4e-compose.el
-index 082665a0..2830f9c9 100644
+index 082665a0..3d53507f 100644
 --- a/mu4e/mu4e-compose.el
 +++ b/mu4e/mu4e-compose.el
 @@ -776,13 +776,13 @@ Optionally, SWITCH determines how to find a buffer for the message
@@ -9088,6 +9088,19 @@ index 082665a0..2830f9c9 100644
        (let* ((msgframe (selected-frame))
               (actions (list
                         (lambda () ;; kill frame when it was created for this
+@@ -886,7 +886,10 @@ must be from current user, as determined through
+     (mu4e--compose-setup
+      'edit
+      (lambda (parent)
+-       (find-file (plist-get parent :path))
++       (let ((buf (find-file-noselect (plist-get parent :path))))
++         (with-current-buffer buf
++           (mu4e-compose-mode)
++           (display-buffer buf)))
+        (mu4e--delimit-headers)))))
+
+ ;;;###autoload
+
 #+end_src
 
 We allow helm buffers in the mu4e frame, e.g. to pick attachments.
