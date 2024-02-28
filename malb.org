@@ -5877,7 +5877,7 @@ and move to the source code that caused it."
 #+begin_src emacs-lisp
 (use-package go-ts-mode
   :mode "\\.go$"
-  :ensure-system-package gopls
+  :ensure-system-package (gopls . gopls)
   :hook ((go-ts-mode . eldoc-mode)
          (go-ts-mode . malb/lsp-enable)
          (go-ts-mode . display-line-numbers-mode))
@@ -7835,6 +7835,7 @@ A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s
 (use-package aws-polly
   :after emms
   :commands aws-polly-region
+  :ensure-system-package (aws . awscli)
   :ensure nil)
 #+end_src
 
@@ -9835,7 +9836,7 @@ Show dired histories you have visited.
 
 #+begin_src emacs-lisp
 (use-package fd-dired
-  :ensure-system-package fdfind
+  :ensure-system-package (fdfind . fd-find)
   :config  (setq fd-dired-program "fdfind"
                  fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
 #+end_src
