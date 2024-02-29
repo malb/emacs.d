@@ -798,7 +798,6 @@ Main frame dispatch function:
 
    ;; an mu4e buffer
    ((or (malb/mu4e-buffer-p buffer nil))
-    (message "%s -> MU4E" buffer)
     (malb/switch-to-mu4e)
     nil)
 
