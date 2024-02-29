@@ -8621,23 +8621,23 @@ Automate standard “form filling“ workflow
   (interactive)
   ;; 3. reply
   (mu4e-compose-reply)
-  (sleep-for 0.25)
 
-  (dolist (part (mu4e--view-gather-mime-parts))
-    ;; spreadsheets and word documents
-    (let* ((mimetypes '("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
-           (mimetype (caar (cddr part)))
-           (filename (cdr (assoc 'filename (assoc "attachment" (cdr part)))))
-           (path (concat "/tmp/" filename)))
-      (when (member mimetype mimetypes)
-        ;; 1. save
-        (mm-save-part-to-file (cdr part) path)
-        ;; 4. attach
-        (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
-          (gnus-dired-attach (list path)))
-        ;; 2. edit
-        (helm-open-file-with-default-tool path))))
+  (with-current-buffer (malb/mu4e-latest-compose-buffer)
+    (dolist (part (mu4e--view-gather-mime-parts))
+      ;; spreadsheets and word documents
+      (let* ((mimetypes '("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+             (mimetype (caar (cddr part)))
+             (filename (cdr (assoc 'filename (assoc "attachment" (cdr part)))))
+             (path (concat "/tmp/" filename)))
+        (when (member mimetype mimetypes)
+          ;; 1. save
+          (mm-save-part-to-file (cdr part) path)
+          ;; 4. attach
+          (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
+            (gnus-dired-attach (list path)))
+          ;; 2. edit
+          (helm-open-file-with-default-tool path)))))
 
   ;; gnus-dired-attach moves point, annoyingly
   (dolist (buf (gnus-dired-mail-buffers))
