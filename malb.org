@@ -8602,7 +8602,8 @@ Attachments are mostly handled using the helm baloo interface, but sometimes we 
       (interactive)
       (if (buffer-file-name)
           (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
-            (gnus-dired-attach (list (buffer-file-name))))
+            (save-mark-and-excursion
+              (gnus-dired-attach (list (buffer-file-name)))))
         (error "Buffer is not visiting a file")))))
 #+end_src
 
