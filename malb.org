@@ -9279,27 +9279,28 @@ Martin
 
             (when (and (> (length to) 0) (string-match-p "@" to))
 
-              (compose-mail to subject nil nil nil nil nil nil)
+              (mu4e-compose-new to subject)
+              (with-current-buffer  (car (gnus-dired-mail-buffers))
 
-              (message-goto-body)
-              (insert body)
+                (message-goto-body)
+                (insert body)
 
-              (when (and cc (> (length cc) 0))
-                (message-goto-cc)
-                (insert cc))
+                (when (and cc (> (length cc) 0))
+                  (message-goto-cc)
+                  (insert cc))
 
-              (when (and bcc (> (length bcc) 0))
-                (message-goto-bcc)
-                (insert bcc))
+                (when (and bcc (> (length bcc) 0))
+                  (message-goto-bcc)
+                  (insert bcc))
 
-              ;; move point back to the top
-              (message-goto-to)
+                ;; move point back to the top
+                (message-goto-to)
 
-              ;; we assume all e-mails should be sent from the same context
-              (setq context-set-p t)
+                ;; we assume all e-mails should be sent from the same context
+                (setq context-set-p t)
 
-              (when just-send
-                (message-send-and-exit))))))))
+                (when just-send
+                  (message-send-and-exit)))))))))
 
   (let ((display-buffer-alist nil))
     (when (and (nth 2 (org-heading-components)) just-send)
