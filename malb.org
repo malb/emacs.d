@@ -8569,10 +8569,13 @@ Attachments are mostly handled using the helm baloo interface, but sometimes we 
   :after mu4e
   :config
   (progn
-    ;; make the `gnus-dired-mail-buffers' function also work on
-    ;; message-mode derived modes, such as mu4e-compose-mode
-    (defun gnus-dired-mail-buffers ()
+    (malb/defadvice! malb/gnus-dired-mail-buffers ()
       "Return a list of active message buffers."
+      :override #'gnus-dired-mail-buffers
+
+      ;; make the `gnus-dired-mail-buffers' function also work on
+      ;; message-mode derived modes, such as mu4e-compose-mode
+
       (let (buffers)
         (save-current-buffer
           (dolist (buffer (buffer-list t))
