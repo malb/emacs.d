@@ -6711,7 +6711,7 @@ Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]]) for offlin
                                 (concat user-emacs-directory "LanguageTool-6.3"))
               flycheck-languagetool-language "en-GB"
               flycheck-languagetool-active-modes
-              '(text-mode LaTeX-mode org-mode markdown-mode message-mode mu4e-compose-mode)))
+              '(LaTeX-mode org-mode markdown-mode mu4e-compose-mode)))
 #+end_src
 
 *** Synonyms
