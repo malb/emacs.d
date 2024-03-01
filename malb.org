@@ -8178,22 +8178,33 @@ Extract a pretty-ish list of contacts from an e-mail.
         point-end-of-line
         (case-fold-search t)
         (search-regexp (mapconcat (lambda (arg) (concat "^" arg ": *"))
-                                  fields "\\|")))
+                                  fields "\\|"))
+        (end (save-excursion
+               (search-forward
+               (or (search-forward
+                    "-------------------- Start of forwarded message --------------------"
+                    nil t)
+                   (point-max))
+               (point))))
 
     ;; extract addresses
     (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward search-regexp nil t)
-        (save-excursion
-          (setq point-end-of-line (re-search-forward "$")))
-        (setq addresses (append addresses
-                                (mail-header-parse-addresses
-                                 (buffer-substring-no-properties (point) point-end-of-line))))))
-    (setq addresses (mapcar (lambda (address)
-                              (format "\"%s\" <%s>"
-                                      (malb/canonicalise-contact-name (car address) (cdr address))
-                                      (car address)))
-                            addresses))))
+      (save-restriction
+        (goto-char (point-min))
+        (narrow-to-region (point-min) end)
+        (while (re-search-forward search-regexp nil t)
+          (save-excursion
+            (setq point-end-of-line (re-search-forward "$")))
+          (setq addresses (append addresses
+                                  (mail-header-parse-addresses
+                                   (buffer-substring-no-properties (point) point-end-of-line)))))
+        ))
+    (setq addresses
+          (mapcar (lambda (address)
+                    (format "\"%s\" <%s>"
+                            (malb/canonicalise-contact-name (car address) (cdr address))
+                            (car address)))
+                  addresses))))
 #+end_src
 
 The following is useful in e-mail templates
@@ -8206,22 +8217,30 @@ The following is useful in e-mail templates
         (search-regexp (mapconcat (lambda (arg)
                                     (concat "^" arg ": "))
                                   fields "\\|"))
-        (case-fold-search t))
+        (case-fold-search t)
+        (end (save-excursion
+               (or (search-forward
+                    "-------------------- Start of forwarded message --------------------"
+                    nil t)
+                   (point-max))
+               (point))))
     (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward search-regexp nil t)
-        (save-excursion
-          (setq point-end-of-line (re-search-forward "$")))
-        (setq contacts (append contacts
-                               (mail-header-parse-addresses
-                                (buffer-substring-no-properties (point)
-                                                                point-end-of-line)))))
-      (dolist (contact contacts)
-        (let ((name (malb/canonicalise-contact-name (car contact) (cdr contact) t)))
-          ;; extract first name
-          (when (string-match "\\([^ ,]+\\)" name)
-            (push (match-string 1 name) ret))))
-      (if ret (string-join (nreverse ret) ", ") ret "there"))))
+      (save-restriction
+        (goto-char (point-min))
+        (narrow-to-region (point-min) end)
+
+        (while (re-search-forward search-regexp nil t)
+          (save-excursion (setq point-end-of-line (re-search-forward "$")))
+          (setq contacts (append contacts
+                                 (mail-header-parse-addresses
+                                  (buffer-substring-no-properties (point)
+                                                                  point-end-of-line)))))
+        (dolist (contact contacts)
+          (let ((name (malb/canonicalise-contact-name (car contact) (cdr contact) t)))
+            ;; extract first name
+            (when (string-match "\\([^ ,]+\\)" name)
+              (push (match-string 1 name) ret))))
+        (if ret (string-join (nreverse ret) ", ") ret "there")))))
 #+end_src
 
 A shortcut:
