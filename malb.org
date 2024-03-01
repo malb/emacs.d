@@ -7882,8 +7882,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
         (:maildir "/sandbox/Inbox"    :key ?S)
         (:maildir "/kcl/INBOX"    :key ?K)
         (:maildir "/gmail/[Google Mail]/Drafts"    :key ?d)
-        (:maildir "/gmail/research/ec24artifacts" :key ?a)
-))
+        (:maildir "/gmail/research/ec24artifacts" :key ?a)))
 #+end_src
 
 ** Retrieving
