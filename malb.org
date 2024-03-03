@@ -8637,30 +8637,26 @@ Automate standard “form filling“ workflow
 #+begin_src emacs-lisp
 (defun malb/mu4e-form-turnaround (&optional msg)
   (interactive)
-  ;; 3. reply
-  (mu4e-compose-reply)
-
-  (with-current-buffer (malb/mu4e-latest-compose-buffer)
-    (dolist (part (mu4e--view-gather-mime-parts))
-      ;; spreadsheets and word documents
-      (let* ((mimetypes '("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
-             (mimetype (caar (cddr part)))
-             (filename (cdr (assoc 'filename (assoc "attachment" (cdr part)))))
+  ;; spreadsheets and word documents
+  (let ((mimetypes '("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                     "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+        files)
+    ;; 1. save
+    (dolist (part (mu4e-view-mime-parts))
+      (let* ((filename (plist-get part :filename))
              (path (concat "/tmp/" filename)))
-        (when (member mimetype mimetypes)
-          ;; 1. save
-          (mm-save-part-to-file (cdr part) path)
-          ;; 4. attach
-          (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
-            (gnus-dired-attach (list path)))
-          ;; 2. edit
-          (helm-open-file-with-default-tool path)))))
-
-  ;; gnus-dired-attach moves point, annoyingly
-  (dolist (buf (gnus-dired-mail-buffers))
-    (with-current-buffer buf
-      (mu4e-compose-goto-top))))
+        (when (member (plist-get part :mime-type) mimetypes)
+          (mm-save-part-to-file (plist-get part :handle) path)
+          (add-to-list 'files path))))
+    ;; 3. reply
+    (with-current-buffer (mu4e-compose-reply)
+      (dolist (file files)
+        ;; 4. attach
+        (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t))
+                  ((symbol-function 'y-or-n-p) (lambda (prompt) t)))
+          (gnus-dired-attach (list file)))
+        ;; 2. edit
+        (helm-open-file-with-default-tool file)))))
 #+end_src
 
 *** Save all
@@ -9291,10 +9287,7 @@ Martin
                  (bcc (if (assoc "BCC" entry) (cdr (assoc "BCC" entry)) bcc)))
 
             (when (and (> (length to) 0) (string-match-p "@" to))
-
-              (mu4e-compose-new to subject)
-              (with-current-buffer (malb/mu4e-latest-compose-buffer)
-
+              (with-current-buffer (mu4e-compose-new to subject)
                 (message-goto-body)
                 (insert body)
 
