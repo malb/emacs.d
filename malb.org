@@ -8603,16 +8603,6 @@ Attachments are mostly handled using the helm baloo interface, but sometimes we 
               (push (buffer-name buffer) buffers))))
         (nreverse buffers)))
 
-    (defun malb/mu4e-latest-compose-buffer ()
-      (let (buffers)
-        (save-current-buffer
-          (dolist (buffer (buffer-list t))
-            (with-current-buffer buffer
-              (when (and (derived-mode-p 'message-mode)
-                         (null message-sent-message-via))
-                (push (buffer-name buffer) buffers)))))
-        (car (nreverse buffers))))
-
     (setq gnus-dired-mail-mode 'mu4e-user-agent)
 
     (defun malb/attach-current-buffer ()
