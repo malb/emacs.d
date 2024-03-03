@@ -3365,7 +3365,7 @@ UTF-8 everywhere.
       org-export-use-babel t
       org-export-with-toc nil
       org-export-with-timestamps 'active
-      org-latex-pdf-process '("latexmk -g -pdf -pdflatex=\"%latex --shell-escape -halt-on-error\" -outdir=%o %f")
+      org-latex-pdf-process '("latexmk -g -pdf -pdflatex=\"%latex --shell-escape -halt-on-error\" -auxdir=/tmp/ -outdir=%o %f")
       org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))
 #+end_src
 
@@ -7363,6 +7363,7 @@ Run =latexmk -pvc= in async shell
                                        "-shell-escape"
                                        "-interaction=nonstopmode"
                                        "-halt-on-error"
+                                       "-auxdir=/tmp/"
                                        "-f-"
                                        (format "%s.tex"
                                                (file-name-sans-extension main-file-name)))))
