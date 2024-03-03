@@ -8609,7 +8609,8 @@ Attachments are mostly handled using the helm baloo interface, but sometimes we 
       "Attach the file visited by the current buffer to an e-mail."
       (interactive)
       (if (buffer-file-name)
-          (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t)))
+          (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t))
+                    ((symbol-function 'y-or-n-p) (lambda (prompt) t)))
             (save-mark-and-excursion
               (gnus-dired-attach (list (buffer-file-name)))))
         (error "Buffer is not visiting a file")))))
