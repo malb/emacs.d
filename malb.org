@@ -8179,7 +8179,6 @@ Extract a pretty-ish list of contacts from an e-mail.
         (search-regexp (mapconcat (lambda (arg) (concat "^" arg ": *"))
                                   fields "\\|"))
         (end (save-excursion
-               (search-forward
                (or (search-forward
                     "-------------------- Start of forwarded message --------------------"
                     nil t)
