@@ -7852,7 +7852,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-auto-retrieve-keys t
                  message-dont-reply-to-names #'mu4e-personal-or-alternative-address-p
                  mu4e-completing-read-function 'completing-read
-                 mu4e-compose-switch 'frame
+                 mu4e-compose-switch 'display-buffer
                  mu4e-split-view 'vertical
                  mu4e-headers-visible-columns 134
                  mu4e-headers-visible-lines 16
@@ -9085,24 +9085,6 @@ We patch some hardcoded behaviour out of Mu4e:
 #+begin_src diff
 diff --git a/mu4e/mu4e-compose.el b/mu4e/mu4e-compose.el
 index 082665a0..3d53507f 100644
---- a/mu4e/mu4e-compose.el
-+++ b/mu4e/mu4e-compose.el
-@@ -776,13 +776,13 @@ Optionally, SWITCH determines how to find a buffer for the message
-     (mu4e--context-autoswitch parent mu4e-compose-context-policy)
-     (with-current-buffer
-         (mu4e--compose-setup-buffer compose-type compose-func parent)
--      (funcall (or switch (mu4e--compose-switch-function)) (current-buffer))
-+      ;; (funcall (or switch (mu4e--compose-switch-function)) (current-buffer))
-       (unless (eq compose-type 'edit)
-         (set-visited-file-name ;; make it a draft file
-          (mu4e--draft-message-path (mu4e--message-basename) parent)))
-       (mu4e--compose-setup-post compose-type parent)
-       (setq buf (current-buffer))
--      (switch-to-buffer buf)
-+      (display-buffer buf)
-       (let* ((msgframe (selected-frame))
-              (actions (list
-                        (lambda () ;; kill frame when it was created for this
 @@ -886,7 +886,10 @@ must be from current user, as determined through
      (mu4e--compose-setup
       'edit
