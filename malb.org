@@ -8172,21 +8172,26 @@ Some tests, these should all return the same value.
 Extract a pretty-ish list of contacts from an e-mail.
 
 #+begin_src emacs-lisp
+(defun malb/mu4e-end-of-my-message ()
+  (save-excursion
+    (or (search-forward
+         "-------------------- Start of forwarded message --------------------"
+         nil t)
+        (progn (message-goto-signature)
+               (point)))))
+#+end_src
+
+#+begin_src emacs-lisp
 (defun malb/extract-contacts (fields)
   "Return a list of 'name <email>' entries."
-  (let (addresses
+  (let (contacts
         point-end-of-line
         (case-fold-search t)
         (search-regexp (mapconcat (lambda (arg) (concat "^" arg ": *"))
                                   fields "\\|"))
-        (end (save-excursion
-               (or (search-forward
-                    "-------------------- Start of forwarded message --------------------"
-                    nil t)
-                   (point-max))
-               (point))))
+        (end (malb/mu4e-end-of-my-message)))
 
-    ;; extract addresses
+    ;; extract contacts
     (save-excursion
       (save-restriction
         (goto-char (point-min))
@@ -8194,52 +8199,27 @@ Extract a pretty-ish list of contacts from an e-mail.
         (while (re-search-forward search-regexp nil t)
           (save-excursion
             (setq point-end-of-line (re-search-forward "$")))
-          (setq addresses (append addresses
-                                  (mail-header-parse-addresses
-                                   (buffer-substring-no-properties (point) point-end-of-line)))))
-        ))
-    (setq addresses
-          (mapcar (lambda (address)
-                    (format "\"%s\" <%s>"
-                            (malb/canonicalise-contact-name (car address) (cdr address))
-                            (car address)))
-                  addresses))))
+          (add-to-list 'contacts
+                       (mail-header-parse-addresses
+                        (buffer-substring-no-properties (point)
+                                                        point-end-of-line))
+                       t))))
+    (apply #'append contacts)))
 #+end_src
 
 The following is useful in e-mail templates
 
 #+begin_src emacs-lisp
 (defun malb/get-names-from-fields (fields)
-  (let (contacts
+  (let ((contacts (malb/extract-contacts fields))
         ret
-        point-end-of-line
-        (search-regexp (mapconcat (lambda (arg)
-                                    (concat "^" arg ": "))
-                                  fields "\\|"))
-        (case-fold-search t)
-        (end (save-excursion
-               (or (search-forward
-                    "-------------------- Start of forwarded message --------------------"
-                    nil t)
-                   (point-max))
-               (point))))
-    (save-excursion
-      (save-restriction
-        (goto-char (point-min))
-        (narrow-to-region (point-min) end)
-
-        (while (re-search-forward search-regexp nil t)
-          (save-excursion (setq point-end-of-line (re-search-forward "$")))
-          (setq contacts (append contacts
-                                 (mail-header-parse-addresses
-                                  (buffer-substring-no-properties (point)
-                                                                  point-end-of-line)))))
-        (dolist (contact contacts)
-          (let ((name (malb/canonicalise-contact-name (car contact) (cdr contact) t)))
-            ;; extract first name
-            (when (string-match "\\([^ ,]+\\)" name)
-              (push (match-string 1 name) ret))))
-        (if ret (string-join (nreverse ret) ", ") ret "there")))))
+        (case-fold-search t))
+    (dolist (contact contacts)
+      (let ((name (malb/canonicalise-contact-name (car contact) (cdr contact) t)))
+        ;; extract first name
+        (when (string-match "\\([^ ,]+\\)" name)
+          (push (match-string 1 name) ret))))
+    (if ret (string-join (nreverse ret) ", ") ret "there")))
 #+end_src
 
 A shortcut:
@@ -8259,7 +8239,11 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
   "Re-distribute addresses to To: and CC: fields."
   (interactive)
   (let* ((search-regexp "^to: *\\|^cc: *")
-         (addresses (malb/extract-contacts '("to" "cc")))
+         (addresses (mapcar (lambda (address)
+                              (format "\"%s\" <%s>"
+                                      (malb/canonicalise-contact-name (car address) (cdr address))
+                                      (car address)))
+                            (malb/extract-contacts '("to" "cc"))))
          (case-fold-search t)
          to cc)
 
