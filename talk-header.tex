@@ -1,6 +1,6 @@
 \RequirePackage[l2tabu,orthodox]{nag}            %% Warn about obsolete commands and packages
 \RequirePackage{amsmath,amsfonts,amssymb,amsthm} %% Math
-\RequirePackage{ifpdf,ifxetex,ifluatex}                %% Detect XeTeX and LuaTeX
+\RequirePackage{ifpdf,ifxetex,ifluatex}          %% Detect XeTeX and LuaTeX
 \RequirePackage{xspace}
 \RequirePackage{graphicx}
 \RequirePackage{comment}
@@ -128,6 +128,9 @@
         \ifnum\coordindex>#2\def\pgfmathresult{}\fi
     }
 }}
+
+\setlength{\marginparwidth}{2cm}
+\pgfplotsset{compat=1.18}
 
 %%%
 %%% SVG (Inkscape)
