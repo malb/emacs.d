@@ -3467,7 +3467,7 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("color=cyan!0!magenta!4!yellow!16" "todonotes") t)
 
 
-            (setq org-latex-listings 't
+            (setq org-latex-src-block-backend 'listings
                   org-latex-compiler "lualatex"
                   org-latex-prefer-user-labels t
                   org-latex-caption-above nil
