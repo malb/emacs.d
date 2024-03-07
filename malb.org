@@ -7816,10 +7816,10 @@ Spray is a speed reading mode.
 A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s severs so keep privacy implications in mind before using this.
 
 #+begin_src emacs-lisp
-(use-package aws-polly
+(use-package piper
   :after emms
-  :commands aws-polly-region
-  :ensure-system-package (aws . awscli)
+  :commands piper-region
+  :ensure-system-package piper
   :ensure nil)
 #+end_src
 
@@ -11901,7 +11901,7 @@ Easily change the text size:
 #+begin_src emacs-lisp
 (malb/set-menu-key "<f2>" #'malb/hydra-window/body)
 (malb/set-menu-key "A" #'malb/imenu-anywhere)
-(malb/set-menu-key "a" #'aws-polly-region)
+(malb/set-menu-key "a" #'piper-region)
 (malb/set-menu-key "B" #'malb/helm-mu-contacts)
 (malb/set-menu-key "b" #'helm-bookmarks)
 (malb/set-menu-key "C" #'malb/calc-eval-region)
