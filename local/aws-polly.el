@@ -30,7 +30,7 @@
                               ("Mads"     "da-DK") ("Gwyneth"  " cy-GB") ("Jacek"     "pl-PL"))
   "Voices to use in AWS polly in order of preference."
   :group 'aws-polly
-  :type ''(alist :value-type (string string)))
+  :type '(alist :value-type (string string)))
 
 ;; We call the command line client which can be obtained by =pip install awscli=
 
