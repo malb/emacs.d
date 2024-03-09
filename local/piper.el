@@ -105,6 +105,10 @@ Region between BEGINNING and END is converted."
   (let ((tmp text))
     (setq tmp (replace-regexp-in-string "^> \\(.*\\)" "\\1" tmp))
     (setq tmp (replace-regexp-in-string "^- \\(.*\\)" "\\1" tmp))
+    (setq tmp (replace-regexp-in-string "\\mat{\\(.*?\\)}" "\\1" tmp))
+    (setq tmp (replace-regexp-in-string "\\vec{\\(.*?\\)}" "\\1" tmp))
+    (setq tmp (replace-regexp-in-string "\\\\" "" tmp))
+    (setq tmp (replace-regexp-in-string "\\$\\(.*?\\)\\$" "\\1" tmp))
     tmp))
 
 ;;;###autoload
