@@ -8640,39 +8640,24 @@ Save all attachments at once ([[https://github.com/sje30/emacs/blob/master/mu4e-
 
 #+begin_src emacs-lisp
 (defun malb/mu4e-view-save-all-attachments (&optional msg)
-  "Save all MIME parts from current mu4e gnus view buffer."
+  "Save all MIME parts from current mu4e gnus view buffer.
+If MSG is given use that instead."
   (interactive "P")
-  (cl-assert (and (eq major-mode 'mu4e-view-mode)
-                  (derived-mode-p 'gnus-article-mode)))
+  (cl-assert (eq major-mode 'mu4e-view-mode))
   (let* ((msg (or msg (mu4e-message-at-point)))
-         (id (replace-regexp-in-string "[^A-Z0-9]+" "-" (downcase (mu4e-message-field msg :subject))))
-         (attachdir (concat (read-directory-name "Save to directory: ")
-                            "/" id))
-	     (parts (mu4e--view-gather-mime-parts))
-         (handles '())
-         (files '())
-         dir)
-    (mkdir attachdir t)
-    (dolist (part parts)
-      (let ((fname (or
-		            (cdr (assoc 'filename (assoc "attachment" (cdr part))))
-                    (seq-find #'stringp
-                              (mapcar (lambda (item) (cdr (assoc 'name item)))
-                                      (seq-filter 'listp (cdr part)))))))
-        (when fname
-          (push `(,fname . ,(cdr part)) handles)
-          (push fname files))))
-    (if files
-        (progn
-          (setq dir attachdir)
-          (cl-loop for (f . h) in handles
-                   when (member f files)
-                   do (mm-save-part-to-file h
-					                        (malb/next-free
-					                         (expand-file-name f dir)))))
-      (mu4e-message "No attached files found"))))
+         (id (replace-regexp-in-string "[^A-Z0-9]+" "-"
+                                       (downcase (mu4e-message-field msg :subject))))
+         (dir (concat (read-directory-name "Save to directory: ") "/" id)))
+    (mkdir dir t)
+    (dolist (part (mu4e-view-mime-parts))
+      (let ((filename (plist-get part :filename)))
+        (when (and (s-equals-p (plist-get part :disposition) "attachment")
+                   filename)
+          (mm-save-part-to-file (plist-get part :handle)
+		                        (malb/next-free-filename
+                                 (expand-file-name filename dir))))))))
 
-(defun malb/next-free (file)
+(defun malb/next-free-filename (file)
   "Return name of next unique 'free' FILE.
 If /tmp/foo.txt and /tmp/foo-1.txt exist, when this is called
 with /tmp/foo.txt, return /tmp/foo-2.txt. This is not very
@@ -8682,7 +8667,7 @@ from 1 each time until it finds a gap. An alternative might be to
 do a wildcard search for all the filenames, extract the highest
 number and then increment it."
   ;; base case is easy; does file exist already?
-  (if (not  (file-exists-p file))
+  (if (not (file-exists-p file))
       file
     ;; othwerwise need to iterate through f-1.pdf
     ;; f-2.pdf, f-3.pdf ... until we no longer find a file.
@@ -8690,12 +8675,11 @@ number and then increment it."
 	      (suffix (file-name-extension file))
 	      (looking t)
 	      (n 0)
-	      (f)
-	      )
+          f)
       (while looking
-	    (setq n (1+ n))
-	    (setq f (concat prefix "-" (number-to-string n) "." suffix))
-	    (setq looking (file-exists-p f)))
+        (setq n (1+ n))
+        (setq f (concat prefix "-" (number-to-string n) "." suffix))
+        (setq looking (file-exists-p f)))
       f)))
 #+end_src
 
