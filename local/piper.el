@@ -8,6 +8,7 @@
 (require 'emms)
 (require 'guess-language)
 (require 'pandoc-mode-utils)
+(require 'f)
 (require 's)
 
 (defgroup piper nil
@@ -22,7 +23,7 @@ These are tuples of (\"model-path\", \"lang-code\")."
   :group 'piper
   :type '(alist :value-type (string string)))
 
-(defcustom piper-command "echo '${text}' | piper -m ${voice} -f ${output-filename}"
+(defcustom piper-command "cat ${input-filename} | piper -m ${voice} -f ${output-filename}"
   "Command to run Piper."
   :group 'piper
   :type 'string)
@@ -39,7 +40,6 @@ These are tuples of (\"model-path\", \"lang-code\")."
                 (insert text)
                 (replace-regexp-in-string "_" "-" (cadr (assq (guess-language-buffer) guess-language-langcodes)))))
         (voices nil))
-    (message "lang: %s" lang)
     (dolist (entry piper-voices)
       (if (string-prefix-p lang (cadr entry))
           (push (car entry) voices)))
@@ -102,9 +102,10 @@ Region between BEGINNING and END is converted."
 
 (defun piper-text-postprocess (text)
   "Postprocess TEXT before passing it to polly proper."
-  (replace-regexp-in-string
-   "^- \\(.*\\)" "\\1"
-   (replace-regexp-in-string "^> \\(.*\\)" "\\1" text)))
+  (let ((tmp text))
+    (setq tmp (replace-regexp-in-string "^> \\(.*\\)" "\\1" tmp))
+    (setq tmp (replace-regexp-in-string "^- \\(.*\\)" "\\1" tmp))
+    tmp))
 
 ;;;###autoload
 (defun piper-region (arg)
@@ -126,14 +127,16 @@ When ARG is given, allow to select the voice first."
          (files nil)
          (set-voice (if arg (piper-voices-completing-read) nil)))
     (dolist (text texts)
-      (let ((voice (if set-voice set-voice (piper-select-voice text)))
-            (output-filename (make-temp-file "emacs-piper" nil ".wav")))
-        (call-process-shell-command
-         (s-format piper-command 'aget
-                   `(("text" . ,(piper-text-postprocess text))
-                     ("voice" . ,voice)
-                     ("output-filename" . ,output-filename)))
-         nil nil nil)
+      (let* ((voice (if set-voice set-voice (piper-select-voice text)))
+             (temp-filename (make-temp-file "emacs-piper"))
+             (input-filename (concat temp-filename ".txt"))
+             (output-filename (concat temp-filename ".wav"))
+             (cmd (s-format piper-command 'aget
+                            `(("input-filename" . ,input-filename)
+                              ("voice" . ,voice)
+                              ("output-filename" . ,output-filename)))))
+        (f-write-text (piper-text-postprocess text) 'utf-8 input-filename)
+        (call-process-shell-command cmd nil nil nil)
         (add-to-list 'files output-filename t)))
     ;; TODO I'm too lazy to figure out how to prevent emms from keeping th last file in the
     ;; playlist, we just add a short silence to make it unnoticeable
