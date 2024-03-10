@@ -6789,7 +6789,7 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 
 #+begin_src emacs-lisp
 (use-package google-translate
-  :bind ("C-c w t" . google-translate-smooth-translate)
+  :bind ("C-c w T" . google-translate-smooth-translate)
   :init (progn
           (setq google-translate-translation-directions-alist
                 '(("de" . "en") ("en" . "de")))))
@@ -11107,7 +11107,7 @@ Transparent encryption and decryption.
 
             (setopt ellama-language "German"
                     ellama-provider (make-llm-ollama
-		                             :chat-model malb/ollama-default
+                                     :chat-model malb/ollama-default
                                      :embedding-model malb/ollama-default)
                     ellama-long-lines-length 1000000
                     ellama-fill-paragraphs nil
@@ -11117,8 +11117,12 @@ Transparent encryption and decryption.
             (defun malb/translate-llm (&optional change)
               "Translate selected region or sentence at point and replace."
               (interactive "P")
-              (let* ((beg (if (region-active-p) (region-beginning) (beginning-of-thing 'sentence)))
-                     (end (if (region-active-p) (region-end) (end-of-thing 'sentence)))
+              (let* ((beg (if (not (use-region-p))
+                              (save-excursion (backward-paragraph) (+ (point) 1))
+                            (region-beginning)))
+                     (end (if (not (use-region-p))
+                              (save-excursion (forward-paragraph) (- (point) 1))
+                            (region-end)))
                      (filter (lambda (text) (concat
                                              (string-trim
                                               (replace-regexp-in-string
@@ -11139,7 +11143,7 @@ Transparent encryption and decryption.
                                          to-language text))
                      (ollama-service (prodigy-find-service "ollama"))
                      (ellama-provider (make-llm-ollama
-		                               :chat-model malb/ollama-translate-default
+                                       :chat-model malb/ollama-translate-default
                                        :embedding-model malb/ollama-translate-default)))
 
                 (when (not (prodigy-service-started-p ollama-service))
@@ -11155,7 +11159,7 @@ Transparent encryption and decryption.
 
             (bind-key "C-c w f" #'malb/fix-grammar-llm)
             (bind-key "C-c w F" #'malb/formalize-email-llm)
-            (bind-key "C-c w l" #'malb/translate-llm)
+            (bind-key "C-c w t" #'malb/translate-llm)
 
             (defmacro malb/llm-do-task (cmd task &rest args)
               `(defun ,(intern (concat "malb/" cmd "-llm")) nil
