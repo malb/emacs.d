@@ -8714,7 +8714,6 @@ return the filename."
         (insert header)
         (unless (gnus-article-browse-html-parts parts nil)
           (progn ;; fall back to plain
-            (message "here")
             (erase-buffer)
             (insert "<head><meta charset=\"UTF-8\"></head>\n")
             (insert (concat "<pre>" (mu4e-view-message-text msg) "</pre>"))))
