@@ -11153,14 +11153,24 @@ Transparent encryption and decryption.
                         (ellama-stream task-descr :point beg :filter filter)))
                   (ellama-instant task-descr))))
 
+            (bind-key "C-c w f" #'malb/fix-grammar-llm)
+            (bind-key "C-c w F" #'malb/formalize-email-llm)
             (bind-key "C-c w l" #'malb/translate-llm)
 
             (defmacro malb/llm-do-task (cmd task &rest args)
               `(defun ,(intern (concat "malb/" cmd "-llm")) nil
                  ,(plist-get args :docstring)
                  (interactive)
-                 (let* ((beg (if (region-active-p) (region-beginning) (point-min)))
-                        (end (if (region-active-p) (region-end) (point-max)))
+                 (let* ((beg (if (not (use-region-p))
+                                 ,(if (plist-get args :paragraph)
+                                      (save-excursion (backward-paragraph) (+ (point) 1))
+                                    (point-min))
+                               (region-beginning)))
+                        (end (if (not (use-region-p))
+                                 ,(if (plist-get args :paragraph)
+                                      (save-excursion (forward-paragraph) (- (point) 1))
+                                    (point-max))
+                               (region-end)))
                         (filter (lambda (text) (string-trim text)))
                         (text (buffer-substring-no-properties beg end))
                         (ollama-service (prodigy-find-service "ollama"))
@@ -11199,7 +11209,7 @@ Transparent encryption and decryption.
              "caption"
              '("Create a single headline for the following text that summarizes what the reader can expect. "
                "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point.")
-             :docstring "Caption selected region or current buffer.")
+             :docstring "Caption selected region or current paragraph.")
 
             (malb/llm-do-task
              "formalize-email"
@@ -11207,14 +11217,16 @@ Transparent encryption and decryption.
                "Don't be overly formal. "
                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
              :docstring "Rewrite e-mail more formally."
-             :mode 'change)
+             :mode 'change
+             :paragraph t)
 
             (malb/llm-do-task
              "fix-grammar"
              '("Change the following text, improve grammar and spelling while keeping the same meaning, "
                "just output the final text without additional quotes around it:")
              :docstring "Fix grammar and spelling."
-             :mode 'change)
+             :mode 'change
+             :paragraph t)
 
             (malb/llm-do-task
              "decline"
@@ -11228,7 +11240,8 @@ Transparent encryption and decryption.
                "Write several paragraphs if appropriate. "
                "Output only the text and nothing else, do not chat, no preamble, get to the point. ")
              :docstring "Expand bullet points into prose."
-             :mode 'append)
+             :mode 'append
+             :paragraph t)
 
             (defun malb/toggle-ollama-chat (&optional arg)
               (interactive "P")
