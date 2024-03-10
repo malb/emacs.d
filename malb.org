@@ -8684,13 +8684,6 @@ number and then increment it."
 
 ** Actions
 
-Action to view e-mails in external browser.
-
-#+begin_src emacs-lisp
-(add-to-list 'mu4e-view-actions
-             '("browser" . mu4e-action-view-in-browser) t)
-#+end_src
-
 Action to save e-mail to PDF.
 
 #+begin_src emacs-lisp
