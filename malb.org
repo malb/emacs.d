@@ -541,7 +541,6 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                                  (rx (seq bos "*ielm*" eos))
                                  (rx (seq bos "*Synonyms List*" eos))
                                  (rx (seq bos "*anaconda-doc*" eos))
-                                 (rx (seq bos "*Google Translate*" eos))
                                  (rx (seq bos "*LanguageTool Errors*" eos))
                                  (rx (seq bos "*Edit footnote " (zero-or-more nonl) "*" eos))
                                  (rx (seq bos "*TeX errors" "*" eos))
@@ -6789,21 +6788,22 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
 
 #+begin_src emacs-lisp
 (use-package google-translate
-  :bind ("C-c w T" . google-translate-smooth-translate)
+  :bind ("C-c w t g" . google-translate-smooth-translate)
   :init (progn
           (setq google-translate-translation-directions-alist
-                '(("de" . "en") ("en" . "de")))))
+                '(("de" . "en") ("en" . "de")))
+          (malb/register-right-side-window (rx (seq bos "*Google Translate*" eos)))))
 #+end_src
 
 [[https://www.reverso.net/][Reverso]] offers translation, grammar checks, synonyms and context
 
 #+begin_src emacs-lisp
 (use-package reverso
-  :bind (("C-c w r" . reverso))
+  :bind (("C-c w t r" . reverso))
   :hook ((reverso-result-mode . visual-line-mode))
-  ;; :straight (:host github :repo "SqrtMinusOne/reverso.el")
-  :ensure nil
-  :config (setq reverso-languages '(english german)))
+  :config (progn
+            (setq reverso-languages '(english german))
+            (malb/register-right-side-window (rx (seq bos "*Reverso*" eos)))))
 #+end_src
 
 ** Taking Notes (Deft)
@@ -11157,9 +11157,9 @@ Transparent encryption and decryption.
                         (ellama-stream task-descr :point beg :filter filter)))
                   (ellama-instant task-descr))))
 
-            (bind-key "C-c w f" #'malb/fix-grammar-llm)
-            (bind-key "C-c w F" #'malb/formalize-email-llm)
-            (bind-key "C-c w t" #'malb/translate-llm)
+            (bind-key "C-c w f"   #'malb/fix-grammar-llm)
+            (bind-key "C-c w F"   #'malb/formalize-email-llm)
+            (bind-key "C-c w t t" #'malb/translate-llm)
 
             (defmacro malb/llm-do-task (cmd task &rest args)
               `(defun ,(intern (concat "malb/" cmd "-llm")) nil
