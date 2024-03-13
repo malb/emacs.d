@@ -11173,6 +11173,9 @@ Transparent encryption and decryption.
 
             (bind-key "C-c w f"   #'malb/fix-grammar-llm)
             (bind-key "C-c w F"   #'malb/formalize-email-llm)
+            (bind-key "C-c w c"   #'malb/caption-llm)
+            (bind-key "C-c w ?"   #'malb/explain-llm)
+            (bind-key "C-c w !"   #'malb/summarize-llm)
             (bind-key "C-c w t t" #'malb/translate-llm)
 
             (defmacro malb/llm-do-task (cmd task &rest args)
@@ -11180,14 +11183,22 @@ Transparent encryption and decryption.
                  ,(plist-get args :docstring)
                  (interactive)
                  (let* ((beg (if (not (use-region-p))
-                                 ,(if (plist-get args :paragraph)
-                                      (save-excursion (backward-paragraph) (+ (point) 1))
-                                    (point-min))
+                                 (cond (,(plist-get args :paragraph)
+                                        (save-excursion (backward-paragraph) (+ (point) 1)))
+                                       ((and ,(plist-get args :section) (eq major-mode 'org-mode))
+                                        (save-restriction (org-narrow-to-subtree) (point-min)))
+                                       ((and ,(plist-get args :section) (eq major-mode 'markdown-mode))
+                                        (save-restriction (markdown-narrow-to-subtree) (point-min)))
+                                       (t (point-min)))
                                (region-beginning)))
                         (end (if (not (use-region-p))
-                                 ,(if (plist-get args :paragraph)
-                                      (save-excursion (forward-paragraph) (- (point) 1))
-                                    (point-max))
+                                 (cond (,(plist-get args :paragraph)
+                                        (save-excursion (forward-paragraph) (- (point) 1)))
+                                       ((and ,(plist-get args :section) (eq major-mode 'org-mode))
+                                        (save-restriction (org-narrow-to-subtree) (point-max)))
+                                       ((and ,(plist-get args :section) (eq major-mode 'markdown-mode))
+                                        (save-restriction (markdown-narrow-to-subtree) (point-max)))
+                                       (t (point-max)))
                                (region-end)))
                         (filter (lambda (text) (string-trim text)))
                         (text (buffer-substring-no-properties beg end))
@@ -11227,7 +11238,8 @@ Transparent encryption and decryption.
              "caption"
              '("Create a single headline for the following text that summarizes what the reader can expect. "
                "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point.")
-             :docstring "Caption selected region or current paragraph.")
+             :docstring "Caption selected region or current paragraph."
+             :section t)
 
             (malb/llm-do-task
              "formalize-email"
