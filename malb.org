@@ -1794,7 +1794,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
             (add-to-list 'helm-commands-using-frame 'helm-org-ql-agenda-files)))
 #+end_src
 
-** Helm & Google
+** Helm DuckDuckGo
 
 [[./local/helm-ddgr.el][helm-ddgr]] for doing [[https://github.com/jarun/ddgr][ddgr]] based DuckDuckGo searches.
 
