@@ -11184,24 +11184,26 @@ Transparent encryption and decryption.
               `(defun ,(intern (concat "malb/" cmd "-llm")) nil
                  ,(plist-get args :docstring)
                  (interactive)
-                 (let* ((beg (if (not (use-region-p))
-                                 (cond (,(plist-get args :paragraph)
-                                        (save-excursion (backward-paragraph) (+ (point) 1)))
-                                       ((and ,(plist-get args :section) (eq major-mode 'org-mode))
-                                        (save-restriction (org-narrow-to-subtree) (point-min)))
-                                       ((and ,(plist-get args :section) (eq major-mode 'markdown-mode))
-                                        (save-restriction (markdown-narrow-to-subtree) (point-min)))
-                                       (t (point-min)))
-                               (region-beginning)))
-                        (end (if (not (use-region-p))
-                                 (cond (,(plist-get args :paragraph)
-                                        (save-excursion (forward-paragraph) (- (point) 1)))
-                                       ((and ,(plist-get args :section) (eq major-mode 'org-mode))
-                                        (save-restriction (org-narrow-to-subtree) (point-max)))
-                                       ((and ,(plist-get args :section) (eq major-mode 'markdown-mode))
-                                        (save-restriction (markdown-narrow-to-subtree) (point-max)))
-                                       (t (point-max)))
-                               (region-end)))
+                 (let* ((beg (cond ((use-region-p) (region-beginning))
+                                   ((eq ,(plist-get args :scope) 'paragraph)
+                                    (save-excursion (backward-paragraph) (+ (point) 1)))
+                                   ((eq ,(plist-get args :scope) 'section)
+                                    (cond ((eq major-mode 'org-mode)
+                                           (save-restriction (org-narrow-to-subtree) (point-min)))
+                                          ((eq major-mode 'markdown-mode)
+                                           (save-restriction (markdown-narrow-to-subtree) (point-min)))
+                                          (t (save-excursion (backward-paragraph) (+ (point) 1)))))
+                                   (t (point-min))))
+                        (end (cond ((use-region-p) (region-end))
+                                   ((eq ,(plist-get args :scope) 'paragraph)
+                                    (save-excursion (forward-paragraph) (- (point) 1)))
+                                   ((eq ,(plist-get args :scope) 'section)
+                                    (cond ((eq major-mode 'org-mode)
+                                           (save-restriction (org-narrow-to-subtree) (point-max)))
+                                          ((eq major-mode 'markdown-mode)
+                                           (save-restriction (markdown-narrow-to-subtree) (point-max)))
+                                          (t (save-excursion (forward-paragraph) (- (point) 1)))))
+                                   (t (point-max))))
                         (filter (lambda (text) (string-trim text)))
                         (text (buffer-substring-no-properties beg end))
                         (ollama-service (prodigy-find-service "ollama"))
@@ -11240,8 +11242,8 @@ Transparent encryption and decryption.
              "caption"
              '("Create a single headline for the following text that summarizes what the reader can expect. "
                "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point.")
-             :docstring "Caption selected region or current paragraph."
-             :section t)
+             :docstring "Caption selected region or current section."
+             :scope 'section)
 
             (malb/llm-do-task
              "formalize-email"
@@ -11250,7 +11252,7 @@ Transparent encryption and decryption.
                "Output only the text and nothing else, do not chat, no preamble, get to the point.")
              :docstring "Rewrite e-mail more formally."
              :mode 'change
-             :paragraph t)
+             :scope 'paragraph)
 
             (malb/llm-do-task
              "fix-grammar"
@@ -11258,13 +11260,14 @@ Transparent encryption and decryption.
                "just output the final text without additional quotes around it:")
              :docstring "Fix grammar and spelling."
              :mode 'change
-             :paragraph t)
+             :scope 'paragraph)
 
             (malb/llm-do-task
              "decline"
-             '("Politely decline the following invitation. "
-               "Output only the text and nothing else, do not chat, no preamble, get to the point. ")
-             :docstring "Decline an invitiation.")
+             '("You are a helpful assistant. "
+               "Your job is to write email responses in a professional tone either declining the initial invitation."
+               "Original email: ")
+             :docstring "Decline an invitation.")
 
             (malb/llm-do-task
              "expand-bullet-points"
@@ -11273,7 +11276,7 @@ Transparent encryption and decryption.
                "Output only the text and nothing else, do not chat, no preamble, get to the point. ")
              :docstring "Expand bullet points into prose."
              :mode 'append
-             :paragraph t)
+             :scope 'paragraph)
 
             (defun malb/toggle-ollama-chat (&optional arg)
               (interactive "P")
