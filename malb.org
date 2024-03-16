@@ -11173,13 +11173,6 @@ Transparent encryption and decryption.
                         (ellama-stream task-descr :point beg :filter filter)))
                   (ellama-instant task-descr))))
 
-            (bind-key "C-c w f"   #'malb/fix-grammar-llm)
-            (bind-key "C-c w F"   #'malb/formalize-email-llm)
-            (bind-key "C-c w c"   #'malb/caption-llm)
-            (bind-key "C-c w ?"   #'malb/explain-llm)
-            (bind-key "C-c w !"   #'malb/summarize-llm)
-            (bind-key "C-c w t t" #'malb/translate-llm)
-
             (defmacro malb/llm-do-task (cmd task &rest args)
               `(defun ,(intern (concat "malb/" cmd "-llm")) nil
                  ,(plist-get args :docstring)
@@ -11226,64 +11219,6 @@ Transparent encryption and decryption.
                          (t
                           (ellama-instant task-descr))))))
 
-            (malb/llm-do-task
-             "summarize"
-             '("Summarize the following text in a few sentences highlighting the key takeaways. "
-               "Output only the text and nothing else, do not chat, no preamble, get to the point. "
-               "Original text: ")
-             :docstring "Summarize selected region or current buffer.")
-
-            (malb/llm-do-task
-             "explain"
-             '("Explain the following text in simple and concise terms keeping the same meaning. "
-               "Output only the text and nothing else, do not chat, no preamble, get to the point. "
-               "Original text: ")
-             :docstring "Explain selected region or current buffer.")
-
-            (malb/llm-do-task
-             "caption"
-             '("Create a single headline for the following text that summarizes what the reader can expect. "
-               "Output only the headline and nothing else, do not chat, no preamble, no explanation, get to the point. "
-               "Original text: ")
-             :docstring "Caption selected region or current section."
-             :scope 'section)
-
-            (malb/llm-do-task
-             "formalize-email"
-             '("You are a helpful assistant. "
-               "Rewrite the text in a business e-mail style while keeping the same meaning. "
-               "Do not be overly formal. "
-               "Output only the text and nothing else, do not chat, no preamble, get to the point."
-               "Original email: ")
-             :docstring "Rewrite e-mail more formally."
-             :mode 'change
-             :scope 'paragraph)
-
-            (malb/llm-do-task
-             "fix-grammar"
-             '("Change the following text, improve grammar and spelling while keeping the same meaning, "
-               "just output the final text without additional quotes around it. "
-               "Original text: ")
-             :docstring "Fix grammar and spelling."
-             :mode 'change
-             :scope 'paragraph)
-
-            (malb/llm-do-task
-             "decline"
-             '("You are a helpful assistant. "
-               "Your job is to write email responses in a professional tone either declining the initial invitation."
-               "Original email: ")
-             :docstring "Decline an invitation.")
-
-            (malb/llm-do-task
-             "expand-bullet-points"
-             '("Turn the following bullet points into an informative and clear text. Expand but keep the same meaning. "
-               "Write several paragraphs if appropriate. "
-               "Output only the text and nothing else, do not chat, no preamble, get to the point. "
-               "Original bullet points: ")
-             :docstring "Expand bullet points into prose."
-             :mode 'append
-             :scope 'paragraph)
 
             (defun malb/toggle-ollama-chat (&optional arg)
               (interactive "P")
@@ -11310,9 +11245,12 @@ Transparent encryption and decryption.
                         ))
                     (pop-to-buffer buffer-name)))))
 
+            (require 'llm-prompts)
+
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)
             (malb/register-right-side-window (rx bos "ellama-session") t)))
 #+end_src
+
 
 * File Types
 ** CMake Files
