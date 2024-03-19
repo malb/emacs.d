@@ -8868,6 +8868,14 @@ This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d
             ": \\(.*\\)$/\\1/Ip'"))))
 #+end_src
 
+#+begin_src emacs-lisp
+(defun malb/edit-raw-email (msg)
+  (find-file (plist-get msg :path)))
+
+(add-to-list 'mu4e-view-actions '("Edit raw" . malb/edit-raw-email) t)
+(add-to-list 'mu4e-headers-actions '("Edit raw" . malb/edit-raw-email) t)
+#+end_src
+
 ** Composing
 
 Don’t break long lines manually.
