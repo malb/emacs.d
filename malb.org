@@ -11900,7 +11900,7 @@ Easily change the text size:
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
 (malb/set-menu-key "Q" #'malb/toggle-llm-chat)
-(malb/set-menu-key "q" #'malb/toggle-ollama-chat)
+(malb/set-menu-key "q" #'ellama-chat)
 (malb/set-menu-key "S" #'malb/toggle-sage-jupyter)
 (malb/set-menu-key "s" #'malb/switch-tab)
 (malb/set-menu-key "t" #'helm-tramp)
