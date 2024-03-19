@@ -8757,6 +8757,10 @@ return the filename."
 #+end_src
 
 #+begin_src emacs-lisp
+(delete '("xview in xwidget" . mu4e-action-view-in-xwidget) mu4e-view-actions)
+#+end_src
+
+#+begin_src emacs-lisp
 (add-to-list 'mu4e-view-actions '("Save all attachments" . malb/mu4e-view-save-all-attachments) t)
 #+end_src
 
