@@ -7222,7 +7222,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 
             (font-lock-add-keywords
              'LaTeX-mode
-             `((,(rx "\\pc" (and (or "if" "then" "else" "for" "do" "return" "const" "and" "linecomment" "assert" "in")
+             `((,(rx "\\pc" (and (or "if" "then" "else" "elseif" "for" "do" "return" "const" "and" "or" "linecomment" "assert" "in")
                                 symbol-end))
                 0 'font-latex-bold-face prepend))
              'end)
