@@ -3459,7 +3459,7 @@ iCal export is triggered after 600 seconds of inactivity.
 
 #+begin_src emacs-lisp
 (defun malb/ox-export-after-save-hook ()
-  "Save after 600 seconds of no changes."
+  "Save after 30 seconds of no changes."
   (if (eq major-mode 'org-mode)
       (malb/org-icalendar-export-with-delay 30)))
 #+end_src
