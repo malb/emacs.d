@@ -7865,7 +7865,7 @@ A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s
   :ensure nil)
 #+end_src
 
-* E-mail (Mu4e)
+* E-Mail (Mu4e)
 
 We use Mu4e:
 
