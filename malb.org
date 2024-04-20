@@ -3453,7 +3453,7 @@ iCal export is triggered after 600 seconds of inactivity.
         (run-with-idle-timer
          (* 1 secs) nil (lambda ()
                           ;; async, check org-export-init.el
-                          (org-icalendar-combine-agenda-files t)
+                          (org-icalendar-combine-agenda-files nil)
                           (org-agenda-redo)))))
 #+end_src
 
