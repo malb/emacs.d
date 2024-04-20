@@ -11257,37 +11257,100 @@ Transparent encryption and decryption.
                           (ellama-instant task-descr))))))
 
 
-            (defun malb/toggle-ollama-chat (&optional arg)
-              (interactive "P")
-              (let* ((buffer-name "*ollama*")
-                     (window (get-buffer-window buffer-name))
-                     (buffer (get-buffer-create buffer-name))
-                     (proc-alive (term-check-proc buffer))
-                     (process (get-buffer-process buffer)))
-                (if window
-                    (progn
-                      (select-window window)
-                      (delete-window))
-                  (progn
-                    (unless proc-alive
-                      (let ((ollama-service (prodigy-find-service "ollama")))
-                        (when (not (prodigy-service-started-p ollama-service))
-                          (prodigy-start-service ollama-service)
-                          (sit-for 2)))
-                      (with-current-buffer buffer
-                        (apply 'make-term "ollama" "ollama" nil `("run" ,malb/ollama-default))
-                        (term-char-mode)
-                        ;; (malb/company-prose-setup)
-                        ;; (visual-line-mode)
-                        ))
-                    (pop-to-buffer buffer-name)))))
+            ;; (defun malb/toggle-ollama-chat (&optional arg)
+            ;;   (interactive "P")
+            ;;   (let* ((buffer-name "*ollama*")
+            ;;          (window (get-buffer-window buffer-name))
+            ;;          (buffer (get-buffer-create buffer-name))
+            ;;          (proc-alive (term-check-proc buffer))
+            ;;          (process (get-buffer-process buffer)))
+            ;;     (if window
+            ;;         (progn
+            ;;           (select-window window)
+            ;;           (delete-window))
+            ;;       (progn
+            ;;         (unless proc-alive
+            ;;           (let ((ollama-service (prodigy-find-service "ollama")))
+            ;;             (when (not (prodigy-service-started-p ollama-service))
+            ;;               (prodigy-start-service ollama-service)
+            ;;               (sit-for 2)))
+            ;;           (with-current-buffer buffer
+            ;;             (apply 'make-term "ollama" "ollama" nil `("run" ,malb/ollama-default))
+            ;;             (term-char-mode)
+            ;;             ;; (malb/company-prose-setup)
+            ;;             ;; (visual-line-mode)
+            ;;             ))
+            ;;         (pop-to-buffer buffer-name)))))
 
             (require 'llm-prompts)
 
-            (malb/register-right-side-window (rx bos "*ollama*" eos) t)
             (malb/register-right-side-window (rx bos "ellama-session") t)))
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package shell-maker
+  :after ellama
+  :custom ((shell-maker-prompt-before-killing-buffer . nil))
+  :config (progn
+
+            ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
+            (defun ollama-fetch (url prompt model)
+              (let* ((url-request-method "POST")
+                     (url-request-extra-headers
+                      '(("Content-Type" . "application/json")))
+                     (url-request-data
+                      (encode-coding-string
+                       (json-encode `((model . ,model)
+                                      (prompt . ,prompt)
+                                      (context . ,ollama-context)))
+                       'utf-8)))
+                (with-current-buffer (url-retrieve-synchronously url)
+                  (goto-char url-http-end-of-headers)
+                  (decode-coding-string
+                   (buffer-substring-no-properties
+                    (point)
+                    (point-max))
+                   'utf-8))))
+
+            ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
+            (defun ollama-get-response-from-line (line)
+              (let ((json (json-read-from-string line)))
+                (setq-local ollama-context (cdr (assoc 'context json)))
+                (cdr (assoc 'response json))))
+
+            ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
+            (defun ollama-prompt (url prompt model)
+              (mapconcat 'ollama-get-response-from-line
+                         (cl-remove-if #'(lambda (str) (string= str ""))
+                                       (split-string (ollama-fetch url prompt model) "\n"))
+                         ""))
+
+            (defvar ollama-shell--config
+              (make-shell-maker-config
+               :name "ollama"
+               :execute-command
+               (lambda (command _history callback error-callback)
+                 (funcall callback
+                          (ollama-prompt
+                           "http://localhost:11434/api/generate"
+                           command
+                           (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider))
+                          nil))))
+
+            (defun ollama-shell ()
+              "Start an ollama shell."
+              (interactive)
+
+              (let ((ollama-service (prodigy-find-service "ollama")))
+                (when (not (prodigy-service-started-p ollama-service))
+                  (prodigy-start-service ollama-service)
+                  (sit-for 2)))
+
+              (shell-maker-start ollama-shell--config)
+              (setq-local ollama-context nil))
+
+            (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
+#+end_src
 
 * File Types
 ** CMake Files
@@ -11925,7 +11988,7 @@ Easily change the text size:
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
 (malb/set-menu-key "Q" #'malb/toggle-llm-chat)
-(malb/set-menu-key "q" #'ellama-chat)
+(malb/set-menu-key "q" #'ollama-shell)
 (malb/set-menu-key "S" #'malb/toggle-sage-jupyter)
 (malb/set-menu-key "s" #'malb/switch-tab)
 (malb/set-menu-key "t" #'helm-tramp)
