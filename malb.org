@@ -11293,8 +11293,10 @@ Transparent encryption and decryption.
   :custom ((shell-maker-prompt-before-killing-buffer . nil))
   :config (progn
 
+            (defconst ollama-shell-api-url "http://localhost:11434/api/generate")
+
             ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
-            (defun ollama-fetch (url prompt model)
+            (defun ollama-shell-fetch (prompt model)
               (let* ((url-request-method "POST")
                      (url-request-extra-headers
                       '(("Content-Type" . "application/json")))
@@ -11302,27 +11304,25 @@ Transparent encryption and decryption.
                       (encode-coding-string
                        (json-encode `((model . ,model)
                                       (prompt . ,prompt)
-                                      (context . ,ollama-context)))
+                                      (context . ,ollama-shell-context)))
                        'utf-8)))
-                (with-current-buffer (url-retrieve-synchronously url)
+                (with-current-buffer (url-retrieve-synchronously ollama-shell-api-url)
                   (goto-char url-http-end-of-headers)
                   (decode-coding-string
-                   (buffer-substring-no-properties
-                    (point)
-                    (point-max))
+                   (buffer-substring-no-properties (point) (point-max))
                    'utf-8))))
 
             ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
-            (defun ollama-get-response-from-line (line)
+            (defun ollama-shell-get-response-from-line (line)
               (let ((json (json-read-from-string line)))
-                (setq-local ollama-context (cdr (assoc 'context json)))
+                (setq-local ollama-shell-context (cdr (assoc 'context json)))
                 (cdr (assoc 'response json))))
 
             ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
-            (defun ollama-prompt (url prompt model)
-              (mapconcat 'ollama-get-response-from-line
+            (defun ollama-shell-prompt (prompt model)
+              (mapconcat 'ollama-shell-get-response-from-line
                          (cl-remove-if #'(lambda (str) (string= str ""))
-                                       (split-string (ollama-fetch url prompt model) "\n"))
+                                       (split-string (ollama-shell-fetch prompt model) "\n"))
                          ""))
 
             (defvar ollama-shell--config
@@ -11330,12 +11330,8 @@ Transparent encryption and decryption.
                :name "ollama"
                :execute-command
                (lambda (command _history callback error-callback)
-                 (funcall callback
-                          (ollama-prompt
-                           "http://localhost:11434/api/generate"
-                           command
-                           (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider))
-                          nil))))
+                 (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
+                   (funcall callback (ollama-shell-prompt command model) nil)))))
 
             (defun ollama-shell ()
               "Start an ollama shell."
@@ -11347,7 +11343,7 @@ Transparent encryption and decryption.
                   (sit-for 2)))
 
               (shell-maker-start ollama-shell--config)
-              (setq-local ollama-context nil))
+              (setq-local ollama-shell-context nil))
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
 #+end_src
