@@ -630,9 +630,12 @@ In case we just want to kill the bottom window, set a shortcut do to this.
 (defun malb/quit-bottom-disposable-windows ()
   "Quit disposable windows of the current frame."
   (interactive)
-  (dolist (window (window-at-side-list))
-    (if (malb/window-has-popup-height-p window)
-        (delete-window window))))
+  (let ((found))
+    (dolist (window (window-at-side-list))
+      (when (malb/window-has-popup-height-p window)
+        (setq found t)
+        (delete-window window)))
+    found))
 
 (defun malb/promote-disposable-window-or-to-frame ()
   "Promote disposable window to real window."
