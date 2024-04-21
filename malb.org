@@ -11257,7 +11257,9 @@ Transparent encryption and decryption.
                                           (t (save-excursion (forward-paragraph) (- (point) 1)))))
                                    (t (point-max))))
                         (filter (lambda (text) (string-trim text)))
-                        (text (buffer-substring-no-properties beg end))
+                        (text (if ,(plist-get args :format)
+                                  (malb/pandoc-convert (prin1-to-string ,(plist-get args :format)) (current-buffer) beg end)
+                                (buffer-substring-no-properties beg end)))
                         (ollama-service (prodigy-find-service "ollama"))
                         (task-descr (format (concat (apply 'concat ,task) "\n" "%s") text)))
 
