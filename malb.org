@@ -7010,7 +7010,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
                      (pandoc-buffer (get-buffer-create pandoc--output-buffer-name))
                      (begginning (or beginning (point-min)))
                      (end (or end (point-max)))
-                     (reader (or reader (cdr (assq major-mode pandoc-major-modes))))
+                     (reader (or reader (cdr (assq major-mode pandoc-major-modes)) "markdown"))
                      (text))
                 (with-current-buffer pandoc-buffer
                   (erase-buffer))
