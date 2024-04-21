@@ -8904,6 +8904,15 @@ This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d
 (add-to-list 'mu4e-headers-actions '("Edit raw" . malb/edit-raw-email) t)
 #+end_src
 
+#+begin_src emacs-lisp
+(defun malb/mail-summarize (msg)
+  (let ((display-buffer-alist nil))
+    (malb/register-popup-window (rx bos "ellama-session"))
+    (malb/summarize-llm)))
+
+(add-to-list 'mu4e-view-actions '("/summarise" . malb/mail-summarize) t)
+#+end_src
+
 ** Composing
 
 Don’t break long lines manually.
