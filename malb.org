@@ -9114,7 +9114,8 @@ index 082665a0..3d53507f 100644
 We allow helm buffers in the mu4e frame, e.g. to pick attachments.
 
 #+begin_src emacs-lisp
-(defvar malb/mu4e-buffer-allowed-regexps (append malb/popup-windows '("\\`\\*helm.*\\*\\'"))
+(defvar malb/mu4e-buffer-allowed-regexps `(,(rx bos "*helm" (zero-or-more any) "*" eos)
+                                           ,(rx bos "ellama-session"))
   "Buffer names allowed in mu4e frame.")
 #+end_src
 
