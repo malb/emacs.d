@@ -11273,11 +11273,14 @@ Transparent encryption and decryption.
                      (prodigy-start-service ollama-service)
                      (sit-for 2))
 
-                   (cond ((equal ,(plist-get args :mode) 'change)
+                   (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
+                          (progn
+                            (ellama-stream task-descr :point (point) :filter filter)))
+                         ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
                           (progn
                             (kill-region beg end)
                             (ellama-stream task-descr :point beg :filter filter)))
-                         ((equal ,(plist-get args :mode) 'append)
+                         ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
                           (progn
                             (goto-char end)
                             (insert "\n\n-----\n\n")
