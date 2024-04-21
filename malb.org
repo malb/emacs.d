@@ -11295,35 +11295,41 @@ Transparent encryption and decryption.
 
             (defconst ollama-shell-api-url "http://localhost:11434/api/generate")
 
-            ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
-            (defun ollama-shell-fetch (prompt model)
-              (let* ((url-request-method "POST")
-                     (url-request-extra-headers
-                      '(("Content-Type" . "application/json")))
-                     (url-request-data
-                      (encode-coding-string
-                       (json-encode `((model . ,model)
-                                      (prompt . ,prompt)
-                                      (context . ,ollama-shell-context)))
-                       'utf-8)))
-                (with-current-buffer (url-retrieve-synchronously ollama-shell-api-url)
-                  (goto-char url-http-end-of-headers)
-                  (decode-coding-string
-                   (buffer-substring-no-properties (point) (point-max))
-                   'utf-8))))
+            (defun ollama-shell-callback (status ollama-buffer shell-maker-callback)
+              (goto-char url-http-end-of-headers)
+              (let* ((response (split-string
+                                (decode-coding-string
+                                 (buffer-substring-no-properties (point) (point-max))
+                                 'utf-8)
+                                "\n"))
+                     fragments
+                     context)
 
-            ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
-            (defun ollama-shell-get-response-from-line (line)
-              (let ((json (json-read-from-string line)))
-                (setq-local ollama-shell-context (cdr (assoc 'context json)))
-                (cdr (assoc 'response json))))
+                (dolist (part response)
+                  (when (not (string-empty-p part))
+                    (let ((part-json (json-read-from-string part)))
+                      (push (cdr (assoc 'response part-json)) fragments)
+                      (setq context (cdr (assoc 'context part-json))))))
 
-            ;; https://github.com/zweifisch/ollama/blob/master/ollama.el
-            (defun ollama-shell-prompt (prompt model)
-              (mapconcat 'ollama-shell-get-response-from-line
-                         (cl-remove-if #'(lambda (str) (string= str ""))
-                                       (split-string (ollama-shell-fetch prompt model) "\n"))
-                         ""))
+                (with-current-buffer ollama-buffer
+                  (setq ollama-shell-context context)
+                  (funcall shell-maker-callback
+                           (mapconcat #'identity (nreverse fragments) "")
+                           nil))))
+
+            (defun ollama-shell-fetch (prompt model shell-maker-callback)
+              (let* ((ollama-buffer (current-buffer))
+                     (url-request-method "POST")
+                     (url-request-extra-headers '(("Content-Type" . "application/json")))
+                     (url-request-data (encode-coding-string
+                                        (json-encode `((model . ,model)
+                                                       (prompt . ,prompt)
+                                                       (context . ,ollama-shell-context)))
+                                        'utf-8)))
+                (url-retrieve ollama-shell-api-url
+                              #'ollama-shell-callback
+                              `(,ollama-buffer ,shell-maker-callback)
+                              t t)))
 
             (defvar ollama-shell--config
               (make-shell-maker-config
@@ -11331,7 +11337,7 @@ Transparent encryption and decryption.
                :execute-command
                (lambda (command _history callback error-callback)
                  (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-                   (funcall callback (ollama-shell-prompt command model) nil)))))
+                   (ollama-shell-fetch command model callback)))))
 
             (defun ollama-shell ()
               "Start an ollama shell."
