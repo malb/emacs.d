@@ -11239,9 +11239,9 @@ Transparent encryption and decryption.
                      (to-language (if (s-equals-p from-language ellama-language)
                                       "English"
                                     ellama-language))
-                     (task-descr (format (concat "Translate the following text to %s. "
-                                                 "Output only the text and nothing else, do not chat, no preamble:\n%s")
-                                         to-language text))
+                     (task (format (concat "Translate the following text to %s. "
+                                           "Output only the text and nothing else, do not chat, no preamble:\n%s")
+                                   to-language text))
                      (ollama-service (prodigy-find-service "ollama"))
                      (ellama-provider (make-llm-ollama
                                        :chat-model malb/ollama-translate-default
@@ -11255,8 +11255,8 @@ Transparent encryption and decryption.
                     (progn
                       (progn
                         (kill-region beg end)
-                        (ellama-stream task-descr :point beg :filter filter)))
-                  (ellama-instant task-descr))))
+                        (ellama-stream task :point beg :filter filter)))
+                  (ellama-instant task))))
 
             (defmacro malb/llm-do-task (cmd task &rest args)
               `(defun ,(intern (concat "malb/" cmd "-llm")) nil
@@ -11282,12 +11282,20 @@ Transparent encryption and decryption.
                                            (save-restriction (markdown-narrow-to-subtree) (point-max)))
                                           (t (save-excursion (forward-paragraph) (- (point) 1)))))
                                    (t (point-max))))
-                        (filter (lambda (text) (string-trim text)))
-                        (text (if ,(plist-get args :format)
-                                  (malb/pandoc-convert (prin1-to-string ,(plist-get args :format)) (current-buffer) beg end)
-                                (buffer-substring-no-properties beg end)))
-                        (ollama-service (prodigy-find-service "ollama"))
-                        (task-descr (format (concat (apply 'concat ,task) "\n" "%s") text)))
+                        (filter (lambda (txt) (string-trim txt)))
+                        (ollama-service (prodigy-find-service "ollama")))
+
+                   ;; NOTE: hack to exclude my signatures in e-mail
+                   (when (and (eq major-mode #'mu4e-compose-mode)
+                              (eq end (point-max)))
+                     (setq end (save-excursion (message-goto-signature) (point))))
+
+                   (setq task (format (concat (apply 'concat ,task) "\n" "%s")
+                                      (if ,(plist-get args :format)
+                                          (malb/pandoc-convert
+                                           (prin1-to-string ,(plist-get args :format))
+                                           (current-buffer) beg end)
+                                        (buffer-substring-no-properties beg end))))
 
                    (when (not (prodigy-service-started-p ollama-service))
                      (prodigy-start-service ollama-service)
@@ -11295,19 +11303,19 @@ Transparent encryption and decryption.
 
                    (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
                           (progn
-                            (ellama-stream task-descr :point (point) :filter filter)))
+                            (ellama-stream task :point (point) :filter filter)))
                          ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
                           (progn
                             (kill-region beg end)
-                            (ellama-stream task-descr :point beg :filter filter)))
+                            (ellama-stream task :point beg :filter filter)))
                          ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
                           (progn
                             (goto-char end)
                             (insert "\n\n-----\n\n")
                             (sit-for 1)
-                            (ellama-stream task-descr :point (+ end 9) :filter filter)))
+                            (ellama-stream task :point (+ end 9) :filter filter)))
                          (t
-                          (ellama-instant task-descr))))))
+                          (ellama-instant task))))))
 
 
             ;; (defun malb/toggle-ollama-chat (&optional arg)
