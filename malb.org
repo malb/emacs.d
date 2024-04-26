@@ -4392,6 +4392,7 @@ Working with source code in org-mode.
                (latex . t)
                (ditaa . t)
                (sqlite . t)
+               (gnuplot . t)
                (C . t)
                (dot . t)
                (plantuml . t)
@@ -11159,6 +11160,25 @@ Transparent encryption and decryption.
 #+begin_src emacs-lisp
 (use-package memory-usage)
 #+end_src
+
+
+** Gnuplot
+
+#+begin_src emacs-lisp
+(use-package gnuplot)
+#+end_src
+
+*Example*
+
+#+plot: title:"Weight" ind:1 deps:(2) type:2d with:linespo set:"xdata time" set:"yrange [90:]"
+| Date             |   Kg |
+|------------------+------|
+| <2010-02-21 Sun> | 95.0 |
+| <2010-02-22 Mon> | 93.0 |
+| <2010-02-23 Tue> | 92.0 |
+| <2010-02-24 Wed> | 91.5 |
+| <2010-02-25 Thu> | 91.0 |
+| <2010-02-26 Fri> | 92.0 |
 
 ** Alert
 
