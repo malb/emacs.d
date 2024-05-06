@@ -1485,11 +1485,11 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-display-buffer-width 180
                   helm-display-buffer-height (ceiling (/ (alist-get 'height default-frame-alist) 1.61))
                   helm-use-undecorated-frame-option nil
-
-                  helm-file-cache-fuzzy-match           t
-                  helm-locate-fuzzy-match               nil
-                  helm-imenu-fuzzy-match                t
-                  helm-recentf-fuzzy-match              nil)
+                  helm-file-cache-fuzzy-match t
+                  helm-projectile-fuzzy-match nil
+                  helm-locate-fuzzy-match     nil
+                  helm-imenu-fuzzy-match      t
+                  helm-recentf-fuzzy-match    nil)
 
             (when (executable-find "curl")
               (setq helm-net-prefer-curl t))
