@@ -7954,7 +7954,6 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
       '((:maildir "/gmail/Inbox"      :key ?G)
         (:maildir "/sandbox/Inbox"    :key ?S)
         (:maildir "/kcl/INBOX"        :key ?K)
-        (:maildir "/gmail/[Google Mail]/Drafts"   :key ?d)
         (:maildir "/gmail/research/ec24artifacts" :key ?a)))
 #+end_src
 
@@ -8019,6 +8018,10 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                       '("maildir:\"/gmail/[Google Mail]/Spam\""
                                         "maildir:\"/sandbox/[Gmail]/Spam\""
                                         "maildir:\"/kcl/Junk Email\"")))
+                  ("%drafts" . ,(s-join " OR "
+                                        '("maildir:\"/gmail/[Google Mail]/Drafts\""
+                                          "maildir:\"/sandbox/[Gmail]/Drafts\""
+                                          "maildir:\"/kcl/Drafts\"")))
                   ("%hidden" . "%trash OR %junk")
                   ("%unread" . "flag:unread AND NOT %hidden  ")
                   ("%today"  . "date:today..now AND NOT %hidden")
@@ -8087,6 +8090,7 @@ Canned queries.
                       :key ?R)
              t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%sent AND %week") :name "Last 7 days (sent)" :key ?s) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%drafts") :name "Drafts" :key ?!) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%trash") :name "Bin" :key ?b) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%junk") :name "Junk" :key ?j) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
