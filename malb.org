@@ -8100,6 +8100,13 @@ Canned queries.
 (add-to-list 'mu4e-bookmarks `(:query "(contact:eurocrypt2024artifacts@iacr.org)"  :name "EUROCRYPT'24 Artifacts" :key ?A) t)
 #+end_src
 
+** Key Bindings
+
+#+begin_src emacs-lisp
+(bind-key "D" #'mu4e-headers-mark-for-trash mu4e-headers-mode-map)
+(bind-key "d" #'mu4e-headers-mark-for-delete mu4e-headers-mode-map)
+#+end_src
+
 ** Contacts
 
 Handling contacts semi-automagically is one of mu4e’s big selling points to me. The functions below make it more automagic.
