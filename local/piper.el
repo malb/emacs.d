@@ -15,15 +15,20 @@
   "Run Piper for Text to Speech."
   :group 'tools)
 
+(defcustom piper-default-language "en-GB"
+  "Fallback language."
+  :group 'piper
+  :type 'string)
+
 (defcustom piper-voices nil
   "Voices to use in Piper in order of preference.
 
-These are tuples of (\"model-path\", \"lang-code\")."
+These are tuples of (\"tag\" \"lang-code\" \"model-path\" \"speaker-number\")."
 
   :group 'piper
-  :type '(alist :value-type (string string)))
+  :type '(alist :value-type (string string string string)))
 
-(defcustom piper-command "cat ${input-filename} | piper -m ${voice} -f ${output-filename}"
+(defcustom piper-command "cat ${input-filename} | piper -m ${voice} -s ${speaker-number} -f ${output-filename}"
   "Command to run Piper."
   :group 'piper
   :type 'string)
@@ -34,30 +39,42 @@ These are tuples of (\"model-path\", \"lang-code\")."
 
 ;; Return the first voice matching detected language.
 
+(defun piper-guess-language (text)
+  (if (length< text guess-language-min-paragraph-length)
+      piper-default-language
+    (with-temp-buffer
+      (insert text)
+      (replace-regexp-in-string
+       "_" "-"
+       (cadr (assq (guess-language-buffer) guess-language-langcodes))))))
+
 (defun piper-select-voice (text)
   "Select voice by picking first voice matching detected language in TEXT."
-  (let ((lang (with-temp-buffer
-                (insert text)
-                (replace-regexp-in-string "_" "-" (cadr (assq (guess-language-buffer) guess-language-langcodes)))))
+  (let ((lang (piper-guess-language text))
         (voices nil))
     (dolist (entry piper-voices)
-      (if (string-prefix-p lang (cadr entry))
-          (push (car entry) voices)))
+      (if (string-prefix-p lang (nth 1 entry))
+          (push (cddr entry) voices)))
     (setq voices (nreverse voices))
     (cond
-     ((eq (length voices) 0) (caar piper-voices))
-     ((eq (length voices) 1) (car voices))
+     ((eq (length voices) 0) (cddr (car piper-voices)))
+     ((eq (length voices) 1) (nth 0 voices))
      (t (if (piper-is-quote text)
-            (cadr voices)
-          (car voices))))))
+            (nth 1 voices)
+          (nth 0 voices))))))
 
 (defun piper-voices-completing-read ()
   "Offer list of installed Piper voices to choose from and return choice."
-  (replace-regexp-in-string
-   " .*$" "" (completing-read "Voice: "
-                              (mapcar (lambda (x) (format "%s (%s)" (car x) (cadr x)))
-                                      piper-voices)
-                              nil t)))
+  (let ((string (s-split ":"
+                         (replace-regexp-in-string
+                          ".* (\\(.*?:.*?\\)).*" "\\1"
+                          (completing-read "Voice: "
+                                           (mapcar (lambda (x) (format
+                                                                "%s (%s:%s) [%s]"
+                                                                (nth 0 x) (nth 2 x) (nth 3 x) (nth 1 x)))
+                                                   piper-voices)
+                                           nil t)))))
+    (list (nth 0 string) (string-to-number (nth 1 string)))))
 
 (defun piper-pandoc-convert (writer &optional buffer beginning end reader)
   "Output WRITER formatted string of BUFFER parsed using READER.
@@ -111,6 +128,23 @@ Region between BEGINNING and END is converted."
     (setq tmp (replace-regexp-in-string "\\$\\(.*?\\)\\$" "\\1" tmp))
     tmp))
 
+(defun piper-render-speech (text &optional voice)
+  "Render speech for TEXT with VOICE.
+
+Return output filename."
+  (let* ((voice (if voice voice (piper-select-voice text)))
+         (temp-filename (make-temp-file "emacs-piper"))
+         (input-filename (concat temp-filename ".txt"))
+         (output-filename (concat temp-filename ".wav"))
+         (cmd (s-format piper-command 'aget
+                        `(("input-filename" . ,input-filename)
+                          ("voice" . ,(nth 0 voice))
+                          ("speaker-number" . ,(nth 1 voice))
+                          ("output-filename" . ,output-filename)))))
+    (f-write-text (piper-text-postprocess text) 'utf-8 input-filename)
+    (call-process-shell-command cmd nil nil nil)
+    output-filename))
+
 ;;;###autoload
 (defun piper-region (arg)
   "Speak text with Piper.
@@ -131,17 +165,7 @@ When ARG is given, allow to select the voice first."
          (files nil)
          (set-voice (if arg (piper-voices-completing-read) nil)))
     (dolist (text texts)
-      (let* ((voice (if set-voice set-voice (piper-select-voice text)))
-             (temp-filename (make-temp-file "emacs-piper"))
-             (input-filename (concat temp-filename ".txt"))
-             (output-filename (concat temp-filename ".wav"))
-             (cmd (s-format piper-command 'aget
-                            `(("input-filename" . ,input-filename)
-                              ("voice" . ,voice)
-                              ("output-filename" . ,output-filename)))))
-        (f-write-text (piper-text-postprocess text) 'utf-8 input-filename)
-        (call-process-shell-command cmd nil nil nil)
-        (add-to-list 'files output-filename t)))
+      (add-to-list 'files (piper-render-speech text set-voice) t))
     ;; TODO I'm too lazy to figure out how to prevent emms from keeping th last file in the
     ;; playlist, we just add a short silence to make it unnoticeable
     (add-to-list 'files silence t)
