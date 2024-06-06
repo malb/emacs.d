@@ -7444,6 +7444,14 @@ Run =latexmk -pvc= in async shell
               :secret)))))
 #+end_src
 
+*** Pix2TeX
+
+#+begin_src emacs-lisp
+(use-package pix2tex
+  :ensure nil
+  :custom (pix2tex-command "conda run -n cuda pix2tex %s"))
+#+end_src
+
 *** Math Delimiters
 
 #+begin_src emacs-lisp
@@ -12061,7 +12069,7 @@ Easily change the text size:
 (malb/set-menu-key "j" #'avy-goto-char-timer)
 (malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex-with-local-bibliography)
-(malb/set-menu-key "L" #'mathpix-screenshot)
+(malb/set-menu-key "L" #'pix2tex-screenshot)
 (malb/set-menu-key "K" #'org-download-screenshot)
 (malb/set-menu-key "m" #'mu4e)
 (malb/set-menu-key "M" #'malb/helm-mu)
