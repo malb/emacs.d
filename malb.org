@@ -7872,9 +7872,7 @@ Spray is a speed reading mode.
             (add-to-list 'spray-unsupported-minor-modes 'beacon-mode)))
 #+end_src
 
-** AWS Polly
-
-A simple interface for AWS’ text-to-speech API. All text is sent to Amazon’s severs so keep privacy implications in mind before using this.
+** Piper
 
 #+begin_src emacs-lisp
 (use-package piper
@@ -11421,15 +11419,21 @@ Transparent encryption and decryption.
                  (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
                    (ollama-shell-fetch command model callback)))))
 
-            (defun ollama-shell ()
+            (defun ollama-shell (&optional arg)
               "Start an ollama shell."
-              (interactive)
+              (interactive "P")
 
               (let ((ollama-service (prodigy-find-service "ollama")))
                 (when (not (prodigy-service-started-p ollama-service))
                   (prodigy-start-service ollama-service)
                   (sit-for 2)))
 
+              (when arg
+                (setq ellama-provider (ellama-get-ollama-local-model))
+                (setq ellama--current-session-id nil)
+                ;; (ellama-provider-select)
+                )
+              (message "ollama model: %s" (llm-name ellama-provider))
               (shell-maker-start ollama-shell--config)
               (setq-local ollama-shell-context nil))
 
