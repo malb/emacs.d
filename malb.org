@@ -8719,7 +8719,7 @@ If MSG is given use that instead."
     (mkdir dir t)
     (dolist (part (mu4e-view-mime-parts))
       (let ((filename (plist-get part :filename)))
-        (when (and (s-equals-p (plist-get part :disposition) "attachment")
+        (when (and (plist-get part :attachment-like)
                    filename)
           (mm-save-part-to-file (plist-get part :handle)
 		                        (malb/next-free-filename
