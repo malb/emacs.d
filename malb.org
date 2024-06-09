@@ -11397,15 +11397,37 @@ Transparent encryption and decryption.
                            (mapconcat #'identity (nreverse fragments) "")
                            nil))))
 
+            (defun ollama-base64-images-maybe (prompt)
+              (let (images)
+                (with-temp-buffer
+                  (insert prompt)
+                  (goto-char 0)
+                  (while (re-search-forward
+                          (rx (seq "/" (1+ (not whitespace)) "/" (1+ (not whitespace)) (or ".png" ".jpg" ".jpeg")))
+                          nil t)
+                    (let ((filename (match-string 0)))
+                      (if (file-exists-p filename)
+                          (add-to-list 'images (with-temp-buffer
+                                                 (insert-file-contents filename)
+                                                 (base64-encode-string (buffer-string) t))
+                                       t)
+                        (message "ollama: file not found: %s" filename)))))
+                images))
+
             (defun ollama-shell-fetch (prompt model shell-maker-callback)
               (let* ((ollama-buffer (current-buffer))
+                     (images (if (s-equals-p model "llava:latest")
+                                 (ollama-base64-images-maybe prompt)
+                               nil))
                      (url-request-method "POST")
                      (url-request-extra-headers '(("Content-Type" . "application/json")))
                      (url-request-data (encode-coding-string
                                         (json-encode `((model . ,model)
                                                        (prompt . ,prompt)
+                                                       (images . ,images)
                                                        (context . ,ollama-shell-context)))
                                         'utf-8)))
+                (when images (message "ollama: added %d pictures" (length images)))
                 (url-retrieve ollama-shell-api-url
                               #'ollama-shell-callback
                               `(,ollama-buffer ,shell-maker-callback)
