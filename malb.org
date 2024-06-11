@@ -11278,9 +11278,10 @@ Transparent encryption and decryption.
                   (ellama-instant task))))
 
             (defmacro malb/llm-do-task (cmd task &rest args)
-              `(defun ,(intern (concat "malb/" cmd "-llm")) nil
+              `(defun ,(intern (concat "malb/" cmd "-llm")) (arg)
                  ,(plist-get args :docstring)
-                 (interactive)
+                 (interactive "P")
+
                  (let* ((beg (cond ((use-region-p) (region-beginning))
                                    ((eq ,(plist-get args :scope) 'paragraph)
                                     (save-excursion (backward-paragraph) (+ (point) 1)))
@@ -11319,6 +11320,10 @@ Transparent encryption and decryption.
                    (when (not (prodigy-service-started-p ollama-service))
                      (prodigy-start-service ollama-service)
                      (sit-for 2))
+
+                   (when arg
+                     (setq ellama-provider (ellama-get-ollama-local-model))
+                     (setq ellama--current-session-id nil))
 
                    (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
                           (progn
