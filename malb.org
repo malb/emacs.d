@@ -11378,32 +11378,6 @@ Transparent encryption and decryption.
                          (t
                           (ellama-instant task))))))
 
-
-            ;; (defun malb/toggle-ollama-chat (&optional arg)
-            ;;   (interactive "P")
-            ;;   (let* ((buffer-name "*ollama*")
-            ;;          (window (get-buffer-window buffer-name))
-            ;;          (buffer (get-buffer-create buffer-name))
-            ;;          (proc-alive (term-check-proc buffer))
-            ;;          (process (get-buffer-process buffer)))
-            ;;     (if window
-            ;;         (progn
-            ;;           (select-window window)
-            ;;           (delete-window))
-            ;;       (progn
-            ;;         (unless proc-alive
-            ;;           (let ((ollama-service (prodigy-find-service "ollama")))
-            ;;             (when (not (prodigy-service-started-p ollama-service))
-            ;;               (prodigy-start-service ollama-service)
-            ;;               (sit-for 2)))
-            ;;           (with-current-buffer buffer
-            ;;             (apply 'make-term "ollama" "ollama" nil `("run" ,malb/ollama-default))
-            ;;             (term-char-mode)
-            ;;             ;; (malb/company-prose-setup)
-            ;;             ;; (visual-line-mode)
-            ;;             ))
-            ;;         (pop-to-buffer buffer-name)))))
-
             (require 'llm-prompts)
 
             (malb/register-right-side-window (rx bos "ellama-session") t)))
