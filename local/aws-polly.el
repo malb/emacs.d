@@ -82,19 +82,18 @@
          (end (or end (point-max)))
          (reader (or reader (cdr (assq major-mode pandoc-major-modes))))
          (text))
-    (switch-to-buffer pandoc-buffer)
-    (erase-buffer)
-    (switch-to-buffer buffer)
-    (call-process-region beginning end "pandoc" nil pandoc-buffer t
-                         "--read"
-                         reader
-                         "--write"
-                         writer
-                         "--quiet"
-                         "--wrap=none")
-    (switch-to-buffer pandoc-buffer)
-    (setq text (buffer-string))
-    (bury-buffer)
+    (with-current-buffer pandoc-buffer
+      (erase-buffer))
+    (with-current-buffer buffer
+      (call-process-region beginning end "pandoc" nil pandoc-buffer t
+                           "--read"
+                           reader
+                           "--write"
+                           writer
+                           "--quiet"
+                           "--wrap=none"))
+    (with-current-buffer pandoc-buffer
+      (setq text (buffer-string)))
     text))
 
 (defun aws-polly-plaintextify (beginning end)
