@@ -11216,6 +11216,12 @@ Transparent encryption and decryption.
 (bind-key "M-u" #'upcase-dwim)
 #+end_src
 
+** unset SESSION_MANAGER
+
+#+begin_src emacs-lisp
+(setenv "SESSION_MANAGER" nil)
+#+end_src
+
 * LLM
 
 #+begin_src emacs-lisp
