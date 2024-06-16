@@ -1599,6 +1599,7 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     imenu-list-major-mode
                     messages-buffer-mode
                     nov-mode
+                    ollama-shell-mode
                     comint-mode))
 
             ;; I’m going back and forth what I prefer
