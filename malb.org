@@ -11391,33 +11391,13 @@ Transparent encryption and decryption.
   :config (progn
 
             (defconst ollama-shell-api-url "http://localhost:11434/api/generate")
+            (defvar ollama-shell-streaming t)
 
-            (defun ollama-shell-elisp-callback (status ollama-buffer shell-maker-callback)
-              (goto-char url-http-end-of-headers)
-              (let* ((response (split-string
-                                (decode-coding-string
-                                 (buffer-substring-no-properties (point) (point-max))
-                                 'utf-8)
-                                "\n"))
-                     fragments
-                     context)
-
-                (dolist (part response)
-                  (when (not (string-empty-p part))
-                    (let ((part-json (json-read-from-string part)))
-                      (push (cdr (assoc 'response part-json)) fragments)
-                      (setq context (cdr (assoc 'context part-json))))))
-
-                (with-current-buffer ollama-buffer
-                  (setq ollama-shell-context context)
-                  (funcall shell-maker-callback
-                           (mapconcat #'identity (nreverse fragments) "")
-                           nil))))
-
-            (defun ollama-base64-images-maybe (prompt)
+            (defun ollama-base64-images-maybe (shell-prompt)
+              "Check if image paths are present in PROMPT and return list of images if true."
               (let (images)
                 (with-temp-buffer
-                  (insert prompt)
+                  (insert shell-prompt)
                   (goto-char 0)
                   (while (re-search-forward
                           (rx (seq "/" (1+ (not whitespace)) "/" (1+ (not whitespace)) (or ".png" ".jpg" ".jpeg")))
@@ -11431,33 +11411,88 @@ Transparent encryption and decryption.
                         (message "ollama: file not found: %s" filename)))))
                 images))
 
-            (defun ollama-shell-elisp-fetch (prompt model shell-maker-callback)
+            (defun ollama-shell-make-payload (shell-prompt model)
+              "Create elisp object encoding PROMPT and MODEL."
               (let* ((ollama-buffer (current-buffer))
                      (images (if (s-equals-p model "llava:latest")
-                                 (ollama-base64-images-maybe prompt)
-                               nil))
+                                 (ollama-base64-images-maybe shell-prompt)
+                               nil)))
+                (when images (message "ollama: added %d pictures" (length images)))
+                `(
+                  :model ,model
+                  :prompt ,shell-prompt
+                  :images ,images
+                  :context ,ollama-shell-context
+                  :stream ,(if ollama-shell-streaming t json-false))))
+
+            (defun ollama-shell-callback-curl (blob)
+
+              (let ((json (cond
+                           ((eq (type-of blob) 'cons) blob)
+                           (t (ignore-errors (shell-maker--json-parse-string blob)))))
+                    (response ""))
+                (when (assoc 'response json)
+                  (setq response (cdr (assoc 'response json))))
+                (when (assoc 'context json)
+                  (setq-local ollama-shell-context (cdr (assoc 'context json))))
+                response))
+
+            (defun ollama-shell-call-api-curl (object)
+              (let ((json (json-encode object))
+                    (json-path (make-temp-file "ollama-shell-request" nil ".json")))
+                (with-temp-file json-path (insert json))
+                (append (list "curl" ollama-shell-api-url) `("--data" ,(format "@%s" json-path)))))
+
+            (defun ollama-shell-callback-elisp (status ollama-buffer shell-maker-callback)
+              (goto-char url-http-end-of-headers)
+              (let* ((response (split-string
+                                (decode-coding-string
+                                 (buffer-substring-no-properties (point) (point-max))
+                                 'utf-8)
+                                "\n"))
+                     fragments
+                     context)
+
+                (dolist (part response)
+                  (when (not (string-empty-p part))
+                    (let ((parsed (json-read-from-string part)))
+                      (push (cdr (assoc 'response parsed)) fragments)
+                      (setq context (cdr (assoc 'context parsed))))))
+
+                (with-current-buffer ollama-buffer
+                  (setq ollama-shell-context context)
+                  (funcall shell-maker-callback
+                           (mapconcat #'identity (nreverse fragments) "")
+                           nil))))
+
+            (defun ollama-shell-call-api-elisp (shell-prompt model shell-maker-callback)
+              (let* ((ollama-buffer (current-buffer))
                      (url-request-method "POST")
                      (url-request-extra-headers '(("Content-Type" . "application/json")))
                      (url-request-data (encode-coding-string
-                                        (json-encode `((model . ,model)
-                                                       (prompt . ,prompt)
-                                                       (images . ,images)
-                                                       (context . ,ollama-shell-context)))
+                                        (json-encode (ollama-shell-make-payload shell-prompt model))
                                         'utf-8)))
-                (when images (message "ollama: added %d pictures" (length images)))
                 (url-retrieve ollama-shell-api-url
-                              #'ollama-shell-elisp-callback
+                              #'ollama-shell-callback-elisp
                               `(,ollama-buffer ,shell-maker-callback)
                               t t)))
 
             (defvar ollama-shell--config
               (make-shell-maker-config
                :name "ollama"
-               :prompt (format "ollama(%s)> " (llm-name ellama-provider))
+               :prompt "ollama> "
                :execute-command
+               ;; (lambda (command _history callback error-callback)
+               ;;   (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
+               ;;     (shell-maker-async-shell-command
+               ;;      (ollama-shell-call-api-curl (ollama-shell-make-payload command model))
+               ;;      ollama-shell-streaming
+               ;;      #'ollama-shell-callback-curl
+               ;;      callback
+               ;;      error-callback)))
                (lambda (command _history callback error-callback)
                  (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-                   (ollama-shell-elisp-fetch command model callback)))))
+                   (ollama-shell-call-api-elisp command model callback)))))
 
             (defun ollama-shell (&optional arg)
               "Start an ollama shell."
@@ -11473,6 +11508,7 @@ Transparent encryption and decryption.
                 (setq ellama--current-session-id nil))
 
               (shell-maker-start ollama-shell--config)
+
               (setq-local ollama-shell-context nil))
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
