@@ -11417,7 +11417,7 @@ Transparent encryption and decryption.
 
             (defconst ollama-shell-api-url "http://localhost:11434/api/generate")
 
-            (defun ollama-shell-callback (status ollama-buffer shell-maker-callback)
+            (defun ollama-shell-elisp-callback (status ollama-buffer shell-maker-callback)
               (goto-char url-http-end-of-headers)
               (let* ((response (split-string
                                 (decode-coding-string
@@ -11456,7 +11456,7 @@ Transparent encryption and decryption.
                         (message "ollama: file not found: %s" filename)))))
                 images))
 
-            (defun ollama-shell-fetch (prompt model shell-maker-callback)
+            (defun ollama-shell-elisp-fetch (prompt model shell-maker-callback)
               (let* ((ollama-buffer (current-buffer))
                      (images (if (s-equals-p model "llava:latest")
                                  (ollama-base64-images-maybe prompt)
@@ -11471,17 +11471,18 @@ Transparent encryption and decryption.
                                         'utf-8)))
                 (when images (message "ollama: added %d pictures" (length images)))
                 (url-retrieve ollama-shell-api-url
-                              #'ollama-shell-callback
+                              #'ollama-shell-elisp-callback
                               `(,ollama-buffer ,shell-maker-callback)
                               t t)))
 
             (defvar ollama-shell--config
               (make-shell-maker-config
                :name "ollama"
+               :prompt (format "ollama(%s)> " (llm-name ellama-provider))
                :execute-command
                (lambda (command _history callback error-callback)
                  (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-                   (ollama-shell-fetch command model callback)))))
+                   (ollama-shell-elisp-fetch command model callback)))))
 
             (defun ollama-shell (&optional arg)
               "Start an ollama shell."
@@ -11494,10 +11495,8 @@ Transparent encryption and decryption.
 
               (when arg
                 (setq ellama-provider (ellama-get-ollama-local-model))
-                (setq ellama--current-session-id nil)
-                ;; (ellama-provider-select)
-                )
-              (message "ollama model: %s" (llm-name ellama-provider))
+                (setq ellama--current-session-id nil))
+
               (shell-maker-start ollama-shell--config)
               (setq-local ollama-shell-context nil))
 
