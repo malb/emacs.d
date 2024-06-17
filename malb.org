@@ -11391,6 +11391,8 @@ Transparent encryption and decryption.
   :config (progn
 
             (defconst ollama-shell-api-url "http://localhost:11434/api/generate")
+
+            ;; need to use curl version and patch shell-maker to not do (t (funcall callback (cdr preparsed) t))
             (defvar ollama-shell-streaming t)
 
             (defun ollama-base64-images-maybe (shell-prompt)
@@ -11434,6 +11436,7 @@ Transparent encryption and decryption.
                 (when (assoc 'response json)
                   (setq response (cdr (assoc 'response json))))
                 (when (assoc 'context json)
+                  ;; (message "updating context")
                   (setq-local ollama-shell-context (cdr (assoc 'context json))))
                 response))
 
@@ -11482,17 +11485,18 @@ Transparent encryption and decryption.
                :name "ollama"
                :prompt "ollama> "
                :execute-command
-               ;; (lambda (command _history callback error-callback)
-               ;;   (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-               ;;     (shell-maker-async-shell-command
-               ;;      (ollama-shell-call-api-curl (ollama-shell-make-payload command model))
-               ;;      ollama-shell-streaming
-               ;;      #'ollama-shell-callback-curl
-               ;;      callback
-               ;;      error-callback)))
                (lambda (command _history callback error-callback)
                  (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-                   (ollama-shell-call-api-elisp command model callback)))))
+                   (shell-maker-async-shell-command
+                    (ollama-shell-call-api-curl (ollama-shell-make-payload command model))
+                    ollama-shell-streaming
+                    #'ollama-shell-callback-curl
+                    callback
+                    error-callback)))
+               ;; (lambda (command _history callback error-callback)
+               ;;   (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
+               ;;     (ollama-shell-call-api-elisp command model callback)))
+               ))
 
             (defun ollama-shell (&optional arg)
               "Start an ollama shell."
