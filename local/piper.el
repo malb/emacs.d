@@ -125,6 +125,9 @@ Region between BEGINNING and END is converted."
     (setq tmp (replace-regexp-in-string "\\vec{\\(.*?\\)}" "\\1" tmp))
     (setq tmp (replace-regexp-in-string "\\\\" "" tmp))
     (setq tmp (replace-regexp-in-string "\\$\\(.*?\\)\\$" "\\1" tmp))
+    (setq tmp (replace-regexp-in-string (rx ", d.h. ") ", das heißt " tmp))
+    (setq tmp (replace-regexp-in-string (rx " i.e." (or "," " " " ")) " that is " tmp))
+    (setq tmp (replace-regexp-in-string (rx " e.g." (or "," " " " "))" for example " tmp))
     tmp))
 
 (defun piper-render-speech (text &optional voice)
