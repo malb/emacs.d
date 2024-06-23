@@ -12,12 +12,12 @@
          (cond
           ((eq 'latex backend)
            (let ((author (if (match-string 3)
-                             (format "[author=%s]" (substring (match-string 3) 1 -2))
+                             (format "\textbf{%s}: " (substring (match-string 3) 1 -2))
                            "")))
              (if (match-string 2)
-                 (format "@@latex:\\fxnote*%s{%s}{%s}@@"
+                 (format "@@latex:\\todo[]{%s\emph{%s} %s}@@"
                          author (match-string 2) (match-string 1))
-               (format "@@latex:\\fxnote%s{%s}@@" author (match-string 1)))))
+               (format "@@latex:\\todo[]{%s%s}@@" author (match-string 1)))))
           ((eq 'odt backend)
            (format (if (match-string 2)
                        (let ((an-name (concat "__Annot_" (number-to-string (random)))))
@@ -34,60 +34,18 @@
 
 
 ;;; Inserting
-(defun malb/org-insert-inline-comment (arg)
-  (interactive "P")
+(defun malb/org-insert-inline-comment ()
+  (interactive)
   (if (use-region-p)
       (let ((beg (min (point) (mark))) 
             (end (max (point) (mark))))
         (goto-char beg)
         (insert "❰")
         (goto-char (1+ end))
-        (insert (concat"❙"
-                       (when arg (malb/org-inline-comment-name))
-                       "❱"))
+        (insert (concat"❙" "❱"))
         (backward-char))
-    (insert (concat "❰"
-                    (when arg (malb/org-inline-comment-name))
-                    "❱"))
+    (insert (concat "❰" "❱"))
     (backward-char)))
-
-(defvar malb/org-inline-comment-name-history nil)
-(defun malb/org-inline-comment-name ()
-  (concat
-   "["
-   (helm :sources '(malb/org-inline-comment-names-source
-                    malb/org-inline-comment-names-fallback-source)
-         :buffer "*aj helm choose oic-names*"
-         :resume 'noresume
-         :history 'malb/org-inline-comment-name-history)
-   ;; (helm-comp-read
-   ;;  "Författare: "
-   ;;  malb/org-insert-inline-comment-name-history
-   ;;  :input-history 'malb/org-insert-inline-comment-name-history
-   ;;  :name "Comment name" :buffer "*oic-helm*")
-   "] "))
-
-
-(defvar malb/org-inline-comment-names-source
-  (helm-build-sync-source "Inline comment names"
-    :candidates 'malb/org-inline-comment-name-history
-    :fuzzy-match t
-    :action (helm-make-actions "Insert" 'identity "Delete" 'malb/org-inline-comment-remove-name)
-    :persistent-action 'malb/org-inline-comment-remove-name
-    :multiline t)
-  "Source for inline comment names")
-
-(defvar malb/org-inline-comment-names-fallback-source
-  '((name . "Insert")
-    (dummy)
-    (action . (("insert" . identity)))))
-
-(defun malb/org-inline-comment-remove-name (_cand)
-  (let ((marked (helm-marked-candidates)))
-    (dolist (el marked)
-      (setq malb/org-inline-comment-name-history
-            (delete el malb/org-inline-comment-name-history))))
-  (helm-force-update))
 
 (font-lock-add-keywords 'org-mode '(("❰\\(\\[[^\]]+\\] \\)?\\([^❱❙]+\\)❱"
                                      (1 'bold prepend t)
