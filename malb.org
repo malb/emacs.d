@@ -7333,7 +7333,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+end_src
 
-*** Yanking
+*** COMMENT Yanking
 
 - https://abizjak.github.io/emacs/2016/03/05/latex-environment-yank.html
 - https://abizjak.github.io/emacs/2016/03/05/latex-environment.html
