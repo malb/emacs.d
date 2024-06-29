@@ -11354,7 +11354,6 @@ Transparent encryption and decryption.
 
             (defconst ollama-shell-api-url "http://localhost:11434/api/generate")
 
-            ;; need to use curl version and patch shell-maker to not do (t (funcall callback (cdr preparsed) t))
             (defvar ollama-shell-streaming t)
 
             (defun ollama-base64-images-maybe (shell-prompt)
