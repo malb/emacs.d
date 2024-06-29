@@ -9809,30 +9809,6 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                 image-dired-thumb-margin 16))
 #+end_src
 
-Show dired histories you have visited.
-
-#+begin_src emacs-lisp
-(use-package helm-dired-history
-  :after (dired helm)
-  :config (defun helm-dired-history--update(dir)
-            "update variable `helm-dired-history-variable'."
-            (unless helm-dired-history-cleanup-p
-              (setq helm-dired-history-cleanup-p t)
-              (let ((tmp-history ))
-                (dolist (d helm-dired-history-variable)
-                  (when (or (file-remote-p d) (file-directory-p d))
-                    (add-to-list 'tmp-history d t)))
-                (setq helm-dired-history-variable tmp-history)))
-            (setq helm-dired-history-variable
-                  (delete-dups (delete dir helm-dired-history-variable)))
-            (setq helm-dired-history-variable
-                  ;; HACK: adding "." to make it work again
-                  (append (list (concat dir ".")) helm-dired-history-variable))
-            (helm-dired-history-trim)))
-#+end_src
-
-[[https://camo.githubusercontent.com/966cf1fc63ee7bdb7631c0debc74957ccefaff37/687474703a2f2f692e696d6775722e636f6d2f6d6d36674662582e706e67]]
-
 [[https://github.com/Fuco1/dired-hacks][dired-collapse]] renders directories with just one file like GitHub does.
 
 #+begin_src emacs-lisp
