@@ -120,6 +120,10 @@ DOCSTRING and BODY are as in `defun'.
 Configure package repositories.
 
 #+begin_src emacs-lisp
+(package-initialize)
+#+end_src
+
+#+begin_src emacs-lisp
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (setq package-archive-priorities '(("gnu" . 1)
                                    ("nongnu" . 1)
@@ -128,10 +132,6 @@ Configure package repositories.
 #+end_src
 
 Get the package manager going.
-
-#+begin_src emacs-lisp
-(package-initialize)
-#+end_src
 
 Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our configuration readable.
 
