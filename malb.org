@@ -6128,7 +6128,7 @@ Manually fixed bugs:
   :commands python-docstring-mode)
 #+end_src
 
-**** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx Doc]]
+**** [[https://github.com/naiquevin/sphinx-doc.el][Sphinx Doc]]                                                                                               :patch:
 
 An emacs minor mode for inserting docstring skeleton for Python functions and methods (=C-c M-d=). The structure of the docstring is as per the requirement of the Sphinx documentation generator.
 
@@ -7960,27 +7960,6 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-org-link-query-in-headers-mode t
                  mu4e-eldoc-support t
                  mu4e-modeline-support nil))
-#+end_src
-
-** Patching
-
-#+begin_src emacs-lisp
-;; (malb/defadvice! malb/mu4e-compose-edit ()
-;;   "Edit an existing draft message."
-;;   :override #'mu4e-compose-edit
-;;   (interactive)
-;;   (let* ((msg (mu4e-message-at-point)))
-;;     (unless  (member 'draft (mu4e-message-field msg :flags))
-;;       (mu4e-warn "Cannot edit non-draft messages"))
-;;     (mu4e--compose-setup
-;;      'edit
-;;      (lambda (parent)
-;;        (let ((buf (find-file-noselect (plist-get parent :path))))
-;;          (with-current-buffer buf
-;;            (mu4e--delimit-headers)
-;;            ;; https://github.com/djcb/mu/issues/2644#issuecomment-2054104555
-;;            (mu4e-compose-mode))
-;;          (display-buffer buf))))))
 #+end_src
 
 ** Folders
@@ -11661,11 +11640,23 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
         " - " invocation-name))
 #+end_src
 
-** Stripe Buffer
+** Stripe Buffer                                                                                                :patch:
 
 [[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png]] ([[https://github.com/sabof/stripe-buffer/raw/master/screenshot.png][source]])
 
 [[https://github.com/sabof/stripe-buffer][Stripe Buffer]] makes it vastly easier to read tables and dired buffers. We apply this [[https://github.com/sabof/stripe-buffer/pull/14][patch]] for performance.
+
+#+begin_src diff
+@@ -141,7 +141,7 @@ Used by `stripe-table-mode' Only the first matching group will be painted."
+                  (push overlay sb/overlays)))))
+          ( goto-start-pos
+            (lambda ()
+-             (let (( start-offset (mod (1- (line-number-at-pos)) interval)))
++             (let (( start-offset (mod (1- (string-to-number (format-mode-line "%l"))) interval)))
+                (if (< start-offset stripe-height) ; in first part
+                    (progn
+                      (forward-line (- stripe-height start-offset))
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package stripe-buffer
