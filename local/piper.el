@@ -39,18 +39,18 @@ These are tuples of (\"tag\" \"lang-code\" \"model-path\" \"speaker-number\")."
 
 ;; Return the first voice matching detected language.
 
-(defun piper-guess-language (text)
+(defun piper-guess-language (text &optional default-language)
   (if (length< text guess-language-min-paragraph-length)
-      piper-default-language
+      (or default-language piper-default-language)
     (with-temp-buffer
       (insert text)
       (replace-regexp-in-string
        "_" "-"
        (cadr (assq (guess-language-buffer) guess-language-langcodes))))))
 
-(defun piper-select-voice (text)
+(defun piper-select-voice (text &optional default-language)
   "Select voice by picking first voice matching detected language in TEXT."
-  (let ((lang (piper-guess-language text))
+  (let ((lang (piper-guess-language text default-language))
         (voices nil))
     (dolist (entry piper-voices)
       (if (string-prefix-p lang (nth 1 entry))
@@ -130,11 +130,11 @@ Region between BEGINNING and END is converted."
     (setq tmp (replace-regexp-in-string (rx " e.g." (or "," " " " "))" for example " tmp))
     tmp))
 
-(defun piper-render-speech (text &optional voice)
+(defun piper-render-speech (text &optional voice default-language)
   "Render speech for TEXT with VOICE.
 
 Return output filename."
-  (let* ((voice (if voice voice (piper-select-voice text)))
+  (let* ((voice (if voice voice (piper-select-voice text default-language)))
          (temp-filename (make-temp-file "emacs-piper"))
          (input-filename (concat temp-filename ".txt"))
          (output-filename (concat temp-filename ".wav"))
@@ -162,12 +162,14 @@ When ARG is given, allow to select the voice first."
          (end (if (not (use-region-p))
                   (save-excursion (forward-paragraph) (point))
                 (region-end)))
-         (texts (split-string (piper-plaintextify beginning end) "\n\n"))
+         (full-text (piper-plaintextify beginning end))
+         (default-language (piper-guess-language full-text))
+         (texts (split-string full-text "\n\n"))
          (silence (make-temp-file "emacs-piper-silence" nil ".mp3"))
          (files nil)
          (set-voice (if arg (piper-voices-completing-read) nil)))
     (dolist (text texts)
-      (add-to-list 'files (piper-render-speech text set-voice) t))
+      (add-to-list 'files (piper-render-speech text set-voice default-language) t))
     ;; TODO I'm too lazy to figure out how to prevent emms from keeping th last file in the
     ;; playlist, we just add a short silence to make it unnoticeable
     (add-to-list 'files silence t)
