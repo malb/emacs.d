@@ -7644,7 +7644,7 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
                (mapcar #'malb/get-bibtex-keys (reftex-get-bibfile-list)))))
 #+end_src
 
-*** BibTeX Completion & Helm BibTeX
+*** BibTeX Completion & Helm BibTeX                                                                            :patch:
 
 [[https://github.com/tmalsburg/helm-bibtex/][Helm-bibtex]] is a nice interface for BibTeX.
 
@@ -7653,6 +7653,99 @@ Force parsing of the BibTeX bibliography ([[http://stackoverflow.com/questions/9
 In [[./local/bibtex-completion-overrides.el][bibtex-completion-overrides]] we
 - patch =bibtex-completion-find-pdf-in-library= to replace =:= with =_=, e.g. =EPRINT:FooBar21= to =EPRINT_FooBar=; [[https://cryptobib.di.ens.fr/][crypto.bib]] uses those keys.
 - add another layer of caching to speed up loading.
+
+We also patch bibtex-completion:
+
+#+begin_src diff
+diff --git a/bibtex-completion.el b/bibtex-completion.el
+index f5e7009..3732c34 100644
+--- a/bibtex-completion.el
++++ b/bibtex-completion.el
+@@ -199,6 +199,11 @@ This should be a single character."
+   :group 'bibtex-completion
+   :type 'string)
+
++(defcustom bibtex-completion-replace-tex nil
++  "Make use of parsebib's ability to parse TeX and replace it by unicode characters."
++  :group 'bibtex-completion
++  :type 'boolean)
++
+ (defcustom bibtex-completion-fallback-options
+   '(("CrossRef                                  (biblio.el)"
+      . (lambda (search-expression) (biblio-lookup #'biblio-crossref-backend search-expression)))
+@@ -676,25 +681,28 @@ Also do some preprocessing of the entries.
+
+ If HT-STRINGS is provided it is assumed to be a hash table."
+   (goto-char (point-min))
+-  (cl-loop
+-   with fields = (append '("title" "crossref")
+-                         (-map (lambda (it) (if (symbolp it) (symbol-name it) it))
+-                               bibtex-completion-additional-search-fields))
+-   for entry-type = (parsebib-find-next-item)
+-   while entry-type
+-   unless (member-ignore-case entry-type '("preamble" "string" "comment"))
+-   collect (let* ((entry (parsebib-read-entry entry-type (point) ht-strings))
+-                  (fields (append
+-                           (list (if (assoc-string "author" entry 'case-fold)
+-                                     "author"
+-                                   "editor")
+-                                 (if (assoc-string "date" entry 'case-fold)
+-                                     "date"
+-                                   "year"))
+-                           fields)))
+-             (-map (lambda (it)
+-                     (cons (downcase (car it)) (cdr it)))
+-                   (bibtex-completion-prepare-entry entry fields)))))
++  (cl-letf (((symbol-function 'parsebib--convert-tex-italics) (lambda (str) str))
++            ((symbol-function 'parsebib--convert-tex-bold) (lambda (str) str)))
++    (cl-loop
++     with fields = (append '("title" "crossref")
++                           (-map (lambda (it) (if (symbolp it) (symbol-name it) it))
++                                 bibtex-completion-additional-search-fields))
++     for entry-type = (parsebib-find-next-item)
++     while entry-type
++     unless (member-ignore-case entry-type '("preamble" "string" "comment"))
++     collect (let* ((entry (parsebib-read-entry entry-type (point) ht-strings nil
++                                                bibtex-completion-replace-tex))
++                    (fields (append
++                             (list (if (assoc-string "author" entry 'case-fold)
++                                       "author"
++                                     "editor")
++                                   (if (assoc-string "date" entry 'case-fold)
++                                       "date"
++                                     "year"))
++                             fields)))
++               (-map (lambda (it)
++                       (cons (downcase (car it)) (cdr it)))
++                     (bibtex-completion-prepare-entry entry fields))))))
+
+ (defun bibtex-completion-get-entry (entry-key)
+   "Given a BibTeX key this function scans all bibliographies listed in `bibtex-completion-bibliography' and returns an alist of the record with that key.
+diff --git a/helm-bibtex.el b/helm-bibtex.el
+index 10b1afb..0bcbbd5 100644
+--- a/helm-bibtex.el
++++ b/helm-bibtex.el
+@@ -174,12 +174,18 @@ comes out in the right buffer."
+
+ ;; Helm sources:
+
++(defcustom helm-bibtex-ignore-diacritics nil
++  "Ignore diacritics when searching."
++  :group 'bibtex-completion
++  :type 'boolean)
++
+ (defvar helm-source-bibtex
+   (helm-build-sync-source "BibTeX entries"
+     :header-name (lambda (name)
+                    (format "%s%s: " name (if helm-bibtex-local-bib " (local)" "")))
+     :candidates 'helm-bibtex-candidates
+     :filtered-candidate-transformer 'helm-bibtex-candidates-formatter
++    :diacritics helm-bibtex-ignore-diacritics
+     :action (helm-make-actions
+              "Open PDF, URL or DOI"       'helm-bibtex-open-any
+              "Open URL or DOI in browser" 'helm-bibtex-open-url-or-doi
+
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package bibtex-completion)
