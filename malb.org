@@ -9139,6 +9139,23 @@ Don’t ask me to remove the backup file, I do want to remove the backup file, t
         (malb/fix-grammar-llm)))))
 #+end_src
 
+([[https://github.com/djcb/mu/issues/2665#issuecomment-2016826822][source]])
+
+#+begin_src emacs-lisp
+(defun malb/supersede-or-compose-reply-ask-wide ()
+  "Supersede own messages or ask whether to reply-to-all."
+  (interactive)
+  (if (mu4e-message-contact-field-matches-me (mu4e-message-at-point) :from)
+      (mu4e-compose-supersede)
+    (let ((tos (length (mu4e-message-field-at-point :to)))
+          (ccs (length (mu4e-message-field-at-point :cc))))
+      (mu4e-compose-reply
+       (and (> (+ tos ccs) 1)
+            (yes-or-no-p "Reply to all?"))))))
+
+(bind-key "R" #'malb/supersede-or-compose-reply-ask-wide 'mu4e-compose-minor-mode-map)
+#+end_src
+
 ** Context Switching
 
 Update "From:" and signature on context switch.
