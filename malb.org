@@ -9466,6 +9466,55 @@ Martin
       (org-todo "DONE"))))
 #+end_src
 
+** Debugging
+
+#+begin_src shell :tangle no
+emacs -Q -l ~/.emacs.d/mu4e-test.el
+#+end_src
+
+#+begin_src emacs-lisp :tangle mu4e-test.el
+(package-initialize)
+(add-to-list 'load-path "~/.emacs.d/local/mu4e/")
+(require 'mu4e)
+
+(setq mu4e-headers-skip-duplicates t
+      mu4e-view-show-images t
+      message-kill-buffer-on-exit t
+      mu4e-hide-index-messages t
+      mu4e-auto-retrieve-keys t
+      message-dont-reply-to-names #'mu4e-personal-or-alternative-address-p
+      mu4e-completing-read-function 'completing-read
+      mu4e-compose-switch 'display-buffer
+      mu4e-split-view 'vertical
+      mu4e-headers-visible-columns 134
+      mu4e-headers-visible-lines 16
+      mu4e-context-policy 'pick-first
+      mu4e-compose-context-policy 'ask
+      mu4e-change-filenames-when-moving t
+      mu4e-confirm-quit nil
+      mu4e-index-cleanup t
+      mu4e-view-show-addresses t
+      mu4e-headers-precise-alignment t
+      mu4e-compose-complete-only-after nil
+      mu4e-index-lazy-check nil
+      mu4e-headers-auto-update nil
+      mu4e-org-link-query-in-headers-mode t
+      mu4e-eldoc-support t
+      mu4e-modeline-support nil)
+
+(setq mu4e-contexts
+      `( ,(make-mu4e-context
+           :name "Google Mail"
+           :vars `((user-mail-address . "martinralbrecht@googlemail.com")
+                   (send-mail-function . sendmail-send-it)
+                   (sendmail-program . "/usr/sbin/sendmail")
+                   (message-send-mail-function . message-send-mail-with-sendmail)
+                   (mu4e-drafts-folder . "/gmail/[Google Mail]/Drafts")
+                   (mu4e-sent-folder   . "/gmail/[Google Mail]/Sent Mail")
+                   (mu4e-trash-folder  . "/gmail/[Google Mail]/Bin")
+                   (mu4e-sent-messages-behavior . delete)))))
+#+end_src
+
 * Blogging
 
 We change the default template to not include the title which is filled in by deft. We also query the user for a date/time for the blog post.
