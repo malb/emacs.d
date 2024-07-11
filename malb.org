@@ -7269,7 +7269,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                     "for" "do" "return"
                                     "const"
                                     "and" "or"
-                                    "linecomment" "assert" "in")
+                                    "linecomment" "comment" "assert" "in")
                                 symbol-end))
                 0 'font-latex-bold-face prepend))
              'end)
