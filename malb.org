@@ -8028,6 +8028,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 (use-package mu4e
   :ensure nil
   :ensure-system-package mu
+  :commands (mu4e mu4e-update-index)
   :bind (:map mu4e-main-mode-map ("u" . mu4e-update-index))
   :config  (setq mu4e-headers-skip-duplicates t
                  mu4e-view-show-images t
