@@ -11362,9 +11362,7 @@ Transparent encryption and decryption.
               "ellama-session")
 
             (setopt ellama-language "German"
-                    ellama-provider (make-llm-ollama
-                                     :chat-model malb/ollama-default
-                                     :embedding-model malb/ollama-default)
+                    ellama-provider (apply #'make-llm-ollama malb/ollama-default)
                     ellama-long-lines-length 1000000
                     ellama-fill-paragraphs nil
                     ellama-enable-keymap nil
@@ -11398,9 +11396,7 @@ Transparent encryption and decryption.
                                            "Output only the text and nothing else, do not chat, no preamble:\n%s")
                                    to-language text))
                      (ollama-service (prodigy-find-service "ollama"))
-                     (ellama-provider (make-llm-ollama
-                                       :chat-model malb/ollama-translate-default
-                                       :embedding-model malb/ollama-translate-default)))
+                     (ellama-provider (apply #'make-llm-ollama malb/ollama-translate-default)))
 
                 (when (not (prodigy-service-started-p ollama-service))
                   (prodigy-start-service ollama-service)
