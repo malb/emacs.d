@@ -11368,6 +11368,14 @@ Transparent encryption and decryption.
                     ellama-enable-keymap nil
                     ellama-naming-scheme #'malb/ellama-static-name)
 
+            (malb/defadvice! malb/make-llm-ollama-parameters (old-function &rest args)
+              "Pass in parameters."
+              :around 'make-llm-ollama
+              (apply old-function
+                     (append args
+                             `(:default-chat-non-standard-params
+                               ,(cdr (assoc (plist-get args :chat-model) malb/ollama-parameters))))))
+
             (defun malb/translate-llm (&optional change)
               "Translate selected region or sentence at point and replace."
               (interactive "P")
@@ -11518,6 +11526,7 @@ Transparent encryption and decryption.
                   :prompt ,shell-prompt
                   :images ,images
                   :context ,ollama-shell-context
+                  :options ,(cdr (assoc model malb/ollama-parameters))
                   :stream ,(if ollama-shell-streaming t json-false))))
 
             (defun ollama-shell-callback-curl (blob)
