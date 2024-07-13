@@ -9156,6 +9156,12 @@ Don’t ask me to remove the backup file, I do want to remove the backup file, t
 (bind-key "R" #'malb/supersede-or-compose-reply-ask-wide 'mu4e-compose-minor-mode-map)
 #+end_src
 
+Do not restore window configuration (not necessary) or kill frame (handled by dedicated buffers)
+
+#+begin_src emacs-lisp
+(setq mu4e-compose-post-hook nil)
+#+end_src
+
 ** Context Switching
 
 Update "From:" and signature on context switch.
