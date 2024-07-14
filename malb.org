@@ -5839,17 +5839,11 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :after (lsp-mode)
   :config (progn
             (setq lsp-ui-sideline-enable nil
-                  lsp-ui-sideline-ignore-duplicate t)
-
-            (setq lsp-ui-peek-enable t)
-            ;; register the defaults which will call out to ccls
-            (smart-jump-register :modes '(c-mode c-ts-mode c++-modec c++-ts-mode)
-                                 :async 2000
-                                 :order 1)
-
-            (setq lsp-ui-imenu-enable t)
-            (setq lsp-ui-doc-enable nil)
-            (setq lsp-ui-flycheck-enable t)))
+                  lsp-ui-sideline-ignore-duplicate t
+                  lsp-ui-peek-enable t
+                  lsp-ui-imenu-enable t
+                  lsp-ui-doc-enable t
+                  lsp-ui-flycheck-enable t)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -5879,7 +5873,11 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :init (progn
           (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
           (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
-          (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-ts-mode))))
+          (add-to-list 'auto-mode-alist '("\\.inl\\'" . c++-ts-mode)))
+  :config  ;; register the defaults which will call out to ccls
+  (smart-jump-register :modes '(c-mode c-ts-mode c++-modec c++-ts-mode)
+                       :async 2000
+                       :order 1))
 #+end_src
 
 Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format code, [[https://github.com/SavchenkoValeriy/emacs-clang-format-plus][clang-format+]] automatically runs =clang-format= when a =.clang-format= is present.
@@ -6775,73 +6773,11 @@ Automatically pick dictionary.
                 guess-language-languages '(en de)))
 #+end_src
 
-*** Grammar Checking
-
-Langtool ([[https://github.com/mhayashi1120/Emacs-langtool][source]]) for offline grammar checking.
-
-#+begin_src emacs-lisp
-(use-package flycheck-languagetool
-  :ensure t
-  :hook (text-mode . flycheck-languagetool-setup)
-  :init (setq flycheck-languagetool-server-jar
-              (expand-file-name "languagetool-server.jar"
-                                (concat user-emacs-directory "LanguageTool-6.3"))
-              flycheck-languagetool-language "en-GB"
-              flycheck-languagetool-check-params
-              '(("disabledRules" . ("OXFORD_SPELLING_Z_NOT_S")))
-              flycheck-languagetool-active-modes
-              '(org-mode markdown-mode)))
-#+end_src
-
-*** Synonyms
-
-**** Synosaurus for offline lookups
-
-[[https://raw.githubusercontent.com/hpdeifel/synosaurus/master/screenshots/cnr.png]]
-
-[[https://github.com/hpdeifel/synosaurus][synosaurus]]
-
-#+begin_src emacs-lisp
-(use-package synosaurus
-  :ensure-system-package ((wn . wordnet))
-  :bind (("C-c w s" . synosaurus-lookup)
-         ("C-c w S" . synosaurus-choose-and-replace))
-  :config (progn
-            (setq synosaurus-choose-method 'popup)
-            (unbind-key "C-c s l" synosaurus-mode-map)
-            (unbind-key "C-c s r" synosaurus-mode-map)
-            (add-hook 'org-mode-hook #'synosaurus-mode)
-            (add-hook 'LaTeX-mode-hook #'synosaurus-mode)))
-#+end_src
-
-**** Powerthesaurus for online lookups
-
-[[https://raw.githubusercontent.com/SavchenkoValeriy/emacs-powerthesaurus/master/assets/demo.gif]]
-
-[[https://github.com/SavchenkoValeriy/emacs-powerthesaurus][powerthesaurus]]
-
-#+begin_src emacs-lisp
-(use-package powerthesaurus
-  :bind ("C-c w p" . powerthesaurus-lookup-dwim)
-  :config (malb/register-right-side-window (rx bos "*Powerthesaurus - " (0+ any) "*" eos) t))
-#+end_src
-
 *** Dictionary
 
 [[https://raw.githubusercontent.com/wiki/abo-abo/define-word/images/define-word.png]]
 
-**** Define-word for online Wordnix lookups
-
-Use [[http://oremacs.com/2015/05/22/define-word/][define-word]] to get a quick reference on a word using [[https://www.wordnik.com/][wordnik]].
-
-#+begin_src emacs-lisp
-(use-package define-word
-  :bind (("C-c w D" . define-word-at-point)))
-#+end_src
-
-**** Lexic for offline lookups
-
-Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
+*[[https://github.com/tecosaur/lexic][Lexic]] for offline lookups.*
 
 #+begin_src emacs-lisp
 (use-package lexic
@@ -6862,20 +6798,66 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
             (malb/register-right-side-window (rx bos "*lexic*" eos))))
 #+end_src
 
-*** Translating
-
-[[https://github.com/atykhonov/google-translate][google-translate]] queries just that.
+*[[http://oremacs.com/2015/05/22/define-word/][Define-word]] for online [[https://www.wordnik.com/][wordnik]] lookups.*
 
 #+begin_src emacs-lisp
-(use-package google-translate
-  :bind ("C-c w t g" . google-translate-smooth-translate)
-  :init (progn
-          (setq google-translate-translation-directions-alist
-                '(("de" . "en") ("en" . "de")))
-          (malb/register-right-side-window (rx (seq bos "*Google Translate*" eos)))))
+(use-package define-word
+  :bind (("C-c w D" . define-word-at-point)))
 #+end_src
 
-[[https://www.reverso.net/][Reverso]] offers translation, grammar checks, synonyms and context
+*** Synonyms
+
+*[[Https://github.com/hpdeifel/synosaurus][Synosaurus]] for offline lookups.*
+
+[[https://raw.githubusercontent.com/hpdeifel/synosaurus/master/screenshots/cnr.png]]
+
+#+begin_src emacs-lisp
+(use-package synosaurus
+  :ensure-system-package ((wn . wordnet))
+  :bind (("C-c w s" . synosaurus-choose-and-replace)
+         ("C-c w S" . synosaurus-lookup))
+  :config (progn
+            (setq synosaurus-choose-method 'popup)
+            (unbind-key "C-c s l" synosaurus-mode-map)
+            (unbind-key "C-c s r" synosaurus-mode-map)
+            (add-hook 'org-mode-hook #'synosaurus-mode)
+            (add-hook 'LaTeX-mode-hook #'synosaurus-mode)))
+#+end_src
+
+*[[https://github.com/SavchenkoValeriy/emacs-powerthesaurus][PowerThesaurus]] for online lookups.*
+
+[[https://raw.githubusercontent.com/SavchenkoValeriy/emacs-powerthesaurus/master/assets/demo.gif]]
+
+#+begin_src emacs-lisp
+(use-package powerthesaurus
+  :bind ("C-c w p" . powerthesaurus-lookup-dwim)
+  :config (malb/register-right-side-window (rx bos "*Powerthesaurus - " (0+ any) "*" eos) t))
+#+end_src
+
+*** Grammar Checking
+
+*[[https://github.com/emacs-languagetool/lsp-ltex][Langtool]] for offline grammar checking.*
+
+#+begin_src emacs-lisp
+(use-package lsp-ltex
+  :init (setq lsp-ltex-version "15.2.0"
+              lsp-ltex-language "en-GB"
+              lsp-ltex-disabled-rules '("OXFORD_SPELLING_Z_NOT_S")))
+#+end_src
+
+*[[https://github.com/emacs-grammarly/lsp-grammarly][Grammarly]] for online grammar checking.*
+
+#+begin_src emacs-lisp
+(use-package lsp-grammarly
+  :init (progn
+          (setq lsp-grammarly-dialect "british")
+          ;; never start grammarly-ls automatically, but only do it on a document-by-document basis
+          (add-to-list 'lsp-disabled-clients 'grammarly-ls)))
+#+end_src
+
+*** Translating
+
+*[[https://www.reverso.net/][Reverso]] offers translation, grammar checks, synonyms and context.*
 
 #+begin_src emacs-lisp
 (use-package reverso
@@ -6884,6 +6866,17 @@ Use [[https://github.com/tecosaur/lexic][lexic]] for local word lookups.
   :config (progn
             (setq reverso-languages '(english german))
             (malb/register-right-side-window (rx (seq bos "*Reverso*" eos)))))
+#+end_src
+
+*[[Https://github.com/atykhonov/google-translate][Google-translate]] queries just that.*
+
+#+begin_src emacs-lisp
+(use-package google-translate
+  :bind ("C-c w t g" . google-translate-smooth-translate)
+  :init (progn
+          (setq google-translate-translation-directions-alist
+                '(("de" . "en") ("en" . "de")))
+          (malb/register-right-side-window (rx (seq bos "*Google Translate*" eos)))))
 #+end_src
 
 ** Taking Notes (Deft)
