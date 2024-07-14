@@ -40,6 +40,7 @@ These are tuples of (\"tag\" \"lang-code\" \"model-path\" \"speaker-number\")."
 ;; Return the first voice matching detected language.
 
 (defun piper-guess-language (text &optional default-language)
+  "Guess the language of TEXT and fall back to DEFAULT-LANGUAGE."
   (if (length< text guess-language-min-paragraph-length)
       (or default-language piper-default-language)
     (with-temp-buffer
