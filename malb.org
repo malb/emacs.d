@@ -8209,10 +8209,6 @@ Canned queries.
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
 #+end_src
 
-#+begin_src emacs-lisp
-(add-to-list 'mu4e-bookmarks `(:query "(contact:eurocrypt2024artifacts@iacr.org)"  :name "EUROCRYPT'24 Artifacts" :key ?A) t)
-#+end_src
-
 ** Key Bindings
 
 #+begin_src emacs-lisp
