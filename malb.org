@@ -6840,9 +6840,10 @@ Automatically pick dictionary.
 
 #+begin_src emacs-lisp
 (use-package lsp-ltex
-  :init (setq lsp-ltex-version "15.2.0"
+  :init (setq lsp-ltex-version "16.0.0"
               lsp-ltex-language "en-GB"
-              lsp-ltex-disabled-rules '("OXFORD_SPELLING_Z_NOT_S")))
+              lsp-ltex-disabled-rules '(:en-GB ["OXFORD_SPELLING_Z_NOT_S"
+                                                "MORFOLOGIK_RULE_EN_GB"])))
 #+end_src
 
 *[[https://github.com/emacs-grammarly/lsp-grammarly][Grammarly]] for online grammar checking.*
