@@ -6879,6 +6879,18 @@ Automatically pick dictionary.
           (malb/register-right-side-window (rx (seq bos "*Google Translate*" eos)))))
 #+end_src
 
+*[[https://github.com/argosopentech/argos-translate][Argos-translate]] for offline translations.*
+
+#+begin_src emacs-lisp
+(use-package argos-translate
+  :ensure nil
+  :bind ("C-c w t t" . argos-translate-region)
+  :config (progn
+            (setq argos-translate-command
+                  "conda run -n cuda --no-capture-output argos-translate -f ${from} -t ${to} ${text}")
+            (malb/register-right-side-window (rx bos "*argos-translate*" eos))))
+#+end_src
+
 ** Taking Notes (Deft)
 
 Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a listing of blog entries.
