@@ -6672,7 +6672,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 (use-package focus)
 #+end_src
 
-*** Spell Checking
+** Spell Checking
 
 - Replace ~’~ with ~​'​~ before sending it to ispell ([[http://endlessparentheses.com/ispell-and-apostrophes.html][source]]) *Note:* Below, we adapt "en-default" (our default) instead of =nil= (the global default) because otherwise we [[http://endlessparentheses.com/ispell-and-apostrophes.html#comment-2258586606][can’t change dictionaries]].
 
@@ -6773,7 +6773,7 @@ Automatically pick dictionary.
                 guess-language-languages '(en de)))
 #+end_src
 
-*** Dictionary
+** Dictionary
 
 [[https://raw.githubusercontent.com/wiki/abo-abo/define-word/images/define-word.png]]
 
@@ -6805,7 +6805,7 @@ Automatically pick dictionary.
   :bind (("C-c w D" . define-word-at-point)))
 #+end_src
 
-*** Synonyms
+** Synonyms
 
 *[[Https://github.com/hpdeifel/synosaurus][Synosaurus]] for offline lookups.*
 
@@ -6834,7 +6834,7 @@ Automatically pick dictionary.
   :config (malb/register-right-side-window (rx bos "*Powerthesaurus - " (0+ any) "*" eos) t))
 #+end_src
 
-*** Grammar Checking
+** Grammar Checking
 
 *[[https://github.com/emacs-languagetool/lsp-ltex][Langtool]] for offline grammar checking.*
 
@@ -6855,7 +6855,7 @@ Automatically pick dictionary.
           (add-to-list 'lsp-disabled-clients 'grammarly-ls)))
 #+end_src
 
-*** Translating
+** Translating
 
 *[[https://www.reverso.net/][Reverso]] offers translation, grammar checks, synonyms and context.*
 
@@ -11476,7 +11476,7 @@ Transparent encryption and decryption.
                           (ellama-instant task))))))
 
             (require 'llm-prompts)
-
+            (bind-key "C-c w t l" #'malb/translate-llm)
             (malb/register-right-side-window (rx bos "ellama-session") t)))
 #+end_src
 
