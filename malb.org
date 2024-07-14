@@ -8475,7 +8475,7 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
 (bind-key "C-c ]" #'malb/helm-reorder-recipients mu4e-compose-mode-map)
 #+end_src
 
-*** Contact Look up
+*** Contact look up
 
 #+begin_src emacs-lisp
 (defun malb/fullcontact ()
@@ -9351,21 +9351,21 @@ Open raw view in message view or below.
                 display-buffer-below-selected)))
 #+end_src
 
-** PGP
+** PGP / GnuPG
 
 #+begin_src emacs-lisp
 (setq mml2015-encrypt-to-self t)
 (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
 (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
-(setq epg-gpg-program "gpg2")
+(setq epg-gpg-program "gpg")
 #+end_src
 
 ** iCal
 
 #+begin_src emacs-lisp
-(use-package mu4e-icalendar
+(use-package gnus-icalendar
   :ensure nil
-  :config (mu4e-icalendar-setup))
+  :config (gnus-icalendar-setup))
 #+end_src
 
 ** Mu4e 🖤 Org
@@ -9375,11 +9375,10 @@ Link to mu4e messages and threads.
 #+begin_src emacs-lisp
 (use-package mu4e-org
   :ensure nil
-  :config (progn
-            (setq mu4e-org-link-query-in-headers-mode t)))
+  :config (setq mu4e-org-link-query-in-headers-mode t))
 #+end_src
 
-** Mail Merge
+** Mail merge
 :PROPERTIES:
 :BCC:       Eve <eve@example.com>
 :END:
