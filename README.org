@@ -12,6 +12,9 @@ These are the relevant bits of my emacs config. Some stuff not suitable for gene
 - [[https://github.com/malb/emacs.d/blob/master/local/helm-baloo.el][Helm interface]] to KDE’s [[https://community.kde.org/Baloo][desktop search]]
 - [[https://github.com/malb/emacs.d/blob/master/malb.org#e-mail-mu4e][Extensive setup]] for email via [[https://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]], cf also this [[https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/][blog post]].
 - [[https://github.com/malb/emacs.d/blob/master/malb.org#bibtex-completion--helm-bibtex][Company interface]] to [[https://github.com/tmalsburg/helm-bibtex][helm-bibtex]].
-- [[https://github.com/malb/emacs.d/blob/master/local/aws-polly.el][AWS Polly interface]] for text to speech.
+- +[[https://github.com/malb/emacs.d/blob/master/local/aws-polly.el][AWS Polly interface]] for text to speech.+
+- [[https://github.com/malb/emacs.d/blob/master/local/piper.el][Piper interface]] for offline text-to-speech.
+- [[https://github.com/malb/emacs.d/blob/master/local/argos-translate.el][Argos Translate interface]] for offline translation.
+- [[https://github.com/malb/emacs.d/blob/master/local/pix2tex.el][Pix2Tex interface]] for offline LaTeX OCR.  
 - [[https://github.com/malb/emacs.d/blob/master/malb.org#pdf-viewer][Various functions]] for extracting data from PDFs and for [[https://github.com/malb/emacs.d/blob/master/malb.org#pdf-diff][diffing]] two PDFs.
 - [[https://github.com/malb/emacs.d/blob/master/malb.org#mail-merge][Mail merge]] in org buffers.
