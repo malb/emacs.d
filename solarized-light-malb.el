@@ -96,24 +96,24 @@
 
      `(hl-sentence ((t (:background ,yellow-1bg :inherit (highlight)))))
      `(hl-line ((t (:background ,yellow-1bg :inherit (highlight)))))
+
      `(mu4e-header-highlight-face ((t (:background ,yellow-1bg :inherit (highlight)))))
      `(mu4e-related-face ((t (:foreground ,base00))))
-     ;; `(which-func  ((t (:foreground ,green :weight bold))))
-     `(stripe-highlight ((t (:background ,s-base2 :extend t))))
+     `(mu4e-thread-folding-child-face         ((t (:background "#EEF3FC" :extend t))))
+     `(mu4e-thread-folding-root-unfolded-face ((t (:background "#DCE6F9" :extend t))))
 
-     ;; `(sp-wrap-overlay-opening-pair ((t (:foreground ,green))))
-     ;; `(sp-wrap-overlay-closing-pair ((t (:foreground ,orange))))
+     `(stripe-highlight ((t (:background ,s-base2 :extend t))))
 
      `(show-paren-match     ((,class (:foreground unspecified :background ,cyan-1bg :inherit (highlight) :extend t))))
      `(show-paren-mismatch  ((,class (:foreground ,base02 :background ,red :weight ,s-maybe-bold))))
 
      ;; steal spacemacs flycheck style
      `(flycheck-error   ((t (:underline (:color ,red :style line)))))
-     `(flycheck-warning ((t (:underline (:color "#b58900" :style line)))))
-     `(flycheck-info    ((t (:underline (:color "#268bd2" :style line)))))
-     `(flycheck-fringe-warning ((t (:weight bold :foreground "#DEB542" :background ,s-base3))))
+     `(flycheck-warning ((t (:underline (:color ,yellow :style line)))))
+     `(flycheck-info    ((t (:underline (:color ,blue :style line)))))
      `(flycheck-fringe-error   ((t (:weight bold :foreground ,red :background ,s-base3))))
-     `(flycheck-fringe-info    ((t (:weight bold :foreground "#69B7F0" :background ,s-base3))))
+     `(flycheck-fringe-warning ((t (:weight bold :foreground ,yellow :background ,s-base3))))
+     `(flycheck-fringe-info    ((t (:weight bold :foreground ,blue :background ,s-base3))))
 
      `(eshell-git-prompt-powerline-dir-face ((t (:foreground ,s-base3 :background ,blue))))
      `(eshell-git-prompt-powerline-clean-face ((t (:foreground ,s-base3 :background ,green))))
@@ -133,11 +133,23 @@
      `(dired-subtree-depth-5-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(dired-subtree-depth-6-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
 
-     `(mu4e-thread-folding-child-face         ((t (:background "#EEF3FC" :extend t))))
-     `(mu4e-thread-folding-root-unfolded-face ((t (:background "#DCE6F9" :extend t))))
-
      `(ein:cell-input-area   ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.15)))))
      `(ein:cell-input-prompt ((t (:weight bold :foreground ,s-base00 :inherit (header-line)))))
+
+     `(lsp-headerline-breadcrumb-symbols-face ((t (:underline unspecified))))
+     `(lsp-headerline-breadcrumb-symbols-error-face   ((t (:underline (:color ,red :style line)))))
+     `(lsp-headerline-breadcrumb-symbols-hint-face    ((t (:underline (:color ,blue :style line)))))
+     `(lsp-headerline-breadcrumb-symbols-info-face    ((t (:underline (:color ,blue :style line)))))
+     `(lsp-headerline-breadcrumb-symbols-warning-face ((t (:underline (:color ,yellow :style line)))))
+
+     `(lsp-headerline-breadcrumb-path-face ((t (:foreground ,s-base00))))
+     `(lsp-headerline-breadcrumb-path-error-face ((t (:underline unspecified))))
+     `(lsp-headerline-breadcrumb-path-warning-face ((t (:underline unspecified))))
+     `(lsp-headerline-breadcrumb-path-info-face ((t (:underline unspecified))))
+     `(lsp-headerline-breadcrumb-path-hint-face ((t (:underline unspecified))))
+
+     `(lsp-headerline-breadcrumb-project-prefix-face ((t (:underline unspecified))))
+     `(lsp-headerline-breadcrumb-unknown-project-prefix-face ((t (:underline unspecified))))
 
      `(helm-ff-file-extension ((t ())))
      `(bm-face ((t (:background "#FFE6E4"))))
