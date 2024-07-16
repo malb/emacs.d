@@ -12194,8 +12194,8 @@ Colourise colours or names in buffers ([[http://git.savannah.gnu.org/cgit/emacs/
 
 #+begin_src emacs-lisp
 (use-package rainbow-mode
-  :config (progn
-            (add-hook 'emacs-lisp-mode-hook #'rainbow-mode))
+  :custom ((rainbow-x-colors nil "don't colorise the word 'red' etc."))
+  :config (progn (add-hook 'emacs-lisp-mode-hook #'rainbow-mode))
   :blackout rainbow-mode)
 #+end_src
 
