@@ -11636,6 +11636,17 @@ Transparent encryption and decryption.
 
               (setq-local ollama-shell-context nil))
 
+            (defun ollama-shell-context-length (&optional print-message)
+              (interactive "p")
+              (let ((len (length ollama-shell-context)))
+                (when print-message (message "ollama-context length %d" len))
+                len))
+
+            (defun ollama-shell-reset-context (&optional print-message)
+              (interactive "p")
+              (when print-message (message "ollama-context reset."))
+              (setq-local ollama-shell-context nil))
+
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
 #+end_src
 
