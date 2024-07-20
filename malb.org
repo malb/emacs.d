@@ -11525,7 +11525,7 @@ Transparent encryption and decryption.
             (defun ollama-shell-make-payload (shell-prompt model)
               "Create elisp object encoding PROMPT and MODEL."
               (let* ((ollama-buffer (current-buffer))
-                     (images (if (s-equals-p model "llava:latest")
+                     (images (if (s-starts-with-p "llava" model)
                                  (ollama-base64-images-maybe shell-prompt)
                                nil)))
                 (when images (message "ollama: added %d pictures" (length images)))
