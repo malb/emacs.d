@@ -5819,12 +5819,12 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 (use-package lsp-mode
   :after (projectile)
   :commands (lsp malb/lsp-enable-maybe)
+  :custom ((lsp-eldoc-render-all nil)
+           (lsp-prefer-flymake nil)
+           (lsp-completion-provider :none "We enable it manually"))
   :bind (:map lsp-mode-map
               ("M-r" . lsp-find-references))
   :config (progn
-            (setq lsp-eldoc-render-all nil
-                  lsp-prefer-flymake nil)
-
             (defun malb/lsp-enable-maybe ()
               (condition-case nil
                   (if (buffer-file-name) (lsp))
@@ -7923,7 +7923,7 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
     (candidates (all-completions arg (company-bibtex-completion-candidates)))
     (annotation (get-text-property 0 'bibtex-completion-annotation arg))))
 
-(add-to-list 'company-backends #'company-bibtex-completion)
+(add-to-list 'company-backends '(company-bibtex-completion company-capf)) ;;
 #+end_src
 
 ****** TODO turn company-bibtex-completion into library so it can be lazy loaded
