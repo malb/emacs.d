@@ -5819,19 +5819,20 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 (use-package lsp-mode
   :after (projectile)
-  :commands (lsp malb/lsp-enable)
+  :commands (lsp malb/lsp-enable-maybe)
   :bind (:map lsp-mode-map
               ("M-r" . lsp-find-references))
-  :config (progn (setq lsp-eldoc-render-all nil
-                       lsp-prefer-flymake nil)
+  :config (progn
+            (setq lsp-eldoc-render-all nil
+                  lsp-prefer-flymake nil)
 
-                 (defun malb/lsp-enable ()
-                   (condition-case nil
-                       (if (buffer-file-name) (lsp))
-                     (user-error nil)))
+            (defun malb/lsp-enable-maybe ()
+              (condition-case nil
+                  (if (buffer-file-name) (lsp))
+                (user-error nil)))
 
-                 (setq read-process-output-max (* 1024 1024))
-                 (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
+            (setq read-process-output-max (* 1024 1024))
+            (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -5868,7 +5869,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
          (c-ts-base-mode . ws-butler-mode)
          (c-ts-base-mode . ggtags-mode)
          (c-ts-base-mode . helm-gtags-mode)
-         (c-ts-base-mode . malb/lsp-enable)
+         (c-ts-base-mode . malb/lsp-enable-maybe)
          (c-ts-base-mode . clang-format+-mode))
   :init (progn
           (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
@@ -5953,7 +5954,7 @@ and move to the source code that caused it."
   :mode "\\.go$"
   :ensure-system-package (gopls . gopls)
   :hook ((go-ts-mode . eldoc-mode)
-         (go-ts-mode . malb/lsp-enable)
+         (go-ts-mode . malb/lsp-enable-maybe)
          (go-ts-mode . display-line-numbers-mode))
   :init (add-to-list 'major-mode-remap-alist '(go-mode . go-ts-mode))
   :config (when (boundp 'dtrt-indent-hook-mapping-list)
@@ -5968,7 +5969,7 @@ and move to the source code that caused it."
   :ensure nil
   :mode "\\.rs$"
   :hook ((rust-ts-mode . eldoc-mode)
-         (rust-ts-mode . malb/lsp-enable)
+         (rust-ts-mode . malb/lsp-enable-maybe)
          (rust-ts-mode . display-line-numbers-mode))
   :init (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
   :config (when (boundp 'dtrt-indent-hook-mapping-list)
