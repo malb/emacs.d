@@ -5811,9 +5811,9 @@ A generator for pop-up Jupyter repls.
 
 *** Language Server Protocol (LSP)
 
-#+BEGIN_QUOTE
+#+begin_quote
 The Language Server Protocol (LSP) defines the protocol used between an editor or IDE and a language server that provides language features like auto complete, go to definition, find all references etc. – https://microsoft.github.io/language-server-protocol/
-#+END_QUOTE
+#+end_quote
 
 #+begin_src emacs-lisp
 (use-package lsp-mode
