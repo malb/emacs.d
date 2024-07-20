@@ -1155,32 +1155,31 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
 #+begin_src emacs-lisp
 (use-package company
-  :bind (("M-/" . company-complete))
+  :bind (("M-/" . company-complete)
+         :map company-active-map
+         ("C-n" . company-select-next)
+         ("C-p" . company-select-previous)
+         ("TAB" . company-complete)
+         ("M-?" . company-show-doc-buffer)
+         ("M-." . company-show-location))
+  :custom ((company-tooltip-limit 20 "bigger popup window")
+           (company-idle-delay 0.6 "delay for popup")
+           (company-echo-delay 0 "remove blinking")
+           (company-show-numbers t "show numbers for easy selection")
+           (company-abort-on-unique-match nil)
+           (company-selection-wrap-around t)
+           (company-require-match nil)
+           (company-dabbrev-ignore-case nil)
+           (company-dabbrev-ignore-invisible t)
+           (company-dabbrev-other-buffers t)
+           (company-dabbrev-downcase nil)
+           (company-dabbrev-code-everywhere t)
+           (company-tooltip-align-annotations t)
+           (company-minimum-prefix-length 1)
+           (company-global-modes '(not) "company is 'always on', except for a few … exceptions")
+           (company-lighter-base ""))
   :demand t
-  :config (progn
-            (setq company-tooltip-limit 20 ; bigger popup window
-                  company-idle-delay 0.6   ; delay for popup
-                  company-echo-delay 0     ; remove blinking
-                  company-show-numbers t   ; show numbers for easy selection
-                  company-selection-wrap-around t
-                  company-require-match nil
-                  company-dabbrev-ignore-case nil
-                  company-dabbrev-ignore-invisible t
-                  company-dabbrev-other-buffers t
-                  company-dabbrev-downcase nil
-                  company-dabbrev-code-everywhere t
-                  company-tooltip-align-annotations t
-                  company-minimum-prefix-length 1
-                  company-global-modes '(not) ; company is "always on", except for a few … exceptions
-                  company-lighter-base "")
-
-            (global-company-mode 1)
-
-            (bind-key "C-n"   #'company-select-next company-active-map)
-            (bind-key "C-p"   #'company-select-previous company-active-map)
-            (bind-key "TAB" #'company-complete company-active-map)
-            (bind-key "M-?"   #'company-show-doc-buffer company-active-map)
-            (bind-key "M-."   #'company-show-location company-active-map)))
+  :config (global-company-mode 1))
 #+end_src
 
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
