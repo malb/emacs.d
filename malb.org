@@ -1224,19 +1224,13 @@ For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We
             (advice-add #'company-math-symbols-unicode :around #'malb/enforce-case-sensitive)))
 
 (use-package company-auctex
-  :config (progn
-            (add-to-list 'company-backends 'company-math-symbols-unicode)
-            (add-to-list 'company-backends
-                         '(company-math-symbols-latex
-                           company-auctex-macros
-                           company-auctex-environments))))
+  :config (add-to-list 'company-backends 'company-math-symbols-unicode))
 #+end_src
 
 [[https://github.com/TheBB/company-reftex][company-refex]] is used for \LaTeX labels.
 
 #+begin_src emacs-lisp
-(use-package company-reftex
-   :config (add-to-list 'company-backends #'company-reftex-labels))
+(use-package company-reftex)
 #+end_src
 
 BibTeX is handled by Helm BibTeX below.
@@ -6711,11 +6705,11 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
             (defun malb/company-prose-setup ()
               (when (boundp 'company-backends)
-                (make-local-variable 'company-backends)
-                (setq company-backends '((company-capf :with company-yasnippet)
-                                         (company-math-symbols-unicode :with company-yasnippet)
-                                         (company-files :with company-yasnippet)
-                                         company-ispell))
+                (setq-local company-backends
+                            '((company-capf :with company-yasnippet)
+                              (company-math-symbols-unicode :with company-yasnippet)
+                              (company-files :with company-yasnippet)
+                              company-ispell))
                 ;; https://github.com/redguardtoo/emacs.d/issues/473
                 (if (and (boundp 'ispell-alternate-dictionary)
                          ispell-alternate-dictionary)
@@ -6840,10 +6834,12 @@ Automatically pick dictionary.
 
 #+begin_src emacs-lisp
 (use-package lsp-ltex
-  :init (setq lsp-ltex-version "16.0.0"
-              lsp-ltex-language "en-GB"
-              lsp-ltex-disabled-rules '(:en-GB ["OXFORD_SPELLING_Z_NOT_S"
-                                                "MORFOLOGIK_RULE_EN_GB"])))
+  :init
+  (setq lsp-ltex-version "16.0.0"
+        lsp-ltex-language "en-GB"
+        lsp-ltex-disabled-rules '(:en-GB ["OXFORD_SPELLING_Z_NOT_S"
+                                          "MORFOLOGIK_RULE_EN_GB"]))
+  (add-to-list 'lsp-disabled-clients 'ltex-ls))
 #+end_src
 
 *[[https://github.com/emacs-grammarly/lsp-grammarly][Grammarly]] for online grammar checking.*
@@ -7152,7 +7148,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
          (LaTeX-mode . malb/latex-add-environments)
          (LaTeX-mode . malb/latex-add-font-lock)
          (LaTeX-mode . malb/enable-cleveref)
-         (LaTeX-mode . malb/expand-region-setup))
+         (LaTeX-mode . malb/expand-region-setup)
+         (LaTeX-mode . malb/lsp-enable-maybe)
+         (LaTeX-mode . malb/company-latex-setup))
   :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
                                     ("\\sendmessageleft*" arg-on)
                                     ("\\sendmessagerightleft*" arg-on))))
@@ -7221,6 +7219,19 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                          ("pgfkeysvalueof" "{"))
                                        'function))
 
+            (defun malb/company-latex-setup ()
+              (setq-local company-backends '(:separate
+                                             (company-bibtex-completion
+                                              company-reftex-labels
+                                              company-capf
+                                              company-math-symbols-latex
+                                              company-auctex-environments
+                                              company-auctex-macros
+                                              company-files
+                                              company-dabbrev
+                                              :with company-yasnippet)
+                                             )))
+
             (defun malb/enable-cleveref ()
               ;; TODO dunno why cleveref.el isn't loaded
               (font-latex-add-keywords '(("cref"          "*{")
@@ -7264,19 +7275,19 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\" (or (any ",.!;@")
-                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
-                                  symbol-end)))
+                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
+                                   symbol-end)))
                 0 'malb/unimportant-latex-face prepend))
              'end)
 
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\pc" (and (or "if" "then" "else" "elseif"
-                                    "for" "do" "return"
-                                    "const"
-                                    "and" "or"
-                                    "linecomment" "comment" "assert" "in")
-                                symbol-end))
+                                     "for" "do" "return"
+                                     "const"
+                                     "and" "or"
+                                     "linecomment" "comment" "assert" "in")
+                                 symbol-end))
                 0 'font-latex-bold-face prepend))
              'end)
 
