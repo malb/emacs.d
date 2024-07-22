@@ -5779,20 +5779,20 @@ A generator for pop-up Jupyter repls.
 
 **** Tips
 
-- We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
+We can [[https://janakiev.com/blog/jupyter-virtual-envs/][add virtual environments as Jupyter kernels]] like this:
 
-  #+begin_example shell
+#+begin_example shell
 (env) pip install ipykernel
 (env) python -m ipykernel install --user --name=env
-  #+end_example
+#+end_example
 
-- It also works over Tramp
+It also works over Tramp
 
-- Reload kernels
+Make Emacs aware by reloading kernels:
 
-  #+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no
 (jupyter-available-kernelspecs t)
-  #+end_src
+#+end_src
 
 *** Tree Sitter
 
