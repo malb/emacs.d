@@ -11625,28 +11625,35 @@ Transparent encryption and decryption.
                 (setq ellama-provider (ellama-get-ollama-local-model))
                 (setq ellama--current-session-id nil))
 
-              (shell-maker-start
-               (make-shell-maker-config
-                :name "ollama"
-                :prompt (format "ollama(%s)> "
-                                (car (s-split ":" (cl-struct-slot-value 'llm-ollama
-                                                                        'chat-model
-                                                                        ellama-provider))))
-                :execute-command
-                (lambda (command _history callback error-callback)
-                  (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-                    (shell-maker-async-shell-command
-                     (ollama-shell-call-api-curl (ollama-shell-make-payload command model))
-                     ollama-shell-streaming
-                     #'ollama-shell-callback-curl
-                     callback
-                     error-callback)))
-                ;; (lambda (command _history callback error-callback)
-                ;;   (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-                ;;     (ollama-shell-call-api-elisp command model callback)))
-                ))
+              (let ((initial-prompt
+                     (if (use-region-p)
+                         (buffer-substring-no-properties (region-beginning) (region-end))
+                       nil)))
 
-              (setq-local ollama-shell-context nil))
+                (shell-maker-start
+                 (make-shell-maker-config
+                  :name "ollama"
+                  :prompt (format "ollama(%s)> "
+                                  (car (s-split ":" (cl-struct-slot-value 'llm-ollama
+                                                                          'chat-model
+                                                                          ellama-provider))))
+                  :execute-command
+                  (lambda (command _history callback error-callback)
+                    (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
+                      (shell-maker-async-shell-command
+                       (ollama-shell-call-api-curl (ollama-shell-make-payload command model))
+                       ollama-shell-streaming
+                       #'ollama-shell-callback-curl
+                       callback
+                       error-callback)))
+                  ;; (lambda (command _history callback error-callback)
+                  ;;   (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
+                  ;;     (ollama-shell-call-api-elisp command model callback)))
+                  ))
+
+                (setq-local ollama-shell-context nil)
+                (when initial-prompt
+                  (insert initial-prompt))))
 
             (defun ollama-shell-context-length (&optional print-message)
               (interactive "p")
