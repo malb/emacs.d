@@ -9906,47 +9906,58 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 (use-package dired
   :ensure nil
   :commands dired
+  :custom ((dired-recursive-copies 'always)
+           (dired-recursive-deletes 'always)
+           (dired-dwim-target t)
+           (dired-vc-rename-file t)
+           (dired-omit-verbose nil)
+           (dired-auto-revert-buffer t)
+           (dired-listing-switches "-laGh1v --group-directories-first")
+           (wdired-allow-to-change-permissions t)
+           (wdired-use-dired-vertical-movement 'sometimes))
   :bind (:map dired-mode-map
               ("a"   . dired-find-file-other-window)
               ("RET" . dired-find-alternate-file)
               ("^"   . (lambda () (interactive) (find-alternate-file "..")))
               ("q"   . (lambda () (interactive) (find-alternate-file "..")))
               ("Q"   . quit-window)
+              ("C-s" . dired-isearch-filenames)
               ("C-c C-o" . malb/dired-xdg-open-file))
   :config (progn
             (require 'dired-x)
-            (setq dired-listing-switches "-laGh1v --group-directories-first")
 
             (defvar malb/unimportant-files
-              (mapconcat 'identity '("\\.idx" "\\.run\\.xml$" "\\.bcf$" ".blg$"
-                                     "-blx.bib$" "\\.snm$"
-                                     "\\.synctex\\.gz$" "\\.tex\\.backup$" "\\.bib\\.backup$"
-                                     "\\.fdb_latexmk$" "\\.fls$"
-                                     "\\.pyc"
-                                     "\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|out\\|nav\\|orig\\|rej\\|toc\\|vrb\\|pyg\\)\\)\\'"
-                                     "^autosaves#"
-                                     "^\\.?#\\|^\\..+$")
-                         "\\|"))
+              (rx (or (seq "." (or "aux"
+                                   "bak"
+                                   "bcf"
+                                   "bib.backup"
+                                   "blg"
+                                   "dvi"
+                                   "fdb_latexmk"
+                                   "fls"
+                                   "idx"
+                                   "log"
+                                   "nav"
+                                   "orig"
+                                   "out"
+                                   "pyg"
+                                   "rej"
+                                   "run.xml"
+                                   "snm"
+                                   "synctex.gz"
+                                   "tex.backup"
+                                   "toc"
+                                   "vrb")
+                           eos)
+                      (seq bos "autosaves#")
+                      (seq bos (opt ".") "#")
+                      (seq bos "." (one-or-more nonl) eos))))
 
-            (push ".brf" dired-latex-unclean-extensions)
-            (push ".bmt" dired-latex-unclean-extensions)
-            (push ".out" dired-latex-unclean-extensions)
-            (push ".nav" dired-latex-unclean-extensions)
-            (push ".snm" dired-latex-unclean-extensions)
-            (push ".synctex.gz" dired-latex-unclean-extensions)
-            (push ".vrb" dired-latex-unclean-extensions)
+            (setq dired-garbage-files-regexp malb/unimportant-files)
+            (setq dired-omit-files malb/unimportant-files)
 
-            (setq dired-garbage-files-regexp malb/unimportant-files
-                  dired-omit-files malb/unimportant-files
-                  dired-recursive-copies 'always
-                  dired-recursive-deletes 'always
-                  dired-dwim-target t
-                  dired-omit-verbose nil
-                  dired-auto-revert-buffer t
-                  wdired-allow-to-change-permissions t
-                  wdired-use-dired-vertical-movement 'sometimes)
-
-            (bind-key "C-s" #'dired-isearch-filenames dired-mode-map)
+            (dolist (ext  '(".brf" ".bmt" ".out" ".nav" ".snm" ".vrb" ".synctex.gz"))
+              (push ext dired-latex-unclean-extensions))
 
             (defun malb/enable-dired-omit-mode ()
               (dired-omit-mode))
@@ -9956,6 +9967,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (defun malb/dired-layout ()
               (setq-local tab-width 1)
               (toggle-truncate-lines 1))
+
             (add-hook 'dired-mode-hook #'malb/dired-layout)
 
             (defun malb/dired-xdg-open-file ()
