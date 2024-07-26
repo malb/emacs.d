@@ -6810,14 +6810,25 @@ Automatically pick dictionary.
 #+begin_src emacs-lisp
 (use-package synosaurus
   :ensure-system-package ((wn . wordnet))
+  :hook ((org-mode . synosaurus-mode)
+         (LaTeX-mode . synosaurus-mode))
   :bind (("C-c w s" . synosaurus-choose-and-replace)
          ("C-c w S" . synosaurus-lookup))
   :config (progn
             (setq synosaurus-choose-method 'popup)
             (unbind-key "C-c s l" synosaurus-mode-map)
             (unbind-key "C-c s r" synosaurus-mode-map)
-            (add-hook 'org-mode-hook #'synosaurus-mode)
-            (add-hook 'LaTeX-mode-hook #'synosaurus-mode)))
+
+            (malb/defadvice! malb/capitalise-wordnet (orig-function word)
+              :around 'synosaurus-backend-wordnet
+              (let* ((case-fold-search nil)
+                     (is-capitalised (string-match-p (rx upper) word))
+                     (words (apply orig-function (list word))))
+                (message "%s %s" word is-capitalised)
+                (if is-capitalised
+                  (mapcar  (lambda (x) (list (capitalize (car x)) (cdr x))) words)
+                  words)))
+            ))
 #+end_src
 
 *[[https://github.com/SavchenkoValeriy/emacs-powerthesaurus][PowerThesaurus]] for online lookups.*
