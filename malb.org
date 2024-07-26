@@ -9172,7 +9172,7 @@ Don’t ask me to remove the backup file, I do want to remove the backup file, t
   "Supersede own messages or ask whether to reply-to-all."
   (interactive)
   (if (mu4e-message-contact-field-matches-me (mu4e-message-at-point) :from)
-      (mu4e-compose-supersede)
+      (mu4e-compose-wide-reply)
     (let ((tos (length (mu4e-message-field-at-point :to)))
           (ccs (length (mu4e-message-field-at-point :cc))))
       (mu4e-compose-reply
