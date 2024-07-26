@@ -4971,7 +4971,9 @@ When nth is set, it will copy the nth previous command."
             (defun malb/config-eshell-completion ()
               (setq pcomplete-cycle-completions t
                     pcomplete-ignore-case t)
-              (setq-local company-idle-delay 1.0)
+              (setq-local company-idle-delay 1.0
+                          company-backends '((company-files :with company-yasnippet)
+                                             (company-capf  :with company-yasnippet)))
               (define-key eshell-mode-map [remap eshell-pcomplete]
                           (lambda ()
                             (interactive)
