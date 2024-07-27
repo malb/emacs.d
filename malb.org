@@ -11484,12 +11484,13 @@ Transparent encryption and decryption.
                               (eq end (point-max)))
                      (setq end (save-excursion (message-goto-signature) (point))))
 
-                   (setq task (format (concat (apply 'concat ,task) "\n" "%s")
-                                      (if ,(plist-get args :format)
-                                          (malb/pandoc-convert
-                                           (prin1-to-string ,(plist-get args :format))
-                                           (current-buffer) beg end)
-                                        (buffer-substring-no-properties beg end))))
+                   (setq task (templatel-render-string
+                               (apply 'concat (mapcar (lambda (str) (concat str "\n")) ,task))
+                               (list (cons "context" (if ,(plist-get args :format)
+                                                         (malb/pandoc-convert
+                                                          (prin1-to-string ,(plist-get args :format))
+                                                          (current-buffer) beg end)
+                                                       (buffer-substring-no-properties beg end))))))
 
                    (when (not (prodigy-service-started-p ollama-service))
                      (prodigy-start-service ollama-service)
