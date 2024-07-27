@@ -5651,6 +5651,16 @@ This packages tries to smartly go to definition leveraging several methods to do
 
 #+begin_src emacs-lisp
 (use-package smart-jump
+  :custom ((smart-jump-default-mode-list '(cc-mode
+                                           csharp-mode
+                                           clojure-mode
+                                           elixir-mode
+                                           go-mode
+                                           lisp-mode
+                                           ruby-mode
+                                           rust-mode
+                                           scheme
+                                           typescript-mode)))
   :config (smart-jump-setup-default-registers))
 #+end_src
 
