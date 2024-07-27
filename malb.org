@@ -6008,7 +6008,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
 (use-package python
   :ensure nil
   ;; otherwise I get: Cannot modify an area being edited in a dedicated buffer with ob-jupyter
-  ;; :mode (("\\.py\\'" . python-mode))
+  ;; :mode (("\\.py$" . python-mode))
   :bind (:map python-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer)
               ("C-c C-r" . pyvenv-restart-python)
@@ -6181,10 +6181,10 @@ INDENT is the current indentation level of the Python function."
 
 #+begin_src emacs-lisp
 (use-package cython-mode
-  :mode (("\\.pyx\\'"  . cython-mode)
-         ("\\.spyx\\'" . cython-mode)
-         ("\\.pxd\\'"  . cython-mode)
-         ("\\.pxi\\'"  . cython-mode)))
+  :mode (("\\.pyx$"  . cython-mode)
+         ("\\.spyx$" . cython-mode)
+         ("\\.pxd$"  . cython-mode)
+         ("\\.pxi$"  . cython-mode)))
 #+end_src
 
 [[https://github.com/lbolla/emacs-flycheck-cython][Flycheck for Cython]]
@@ -6508,7 +6508,7 @@ Code manipulation:
 
 #+begin_src emacs-lisp
 (use-package web-mode
-  :mode "\\\.html?\\\'"
+  :mode "\\.html?$"
   :after pandoc
   :config (progn
             (setq web-mode-enable-engine-detection t)
@@ -6518,17 +6518,8 @@ Code manipulation:
 #+begin_src emacs-lisp
 (use-package typescript-ts-mode
   :ensure nil
-  :mode "\\\.js\\\'"
-)
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package tide
-  :after (company flycheck)
-  :hook ((typescript-ts-mode . tide-setup)
-         (tsx-ts-mode . tide-setup)
-         (typescript-ts-mode . tide-hl-identifier-mode)
-         (before-save . tide-format-before-save)))
+  :mode "\\.js$"
+  :hook ((typescript-ts-mode . malb/lsp-enable-maybe)))
 #+end_src
 
 * Prose
@@ -6983,10 +6974,10 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
               ("M-<down>" . markdown-move-down)
               ("C-<tab>" . outline-cycle)
               ("M-." .  markdown-do))
-  :mode (("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode)
-         ("\\.text\\'" . markdown-mode)
-         ("README\\.md\\'" . gfm-mode))
+  :mode (("\\.md$" . markdown-mode)
+         ("\\.markdown$" . markdown-mode)
+         ("\\.text$" . markdown-mode)
+         ("README\\.md$" . gfm-mode))
   :config (progn
             (defvar malb/markdown.css
               (expand-file-name "themes/foghorn.css" user-emacs-directory))
@@ -7127,7 +7118,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               ("M-<down>" . drag-stuff-down))
   :commands rst-mode-hook
   :hook (rst-mode . adaptive-wrap-prefix-mode)
-  :mode "README\\.txt")
+  :mode "README\\.txt$")
 #+end_src
 
 ** LaTeX (AucTeX)
@@ -7141,7 +7132,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
 #+begin_src emacs-lisp
 (use-package tex
   :ensure auctex
-  :mode (("\\.tikz\\'" . LaTeX-mode))
+  :mode (("\\.tikz$" . LaTeX-mode))
   :bind (:map LaTeX-mode-map
               ("C-<tab>" . outline-cycle)
               ("M-." . malb/latex-jump)
@@ -11703,8 +11694,8 @@ List symbols in =.so= and =.a= files ([[https://github.com/abo-abo/elf-mode][sou
 
 #+begin_src emacs-lisp
 (use-package elf-mode
-  :mode (("\\.so\\'"  . elf-mode)
-         ("\\.a\\'"   . elf-mode)))
+  :mode (("\\.so$"  . elf-mode)
+         ("\\.a$"   . elf-mode)))
 #+end_src
 
 ** Log Files
@@ -11802,7 +11793,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 #+begin_src emacs-lisp
 (use-package conf-mode
   :ensure nil
-  :mode (("\\.mailrc" . conf-mode)))
+  :mode (("\\.mailrc$" . conf-mode)))
 #+end_src
 
 ** HotCRP Reviews
@@ -11810,7 +11801,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 #+begin_src emacs-lisp
 (use-package hotcrp-mode
   :ensure nil
-  :mode (("-reviews\\.txt" . hotcrp-mode))
+  :mode (("-reviews\\.txt$" . hotcrp-mode))
   :hook ((hotcrp-mode . visual-fill-column-mode)
          (hotcrp-mode . adaptive-wrap-prefix-mode)
          (hotcrp-mode . flyspell-mode))
