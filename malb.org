@@ -6248,17 +6248,16 @@ pip install isort
 Elpy is quite opinionated and we don’t necessarily share all those opinions. Hence, we only enable a small subset.
 
 #+begin_src emacs-lisp
+(defun malb/elpy-sane-defaults ()
+  (elpy-module-sane-defaults 'buffer-init))
+
 (use-package elpy
   :bind (:map python-mode-map
               ("C-c C-c" . elpy-shell-send-region-or-buffer))
   :commands (elpy-shell-send-region-or-buffer
              elpy-module-yasnippet
-             elpy-module-sane-defaults
-             malb/elpy-sane-defaults)
-  :config (progn
-            (elpy-module-yasnippet 'global-init)
-            (defun malb/elpy-sane-defaults ()
-              (elpy-module-sane-defaults 'buffer-init))))
+             elpy-module-sane-defaults)
+  :config (progn (elpy-module-yasnippet 'global-init)))
 #+end_src
 
 *** Pip
