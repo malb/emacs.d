@@ -284,8 +284,8 @@ When splitting windows open the previous buffer in it.
   (other-window 1 nil)
   (switch-to-next-buffer))
 
-(bind-key "C-x 2" 'malb/vsplit-last-buffer)
-(bind-key "C-x 3" 'malb/hsplit-last-buffer)
+(bind-key "C-x 2" #'malb/vsplit-last-buffer)
+(bind-key "C-x 3" #'malb/hsplit-last-buffer)
 #+end_src
 
 Don’t split horizontally.
