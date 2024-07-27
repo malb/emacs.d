@@ -6812,8 +6812,9 @@ Automatically pick dictionary.
   :ensure-system-package ((wn . wordnet))
   :hook ((org-mode . synosaurus-mode)
          (LaTeX-mode . synosaurus-mode))
-  :custom ((synosaurus-prefix (kbd "C-c w s"))
+  :custom ((synosaurus-prefix (kbd "C-c w S"))
            (synosaurus-choose-method 'popup))
+  :bind (("C-c w s" . synosaurus-choose-and-replace))
   :config (progn
             (malb/defadvice! malb/capitalise-wordnet (orig-function word)
               :around 'synosaurus-backend-wordnet
