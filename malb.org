@@ -10523,6 +10523,7 @@ exports.boxes = [ "INBOX"];
 
 #+begin_src emacs-lisp
 (use-package prodigy
+  :hook ((prodigy-view-mode . toggle-truncate-lines))
   :init (progn
           (prodigy-define-tag
             :name 'email
@@ -10553,8 +10554,7 @@ exports.boxes = [ "INBOX"];
           ;; start some services
           (when (and (daemonp) (not malb/startup-quick))
             (prodigy-start-service (prodigy-find-service "imapnotify-gmail"))
-            (prodigy-start-service (prodigy-find-service "imapnotify-kcl"))
-            )))
+            (prodigy-start-service (prodigy-find-service "imapnotify-kcl")))))
 #+end_src
 
 * Media Players
