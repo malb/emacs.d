@@ -9599,7 +9599,7 @@ We also add support to extract PDF annotations to a temporary org-mode/markdown 
             (require 'pdf-annot)
 
             (setq pdf-annot-default-annotation-properties
-                  `((t (label . ,user-full-name))
+                  `((t (label . "M"))
                     (text (icon . "Note")
                           (color . "#dc322f"))
                     (highlight (color . "#fef3d5"))
