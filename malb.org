@@ -544,7 +544,6 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                                  (rx (seq bos "*LanguageTool Errors*" eos))
                                  (rx (seq bos "*Edit footnote " (zero-or-more nonl) "*" eos))
                                  (rx (seq bos "*TeX errors" "*" eos))
-                                 (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos))
                                  (rx (seq bos "*Org Export Dispatcher*" eos))
                                  (rx (seq bos "*Backtrace*" eos))
                                  (rx (seq bos "*Messages*" eos))
@@ -592,6 +591,26 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                  (reusable-frames . nil)
                  (dedicated       . t)
                  (direction       . below)
+                 (preserve-size   . (nil . t))
+                 (window-parameters
+                  (malb/popup-window . t)
+                  (no-other-window . t)
+                  (no-delete-other-windows . t))
+                 (window-height   . ,malb/popup-window-height)))
+
+  (if winum-10
+      (add-to-list 'winum-assign-functions
+                   (lambda () (when (string-match-p buffer-name-rx (buffer-name)) 10)))))
+
+(defun malb/register-wide-popup-window (buffer-name-rx &optional winum-10)
+  (add-to-list 'display-buffer-alist
+               `(,buffer-name-rx
+                 (malb/frame-dispatch
+                  display-buffer-reuse-window
+                  malb/display-buffer-in-popup-window
+                  display-buffer-at-bottom)
+                 (reusable-frames . nil)
+                 (dedicated       . t)
                  (preserve-size   . (nil . t))
                  (window-parameters
                   (malb/popup-window . t)
@@ -10550,6 +10569,8 @@ exports.boxes = [ "INBOX"];
             :args '("serve" "-P" "4001")
             :port 4001
             :tags '(web))
+
+          (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
 
           ;; start some services
           (when (and (daemonp) (not malb/startup-quick))
