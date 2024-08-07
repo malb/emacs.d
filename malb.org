@@ -8117,6 +8117,8 @@ Spray is a speed reading mode.
 
 ** Piper
 
+[[https://github.com/rhasspy/piper][Text to speech]]
+
 #+begin_src emacs-lisp
 (use-package piper
   :after emms
