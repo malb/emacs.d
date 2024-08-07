@@ -11533,7 +11533,7 @@ Transparent encryption and decryption.
                                               (guess-language-buffer)
                                               guess-language-langcodes))))
                      (to-language (if (s-equals-p from-language ellama-language)
-                                      "English"
+                                      "British English"
                                     ellama-language))
                      (task (format (concat "Translate the following text to %s. "
                                            "Output only the text and nothing else, do not chat, no preamble:\n%s")
