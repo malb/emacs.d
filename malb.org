@@ -8127,6 +8127,15 @@ Spray is a speed reading mode.
   :ensure nil)
 #+end_src
 
+** Tesseract
+
+[[https://github.com/tesseract-ocr/tesseract][OCR screenshots]]
+
+#+begin_src emacs-lisp
+(use-package tesseract
+  :ensure nil)
+#+end_src
+
 * E-Mail (Mu4e)
 
 We use Mu4e:
