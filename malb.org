@@ -798,6 +798,18 @@ Find a frame not named qualified as “special” if there is any, make one othe
 Main frame dispatch function:
 
 #+begin_src emacs-lisp
+(defun malb/mu4e-buffer-p(buffer &optional compose-too)
+  "Return t if BUFFER is a mu4e buffer."
+  (let ((major-mode (buffer-local-value 'major-mode buffer)))
+    (or (memq major-mode
+              '(mu4e-main-mode
+                mu4e-headers-mode
+                mu4e-view-mode
+                mu4e-raw-view-mode))
+        (and compose-too (eq major-mode 'mu4e-compose-mode)))))
+#+end_src
+
+#+begin_src emacs-lisp
 (defun malb/frame-dispatch (buffer alist)
   "Assigning buffers to frames."
   (cond
@@ -9387,18 +9399,6 @@ We allow helm buffers in the mu4e frame, e.g. to pick attachments.
 
 ;; TODO: It is not clear why this is needed
 (advice-add #'mu4e-view :around  #'malb/switch-to-mu4e-advice)
-#+end_src
-
-#+begin_src emacs-lisp
-(defun malb/mu4e-buffer-p(buffer &optional compose-too)
-  "Return t if BUFFER is a mu4e buffer."
-  (let ((major-mode (buffer-local-value 'major-mode buffer)))
-    (or (memq major-mode
-              '(mu4e-main-mode
-                mu4e-headers-mode
-                mu4e-view-mode
-                mu4e-raw-view-mode))
-        (and compose-too (eq major-mode 'mu4e-compose-mode)))))
 #+end_src
 
 Find a frame which is the mu4e frame or create a fresh one.
