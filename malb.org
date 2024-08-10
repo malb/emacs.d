@@ -1242,8 +1242,7 @@ For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We
             (advice-add #'company-math-symbols-latex :around #'malb/enforce-case-sensitive)
             (advice-add #'company-math-symbols-unicode :around #'malb/enforce-case-sensitive)))
 
-(use-package company-auctex
-  :config (add-to-list 'company-backends 'company-math-symbols-unicode))
+(use-package company-auctex)
 #+end_src
 
 [[https://github.com/TheBB/company-reftex][company-refex]] is used for \LaTeX labels.
@@ -2072,24 +2071,24 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 (use-package smartparens
   :blackout smartparens-mode
   :bind (:map smartparens-mode-map
-              ("C-M-f" . sp-forward-sexp)
-              ("C-M-b" . sp-backward-sexp)
-              ("C-M-n" . sp-next-sexp)
-              ("C-M-p" . sp-previous-sexp)
-              ("C-M-d" . sp-down-sexp)
-              ("C-M-u" . sp-backward-up-sexp)
-              ("C-M-a" . sp-beginning-of-sexp)
-              ("C-M-e" . sp-end-of-sexp)
-              ("C-M-k" . sp-kill-sexp)
-              ("C-M-w" . sp-copy-sexp)
-              ("C-M-t" . sp-transpose-sexp)
-              ("C-M-s" . sp-split-sexp)
-              ("C-M-j" . sp-join-sexp)
-              ("C-<right>" . sp-forward-slurp-sexp)
-              ("C-<left>"  . sp-forward-barf-sexp)
-              ("M-S-<backspace>" . sp-backward-unwrap-sexp)
-              ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
-              ("C-S-<backspace>" . sp-splice-sexp-killing-around))
+         ("C-M-f" . sp-forward-sexp)
+         ("C-M-b" . sp-backward-sexp)
+         ("C-M-n" . sp-next-sexp)
+         ("C-M-p" . sp-previous-sexp)
+         ("C-M-d" . sp-down-sexp)
+         ("C-M-u" . sp-backward-up-sexp)
+         ("C-M-a" . sp-beginning-of-sexp)
+         ("C-M-e" . sp-end-of-sexp)
+         ("C-M-k" . sp-kill-sexp)
+         ("C-M-w" . sp-copy-sexp)
+         ("C-M-t" . sp-transpose-sexp)
+         ("C-M-s" . sp-split-sexp)
+         ("C-M-j" . sp-join-sexp)
+         ("C-<right>" . sp-forward-slurp-sexp)
+         ("C-<left>"  . sp-forward-barf-sexp)
+         ("M-S-<backspace>" . sp-backward-unwrap-sexp)
+         ("C-M-<backspace>" . sp-splice-sexp-killing-backward)
+         ("C-S-<backspace>" . sp-splice-sexp-killing-around))
   :config (progn
             (require 'smartparens-config)
             (require 'smartparens-latex)
@@ -2481,8 +2480,8 @@ https://github.com/cute-jumper/embrace.el
 (use-package bicycle
   :after outline
   :bind (:map outline-minor-mode-map
-              ([C-tab] . bicycle-cycle)
-              ([S-tab] . bicycle-cycle-global)))
+         ([C-tab] . bicycle-cycle)
+         ([S-tab] . bicycle-cycle-global)))
 #+end_src
 
 ** Beginning of …
@@ -2730,7 +2729,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
              magit-unstage-file
              malb/expand-org-mode-entry)
   :hook ((magit-diff-visit-file . malb/expand-org-mode-entry)
-          (magit-status-mode . visual-fill-column-mode))
+         (magit-status-mode . visual-fill-column-mode))
   :bind (("S-<f7>" . magit-status)
          ("<f7>" . magit-dispatch))
   :config (progn
@@ -2835,8 +2834,8 @@ Dired additions for git-annex.
 (use-package git-annex
   :demand
   :bind (:map git-annex-dired-map
-              ("s" . git-annex-dired-sync)
-              ("D" . git-annex-dired-hard-delete-files))
+         ("s" . git-annex-dired-sync)
+         ("D" . git-annex-dired-hard-delete-files))
   :config (progn
             (defun git-annex-dired-sync ()
               (interactive)
@@ -3287,10 +3286,10 @@ Extract org tables as lists of alists.
 (add-to-list 'org-speed-commands (cons "m" 'org-mark-subtree)) ;; Mark a subtree
 (add-to-list 'org-speed-commands (cons "S" 'widen)) ;; Widen
 (add-to-list 'org-speed-commands (cons "k" (lambda () ;; kill a subtree
-                                                  (org-mark-subtree)
-                                                  (kill-region
-                                                   (region-beginning)
-                                                   (region-end)))))
+                                             (org-mark-subtree)
+                                             (kill-region
+                                              (region-beginning)
+                                              (region-end)))))
 (add-to-list 'org-speed-commands (cons "J" 'avy-org-goto-heading-timer))
 #+end_src
 
