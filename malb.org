@@ -6568,9 +6568,11 @@ Lisp function does not specify a special indentation."
 (use-package elisp-mode
   :ensure nil
   :bind (:map emacs-lisp-mode-map
-              ("C-c C-z" . ielm)
-              ("C-c C-c" . eval-defun)
-              ("C-c C-b" . eval-buffer))
+         ("C-c C-z" . ielm)
+         ("C-c C-c" . eval-defun)
+         ("C-c C-b" . eval-buffer)
+         ("M-<up>" .   (lambda () (interactive) (when (looking-at-p "(") (sp-forward-sexp)) (sp-transpose-sexp -1)))
+         ("M-<down>" . (lambda () (interactive) (when (looking-at-p "(") (sp-forward-sexp)) (sp-transpose-sexp  1))))
   :hook ((emacs-lisp-mode . smartparens-strict-mode)
          (emacs-lisp-mode . eldoc-mode)
          (emacs-lisp-mode . lispy-mode)
