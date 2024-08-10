@@ -8036,7 +8036,7 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
     (candidates (all-completions arg (company-bibtex-completion-candidates)))
     (annotation (get-text-property 0 'bibtex-completion-annotation arg))))
 
-(add-to-list 'company-backends '(company-bibtex-completion company-capf)) ;;
+(add-to-list 'company-backends '(company-bibtex-completion company-math-symbols-unicode company-capf)) ;;
 #+end_src
 
 ****** TODO turn company-bibtex-completion into library so it can be lazy loaded
