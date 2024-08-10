@@ -2916,15 +2916,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 #+end_src
 
 #+begin_src emacs-lisp
-(defun malb/org-hidden-link-ignore-isearch ()
-  "Do not match hidden parts of links during isearch."
-  (org-fold-core-set-folding-spec-property 'org-link :isearch-open nil))
-
-(add-hook 'org-mode-hook #'malb/org-hidden-link-ignore-isearch)
-(add-hook 'org-cycle-hook #'org-cycle-hide-drawers)
-#+end_src
-
-#+begin_src emacs-lisp
 (use-package org-contrib)
 #+end_src
 
