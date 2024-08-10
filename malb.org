@@ -10806,8 +10806,7 @@ We don’t want the *scratch* buffer to be killed ever.
 
 #+begin_src emacs-lisp
 (use-package unkillable-scratch
-  :config (progn
-            (unkillable-scratch 1)))
+  :config (progn (unkillable-scratch 1)))
 #+end_src
 
 Get a [[https://github.com/ieure/scratch-el][scratch]] for every mode quickly
