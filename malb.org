@@ -7170,22 +7170,27 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
                   (setq text (buffer-string)))
                 text))
 
+            (defun malb/-copy-as-from-org (backend)
+              (let ((beg (if (org-region-active-p) (region-beginning) (point-min)))
+                    (end (if (org-region-active-p) (region-end) (point-max))))
+                (kill-new (org-export-string-as (buffer-substring beg end) backend t))
+                (deactivate-mark)))
+
+            (defun malb/-copy-as (what)
+              (kill-new (malb/pandoc-convert what
+                                             (current-buffer)
+                                             (if (use-region-p) (region-beginning) (point-min))
+                                             (if (use-region-p) (region-end) (point-max))))
+              (deactivate-mark))
+
+
             (defun malb/copy-as (arg)
               (interactive "P")
-              (cond
-               (arg
-                (malb/-copy-as
-                 (completing-read "Output format to use: " (mapcar 'car pandoc-output-format-extensions) nil t)))
-               ((derived-mode-p 'org-mode)
-                (malb/copy-as-latex-from-org))
-               (t
-                (malb/-copy-as "org"))))
-
-            (defun malb/copy-as-latex-from-org ()
-              (interactive)
-              (if (org-region-active-p)
-                  (kill-new (org-export-string-as (buffer-substring (region-beginning) (region-end)) 'latex t))
-                (kill-new (org-export-string-as (buffer-substring (point-min) (point-max)) 'latex t))))
+              (cond (arg (malb/-copy-as (completing-read
+                                         "Output format to use: "
+                                         (mapcar 'car pandoc-output-format-extensions) nil t)))
+                    ((derived-mode-p 'org-mode) (malb/-copy-as-from-org 'md))
+                    (t (malb/-copy-as "org"))))
 
             (defun malb/copy-as-latex ()
               (interactive)
@@ -7194,13 +7199,6 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
             (defun malb/copy-as-org ()
               (interactive)
               (malb/-copy-as "org"))
-
-            (defun malb/-copy-as (what)
-              (kill-new (malb/pandoc-convert what
-                                             (current-buffer)
-                                             (if (use-region-p) (region-beginning) (point-min))
-                                             (if (use-region-p) (region-end) (point-max))))
-              (deactivate-mark))
 
             (bind-key "M-W" #'malb/copy-as)))
 #+end_src
