@@ -10939,8 +10939,9 @@ then enter the text in that file's own buffer.
                      (grab-x-link--shell-command-to-string
                       "xdotool getactivewindow"))
                     (firefox-window
-                     (or (grab-x-link--shell-command-to-string
-                          "xdotool search --classname Navigator")
+                     (or (car (split-string (grab-x-link--shell-command-to-string
+                                             "xdotool search --classname Navigator")
+                                            "\n"))
                          (error "Can't detect Firfox Window -- is it running?"))))
                 (shell-command (format "xdotool windowactivate --sync %s key ctrl+l ctrl+c" firefox-window))
                 (shell-command (format "xdotool windowactivate %s" emacs-window))
