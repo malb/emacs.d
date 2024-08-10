@@ -3019,6 +3019,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                                 (not (priority "B"))
                                 (not (priority "C"))
                                 (todo)
+                                (not (tags "idea"))
+                                (not (tags "presents"))
                                 (not (tags "entertainment"))
                                 (not (tags "ARCHIVE")))
                           ((org-ql-block-header "TODOs\n")))
