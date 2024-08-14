@@ -3958,7 +3958,8 @@ In [[file:%s::%s][%s]]:
        (mu4e-mark-set 'unflag)))
   (org-capture arg))
 
-(bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map)
+(eval-after-load 'mu4e-view
+  '(bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map))
 #+end_src
 
 
