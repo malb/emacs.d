@@ -10551,33 +10551,40 @@ exports.boxes = [ "INBOX"];
             :ready-message "Checking E-mail using IMAP IDLE. Ctrl-C to shutdown.")
 
           (prodigy-define-service
-            :name "imapnotify-gmail"
+            :name "IMAPNotify (GMail)"
             :command "imapnotify"
             :args (list "-c" (expand-file-name ".config/imapnotify.gmail.js" (getenv "HOME")))
             :tags '(email)
             :kill-signal 'sigkill)
 
           (prodigy-define-service
-            :name "imapnotify-kcl"
+            :name "IMAPNotify (KCL)"
             :command "goimapnotify"
             :args (list "-conf" (expand-file-name ".config/imapnotify.kcl.json" (getenv "HOME")))
             :tags '(email)
             :kill-signal 'sigkill)
 
           (prodigy-define-service
-            :name "malb.io"
+            :name "malb.io Website"
             :cwd (expand-file-name "web/malb.io" malb/projects-dir)
             :command "jekyll"
             :args '("serve" "-P" "4001")
             :port 4001
             :tags '(web))
 
+          (prodigy-define-service
+            :name "Ollama Server"
+            :command "ollama"
+            :args '("serve")
+            :port 11434
+            :tags '(llm))
+
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
 
           ;; start some services
           (when (and (daemonp) (not malb/startup-quick))
-            (prodigy-start-service (prodigy-find-service "imapnotify-gmail"))
-            (prodigy-start-service (prodigy-find-service "imapnotify-kcl")))))
+            (prodigy-start-service (prodigy-find-service "IMAPNotify (GMail)"))
+            (prodigy-start-service (prodigy-find-service "IMAPNotify (KCL)")))))
 #+end_src
 
 * Media Players
@@ -11468,7 +11475,7 @@ Transparent encryption and decryption.
                      (task (format (concat "Translate the following text to %s. "
                                            "Output only the text and nothing else, do not chat, no preamble:\n%s")
                                    to-language text))
-                     (ollama-service (prodigy-find-service "ollama"))
+                     (ollama-service (prodigy-find-service "Ollama Server"))
                      (ellama-provider (apply #'make-llm-ollama malb/ollama-translate-default)))
 
                 (when (not (prodigy-service-started-p ollama-service))
@@ -11508,7 +11515,7 @@ Transparent encryption and decryption.
                                           (t (save-excursion (forward-paragraph) (- (point) 1)))))
                                    (t (point-max))))
                         (filter (lambda (txt) (string-trim txt)))
-                        (ollama-service (prodigy-find-service "ollama")))
+                        (ollama-service (prodigy-find-service "Ollama Server")))
 
                    ;; NOTE: hack to exclude my signatures in e-mail
                    (when (and (eq major-mode #'mu4e-compose-mode)
@@ -11652,7 +11659,7 @@ Transparent encryption and decryption.
               "Start an ollama shell."
               (interactive "P")
 
-              (let ((ollama-service (prodigy-find-service "ollama")))
+              (let ((ollama-service (prodigy-find-service "Ollama Server")))
                 (when (not (prodigy-service-started-p ollama-service))
                   (prodigy-start-service ollama-service)
                   (sit-for 2)))
