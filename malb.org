@@ -513,6 +513,7 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
                ((equal major-mode 'imenu-list-major-mode) 8)
                ((equal major-mode 'dired-sidebar-mode) 8)
                ((equal major-mode 'reftex-toc-mode) 8)
+               ((equal major-mode 'pdf-outline-buffer-mode) 8)
                (t nil)))
 
             (add-to-list 'winum-assign-functions #'malb/winum-assign)
