@@ -9652,7 +9652,7 @@ We change the default template to not include the title which is filled in by de
                        :url "https://martinralbrecht.wordpress.com/xmlrpc.php"
                        :username ,(car credentials)
                        :password ,(cadr credentials)))))
-            (setq org2blog/wp-track-posts (list malb/work-org "Bloglog"))
+            (setq org2blog/wp-track-posts (list malb/work-org "Blog Archive"))
 
             (defun malb/org2blog/wp-format-buffer (buffer-template)
               "Buffer formatting function without title."
