@@ -1209,7 +1209,9 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
            (company-global-modes '(not) "company is 'always on', except for a few … exceptions")
            (company-lighter-base ""))
   :demand t
-  :config (global-company-mode 1))
+  :config (progn
+            (global-company-mode 1)
+            (advice-add 'company-files--post-completion :around #'ignore)))
 #+end_src
 
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
