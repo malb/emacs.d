@@ -9486,6 +9486,7 @@ Open raw view in message view or below.
 #+begin_src emacs-lisp
 (use-package gnus-icalendar
   :ensure nil
+  :after mu4e
   :config (gnus-icalendar-setup))
 #+end_src
 
@@ -9496,6 +9497,7 @@ Link to mu4e messages and threads.
 #+begin_src emacs-lisp
 (use-package mu4e-org
   :ensure nil
+  :after mu4e
   :config (setq mu4e-org-link-query-in-headers-mode t))
 #+end_src
 
