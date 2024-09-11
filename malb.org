@@ -330,19 +330,6 @@ Resize windows to accommodate new ones.
 
 ** Restoring Configurations
 
-[[http://www.emacswiki.org/emacs/WinnerMode][Winner mode]] is a global minor mode. When activated, it allows to “undo” (and “redo”) changes in the window configuration.
-
-#+begin_src emacs-lisp
-(winner-mode 1)
-
-(malb/defadvice! malb/winner-save-old-configurations (old-function &rest args)
-  "This deals with `Error in post-command-hook (winner-save-old-configurations):
-  (wrong-type-argument frame-live-p #<dead frame *Org Capture* …>)`"
-  :around 'winner-save-old-configurations
-  (ignore-errors
-    (apply old-function args)))
-#+end_src
-
 [[https://github.com/louiskottmann/zygospore.el][zygospore]] lets you revert =C-x 1= =(delete-other-window)= by pressing =C-x 1= again.
 
 #+begin_src emacs-lisp
@@ -377,7 +364,8 @@ it will restore the window configuration to prior to full-framing."
          ("C-<prior>" . tab-previous))
   :custom ((tab-bar-mode t "Enable tab-bar-mode")
            (tab-bar-show nil "But don't show tabs")
-           (tab-bar-new-tab-to 'rightmost "Open new tabs at the end"))
+           (tab-bar-new-tab-to 'rightmost "Open new tabs at the end")
+           (tab-bar-history-limit 256))
   :config (progn
             ;; https://www.rousette.org.uk/archives/using-the-tab-bar-in-emacs/
             (defun malb/name-tab-by-project-or-default ()
@@ -437,6 +425,10 @@ The default tab-bar name uses the buffer name."
             (add-to-list 'tab-bar-tab-pre-close-functions #'malb/close-remote-tabs)))
 #+end_src
 
+#+begin_src emacs-lisp
+(tab-bar-history-mode 1)
+#+end_src
+
 ** Switching
 *** Ace Window
 
@@ -462,8 +454,8 @@ The default tab-bar name uses the buffer name."
                     (?h aw-split-window-horz "Ace - Split Horz Window")
                     (?g delete-other-windows "Ace - Maximize Window")
                     (?b balance-windows)
-                    (?u winner-undo)
-                    (?r winner-redo)))
+                    (?u tab-bar-history-back)
+                    (?r tab-bar-history-forward)))
             (add-to-list 'aw-ignored-buffers "*Ilist*")
             (add-to-list 'aw-ignored-buffers "*toc*")
             (add-to-list 'aw-ignored-buffers 'dired-sidebar-mode)
@@ -948,8 +940,8 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("d" delete-window)
   ("D" (lambda () (interactive) (ace-window 16)) :color blue)
   ("o" delete-other-windows :color blue)
-  ("z" (progn (winner-undo) (setq this-command 'winner-undo)))
-  ("Z" winner-redo)
+  ("z" (progn (tab-bar-history-back) (setq this-command 'tab-bar-history-back)))
+  ("Z" tab-bar-history-forward)
   ("I" imenu-list-smart-toggle :color blue)
   ("[" (lambda () (interactive) (tab-new) (call-interactively #'tab-rename)) :color blue)
   (";" tab-next :color red)
@@ -3976,7 +3968,7 @@ In [[file:%s::%s][%s]]:
     (save-excursion
       (org-id-goto id)
       (org-todo 'done))
-    ;; (winner-undo)
+    ;; (tab-bar-history-back)
     ))
 #+end_src
 
@@ -10314,7 +10306,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (setq-default ediff-auto-refine 'on
                           ediff-highlighting-style 'face
                           ediff-highlight-all-diffs t)
-            (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
+            (add-hook 'ediff-after-quit-hook-internal 'tab-bar-history-back)
 
             (malb/defadvice! malb/ignore-window-parameters (orig-function &rest args)
               :around #'ediff-regions-wordwise
