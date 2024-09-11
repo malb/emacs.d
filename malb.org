@@ -10102,8 +10102,10 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 #+begin_src emacs-lisp
 (use-package image-dired
   :ensure nil
-  :config (setq image-dired-thumbnail-storage 'standard-xx-large
-                image-dired-thumb-margin 16))
+  :custom ((image-dired-thumbnail-storage 'standard-xx-large)
+           (image-dired-thumb-margin 16)
+           (image-dired-thumb-relief 2)
+           (image-dired-show-all-from-dir-max-files 4096)))
 #+end_src
 
 [[https://github.com/Fuco1/dired-hacks][dired-collapse]] renders directories with just one file like GitHub does.
