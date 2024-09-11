@@ -10580,6 +10580,7 @@ exports.boxes = [ "INBOX"];
             :name "Ollama Server"
             :command "ollama"
             :args '("serve")
+            :stop-signal 'kill
             :port 11434
             :tags '(llm))
 
@@ -11594,9 +11595,7 @@ Transparent encryption and decryption.
             (defun ollama-shell-make-payload (shell-prompt model)
               "Create elisp object encoding PROMPT and MODEL."
               (let* ((ollama-buffer (current-buffer))
-                     (images (if (s-starts-with-p "llava" model)
-                                 (ollama-base64-images-maybe shell-prompt)
-                               nil)))
+                     (images (ollama-base64-images-maybe shell-prompt)))
                 (when images (message "ollama: added %d pictures" (length images)))
                 `(
                   :model ,model
