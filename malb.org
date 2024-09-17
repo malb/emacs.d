@@ -7323,13 +7323,13 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (defun malb/company-latex-setup ()
               (setq-local company-backends '(:separate
                                              (company-bibtex-completion
-                                              company-reftex-labels
+                                              ;; company-reftex-labels
                                               company-capf
                                               company-math-symbols-latex
                                               company-auctex-environments
-                                              company-auctex-macros
+                                              ;; company-auctex-macros
                                               company-files
-                                              company-dabbrev
+                                              ;; company-dabbrev
                                               :with company-yasnippet)
                                              )))
 
