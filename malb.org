@@ -7527,8 +7527,9 @@ When pressed twice, make the sub/superscript roman."
   :after tex
   :config (progn
             (auctex-latexmk-setup)
-            (setq LaTeX-clean-intermediate-suffixes
-                  (append LaTeX-clean-intermediate-suffixes '("\\.fdb_latexmk" "\\.fls")))))
+            (add-to-list 'LaTeX-clean-intermediate-suffixes (rx ".fdb_latexmk" eos))
+            (add-to-list 'LaTeX-clean-intermediate-suffixes (rx ".fls" eos))
+            (add-to-list 'LaTeX-clean-intermediate-suffixes (rx ".tdo" eos))))
 #+end_src
 
 Run =latexmk -pvc= in async shell
