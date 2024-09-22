@@ -7281,8 +7281,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                   TeX-error-overview-open-after-TeX-run t
                   TeX-electric-sub-and-superscript t
                   TeX-quote-after-quote nil
-                  reftex-toc-split-windows-fraction 0.15
-                  reftex-toc-split-windows-horizontally t
                   font-latex-fontify-sectioning 1.0)
             (setq-default TeX-engine 'luatex)
 
@@ -7462,6 +7460,25 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                      LaTeX-mark-section)))
 
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package reftex-toc
+  :ensure nil
+  :after tex
+  :custom ((reftex-toc-split-windows-fraction 0.15)
+           (reftex-toc-split-windows-horizontally t))
+  :config (progn
+            (define-key reftex-toc-mode-map
+              [remap reftex-toc-goto-line]
+              (lambda ()
+                "Go to document location in other window. TOC window stays and focus stays."
+                (interactive)
+                (reftex-toc-dframe-p nil 'error)
+                (reftex-toc-visit-location nil)))
+            (define-key reftex-toc-mode-map
+              [remap reftex-toc-goto-line-and-hide]
+              #'reftex-toc-goto-line)))
 #+end_src
 
 *** COMMENT Yanking
