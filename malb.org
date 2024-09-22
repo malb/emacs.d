@@ -7663,6 +7663,13 @@ Run =latexmk -pvc= in async shell
                         map))))
 #+end_src
 
+*** LSP LaTeX
+
+#+begin_src emacs-lisp
+(use-package lsp-latex
+  :custom ((lsp-latex-completion-matcher "prefix")))
+#+end_src
+
 ** Utility Functions
 
 ([[https://sriramkswamy.github.io/dotemacs/][source]])
