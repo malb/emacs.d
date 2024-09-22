@@ -5880,6 +5880,28 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbol)))
 #+end_src
 
+*** Highlight Indentation
+
+[[https://github.com/jdtsmith/indent-bars][jdtsmith/indent-bars]]
+
+#+begin_src emacs-lisp
+(use-package indent-bars
+  :config (require 'indent-bars-ts)
+  :custom
+  (indent-bars-treesit-support t)
+  (indent-bars-treesit-ignore-blank-lines-types '("module"))
+  (indent-bars-treesit-scope '((python function_definition
+                                       class_definition
+                                       for_statement
+	                                   if_statement with_statement
+                                       while_statement)))
+  ;; Note: wrap may not be needed if no-descend-list is enough
+  (indent-bars-treesit-wrap '((python argument_list parameters
+                                      list list_comprehension
+                                      dictionary dictionary_comprehension
+                                      parenthesized_expression subscript))))
+#+end_src
+
 ** C/C++
 
 #+begin_src emacs-lisp
@@ -6049,7 +6071,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
   :commands (malb/python-mode-hook malb/inferior-python-mode-hook)
   :init (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
   :hook ((python-base-mode . outline-minor-mode)
-         (python-base-mode . highlight-indentation-mode)
+         (python-base-mode . indent-bars-mode)
          (python-base-mode . malb/local-anaconda-mode)
          (python-base-mode . malb/local-anaconda-eldoc-mode)
          (python-base-mode . python-docstring-mode)
@@ -6083,16 +6105,6 @@ I often restart Python processes (Cython development), so let’s bind a key for
 (use-package python-docstring
   :bind (:map python-docstring-mode-map
              ("M-q" . fill-paragraph)))
-#+end_src
-
-*** Highlight indentation
-
-It makes sense to highlight indentation in Python.
-
-#+begin_src emacs-lisp
-(use-package highlight-indentation
-  :blackout highlight-indentation-mode
-  :commands highlight-indentation-mode)
 #+end_src
 
 *** Autocompletion
