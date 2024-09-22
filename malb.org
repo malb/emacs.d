@@ -5678,6 +5678,7 @@ This packages tries to smartly go to definition leveraging several methods to do
                                            lisp-mode
                                            ruby-mode
                                            rust-mode
+                                           LaTeX-mode
                                            scheme
                                            typescript-mode)))
   :config (smart-jump-setup-default-registers))
@@ -7244,7 +7245,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
   :mode (("\\.tikz$" . LaTeX-mode))
   :bind (:map LaTeX-mode-map
          ("C-<tab>" . outline-cycle)
-         ("M-." . malb/latex-jump)
          ("M-<right>" . sp-forward-sexp)
          ("M-<left>" . sp-backward-sexp)
          ("M-<up>" . outline-move-subtree-up)
@@ -7368,15 +7368,6 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                        'reference)
 
               (setq reftex-ref-style-default-list '("Default" "Cleveref")))
-
-            (defun malb/latex-jump ()
-              "If point is on a citation, jump to the bibtex file, otherwise open refex menu."
-              (interactive)
-              (xref-push-marker-stack)
-              (let ((current (point)))
-                (ignore-errors (org-ref-latex-jump-to-bibtex))
-                (if (eq current (point))
-                    (reftex-goto-label))))
 
             ;; http://endlessparentheses.com/improving-latex-equations-with-font-lock.html
             (defface malb/unimportant-latex-face
