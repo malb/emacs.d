@@ -7263,7 +7263,8 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
          (LaTeX-mode . malb/enable-cleveref)
          (LaTeX-mode . malb/expand-region-setup)
          (LaTeX-mode . malb/lsp-enable-maybe)
-         (LaTeX-mode . malb/company-latex-setup))
+         (LaTeX-mode . malb/company-latex-setup)
+         (LaTeX-mode . indent-bars-mode))
   :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
                                     ("\\sendmessageleft*" arg-on)
                                     ("\\sendmessagerightleft*" arg-on))))
@@ -11776,7 +11777,8 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 ** YaML Files
 
 #+begin_src emacs-lisp
-(use-package yaml-mode)
+(use-package yaml-mode
+  :hook ((yaml-mode . indent-bars-mode)))
 #+end_src
 
 ** CSV
