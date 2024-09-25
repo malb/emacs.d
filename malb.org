@@ -9509,9 +9509,10 @@ Open raw view in message view or below.
 ** iCal
 
 #+begin_src emacs-lisp
-(use-package gnus-icalendar
+(use-package mu4e-icalendar
   :ensure nil
   :after mu4e
+  :custom ((mu4e-icalendar-trash-after-reply nil "trash invite after replying"))
   :config (gnus-icalendar-setup))
 #+end_src
 
