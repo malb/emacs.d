@@ -11617,19 +11617,26 @@ Transparent encryption and decryption.
                   (while (re-search-forward
                           (rx (seq "/" (1+ (not whitespace)) "/" (1+ (not whitespace)) (or ".png" ".jpg" ".jpeg")))
                           nil t)
-                    (let ((filename (match-string 0)))
+                    (let ((filename (match-string 0))
+                          (beg (match-beginning 0))
+                          (end (match-end 0)))
                       (if (file-exists-p filename)
-                          (add-to-list 'images (with-temp-buffer
-                                                 (insert-file-contents filename)
-                                                 (base64-encode-string (buffer-string) t))
-                                       t)
-                        (message "ollama: file not found: %s" filename)))))
-                images))
+                          (progn
+                            (add-to-list 'images (with-temp-buffer
+                                                   (insert-file-contents filename)
+                                                   (base64-encode-string (buffer-string) t))
+                                         t)
+                            (delete-region beg end))
+                        (message "ollama: file not found: %s" filename))))
+                  (setq shell-prompt (buffer-substring-no-properties (point-min) (point-max))))
+                (cons shell-prompt images)))
 
             (defun ollama-shell-make-payload (shell-prompt model)
               "Create elisp object encoding PROMPT and MODEL."
               (let* ((ollama-buffer (current-buffer))
-                     (images (ollama-base64-images-maybe shell-prompt)))
+                     (ret (ollama-base64-images-maybe shell-prompt))
+                     (shell-prompt (car ret))
+                     (images (cdr ret)))
                 (when images (message "ollama: added %d pictures" (length images)))
                 `(
                   :model ,model
@@ -11741,10 +11748,12 @@ Transparent encryption and decryption.
                 (when print-message (message "ollama-context length %d" len))
                 len))
 
-            (defun ollama-shell-reset-context (&optional print-message)
+            (defun ollama-shell-reset-context (&optional quiet)
               (interactive "p")
-              (when print-message (message "ollama-context reset."))
+              (when (not quiet) (message "ollama-context reset."))
               (setq-local ollama-shell-context nil))
+
+            (bind-key "C-r" #'ollama-shell-reset-context ollama-shell-mode-map)
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
 #+end_src
