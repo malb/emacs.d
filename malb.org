@@ -7618,13 +7618,22 @@ Run =latexmk -pvc= in async shell
               :secret)))))
 #+end_src
 
-*** Pix2TeX
+*** LaTeX OCR
+
+*Models:*
+
+- [[https://github.com/Ucas-HaoranWei/GOT-OCR2.0/][Ucas-HaoranWei/GOT-OCR2.0]]
+- [[https://github.com/lukas-blecher/LaTeX-OCR][pix2tex]]
 
 #+begin_src emacs-lisp
-(use-package pix2tex
+(use-package latex-ocr
   :ensure nil
   :defer 0
-  :config (setq pix2tex-command "conda run -n cuda pix2tex %s"))
+  :config
+  ;; (setq pix2tex-command "conda run -n cuda pix2tex %s")
+  ;; ;; python GOT/demo/run_ocr_2.0.py  --model-name GOT-weights --type format --image-file "$1"
+  ;; ;; run_ocr_2.0.py edited to not output the prompt
+  (setq latex-ocr-command "got.sh %s"))
 #+end_src
 
 *** Math Delimiters
@@ -12408,7 +12417,7 @@ Easily change the text size:
 (malb/set-menu-key "j" #'avy-goto-char-timer)
 (malb/set-menu-key "k" #'helm-baloo)
 (malb/set-menu-key "l" #'helm-bibtex-with-local-bibliography)
-(malb/set-menu-key "L" #'pix2tex-screenshot)
+(malb/set-menu-key "L" #'latex-ocr-screenshot)
 (malb/set-menu-key "K" #'org-download-screenshot)
 (malb/set-menu-key "m" #'mu4e)
 (malb/set-menu-key "M" #'malb/helm-mu)
