@@ -7623,7 +7623,8 @@ Run =latexmk -pvc= in async shell
 #+begin_src emacs-lisp
 (use-package pix2tex
   :ensure nil
-  :custom (pix2tex-command "conda run -n cuda pix2tex %s"))
+  :defer 0
+  :config (setq pix2tex-command "conda run -n cuda pix2tex %s"))
 #+end_src
 
 *** Math Delimiters
@@ -11726,6 +11727,7 @@ Transparent encryption and decryption.
                                                                           ellama-provider))))
                   :execute-command
                   (lambda (command _history callback error-callback)
+                    (bind-key "C-r" #'ollama-shell-reset-context ollama-shell-mode-map)
                     (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
                       (shell-maker-async-shell-command
                        (ollama-shell-call-api-curl (ollama-shell-make-payload command model))
@@ -11753,7 +11755,7 @@ Transparent encryption and decryption.
               (when (not quiet) (message "ollama-context reset."))
               (setq-local ollama-shell-context nil))
 
-            (bind-key "C-r" #'ollama-shell-reset-context ollama-shell-mode-map)
+
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
 #+end_src
