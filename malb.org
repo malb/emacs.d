@@ -7264,6 +7264,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
          (LaTeX-mode . malb/expand-region-setup)
          (LaTeX-mode . malb/lsp-enable-maybe)
          (LaTeX-mode . malb/company-latex-setup)
+         (LaTeX-mode . malb/raise-flycheck-error-threshold)
          (LaTeX-mode . indent-bars-mode))
   :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
                                     ("\\sendmessageleft*" arg-on)
@@ -7368,6 +7369,9 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
                                        'reference)
 
               (setq reftex-ref-style-default-list '("Default" "Cleveref")))
+
+            (defun malb/raise-flycheck-error-threshold ()
+              (setq-local flycheck-checker-error-threshold nil))
 
             ;; http://endlessparentheses.com/improving-latex-equations-with-font-lock.html
             (defface malb/unimportant-latex-face
