@@ -10034,7 +10034,12 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
             (bind-key "C-<" #'malb/other-pdf-view-prev-page LaTeX-mode-map)))
 #+end_src
 
-[[https://github.com/fuxialexander/org-pdftools][Link to PDF pages]]
+** Org Links to PDF Pages
+
+[[https://github.com/fuxialexander/org-pdftools][org-pdftools]]
+
+- =[​[pdf:~/file.pdf::3][Link to page 3]]=
+- =[​[pdf:~/file.pdf::5++0.00;;annot-5-0][file.pdf: Page 5; Quoting: some text]]= from =C-c l=
 
 #+begin_src emacs-lisp
 (use-package org-pdftools
