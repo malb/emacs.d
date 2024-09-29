@@ -5846,6 +5846,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :after (projectile)
   :commands (lsp malb/lsp-enable-maybe)
   :custom ((lsp-eldoc-render-all nil)
+           (lsp-modeline-diagnostics-scope :file)
            (lsp-restart 'ignore)
            (lsp-completion-provider :none "We enable it manually"))
   :bind (:map lsp-mode-map
@@ -5870,6 +5871,11 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                   lsp-ui-imenu-enable t
                   lsp-ui-doc-enable t
                   lsp-ui-flycheck-enable t)))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package lsp-treemacs
+  :custom ((lsp-treemacs-error-list-current-project-only t)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -7672,7 +7678,9 @@ Run =latexmk -pvc= in async shell
 
 #+begin_src emacs-lisp
 (use-package lsp-latex
-  :custom ((lsp-latex-completion-matcher "prefix")))
+  :custom ((lsp-latex-completion-matcher "prefix")
+           (lsp-latex-diagnostics-ignored-patterns
+            `(,(rx "Unused label")))))
 #+end_src
 
 ** Utility Functions
