@@ -1776,7 +1776,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 
               (cond ((eq major-mode 'org-mode)
                      (call-interactively #'helm-org-in-buffer-headings))
-                    ((bound-and-true-p lsp-mode)
+                    ((and (bound-and-true-p lsp-mode) (not (eq major-mode 'LaTeX-mode)))
                      (call-interactively #'helm-lsp-workspace-symbol))
                     (t
                      (call-interactively #'helm-semantic-or-imenu))))
