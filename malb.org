@@ -6869,7 +6869,7 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
             (setq ace-flyspell-new-word-no-query t)
 
             (defun malb/ace-flyspell-dwim (arg)
-              "Run `ace-flyspell-dim` unless prefix argument is given. In that case offer a word to insert."
+              "Run `ace-flyspell-dwim` unless prefix argument is given. In that case offer a word to insert."
               (interactive "P")
               (if arg
                   (progn
