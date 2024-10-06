@@ -11986,7 +11986,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
   :config (progn
 
             (malb/defadvice! malb/no-stripe-table-mode (old-function &rest args)
-              :around #'org-ctrl-c-ctrl-c
+              :around #'org-babel-execute-src-block
               :around #'org-table-align
               (let ((is-on stripe-table-mode))
                 (stripe-table-mode -1)
