@@ -4484,7 +4484,11 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 (use-package ob-async
   :after ob
   :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia")
-              ob-async-inject-variables "\\`org-babel-[^j].+")
+              async-inject-variables-exclude-regexps
+              `(,(rx "-syntax-table" eos)
+                ,(rx bos "org-babel-expand-noweb-references--cache-buffer" eos)
+                ,(rx bos "org-babel-jupyter"))
+              ob-async-inject-variables "\\`org-babel-.+")
   :config (progn
             (malb/defadvice! malb/no-hide-overlays (orig-fun &rest args)
               :before #'ob-async-org-babel-execute-src-block
