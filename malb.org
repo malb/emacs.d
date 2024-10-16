@@ -8405,6 +8405,22 @@ Canned queries.
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month") :name "Documents (31 days)" :key ?D) t)
 #+end_src
 
+#+begin_src emacs-lisp
+(defun malb/mu4e-search-date (&optional arg)
+  (interactive "P")
+  (if (not arg)
+      (mu4e-search
+       (format "(date:%s) AND NOT %%hidden"
+               (format-time-string "%Y%m%d" (org-read-date nil t))))
+    (mu4e-search
+     (format "(date:%s..%s) AND NOT %%hidden"
+             (format-time-string "%Y%m%d" (org-read-date nil t nil "From: "))
+             (format-time-string "%Y%m%d" (org-read-date nil t nil "To (Inclusive): "))))))
+
+(bind-key "M-g M-g" #'malb/mu4e-search-date mu4e-headers-mode-map)
+(bind-key "M-g M-g" #'malb/mu4e-search-date mu4e-main-mode-map)
+#+end_src
+
 ** Key Bindings
 
 #+begin_src emacs-lisp
@@ -9439,8 +9455,10 @@ message from the wrong account"
 We allow helm buffers in the mu4e frame, e.g. to pick attachments.
 
 #+begin_src emacs-lisp
-(defvar malb/mu4e-buffer-allowed-regexps `(,(rx bos "*helm" (zero-or-more any) "*" eos)
-                                           ,(rx bos "ellama-session"))
+(defvar malb/mu4e-buffer-allowed-regexps
+  `(,(rx bos "*helm" (zero-or-more any) "*" eos)
+    ,(rx bos "ellama-session")
+    ,(rx bos "*Calendar*" eos))
   "Buffer names allowed in mu4e frame.")
 #+end_src
 
