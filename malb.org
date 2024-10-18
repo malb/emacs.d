@@ -1947,9 +1947,9 @@ Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-c
                                                 bm-name)))
                               (when (member tab-name (mapcar (lambda (tab) (cdr (assq 'name tab)))
                                                              (tab-bar-tabs)))
-                                (tab-close (tab-bar--tab-index-by-name tab-name))
-                                ))))))))))
-            ))
+                                (tab-bar-switch-to-tab tab-name)
+                                (tab-bar-close-tab)
+                                ))))))))))))
 #+end_src
 
 * IMenu
