@@ -10804,7 +10804,7 @@ exports.boxes = [ "INBOX"];
 Set Firefox directly because using =xdg-open= can lead to weird redirect on load.
 
 #+begin_src emacs-lisp
-(setq browse-url-browser-function 'browse-url-firefox)
+(setq browse-url-browser-function 'browse-url-xdg-open)
 #+end_src
 
 ** Pocket
