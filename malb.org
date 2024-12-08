@@ -8350,7 +8350,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                         " AND NOT %hidden"))
                   ("%sent"   . ,(concat "(" (s-join " OR "
                                                     '("maildir:\"/gmail/[Google Mail]/Sent Mail\""
-                                                      "maildir:\"/sendmail/[Gmail]/Sent Mail\""
+                                                      "maildir:\"/sandbox/[Gmail]/Sent Mail\""
                                                       "maildir:\"/gmail/royal holloway/sent\""
                                                       "maildir:\"/kcl/Sent Items\""))
                                         ")"))
