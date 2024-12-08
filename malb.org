@@ -1605,13 +1605,13 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     pdf-view-mode
                     mu4e-headers-mode
                     org-mode
+                    org-agenda-mode
                     Man-mode
                     helpful-mode
                     markdown-mode
                     LaTeX-mode
                     sage-shell-mode
                     inferior-python-mode
-                    ein:notebook-multilang-mode
                     imenu-list-major-mode
                     messages-buffer-mode
                     nov-mode
