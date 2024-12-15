@@ -8244,7 +8244,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                  mu4e-completing-read-function 'completing-read
                  mu4e-compose-switch 'display-buffer
                  mu4e-split-view 'vertical
-                 mu4e-headers-visible-columns 134
+                 mu4e-headers-visible-columns 132
                  mu4e-headers-visible-lines 16
                  mu4e-context-policy 'pick-first
                  mu4e-compose-context-policy 'ask
