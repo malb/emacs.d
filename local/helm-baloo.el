@@ -14,9 +14,9 @@
 
 (defun baloo-search (pattern &optional directory)
   (if directory
-      (start-process "baloosearch" nil "baloosearch" "-d" (expand-file-name directory)
+      (start-process "baloosearch" nil "baloosearch6" "-d" (expand-file-name directory)
                      "-l" (format "%d" helm-baloo-file-limit) pattern)
-    (start-process "baloosearch" nil "baloosearch" "-l" (format "%d" helm-baloo-file-limit) pattern)))
+    (start-process "baloosearch" nil "baloosearch6" "-l" (format "%d" helm-baloo-file-limit) pattern)))
 
 (defun helm-baloo-search (&optional directory)
   (baloo-search helm-pattern directory))

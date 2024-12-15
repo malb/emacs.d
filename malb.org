@@ -1841,7 +1841,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 #+begin_src emacs-lisp
 (use-package helm-baloo
   :ensure nil
-  :ensure-system-package ((baloosearch . baloo-kf5))
+  :ensure-system-package ((baloosearch6 . baloo6))
   :config (progn
             (add-to-list 'helm-commands-using-frame 'helm-baloo-no-directory)
             (add-to-list 'helm-commands-using-frame 'helm-baloo-in-directory)))
