@@ -8269,10 +8269,11 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
       mu4e-trash-folder  "/gmail/[Google Mail]/Bin")
 
 (setq mu4e-maildir-shortcuts
-      '((:maildir "/gmail/Inbox"      :key ?G)
-        (:maildir "/sandbox/Inbox"    :key ?S)
-        (:maildir "/kcl/INBOX"        :key ?K)
-        (:maildir "/gmail/research/rwc2025" :key ?r)))
+      '((:maildir "/gmail/Inbox"            :key ?G)
+        (:maildir "/sandbox/Inbox"          :key ?S)
+        (:maildir "/kcl/INBOX"              :key ?K)
+        (:maildir "/gmail/research/rwc2025" :key ?r)
+        (:maildir "/kcl/Lattice PhD 2025"   :key ?l)))
 #+end_src
 
 ** Retrieving
