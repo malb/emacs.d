@@ -7911,6 +7911,10 @@ index f5e7009..3732c34 100644
 
  (defun bibtex-completion-get-entry (entry-key)
    "Given a BibTeX key this function scans all bibliographies listed in `bibtex-completion-bibliography' and returns an alist of the record with that key.
+
+#+end_src
+
+#+begin_src diff
 diff --git a/helm-bibtex.el b/helm-bibtex.el
 index 10b1afb..0bcbbd5 100644
 --- a/helm-bibtex.el
