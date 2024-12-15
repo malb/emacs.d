@@ -9004,7 +9004,8 @@ Automate standard “form filling“ workflow
 (defun malb/mu4e-form-turnaround (&optional msg)
   (interactive)
   ;; spreadsheets and word documents
-  (let ((mimetypes '("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  (let ((mimetypes '("application/msword"
+                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
         files)
     ;; 1. save
