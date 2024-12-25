@@ -4144,7 +4144,7 @@ replace the default prompt message."
           (,(format "%s\tKCL Herrschaftswissen" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01))
            :keys "k"
            :file malb/work-org
-           :headline "King's College London (KCL)"
+           :headline "Herrschaftswissen"
            :template ("* %?"
                       ":PROPERTIES:"
                       ":CREATED: %U"
