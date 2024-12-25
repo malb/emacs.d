@@ -1030,6 +1030,19 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
          ("C-c j b SPC" . bm-toggle)))
 #+end_src
 
+
+** XRef on Steroids
+
+[[https://github.com/ISouthRain/empx/raw/master/attach/README/preview.gif]]
+
+[[https://github.com/ISouthRain/empx][ISouthRain/empx: Emacs mark point use xref.el, forward and backward navigation.]]
+
+#+begin_src emacs-lisp
+(use-package empx
+  :ensure nil
+  :config (empx-mode))
+#+end_src
+
 * Snippets
 ** YaSnippet
 
