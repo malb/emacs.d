@@ -12002,7 +12002,6 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 #+end_src
 
 * Theme & Look
-
 ** Frame Title
 
 Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob/master/init.org#display-buffer-name-in-frame-titles][source]])
