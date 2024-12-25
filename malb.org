@@ -11322,6 +11322,12 @@ Use ~(copyright-update)~ to update copyright info
 (setq copyright-names-regexp "Martin Albrecht\\|Martin R. Albrecht")
 #+end_src
 
+
+#+begin_src emacs-lisp
+(put 'narrow-to-region 'disabled nil)
+(put 'list-timers 'disabled nil)
+#+end_src
+
 ** Async
 
 #+begin_src emacs-lisp
