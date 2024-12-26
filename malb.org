@@ -1920,21 +1920,25 @@ Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-c
   :config (progn
             (malb/defadvice! malb/open-bookmarks-in-tab (orig-function bookmark &optional display-func)
               :around #'bookmark-jump
-              (let ((tab-created nil)
-                    (tab-name (or (cdr (assoc bookmark malb/switch-tab-bookmark-names))
-                                  bookmark)))
-                (if (member tab-name (mapcar (lambda (tab) (cdr (assq 'name tab)))
-                                             (tab-bar-tabs)))
-                    (tab-bar-switch-to-tab tab-name)
-                  (progn
-                    (tab-new)
-                    (setq tab-created t)
-                    (tab-rename tab-name)))
 
-                (apply orig-function bookmark display-func)
+              (if display-func
+                  ;; don't create a tab if display-func is nil
+                  (apply orig-function bookmark display-func nil)
+                (let ((tab-created nil)
+                      (tab-name (or (cdr (assoc bookmark malb/switch-tab-bookmark-names))
+                                    bookmark)))
+                  (if (member tab-name (mapcar (lambda (tab) (cdr (assq 'name tab)))
+                                               (tab-bar-tabs)))
+                      (tab-bar-switch-to-tab tab-name)
+                    (progn
+                      (tab-new)
+                      (setq tab-created t)
+                      (tab-rename tab-name)))
 
-                (when tab-created
-                  (delete-other-windows))))
+                  (apply orig-function bookmark display-func nil)
+
+                  (when tab-created
+                    (delete-other-windows)))))
 
             (require 'dash)
             (malb/defadvice! malb/kill-bookmark-tab-maybe (orig-function &optional buffer-or-name)
@@ -12466,17 +12470,18 @@ Easily change the text size:
 (setq visible-bell t)
 #+end_src
 
-** Dim other Buffers
+** Dim Other Buffers
 
 #+begin_src emacs-lisp
-(use-package dimmer
-  :commands dimmer-mode
-  :config (progn
-            (dimmer-configure-which-key)
-            (dimmer-configure-helm)
-            (dimmer-configure-posframe)
-            (dimmer-configure-company-box)
-            (setq dimmer-percent 0.25)))
+(use-package selected-window-contrast
+  :hook
+  ((buffer-list-update-hook . selected-window-contrast-highlight-selected-window)
+   (server-after-make-frame-hook . selected-window-contrast-highlight-selected-window))
+  :custom
+  ((selected-window-contrast-selected-magnitude-text 1.0)
+   (selected-window-contrast-selected-magnitude-background 1.0)
+   (selected-window-contrast-not-sel-magnitude-text 1.0)
+   (selected-window-contrast-not-sel-magnitude-background 1.0)))
 #+end_src
 
 ** Hide Mode Line
