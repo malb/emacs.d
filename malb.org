@@ -12472,16 +12472,21 @@ Easily change the text size:
 
 ** Dim Other Buffers
 
+[[https://codeberg.org/Anoncheg/selected-window-contrast][selected-window-contrast]]
+
+[[https://raw.githubusercontent.com/Anoncheg1/public-share/refs/heads/main/selected-window-contrast.png]]
+
 #+begin_src emacs-lisp
 (use-package selected-window-contrast
+  :defer nil
   :hook
-  ((buffer-list-update-hook . selected-window-contrast-highlight-selected-window)
-   (server-after-make-frame-hook . selected-window-contrast-highlight-selected-window))
+  ((buffer-list-update . selected-window-contrast-highlight-selected-window)
+   (server-after-make-frame . selected-window-contrast-highlight-selected-window))
   :custom
   ((selected-window-contrast-selected-magnitude-text 1.0)
    (selected-window-contrast-selected-magnitude-background 1.0)
-   (selected-window-contrast-not-sel-magnitude-text 1.0)
-   (selected-window-contrast-not-sel-magnitude-background 1.0)))
+   (selected-window-contrast-not-sel-magnitude-text 1.03)
+   (selected-window-contrast-not-sel-magnitude-background 1.03)))
 #+end_src
 
 ** Hide Mode Line
