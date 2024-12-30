@@ -11714,6 +11714,20 @@ Transparent encryption and decryption.
   :config (progn
             (defun shell-maker-welcome-message (config) "")
 
+            (defun malb/chatgpt-ollama-shell (arg)
+              (interactive "P")
+              (let ((ollama-service (prodigy-find-service "Ollama Server")))
+                (when (not (prodigy-service-started-p ollama-service))
+                  (prodigy-start-service ollama-service)
+                  (sit-for 2)))
+
+              (chatgpt-shell-ollama-load-models)
+
+              (when arg
+                (chatgpt-shell-swap-model))
+
+              (chatgpt-shell))
+
             (malb/register-right-side-window (rx bos "*ollama llm*") t)
 
             (setq chatgpt-shell-model-version
@@ -12544,7 +12558,7 @@ Easily change the text size:
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
 (malb/set-menu-key "Q" #'malb/toggle-llm-chat)
-(malb/set-menu-key "q" #'chatgpt-shell)
+(malb/set-menu-key "q" #'malb/chatgpt-ollama-shell)
 (malb/set-menu-key "S" #'malb/toggle-sage-jupyter)
 (malb/set-menu-key "s" #'malb/switch-tab)
 (malb/set-menu-key "t" #'helm-tramp)
