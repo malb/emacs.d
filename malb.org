@@ -11863,8 +11863,6 @@ Transparent encryption and decryption.
               (when (not quiet) (message "ollama-context reset."))
               (setq-local ollama-shell-context nil))
 
-
-
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
 #+end_src
 
