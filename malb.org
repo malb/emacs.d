@@ -5609,6 +5609,8 @@ mouse-3: go to end")
 
 [[https://github.com/wolray/symbol-overlay][symbol-overlay]] for highlighting symbols.
 
+[[https://github.com/wolray/symbol-overlay/raw/master/screenshot-black.png]]
+
 #+begin_src emacs-lisp
 (use-package symbol-overlay
   :bind ("M-s h ." . symbol-overlay-put)
@@ -5620,6 +5622,16 @@ mouse-3: go to end")
                                        (t (:background "#268bd2" :foreground "white"))
                                        (t (:background "#2aa198" :foreground "black"))
                                        (t (:background "#859900" :foreground "black")))))
+#+end_src
+
+[[https://github.com/xenodium/symbol-overlay-mc/][xenodium/symbol-overlay-mc]]
+
+[[https://raw.githubusercontent.com/xenodium/symbol-overlay-mc/main/demo.gif]]
+
+#+begin_src emacs-lisp
+(use-package symbol-overlay-mc
+  :bind (:map symbol-overlay-map
+         ("m" . symbol-overlay-mc-mark-all)))
 #+end_src
 
 *** Highlight Stuff
