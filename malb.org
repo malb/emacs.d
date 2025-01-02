@@ -8369,18 +8369,18 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                         '("maildir:\"/gmail/[Google Mail]/Drafts\""
                                           "maildir:\"/sandbox/[Gmail]/Drafts\""
                                           "maildir:\"/kcl/Drafts\"")))
-                  ("%hidden" . "%trash OR %junk")
-                  ("%unread" . "flag:unread AND NOT %hidden  ")
-                  ("%today"  . "date:today..now AND NOT %hidden")
-                  ("%week"   . "date:7d..now AND NOT %hidden")
-                  ("%month"  . "date:31d..now AND NOT %hidden")
+                  ("%ignore" . "%trash OR %junk")
+                  ("%unread" . "flag:unread AND NOT %ignore  ")
+                  ("%today"  . "date:today..now AND NOT %ignore")
+                  ("%week"   . "date:7d..now AND NOT %ignore")
+                  ("%month"  . "date:31d..now AND NOT %ignore")
                   ("%inbox"  . ,(concat "(" (s-join " OR "
                                                     '("maildir:/gmail/Inbox"
                                                       "maildir:/sandbox/Inbox"
                                                       "maildir:/kcl/INBOX")
                                                     )
                                         ")"
-                                        " AND NOT %hidden"))
+                                        " AND NOT %ignore"))
                   ("%sent"   . ,(concat "(" (s-join " OR "
                                                     '("maildir:\"/gmail/[Google Mail]/Sent Mail\""
                                                       "maildir:\"/sandbox/[Gmail]/Sent Mail\""
@@ -8391,12 +8391,12 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                   ("%doc"    . ,(concat "mime:application/* "
                                         "AND NOT (mime:application/pgp* or mime:application/ics) "
                                         "AND size:5k.. "
-                                        "AND NOT %hidden"))
+                                        "AND NOT %ignore"))
                   ("%bulk"   . ,(concat "(" "flag:list "
                                         "OR from:trac@sagemath.org "
                                         "OR maildir:/bulk "
                                         "OR maildir:/research/.lists) "
-                                        "AND NOT %hidden"
+                                        "AND NOT %ignore"
                                         ")"))
                   ("%fromme"  . ,(concat "("
                                          (s-join " OR " (mapcar (lambda (arg)
@@ -8425,14 +8425,14 @@ Canned queries.
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%unread") :name "Unread messages" :key ?u) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%unread AND %bulk") :name "Unread (bulk)" :key ?l) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%direct") :name "Direct" :key ?d) t)
-(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "flag:flagged AND NOT %hidden") :name "Flagged" :key ?f) t)
+(add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "flag:flagged AND NOT %ignore") :name "Flagged" :key ?f) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%today") :name "Today's" :key ?t) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%direct AND %today") :name "Today's (direct)" :key ?T) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%week")  :name "Last 7 days" :key ?w) t)
 (add-to-list 'mu4e-bookmarks `(:query ,(mu4e-query-fragments-expand "%direct AND %week") :name "Last 7 days (direct)" :key ?W) t)
 (add-to-list 'mu4e-bookmarks
              `(:query ,(mu4e-query-fragments-expand
-                        "%direct AND %week AND NOT (flag:replied OR flag:passed OR flag:list) AND NOT %hidden")
+                        "%direct AND %week AND NOT (flag:replied OR flag:passed OR flag:list) AND NOT %ignore")
                       :name "Last 7 days (direct, unanswered)"
                       :key ?R)
              t)
@@ -8448,10 +8448,10 @@ Canned queries.
   (interactive "P")
   (if (not arg)
       (mu4e-search
-       (format "(date:%s) AND NOT %%hidden"
+       (format "(date:%s) AND NOT %%ignore"
                (format-time-string "%Y%m%d" (org-read-date nil t))))
     (mu4e-search
-     (format "(date:%s..%s) AND NOT %%hidden"
+     (format "(date:%s..%s) AND NOT %%ignore"
              (format-time-string "%Y%m%d" (org-read-date nil t nil "From: "))
              (format-time-string "%Y%m%d" (org-read-date nil t nil "To (Inclusive): "))))))
 
