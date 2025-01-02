@@ -5270,13 +5270,12 @@ This function uses the `notifications' library."
 
 … still my main shell, let’s make sure we can get there quickly.
 
-#+begin_src sh :tangle no
-#!/usr/bin/env bash
+#+begin_src bash :tangle /home/malb/.local/bin/ykcd :shebang "#!/usr/bin/env bash"
 if [ -z $(wmctrl -xl | grep -iF 'yakuake.yakuake' | head -n1 | cut -d' ' -f1) ]; then
-    qdbus org.kde.yakuake /yakuake/window toggleWindowState;
+    qdbus6 org.kde.yakuake /yakuake/window toggleWindowState;
 fi
-qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.addSession;
-qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev/null 2>&1 &
+qdbus6 org.kde.yakuake /yakuake/sessions org.kde.yakuake.addSession;
+qdbus6 org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/dev/null 2>&1 &
 #+end_src
 
 #+begin_src emacs-lisp
