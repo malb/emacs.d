@@ -1860,6 +1860,47 @@ Please always use ~=~ separator for using long option. Don't use space as separa
             (add-to-list 'helm-commands-using-frame 'helm-baloo-in-directory)))
 #+end_src
 
+** Helm PDFGrep
+
+Extracted from =helm-grep.el=
+
+#+begin_src emacs-lisp
+(defun malb/helm-pdfgrep (directory)
+  "Run PDFGrep via Helm."
+  (interactive "D")
+  (unless (executable-find "pdfgrep")
+    (error "Error: No such program `pdfgrep'."))
+  (let (helm-grep-in-recurse)         ; recursion is implemented differently in *pdfgrep.
+    ;; When called as action from an other source e.g *-find-files
+    ;; we have to kill action buffer.
+    (when (get-buffer helm-action-buffer)
+      (kill-buffer helm-action-buffer))
+    (setq helm-pdfgrep-targets (list directory))
+    (helm
+     :sources (helm-build-async-source "PdfGrep"
+                :init (lambda ()
+                        ;; If `helm-find-files' haven't already started,
+                        ;; give a default value to `helm-ff-default-directory'.
+                        (setq helm-ff-default-directory "/home/malb/Sync/encrochat/"))
+                :candidates-process (lambda ()
+                                      (funcall helm-pdfgrep-default-function
+                                               helm-pdfgrep-targets t))
+                :nohighlight t
+                :nomark t
+                :filter-one-by-one #'helm-grep-filter-one-by-one
+                :candidate-number-limit 9999
+                :history 'helm-grep-history
+                :keymap helm-pdfgrep-map
+                :help-message 'helm-pdfgrep-help-message
+                :action #'helm-pdfgrep-action
+                :persistent-help "Jump to PDF Page"
+                :requires-pattern 2)
+     :buffer "*helm pdfgrep*"
+     :history 'helm-grep-history)))
+
+(add-to-list 'helm-commands-using-frame 'malb/helm-pdfgrep)
+#+end_src
+
 ** Tips
 
 | *Key Binding* | *Action*                                 |
