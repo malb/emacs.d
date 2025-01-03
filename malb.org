@@ -4307,17 +4307,28 @@ replace the default prompt message."
           (,(format "%s\tWebsite" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01))
            :keys "w"
            :file malb/inbox-org
-           :template ("* %?%a"
+           :template ("* TODO %?"
+                      "SCHEDULED: %(let ((hour (nth 2 (decode-time (current-time)))))"
+                      "                  (if (< hour 16)"
+                      "                    (org-insert-time-stamp nil)"
+                      "                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))"
                       ":PROPERTIES:"
                       ":CREATED: %U"
-                      ":END:")
+                      ":END:"
+                      ""
+                      "%a"
+                      "")
            :immediate-finish nil
            :prepend t)
           (,(format "%s\tWebsite (selected text)" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01))
            :keys "W"
            :file malb/inbox-org
            ;; :headline "Links"
-           :template  ("* %?%a"
+           :template  ("* TODO %?"
+                       "SCHEDULED: %(let ((hour (nth 2 (decode-time (current-time)))))"
+                       "                  (if (< hour 16)"
+                       "                    (org-insert-time-stamp nil)"
+                       "                   (org-insert-time-stamp (org-read-date nil t \"+1d\"))))"
                        ":PROPERTIES:"
                        ":CREATED: %U"
                        ":END:"
@@ -4325,7 +4336,9 @@ replace the default prompt message."
                        "#+begin_quote"
                        "%:initial"
                        "#+end_quote"
-                       )
+                       ""
+                       "— %a"
+                       "")
            :immediate-finish nil
            :prepend t))))))
 
