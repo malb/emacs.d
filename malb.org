@@ -1798,9 +1798,15 @@ Please always use ~=~ separator for using long option. Don't use space as separa
             (malb/defadvice! malb/helm-org-faster-caching
               (orig-function filename &optional fontify nofname parents force-refresh)
               :around #'helm-org--get-candidates-in-file
-              (let ((org-highlight-latex-and-related nil)
-                    (org-pretty-entities nil))
-                (apply orig-function filename fontify nofname parents force-refresh nil)))
+
+              (with-current-buffer (pcase filename
+                                     ((pred bufferp) filename)
+                                     ((pred stringp) (find-file-noselect filename t)))
+                (let ((org-highlight-latex-and-related nil)
+                      (org-pretty-entities nil)
+                      (org-latex-and-related-regexp ""))
+
+                  (apply orig-function filename fontify nofname parents force-refresh nil))))
 
             (add-to-list 'helm-commands-using-frame 'helm-org-in-buffer-headings)
             ;; TODO advice malb/helm-in-buffer
