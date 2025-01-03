@@ -4491,7 +4491,7 @@ Working with source code in org-mode.
 
             (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
             ;; TODO this should not be necessary
-            (add-to-list 'org-src-lang-modes '("python" . python-ts))
+            ;; (add-to-list 'org-src-lang-modes '("python" . python-ts))
             ;; TODO until org-mode has caught up with auctex 14
             (add-to-list 'org-src-lang-modes '("latex" . LaTeX))))
 #+end_src
