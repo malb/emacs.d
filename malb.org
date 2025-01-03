@@ -8871,6 +8871,8 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
 #+begin_src emacs-lisp
 (use-package helm-mu
+  :custom ((helm-mu-use-mu4e-query-fragments t)
+           (helm-mu-prexfix "NOT %ignore AND "))
   :config (progn
 
             (defun malb/helm-mu (arg)
