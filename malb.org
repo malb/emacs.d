@@ -12664,8 +12664,8 @@ Easily change the text size:
 (malb/set-menu-key "<f6>" #'emms-next)
 (malb/set-menu-key "<up>" #'drag-stuff-up)
 (malb/set-menu-key "<down>" #'drag-stuff-down)
-(malb/set-menu-key "=" (lambda () (interactive) (org-babel-tangle '(4))))
-(malb/set-menu-key ";" (lambda () (interactive) (org-icalendar-combine-agenda-files t)))
+(malb/set-menu-key ";" (defun malb/org-babel-tangle-one () (interactive) (org-babel-tangle '(4))))
+(malb/set-menu-key "=" (defun malb/org-icalendar-combine-agenda-files-async () (interactive) (org-icalendar-combine-agenda-files t)))
 (malb/set-menu-key "#" #'jupyter-org-hydra/body)
 #+end_src
 
