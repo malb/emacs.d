@@ -7784,8 +7784,8 @@ Run =latexmk -pvc= in async shell
   :config
   ;; ;; python GOT/demo/run_ocr_2.0.py  --model-name GOT-weights --type format --image-file "$1"
   ;; ;; run_ocr_2.0.py edited to not output the prompt
-  ;; (setq latex-ocr-command "got.sh %s")
-  (setq latex-ocr-command "NO_ALBUMENTATIONS_UPDATE=1 conda run -n cuda pix2tex %s"))
+  (setq latex-ocr-command "NO_ALBUMENTATIONS_UPDATE=1 conda run -n cuda pix2tex %s"
+        latex-ocr-secondary-command "got.sh %s"))
 #+end_src
 
 *** Math Delimiters

@@ -56,13 +56,17 @@
   "pix2tex %s"
   "The shell executable command to retrieve the results.")
 
+(defconst latex-ocr-secondary-command
+  "pix2tex %s"
+  "Another shell executable command to retrieve the results.")
+
 ;; screenshot programs have exit-code of 0 even when screenshotting is cancelled.
 ;; To save calls, we use the existence of the file as a check if the user
 ;; wants to continue. Hence, we must delete the file after each function call.
 ;;;###autoload
-(defun latex-ocr-screenshot ()
+(defun latex-ocr-screenshot (&optional arg)
   "Capture screenshot and send result to Latex-Ocr."
-  (interactive)
+  (interactive "P")
   (let ((default-directory "~"))
     (make-directory (file-name-directory latex-ocr-screenshot-file) t)
     (if (functionp latex-ocr-screenshot-method)
@@ -70,14 +74,17 @@
       (shell-command-to-string
        (format latex-ocr-screenshot-method latex-ocr-screenshot-file)))
     (when (file-exists-p latex-ocr-screenshot-file)
-      (let ((latex (latex-ocr-get-result latex-ocr-screenshot-file)))
+      (let ((latex (latex-ocr-get-result latex-ocr-screenshot-file arg)))
         (kill-new latex)
         (insert latex))
       (delete-file latex-ocr-screenshot-file))))
 
-(defun latex-ocr-get-result (file)
+(defun latex-ocr-get-result (file &optional arg)
   "Sends the image FILE to the latex to ocr engine."
-  (let* ((command (format latex-ocr-command file))
+  (let* ((command (format (if arg
+                              latex-ocr-secondary-command
+                            latex-ocr-command)
+                          file))
          (result (replace-regexp-in-string
                   ".*: \\(.*\\)$" "\\1"
                   (shell-command-to-string command))))
