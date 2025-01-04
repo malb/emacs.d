@@ -6009,6 +6009,24 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbol)))
 #+end_src
 
+*** Aider
+
+#+begin_src emacs-lisp
+(use-package aider
+  :ensure nil
+  :bind (("C-c `" . aider-transient-menu))
+  :config (setq aider-args '("--no-gitignore"
+                             "--no-auto-commits"
+                             "--env-file" "/home/malb/.aider.conf.env"
+                             "--model" "ollama_chat/qwen2.5-coder:14b-instruct-q3_K_M")))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package aider-helm
+  :ensure nil
+  :after (aider helm))
+#+end_src
+
 *** Highlight Indentation
 
 [[https://github.com/jdtsmith/indent-bars][jdtsmith/indent-bars]]
