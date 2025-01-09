@@ -11825,7 +11825,7 @@ Transparent encryption and decryption.
 
               (chatgpt-shell))
 
-            (malb/register-right-side-window (rx bos "*ollama llm*") t)
+            (malb/register-right-side-window (rx bos "*ollama llm") t)
 
             (setq chatgpt-shell-model-version
                   (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider))))
