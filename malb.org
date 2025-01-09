@@ -12110,7 +12110,8 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 #+begin_src emacs-lisp
 (use-package conf-mode
   :ensure nil
-  :mode (("\\.mailrc$" . conf-mode)))
+  :mode (("Doxyfile$"  . conf-mode)
+         ("\\.mailrc$" . conf-mode)))
 #+end_src
 
 ** HotCRP Reviews
