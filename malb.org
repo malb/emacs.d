@@ -1879,7 +1879,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 Extracted from =helm-grep.el=
 
 #+begin_src emacs-lisp
-(defun malb/helm-pdfgrep (directory)
+(defun malb/helm-pdfgrep (directories)
   "Run PDFGrep via Helm."
   (interactive "D")
   (unless (executable-find "pdfgrep")
@@ -1889,7 +1889,6 @@ Extracted from =helm-grep.el=
     ;; we have to kill action buffer.
     (when (get-buffer helm-action-buffer)
       (kill-buffer helm-action-buffer))
-    (setq helm-pdfgrep-targets (list directory))
     (helm
      :sources (helm-build-async-source "PdfGrep"
                 :init (lambda ()
@@ -1898,7 +1897,10 @@ Extracted from =helm-grep.el=
                         (setq helm-ff-default-directory "/home/malb/Sync/encrochat/"))
                 :candidates-process (lambda ()
                                       (funcall helm-pdfgrep-default-function
-                                               helm-pdfgrep-targets t))
+                                               (if (stringp directories)
+                                                   (list directories)
+                                                 directories)
+                                               t))
                 :nohighlight t
                 :nomark t
                 :filter-one-by-one #'helm-grep-filter-one-by-one
