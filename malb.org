@@ -1889,17 +1889,20 @@ Extracted from =helm-grep.el=
     ;; we have to kill action buffer.
     (when (get-buffer helm-action-buffer)
       (kill-buffer helm-action-buffer))
+
+    (setq helm-pdfgrep-targets (if (stringp directories)
+                                   (list directories)
+                                 directories))
+
     (helm
      :sources (helm-build-async-source "PdfGrep"
                 :init (lambda ()
                         ;; If `helm-find-files' haven't already started,
                         ;; give a default value to `helm-ff-default-directory'.
-                        (setq helm-ff-default-directory "/home/malb/Sync/encrochat/"))
+                        (setq helm-ff-default-directory (car helm-pdfgrep-targets)))
                 :candidates-process (lambda ()
                                       (funcall helm-pdfgrep-default-function
-                                               (if (stringp directories)
-                                                   (list directories)
-                                                 directories)
+                                               helm-pdfgrep-targets
                                                t))
                 :nohighlight t
                 :nomark t
