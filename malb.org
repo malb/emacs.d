@@ -8399,7 +8399,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
         (:maildir "/sandbox/Inbox"          :key ?S)
         (:maildir "/kcl/INBOX"              :key ?K)
         (:maildir "/gmail/research/rwc2025" :key ?r)
-        (:maildir "/kcl/Lattice PhD 2025"   :key ?l)))
+        (:maildir "/kcl/Lattice PhD 2025"   :key ?l)
+        (:maildir "/kcl/Social Crypto PhD 2025"   :key ?s)))
 #+end_src
 
 ** Retrieving
