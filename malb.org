@@ -483,6 +483,32 @@ Repeated invocations toggle between the two most recently open buffers."
 
 Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
 
+#+begin_src diff
+(defun winum--assign (window &optional number)
+  "Assign to window WINDOW the number NUMBER.
+If NUMBER is not specified, determine it first based on `winum--remaining'.
+Returns the assigned number, or nil on error."
+  (if number
+      (progn
+-        (winum--maybe-expand-window-vector number)
++        (winum--maybe-expand-window-vector (+ number 1))
+        (if (aref (winum--get-window-vector) number)
+            (progn
+              (message "Number %s already assigned to %s, can't assign to %s"
+                       number (aref (winum--get-window-vector) number) window)
+              nil)
+          (setf (aref (winum--get-window-vector) number) window)
+          (puthash window number (winum--get-numbers-table))
+          (setq winum--remaining (delq number winum--remaining))
+          number))
+    ;; else determine number and assign
+    (when winum--remaining
+      (unless (gethash window (winum--get-numbers-table))
+        (let ((number (car winum--remaining)))
+          (winum--assign window number))))))
+
+#+end_src
+
 #+begin_src emacs-lisp
 (use-package winum
   :init (setq winum-keymap
