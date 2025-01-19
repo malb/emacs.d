@@ -572,6 +572,9 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
     (when window
       (window--display-buffer buffer window 'reuse alist))))
 
+#+end_src
+
+#+begin_src emacs-lisp
 (defun malb/register-popup-window (buffer-name-rx &optional winum-10)
   (add-to-list 'display-buffer-alist
                `(,buffer-name-rx
@@ -592,7 +595,9 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
   (if winum-10
       (add-to-list 'winum-assign-functions
                    (lambda () (when (string-match-p buffer-name-rx (buffer-name)) 10)))))
+#+end_src
 
+#+begin_src emacs-lisp
 (defun malb/register-wide-popup-window (buffer-name-rx &optional winum-10)
   (add-to-list 'display-buffer-alist
                `(,buffer-name-rx
