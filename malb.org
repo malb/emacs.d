@@ -1088,7 +1088,14 @@ Use [[http://www.emacswiki.org/emacs/GotoChg][goto-chg]] to jump through edit po
 #+begin_src emacs-lisp
 (use-package empx
   :ensure nil
-  :config (empx-mode))
+  :config (progn
+            (malb/defadvice! malb/empx--idle-function ()
+              "Execute function if no actions occur within `empx-idle-time` seconds."
+              :override #'empx--idle-function
+              (when (and (not (minibufferp))
+                         (malb/frame-is-not-special-p (selected-frame)))
+                (empx--push-marker-stack)))
+            (empx-mode)))
 #+end_src
 
 * Snippets
