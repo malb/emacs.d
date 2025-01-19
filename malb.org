@@ -529,6 +529,7 @@ Returns the assigned number, or nil on error."
             (defun malb/winum-assign ()
               (cond
                ((equal major-mode 'imenu-list-major-mode) 8)
+               ((equal major-mode 'lsp-ui-imenu-mode) 8)
                ((equal major-mode 'dired-sidebar-mode) 8)
                ((equal major-mode 'reftex-toc-mode) 8)
                ((equal major-mode 'pdf-outline-buffer-mode) 8)
@@ -6028,13 +6029,17 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 (use-package lsp-ui
   :after (lsp-mode)
+  :custom ((lsp-ui-imenu-colors '("#268bd2" "#859900")))
   :config (progn
             (setq lsp-ui-sideline-enable nil
                   lsp-ui-sideline-ignore-duplicate t
                   lsp-ui-peek-enable t
                   lsp-ui-imenu-enable t
                   lsp-ui-doc-enable t
-                  lsp-ui-flycheck-enable t)))
+                  lsp-ui-flycheck-enable t
+                  lsp-ui-imenu-buffer-position 'left
+                  lsp-ui-imenu-window-fix-width t
+                  lsp-ui-imenu-window-width malb/left-side-window-width)))
 #+end_src
 
 #+begin_src emacs-lisp
