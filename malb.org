@@ -7081,8 +7081,9 @@ Automatically pick dictionary.
 (use-package guess-language
   :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
-  :config (setq guess-language-langcodes '((en . ("en_GB" "English"))
-                                           (de . ("de_DE" "German")))
+  :config (setq guess-language-langcodes '((en "en_GB" "English" "🇬🇧" "English")
+                                           (de "de" "German" "🇩🇪" "German")
+                                           (fr "francais" "French" "🇫🇷" "French"))
                 guess-language-languages '(en de)))
 #+end_src
 
