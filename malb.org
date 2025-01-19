@@ -649,6 +649,22 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
 #+end_src
 
 #+begin_src emacs-lisp
+(defun malb/register-left-side-window (buffer-name-rx &optional winum-8)
+  (add-to-list 'display-buffer-alist
+             `(,buffer-name-rx
+               (malb/frame-dispatch
+                display-buffer-reuse-window
+                display-buffer-in-side-window)
+               (side . left)
+               (slot . 0)
+               (window-width . ,malb/left-side-window-width)))
+
+  (if winum-8
+      (add-to-list 'winum-assign-functions
+                   (lambda () (when (string-match-p buffer-name-rx (buffer-name)) 8)))))
+#+end_src
+
+#+begin_src emacs-lisp
 (defun malb/register-right-side-window (buffer-name-rx &optional winum-9)
   (add-to-list 'display-buffer-alist
              `(,buffer-name-rx
