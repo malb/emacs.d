@@ -3693,7 +3693,7 @@ iCal export is triggered after 600 seconds of inactivity.
                                                                        "advantage"))
                                                          "cryptocode"))
             (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
-            (add-to-list 'org-latex-packages-alist '("" "microtype"))
+            ;; (add-to-list 'org-latex-packages-alist '("" "microtype"))
             (add-to-list 'org-latex-packages-alist '("" "booktabs"))
             (add-to-list 'org-latex-packages-alist '("color=cyan!0!magenta!4!yellow!16" "todonotes") t)
 

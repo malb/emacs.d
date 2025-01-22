@@ -60,4 +60,5 @@
 
 \linespread{1.04}
 
-\PassOptionsToPackage{verbose=silent}{microtype}
+\IfFileExists{microtype.sty}{\RequirePackage{microtype}}{}
+\IfFileExists{microtype.sty}{\PassOptionsToPackage{verbose=silent}{microtype}}{}
