@@ -3638,7 +3638,8 @@ iCal export is triggered after 600 seconds of inactivity.
                                 (with-current-buffer buf
                                   (save-buffer)))))
                           ;; async, check org-export-init.el
-                          (org-icalendar-combine-agenda-files t)
+                          (let ((async-inject-variables-exclude-regexps ".*"))
+                            (org-icalendar-combine-agenda-files t))
                           (org-agenda-redo)))))
 #+end_src
 
@@ -3647,6 +3648,13 @@ iCal export is triggered after 600 seconds of inactivity.
   "Save after 30 seconds of no changes."
   (if (eq major-mode 'org-mode)
       (malb/org-icalendar-export-with-delay 30)))
+#+end_src
+
+#+begin_src emacs-lisp
+(defun malb/org-icalendar-combine-agenda-files-async ()
+  (interactive)
+  (let ((async-inject-variables-exclude-regexps ".*"))
+    (org-icalendar-combine-agenda-files t)))
 #+end_src
 
 *** Org LaTeX
@@ -12739,7 +12747,7 @@ Easily change the text size:
 (malb/set-menu-key "<up>" #'drag-stuff-up)
 (malb/set-menu-key "<down>" #'drag-stuff-down)
 (malb/set-menu-key ";" (defun malb/org-babel-tangle-one () (interactive) (org-babel-tangle '(4))))
-(malb/set-menu-key "=" (defun malb/org-icalendar-combine-agenda-files-async () (interactive) (org-icalendar-combine-agenda-files t)))
+(malb/set-menu-key "=" #'malb/org-icalendar-combine-agenda-files-async)
 (malb/set-menu-key "#" #'jupyter-org-hydra/body)
 #+end_src
 
