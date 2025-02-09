@@ -3638,8 +3638,9 @@ iCal export is triggered after 600 seconds of inactivity.
                                 (with-current-buffer buf
                                   (save-buffer)))))
                           ;; async, check org-export-init.el
-                          (let ((async-inject-variables-exclude-regexps ".*"))
-                            (org-icalendar-combine-agenda-files t))
+                          (with-temp-buffer
+                            (let ((async-inject-variables-exclude-regexps ".*"))
+                              (org-icalendar-combine-agenda-files t)))
                           (org-agenda-redo)))))
 #+end_src
 
@@ -3653,8 +3654,9 @@ iCal export is triggered after 600 seconds of inactivity.
 #+begin_src emacs-lisp
 (defun malb/org-icalendar-combine-agenda-files-async ()
   (interactive)
-  (let ((async-inject-variables-exclude-regexps ".*"))
-    (org-icalendar-combine-agenda-files t)))
+  (with-temp-buffer
+    (let ((async-inject-variables-exclude-regexps ".*"))
+      (org-icalendar-combine-agenda-files t))))
 #+end_src
 
 *** Org LaTeX
