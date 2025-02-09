@@ -4598,6 +4598,7 @@ Working with source code in org-mode.
                (dot . t)
                (plantuml . t)
                (makefile . t)
+               (http . t)
                (jupyter . t)))          ; must be last
 
             (setq org-babel-default-header-args:sh    '((:results . "output replace"))
@@ -4683,6 +4684,41 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
         (forward-line -1)
         (end-of-line)
         (buffer-substring-no-properties start (point))))))
+#+end_src
+
+** Ob HTTP
+
+[[https://github.com/zweifisch/ob-http][zweifisch/ob-http: make http request within org-mode babel]]
+
+#+begin_src emacs-lisp
+(use-package ob-http)
+#+end_src
+
+*Example:*
+
+#+begin_src http :pretty json :wrap example json
+GET https://api.github.com/repos/zweifisch/ob-http/languages
+Accept: application/vnd.github.moondragon+json
+#+end_src
+
+#+RESULTS:
+#+begin_example json
+{
+  "Emacs Lisp": 15327,
+  "Shell": 139
+}
+#+end_example
+
+*Support TRAMP:*
+
+#+begin_src diff
+    (with-current-buffer (get-buffer-create "*curl output*")
+      (erase-buffer)
+-      (if (= 0 (apply 'call-process "curl" nil `(t ,error-output) nil (ob-http-flatten args)))
++      (if (= 0 (apply 'process-file "curl" nil `(t ,error-output) nil (ob-http-flatten args)))
+          (let ((response (ob-http-parse-response (buffer-string))))
+            (when prettify (ob-http-pretty-response response (cdr pretty)))
+            (when ob-http:remove-cr (ob-http-remove-carriage-return response))
 #+end_src
 
 ** Org Download
