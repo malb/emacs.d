@@ -3008,6 +3008,7 @@ Dired additions for git-annex.
                               (dired-relist-file (expand-file-name file)))
                           file-list)
                   (goto-char here)))
+              (dired-unmark-all-marks)
               (message (format "Annex: dropped %d file(s)" (length file-list))))
 
             (malb/defadvice! malb/git-annex-dired-get-files (file-list &optional arg)
