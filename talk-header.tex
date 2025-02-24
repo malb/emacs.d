@@ -226,8 +226,9 @@
 %%%
 
 \IfFileExists{upquote.sty}{\RequirePackage{upquote}}{}
-\IfFileExists{microtype.sty}{\RequirePackage{microtype}}{}
-\IfFileExists{microtype.sty}{\PassOptionsToPackage{verbose=silent}{microtype}}{}
+%% https://github.com/schlcht/microtype/issues/43
+%% \IfFileExists{microtype.sty}{\RequirePackage{microtype}}{}
+%% \IfFileExists{microtype.sty}{\PassOptionsToPackage{verbose=silent}{microtype}}{}
 
 \setlength{\parindent}{0pt}                   %%
 \setlength{\parskip}{6pt plus 2pt minus 1pt}  %%
