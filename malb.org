@@ -2826,8 +2826,7 @@ This library provides easy project management and navigation. The concept of a p
               (when (> (tab-bar--current-tab-index) 0)
                 (tab-bar-close-tab nil 1)))
 
-            (projectile-mode)
-            (helm-projectile-on)))
+            (projectile-mode)))
 #+end_src
 
 [[https://tuhdo.github.io/helm-projectile.html][Helm]] integration
@@ -2841,12 +2840,14 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
 
 #+begin_src emacs-lisp
 (use-package helm-projectile
-  :after (projectile)
-  :init (setq helm-projectile-fuzzy-match nil)
+  :after (helm projectile)
+  :custom (helm-projectile-fuzzy-match nil)
+  :defer nil
   :commands (helm-projectile-on helm-projectile-switch-project)
   :config (progn
             (defvar malb/helm-source-file-not-found
               (helm-build-dummy-source "Create file" :action 'find-file))
+            (helm-projectile-on)
             (add-to-list 'helm-projectile-sources-list malb/helm-source-file-not-found t)
             (add-to-list 'helm-commands-using-frame #'helm-projectile-switch-project)
             (setq projectile-switch-project-action 'helm-projectile)))
