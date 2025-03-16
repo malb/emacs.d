@@ -10582,18 +10582,18 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 ** Tramp
 
-=.ssh/config= already contains the appropriate config for persistent sessions so we ask tramp to respect it.
+=.ssh/config= already contains the appropriate config for persistent sessions so we ask tramp to respect it (=tramp-use-ssh-controlmaster-options=).
 
 #+begin_src emacs-lisp
 (use-package tramp
   :ensure nil
-  :config (progn
-            (setq tramp-use-ssh-controlmaster-options nil
-                  remote-file-name-inhibit-locks t
-                  tramp-verbose 1
-                  vc-ignore-dir-regexp (format "%s\\|%s"
-                                               vc-ignore-dir-regexp
-                                               tramp-file-name-regexp))))
+  :custom ((tramp-use-ssh-controlmaster-options nil)
+           (remote-file-name-inhibit-locks t)
+           (tramp-verbose 1)
+           (vc-ignore-dir-regexp (format "%s\\|%s"
+                                         vc-ignore-dir-regexp
+                                         tramp-file-name-regexp)))
+  :config (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+end_src
 
 [[https://github.com/masasam/emacs-helm-tramp/blob/master/image/helm-tramp.gif]]
