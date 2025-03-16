@@ -7143,7 +7143,7 @@ Automatically pick dictionary.
 
 ** Dictionary
 
-[[https://raw.githubusercontent.com/wiki/abo-abo/define-word/images/define-word.png]]
+[[https://media.githubusercontent.com/media/tecosaur/lexic/refs/heads/master/lexic.gif]]
 
 *[[https://github.com/tecosaur/lexic][Lexic]] for offline lookups.*
 
