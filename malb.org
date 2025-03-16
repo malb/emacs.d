@@ -7561,6 +7561,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
             (push '("\\rvert" . ?|) tex--prettify-symbols-alist)
             (push '("\\concat" . ?‖) tex--prettify-symbols-alist)
             (push '("\\mhyphen " . ?-) tex--prettify-symbols-alist)
+            (push '("\\mathbb{F}" . ?𝔽) tex--prettify-symbols-alist)
 
             (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
                                           ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
