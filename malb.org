@@ -4234,7 +4234,7 @@ replace the default prompt message."
          :children
          ((,(format "%s\tRespond to Email" (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01))
            :keys "r"
-           :template  ("* REPLY to %:fromname on %a :email:"
+           :template  ("* REPLY %:fromname on %a :email:"
                        "DEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))"
                        ":PROPERTIES:"
                        ":CREATED: %U"
