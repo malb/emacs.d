@@ -10000,7 +10000,8 @@ We change the default template to not include the title which is filled in by de
                            org2blog/wp-default-categories)
                        ", ")))
 
-            (setq org2blog/wp-use-sourcecode-shortcode nil
+            (setq org2blog/wp-keymap-prefix "C-c w b"
+                  org2blog/wp-use-sourcecode-shortcode nil
                   org2blog/wp-image-upload t
                   org2blog/wp-show-post-in-browser nil
                   org2blog/wp-default-categories '("cryptography")
@@ -10011,6 +10012,8 @@ We change the default template to not include the title which is filled in by de
 ,#+TAGS:
 ,#+DESCRIPTION:
 \n")
+            (org2blog-reload-entry-mode-map)
+
             ;; https://github.com/org2blog/org2blog/issues/193
             (malb/defadvice! malb/org2blog--upload-files-replace-urls (orig-function text)
               :around #'org2blog-buffer-post-save
