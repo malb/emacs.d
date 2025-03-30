@@ -11993,11 +11993,15 @@ Transparent encryption and decryption.
                      (ret (ollama-base64-images-maybe shell-prompt))
                      (shell-prompt (car ret))
                      (images (cdr ret)))
-                (when images (message "ollama: added %d pictures" (length images)))
-                `(
-                  :model ,model
+
+                (when images
+                  (dolist (image images)
+                    (add-to-list 'ollama-shell-images image))
+                  (message "ollama: added %d pictures" (length images)))
+
+                `(:model ,model
                   :prompt ,shell-prompt
-                  :images ,images
+                  :images ,ollama-shell-images
                   :context ,ollama-shell-context
                   :options ,(cdr (assoc model malb/ollama-parameters))
                   :stream ,(if ollama-shell-streaming t json-false))))
@@ -12059,6 +12063,7 @@ Transparent encryption and decryption.
                       ))))
 
                 (setq-local ollama-shell-context nil)
+                (setq-local ollama-shell-images nil)
 
                 (setq comint-input-ring (ring-copy ollama-shell-input-ring))
 
@@ -12074,7 +12079,8 @@ Transparent encryption and decryption.
             (defun ollama-shell-reset-context (&optional quiet)
               (interactive "p")
               (when (not quiet) (message "ollama-context reset."))
-              (setq-local ollama-shell-context nil))
+              (setq-local ollama-shell-context nil)
+              (setq-local ollama-shell-images nil))
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
 #+end_src
