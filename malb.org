@@ -12001,22 +12001,21 @@ Transparent encryption and decryption.
 
                 `(:model ,model
                   :prompt ,shell-prompt
-                  :images ,ollama-shell-images
                   :context ,ollama-shell-context
+                  :images ,ollama-shell-images
                   :options ,(cdr (assoc model malb/ollama-parameters))
-                  :stream ,(if ollama-shell-streaming t json-false))))
+                  :stream t)))
 
             (defun ollama-shell-parse-response (blob)
-              (let ((json (cond
-                           ((eq (type-of blob) 'cons) blob)
-                           (t (ignore-errors (shell-maker--json-parse-string blob)))))
-                    (response ""))
-                (when (assoc 'response json)
-                  (setq response (cdr (assoc 'response json))))
-                (when (assoc 'context json)
-                  ;; (message "updating context")
-                  (setq-local ollama-shell-context (cdr (assoc 'context json))))
-                response))
+              (let ((chunks (split-string blob "\n"))
+                    response)
+                (dolist (chunk chunks)
+                  (let ((json (shell-maker--json-parse-string chunk)))
+                    (when (assoc 'response json)
+                      (setq response (concat response (cdr (assoc 'response json)))))
+                    (when (assoc 'context json)
+                      (setq-local ollama-shell-context (cdr (assoc 'context json))))))
+                (s-concat response)))
 
             (defun ollama-shell-call-api-curl-command (object)
               (let ((json (json-encode object))
