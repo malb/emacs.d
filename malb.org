@@ -11925,7 +11925,7 @@ Transparent encryption and decryption.
             (malb/register-right-side-window (rx bos "ellama-session") t)))
 #+end_src
 
-** ChatGPT Shell
+** COMMENT ChatGPT Shell
 
 #+begin_src emacs-lisp
 (use-package chatgpt-shell
@@ -11952,7 +11952,7 @@ Transparent encryption and decryption.
                   (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider))))
 #+end_src
 
-** COMMENT Shell Maker
+** Shell Maker
 
 #+begin_src emacs-lisp
 (use-package shell-maker
