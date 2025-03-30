@@ -11962,7 +11962,7 @@ Transparent encryption and decryption.
 
             (defconst ollama-shell-api-url "http://localhost:11434/api/generate")
 
-            (defvar ollama-shell-streaming t)
+            (defvar ollama-shell-input-ring (make-ring 256))
 
             (defun ollama-base64-images-maybe (shell-prompt)
               "Check if image paths are present in PROMPT and return list of images if true."
@@ -12002,8 +12002,7 @@ Transparent encryption and decryption.
                   :options ,(cdr (assoc model malb/ollama-parameters))
                   :stream ,(if ollama-shell-streaming t json-false))))
 
-            (defun ollama-shell-callback-curl (blob)
-
+            (defun ollama-shell-parse-response (blob)
               (let ((json (cond
                            ((eq (type-of blob) 'cons) blob)
                            (t (ignore-errors (shell-maker--json-parse-string blob)))))
@@ -12015,45 +12014,11 @@ Transparent encryption and decryption.
                   (setq-local ollama-shell-context (cdr (assoc 'context json))))
                 response))
 
-            (defun ollama-shell-call-api-curl (object)
+            (defun ollama-shell-call-api-curl-command (object)
               (let ((json (json-encode object))
                     (json-path (make-temp-file "ollama-shell-request" nil ".json")))
                 (with-temp-file json-path (insert json))
                 (append (list "curl" ollama-shell-api-url) `("--data" ,(format "@%s" json-path)))))
-
-            (defun ollama-shell-callback-elisp (status ollama-buffer shell-maker-callback)
-              (goto-char url-http-end-of-headers)
-              (let* ((response (split-string
-                                (decode-coding-string
-                                 (buffer-substring-no-properties (point) (point-max))
-                                 'utf-8)
-                                "\n"))
-                     fragments
-                     context)
-
-                (dolist (part response)
-                  (when (not (string-empty-p part))
-                    (let ((parsed (json-read-from-string part)))
-                      (push (cdr (assoc 'response parsed)) fragments)
-                      (setq context (cdr (assoc 'context parsed))))))
-
-                (with-current-buffer ollama-buffer
-                  (setq ollama-shell-context context)
-                  (funcall shell-maker-callback
-                           (mapconcat #'identity (nreverse fragments) "")
-                           nil))))
-
-            (defun ollama-shell-call-api-elisp (shell-prompt model shell-maker-callback)
-              (let* ((ollama-buffer (current-buffer))
-                     (url-request-method "POST")
-                     (url-request-extra-headers '(("Content-Type" . "application/json")))
-                     (url-request-data (encode-coding-string
-                                        (json-encode (ollama-shell-make-payload shell-prompt model))
-                                        'utf-8)))
-                (url-retrieve ollama-shell-api-url
-                              #'ollama-shell-callback-elisp
-                              `(,ollama-buffer ,shell-maker-callback)
-                              t t)))
 
             (defun ollama-shell (&optional arg)
               "Start an ollama shell."
@@ -12081,21 +12046,22 @@ Transparent encryption and decryption.
                                                                           'chat-model
                                                                           ellama-provider))))
                   :execute-command
-                  (lambda (command _history callback error-callback)
+                  (lambda (command shell)
                     (bind-key "C-r" #'ollama-shell-reset-context ollama-shell-mode-map)
                     (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-                      (shell-maker-async-shell-command
-                       (ollama-shell-call-api-curl (ollama-shell-make-payload command model))
-                       ollama-shell-streaming
-                       #'ollama-shell-callback-curl
-                       callback
-                       error-callback)))
-                  ;; (lambda (command _history callback error-callback)
-                  ;;   (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
-                  ;;     (ollama-shell-call-api-elisp command model callback)))
-                  ))
+                      (ring-insert ollama-shell-input-ring command)
+                      (shell-maker-execute-command
+                       :async t
+                       :command (ollama-shell-call-api-curl-command
+                                 (ollama-shell-make-payload command model))
+                       :filter #'ollama-shell-parse-response
+                       :shell shell)
+                      ))))
 
                 (setq-local ollama-shell-context nil)
+
+                (setq comint-input-ring (ring-copy ollama-shell-input-ring))
+
                 (when initial-prompt
                   (insert initial-prompt))))
 
@@ -12776,7 +12742,7 @@ Easily change the text size:
 (malb/set-menu-key "o" #'malb/helm-org-ql-agenda-files)
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
-(malb/set-menu-key "q" #'malb/chatgpt-ollama-shell)
+(malb/set-menu-key "q" #'ollama-shell)
 (malb/set-menu-key "S" #'malb/toggle-sage-jupyter)
 (malb/set-menu-key "s" #'malb/switch-tab)
 (malb/set-menu-key "t" #'helm-tramp)
