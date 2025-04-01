@@ -4484,22 +4484,30 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
 #+begin_src emacs-lisp
 (use-package org-capture-pop-frame
   :after (org-capture)
-  :config (progn (setq ocpf-frame-parameters '((name . "*Org Capture*")
-                                               (width . 120)
-                                               (height . 24)
-                                               (sticky . t)
-                                               (malb/special-frame . t)
-                                               (fullscreen . nil)
-                                               (tool-bar-lines . 0)
-                                               (menu-bar-lines . 0)))
+  :custom ((ocpf-frame-parameters '((name . "*Org Capture*")
+                                    (width . 120)
+                                    (height . 24)
+                                    (sticky . t)
+                                    (malb/special-frame . t)
+                                    (fullscreen . nil)
+                                    (tool-bar-lines . 0)
+                                    (menu-bar-lines . 0))))
+  ;; org-mks hardcodes switch-to-buffer-other-window which screws with pop-frame
+  :config (progn
 
-                 (defun ocpf--org-capture (orig-fun &optional goto keys)
-                   "Create a new frame and run org-capture."
-                   (interactive)
-                   (select-frame-set-input-focus (make-frame `(,@ocpf-frame-parameters)))
-                   (condition-case nil ;; MALB: handle "q"
-                       (funcall orig-fun goto keys)
-                     ((debug error) (ocpf--delete-frame))))))
+            (defun ocpf--org-capture (orig-fun &optional goto keys)
+              "Create a new frame and run org-capture."
+              (interactive)
+              (select-frame-set-input-focus (make-frame `(,@ocpf-frame-parameters)))
+              (condition-case nil ;; MALB: handle "q"
+                  (funcall orig-fun goto keys)
+                ((debug error) (ocpf--delete-frame))))
+
+            (malb/defadvice! malb/no-switch-to-buffer-other-window (fn &rest args)
+              :around #'org-capture
+              (cl-letf (((symbol-function 'switch-to-buffer-other-window)
+                         'switch-to-buffer))
+                (apply fn args)))))
 #+end_src
 
 #+begin_src emacs-lisp
