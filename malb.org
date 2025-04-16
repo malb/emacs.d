@@ -6146,10 +6146,10 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 (use-package aidermacs
   :bind (("C-c `" . aidermacs-transient-menu))
   :custom ((aidermacs-architect-model "ollama_chat/qwen2.5-coder:14b")
-           (aidermacs-editor-model "ollama_chat/qwen2.5-coder:14b")
-           (aidermacs-default-model "ollama_chat/qwen2.5-coder:14b")
+           (aidermacs-editor-model    "ollama_chat/qwen2.5-coder:14b")
+           (aidermacs-default-model   "ollama_chat/qwen2.5-coder:14b")
            (aidermacs-use-architect-mode t)
-           (aidermacs-backend 'vterm))
+           (aidermacs-backend 'comint))
   :config (setq aidermacs-extra-args
                 '("--env-file" "/home/malb/.aider.conf.env")))
 #+end_src
