@@ -4505,8 +4505,12 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
 
             (malb/defadvice! malb/no-switch-to-buffer-other-window (fn &rest args)
               :around #'org-capture
+              :around #'org-capture-place-template
+              :around #'org-capture-fill-template
               (cl-letf (((symbol-function 'switch-to-buffer-other-window)
-                         'switch-to-buffer))
+                         'switch-to-buffer)
+                        ((symbol-function 'org-display-buffer-split)
+                         (lambda (buffer alist) (display-buffer-same-window buffer alist))))
                 (apply fn args)))))
 #+end_src
 
