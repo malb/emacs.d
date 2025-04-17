@@ -3254,7 +3254,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 #+begin_src emacs-lisp
 (setq org-hide-emphasis-markers nil      ; don’t hide markers for like *foo*
-      ;; org-ellipsis " ••• "
       org-ellipsis " ▼ "
       org-highlight-latex-and-related nil
       org-src-fontify-natively t        ; fontify code blocks
@@ -3262,7 +3261,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-startup-with-latex-preview nil
       org-preview-latex-default-process 'dvisvgm
       org-pretty-entities nil
-      org-image-actual-width 800)
+      org-image-actual-width 1000)
 #+end_src
 
 Pretty print some maths:
