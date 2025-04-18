@@ -234,10 +234,9 @@ Key chords allow to execute actions by pressing one or two keys really fast. Som
 
 #+begin_src emacs-lisp
 (use-package key-chord
-  :config (progn
-            (setq key-chord-one-key-delay 0.2
-                  key-chord-two-keys-delay 0.1)
-            (key-chord-mode 1)))
+  :custom ((key-chord-one-key-delay  0.3)
+           (key-chord-two-keys-delay 0.1))
+  :hook (after-init . key-chord-mode))
 #+end_src
 
 *Note:* =key-chord= can slow down typing but it works e.g. in =vterm= buffers which is quite handy.
