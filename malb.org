@@ -12814,6 +12814,7 @@ I hardly use it but my fat fingers hit it on some keyboards.
 
 #+begin_src emacs-lisp
 (use-package which-key
+  :ensure nil
   :blackout which-key-mode
   :config (which-key-mode 1))
 #+end_src
