@@ -12828,8 +12828,9 @@ I hardly use it but my fat fingers hit it on some keyboards.
 * Technical Artefacts
 
 # Local Variables:
-# eval: (when (fboundp 'ws-butler-mode) (ws-butler-mode 1))
-# org-cycle-separator-lines: 0
+# eval: (when (fboundp 'ws-butler-mode)    (ws-butler-mode 1))
 # eval: (when (fboundp 'stripe-table-mode) (stripe-table-mode 1))
-# fill-column: 158
+# org-cycle-separator-lines: 0
+# visual-fill-column-width: 126
+# fill-column: 100
 # End:
