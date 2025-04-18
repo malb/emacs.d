@@ -74,8 +74,8 @@
      theme-name
      ;; steal org style from Leuven
      `(org-checkbox ((t (:weight bold :foreground ,base0
-                                 :box (:line-width 1 :color nil :style (quote pressed-button))
-                                 :background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
+                         :box (:line-width 1 :color nil :style pressed-button)
+                         :background ,(solarized-color-blend "#cccccc" s-base3 0.2)))))
      `(org-scheduled-previously ((t (:foreground ,orange))))
      `(org-tag ((t (:weight normal :box (:line-width 1 :color "#BBBBBB" :style nil) :foreground "#9A9FA4"))))
      `(org-todo ((t (:weight bold :box (:line-width 1 :color "#D8ABA7" :style nil) :foreground ,orange :background "#FFE6E4"))))
@@ -86,13 +86,13 @@
 
      `(org-agenda-structure
        ((,class (:foreground ,base1 :background ,base02
-                             :weight bold :slant normal :inverse-video nil :height ,solarized-height-plus-1
-                             :underline nil :extend t
-                             :box (:line-width 2 :color ,base03)))))
+                 :weight bold :slant normal :inverse-video nil :height ,solarized-height-plus-1
+                 :underline nil :extend t
+                 :box (:line-width 2 :color ,base03)))))
 
      `(markdown-code-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2) :inherit nil :extend t))))
      `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)
-                                                       :inherit (highlight)))))
+                                           :inherit (highlight)))))
 
      `(hl-sentence ((t (:background ,yellow-1bg :inherit (highlight)))))
      `(hl-line ((t (:background ,yellow-1bg :inherit (highlight)))))
@@ -156,22 +156,22 @@
 
      `(mode-line
        ((,class (:inverse-video unspecified
-                                :overline ,s-mode-line-bg
-                                :underline ,s-mode-line-underline
-                                :foreground ,s-mode-line-fg
-                                :background ,(if solarized-high-contrast-mode-line
-                                                 s-mode-line-bg
-                                               yellow-1bg)
-                                :box (:line-width 1 :color ,s-mode-line-bg
-                                                  :style unspecified)))))
+                 :overline ,s-mode-line-bg
+                 :underline ,s-mode-line-underline
+                 :foreground ,s-mode-line-fg
+                 :background ,(if solarized-high-contrast-mode-line
+                                  s-mode-line-bg
+                                yellow-1bg)
+                 :box (:line-width 1 :color ,s-mode-line-bg
+                       :style nil)))))
      `(mode-line-inactive
        ((,class (:inverse-video unspecified
-                                :overline ,s-mode-line-inactive-bc
-                                :underline ,s-mode-line-underline
-                                :foreground ,s-mode-line-inactive-fg
-                                :background ,s-mode-line-bg
-                                :box (:line-width 1 :color ,s-mode-line-inactive-bg
-                                                  :style unspecified)))))
+                 :overline ,s-mode-line-inactive-bc
+                 :underline ,s-mode-line-underline
+                 :foreground ,s-mode-line-inactive-fg
+                 :background ,s-mode-line-bg
+                 :box (:line-width 1 :color ,s-mode-line-inactive-bg
+                       :style nil)))))
      )
 
     (custom-theme-set-variables
