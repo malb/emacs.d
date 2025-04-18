@@ -6956,15 +6956,6 @@ Put everything back on one line if =M-q= is pressed twice and use ~visual-line-m
 (bind-key "M-q" #'malb/org-fill-or-unfill org-mode-map)
 #+end_src
 
-Indent correctly in ~visual-line-mode~ (~org-mode~ has its own thing).
-
-#+begin_src emacs-lisp
-(use-package adaptive-wrap
-  :config (progn
-            (add-hook 'markdown-mode-hook #'adaptive-wrap-prefix-mode)
-            (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)))
-#+end_src
-
 Allow for a bit more characters per line by default.
 
 #+begin_src emacs-lisp
@@ -7358,6 +7349,7 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
               ("M-<down>" . markdown-move-down)
               ("C-<tab>" . outline-cycle)
               ("M-." .  markdown-do))
+  :hook ((markdown-mode . visual-wrap-prefix-mode))
   :mode (("\\.md$" . markdown-mode)
          ("\\.markdown$" . markdown-mode)
          ("\\.text$" . markdown-mode)
@@ -7499,7 +7491,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
               ("M-<up>" . drag-stuff-up)
               ("M-<down>" . drag-stuff-down))
   :commands rst-mode-hook
-  :hook (rst-mode . adaptive-wrap-prefix-mode)
+  :hook (rst-mode . visual-wrap-prefix-mode)
   :mode "README\\.txt$")
 #+end_src
 
@@ -7537,6 +7529,7 @@ Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt=
          (LaTeX-mode . malb/lsp-enable-maybe)
          (LaTeX-mode . malb/company-latex-setup)
          (LaTeX-mode . malb/raise-flycheck-error-threshold)
+         (LaTeX-mode . visual-wrap-prefix-mode)
          ;; (LaTeX-mode . indent-bars-mode)
          )
   :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
@@ -12223,7 +12216,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
   :ensure nil
   :mode (("-reviews\\.txt$" . hotcrp-mode))
   :hook ((hotcrp-mode . visual-fill-column-mode)
-         (hotcrp-mode . adaptive-wrap-prefix-mode)
+         (hotcrp-mode . visual-wrap-prefix-mode)
          (hotcrp-mode . flyspell-mode))
   :config (progn
             (defun malb/be-american ()
