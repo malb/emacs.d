@@ -6209,62 +6209,6 @@ Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format 
   :commands clang-format+-mode)
 #+end_src
 
-*** COMMENT Valgrind
-
-This code allows to run [[http://valgrind.org/][valgrind]] and step through warnings/errors. We set =--error-errorcode=1= because we bury compilation buffers that finish with exit code zero automatically. By default, valgrind returns the exit code of the program it runs. ([[https://github.com/codemac/config/blob/master/emacs.d/boot.org][source]])
-
-#+begin_src emacs-lisp
-(require 'compile "compile")
-
-(defgroup valgrind nil
-  "Run valgrind as inferior of Emacs, parse error messages."
-  :group 'tools
-  :group 'processes)
-
-
-(defcustom valgrind-command "valgrind --error-exitcode=1 --leak-check=full"
-  "*Last shell command used to run valgrind; default for next valgrind run.
-
-Sometimes it is useful for files to supply local values for this variable.
-You might also use mode hooks to specify it in certain modes, like this:
-
-    (add-hook 'c-mode-hook
-       (lambda ()
-         (unless (or (file-exists-p \"makefile\")
-                     (file-exists-p \"Makefile\"))
-           (set (make-local-variable 'valgrind-command)
-                (concat \"make -k \"
-                        (file-name-sans-extension buffer-file-name))))))"
-  :type 'string
-  :group 'valgrind)
-
-;; History of compile commands.
-(defvar valgrind-history nil)
-
-(defun valgrind (command)
-  "Run valgrind.
-Runs COMMAND, a shell command, in a separate process asynchronously
-with output going to the buffer `*valgrind*'.
-
-You can then use the command [next-error] to find the next error message
-and move to the source code that caused it."
-  (interactive
-   (if (or compilation-read-command current-prefix-arg)
-       (list (read-from-minibuffer "Valgrind command: "
-                                   (eval valgrind-command) nil nil
-                                   '(valgrind-history . 1)))
-     (list (eval valgrind-command))))
-  (unless (equal command (eval valgrind-command))
-    (setq valgrind-command command))
-  (compilation-start command t))
-#+end_src
-
-*** COMMENT Disassemble
-
-#+begin_src emacs-lisp
-(use-package disaster)
-#+end_src
-
 ** Golang
 
 #+begin_src emacs-lisp
