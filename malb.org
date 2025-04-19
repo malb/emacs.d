@@ -11715,6 +11715,12 @@ Transparent encryption and decryption.
   :config (progn
             (require 'llm-ollama)
 
+            (defun malb/start-ollama-maybe ()
+              (let ((ollama-service (prodigy-find-service "Ollama Server")))
+                (when (not (prodigy-service-started-p ollama-service))
+                  (prodigy-start-service ollama-service)
+                  (sit-for 2))))
+
             (defun malb/ellama-static-name (_provider _action _prompt)
               "Generate name for ellama session by current time."
               "ellama-session")
@@ -11761,19 +11767,18 @@ Transparent encryption and decryption.
                      (task (format (concat "Translate the following text to %s. "
                                            "Output only the text and nothing else, do not chat, no preamble:\n%s")
                                    to-language text))
-                     (ollama-service (prodigy-find-service "Ollama Server"))
+                     (old-ellama-provider ellama-provider)
                      (ellama-provider (apply #'make-llm-ollama malb/ollama-translate-default)))
 
-                (when (not (prodigy-service-started-p ollama-service))
-                  (prodigy-start-service ollama-service)
-                  (sit-for 2))
+                (malb/start-ollama-maybe)
 
-                (if change
-                    (progn
-                      (progn
-                        (kill-region beg end)
-                        (ellama-stream task :point beg :filter filter)))
-                  (ellama-instant task))))
+                (unwind-protect (if change
+                                    (progn
+                                      (kill-region beg end)
+                                      (ellama-stream task :point beg :filter filter))
+                                  (ellama-instant task))
+                  ;; reset to whatever it was
+                  (setq ellama-provider old-ellama-provider))))
 
             (defmacro malb/llm-do-task (cmd task &rest args)
               `(defun ,(intern (concat "malb/" cmd "-llm")) (arg)
@@ -11801,7 +11806,7 @@ Transparent encryption and decryption.
                                           (t (save-excursion (forward-paragraph) (- (point) 1)))))
                                    (t (point-max))))
                         (filter (lambda (txt) (string-trim txt)))
-                        (ollama-service (prodigy-find-service "Ollama Server")))
+                        (old-ellama-provider ellama-provider))
 
                    ;; NOTE: hack to exclude my signatures in e-mail
                    (when (and (eq major-mode #'mu4e-compose-mode)
@@ -11816,29 +11821,40 @@ Transparent encryption and decryption.
                                                           (current-buffer) beg end)
                                                        (buffer-substring-no-properties beg end))))))
 
-                   (when (not (prodigy-service-started-p ollama-service))
-                     (prodigy-start-service ollama-service)
-                     (sit-for 2))
+                   (malb/start-ollama-maybe)
 
                    (when arg
                      (setq ellama-provider (ellama-get-ollama-local-model))
                      (setq ellama--current-session-id nil))
 
-                   (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
-                          (progn
-                            (ellama-stream task :point (point) :filter filter)))
-                         ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
-                          (progn
-                            (kill-region beg end)
-                            (ellama-stream task :point beg :filter filter)))
-                         ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
-                          (progn
-                            (goto-char end)
-                            (insert "\n\n-----\n\n")
-                            (sit-for 1)
-                            (ellama-stream task :point (+ end 9) :filter filter)))
-                         (t
-                          (ellama-instant task))))))
+                   (unwind-protect
+                       (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
+                              (progn
+                                (ellama-stream task :point (point) :filter filter)))
+                             ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
+                              (progn
+                                (kill-region beg end)
+                                (ellama-stream task :point beg :filter filter)))
+                             ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
+                              (progn
+                                (goto-char end)
+                                (insert "\n\n-----\n\n")
+                                (sit-for 1)
+                                (ellama-stream task :point (+ end 9) :filter filter)))
+                             (t
+                              (ellama-instant task)))
+                     (setq ellama-provider old-ellama-provider)))))
+
+            (malb/defadvice! malb/ellama-generate-commit-message (old-function &rest args)
+              :around #'ellama-generate-commit-message
+
+              (malb/start-ollama-maybe)
+
+              (let ((old-ellama-provider ellama-provider)
+                    (ellama-provider (apply #'make-llm-ollama malb/ollama-commit-message-default)))
+                (unwind-protect
+                    (apply old-function args)
+                  (setq ellama-provider old-ellama-provider))))
 
             (require 'llm-prompts)
             (bind-key "C-c w t l" #'malb/translate-llm)
