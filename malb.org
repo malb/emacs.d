@@ -10373,13 +10373,13 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
            (wdired-allow-to-change-permissions t)
            (wdired-use-dired-vertical-movement 'sometimes))
   :bind (:map dired-mode-map
-              ("a"   . dired-find-file-other-window)
-              ("RET" . dired-find-alternate-file)
-              ("^"   . (lambda () (interactive) (find-alternate-file "..")))
-              ("q"   . (lambda () (interactive) (find-alternate-file "..")))
-              ("Q"   . quit-window)
-              ("C-s" . dired-isearch-filenames)
-              ("C-c C-o" . malb/dired-xdg-open-file))
+         ("a"   . dired-find-file-other-window)
+         ("RET" . dired-find-alternate-file)
+         ("^"   . (lambda () (interactive) (find-alternate-file "..")))
+         ("q"   . (lambda () (interactive) (find-alternate-file "..")))
+         ("Q"   . quit-window)
+         ("C-s" . dired-isearch-filenames)
+         ("C-c C-o" . dired-do-open))
   :config (progn
             (require 'dired-x)
 
@@ -10426,12 +10426,6 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
               (toggle-truncate-lines 1))
 
             (add-hook 'dired-mode-hook #'malb/dired-layout)
-
-            (defun malb/dired-xdg-open-file ()
-              "In dired, open the file named on this line."
-              (interactive)
-              (let* ((file (dired-get-filename nil t)))
-                (call-process "xdg-open" nil 0 nil file)))
 
             (dired-async-mode)
 
