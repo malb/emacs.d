@@ -6225,10 +6225,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :hook ((rust-ts-mode . eldoc-mode)
          (rust-ts-mode . malb/lsp-enable-maybe)
          (rust-ts-mode . display-line-numbers-mode))
-  :init (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
-  :config (when (boundp 'dtrt-indent-hook-mapping-list)
-            (add-to-list 'dtrt-indent-hook-mapping-list
-                         '(rust-ts-mode c/c++/java rust-ts-mode-indent-offset))))
+  :init (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode)))
 #+end_src
 
 ** Python
