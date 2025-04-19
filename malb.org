@@ -5962,9 +5962,6 @@ Auto-format source code in many languages with one command – [[https://github.
                           ("Go"  gofmt))))
 #+end_src
 
-****** TODO It would be nice to use this to replace the various other modes floating around
-****** END
-
 *** Jupyter
 
 [[https://github.com/dzop/emacs-jupyter][emacs-jupyter]] is an Emacs frontend to Jupyter kernels
