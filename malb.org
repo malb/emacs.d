@@ -6263,8 +6263,6 @@ I often restart Python processes (Cython development), so let’s bind a key for
 #+begin_src emacs-lisp
 (use-package python
   :ensure nil
-  ;; otherwise I get: Cannot modify an area being edited in a dedicated buffer with ob-jupyter
-  ;; :mode (("\\.py$" . python-mode))
   :bind (:map python-mode-map
          ("C-c C-c" . elpy-shell-send-region-or-buffer)
          ("C-c C-r" . pyvenv-restart-python)
@@ -6275,8 +6273,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
          ("C-c C-r" . pyvenv-restart-python))
   :commands (malb/python-mode-hook malb/inferior-python-mode-hook)
   :init (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-  :hook (
-         (python-base-mode . outline-minor-mode)
+  :hook ((python-base-mode . outline-minor-mode)
          (python-base-mode . indent-bars-mode)
          (python-base-mode . malb/local-anaconda-mode)
          (python-base-mode . malb/local-anaconda-eldoc-mode)
@@ -6285,8 +6282,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
          (python-base-mode . malb/python-mode-hook)
          (python-base-mode . ws-butler-mode)
          (python-base-mode . malb/elpy-sane-defaults)
-         (inferior-python-mode . malb/inferior-python-mode-hook)
-         )
+         (inferior-python-mode . malb/inferior-python-mode-hook))
   :config (progn
             (setq-default python-indent 4
                           python-fill-docstring-style 'django)
