@@ -5954,7 +5954,12 @@ Auto-format source code in many languages with one command – [[https://github.
 #+end_quote
 
 #+begin_src emacs-lisp
-(use-package format-all)
+(use-package format-all
+  :commands format-all-mode
+  :config (setq-default format-all-formatters
+                        '(("C"   clang-format)
+                          ("C++" clang-format)
+                          ("Go"  gofmt))))
 #+end_src
 
 ****** TODO It would be nice to use this to replace the various other modes floating around
@@ -6188,7 +6193,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
          (c-ts-base-mode . ggtags-mode)
          (c-ts-base-mode . helm-gtags-mode)
          (c-ts-base-mode . malb/lsp-enable-maybe)
-         (c-ts-base-mode . clang-format+-mode))
+         (c-ts-base-mode . format-all-mode))
   :init (progn
           (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
           (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
@@ -6197,16 +6202,6 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   (smart-jump-register :modes '(c-mode c-ts-mode c++-modec c++-ts-mode)
                        :async 2000
                        :order 1))
-#+end_src
-
-Use [[http://clang.llvm.org/docs/ClangFormat.html][clang-format]] to … format code, [[https://github.com/SavchenkoValeriy/emacs-clang-format-plus][clang-format+]] automatically runs =clang-format= when a =.clang-format= is present.
-
-#+begin_src emacs-lisp
-(use-package clang-format
-  :config (setq clang-format-executable "clang-format"))
-
-(use-package clang-format+
-  :commands clang-format+-mode)
 #+end_src
 
 ** Golang
