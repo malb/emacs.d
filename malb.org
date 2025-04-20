@@ -12145,12 +12145,9 @@ Using [[https://github.com/doublep/logview][logview]] mode.
   :mode (("-reviews\\.txt$" . hotcrp-mode))
   :hook ((hotcrp-mode . visual-fill-column-mode)
          (hotcrp-mode . visual-wrap-prefix-mode)
-         (hotcrp-mode . flyspell-mode))
-  :config (progn
-            (defun malb/be-american ()
-              (ispell-change-dictionary "american"))
-            ;; Her Majesty's English de-anonymises me
-            (add-hook 'hotcrp-mode-hook #'malb/be-american)))
+         (hotcrp-mode . flyspell-mode)
+         ;; His Majesty's English de-anonymises me
+         (hotcrp-mode . malb/be-american)))
 #+end_src
 
 ** CryptoVerif
