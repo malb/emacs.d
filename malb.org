@@ -4400,12 +4400,13 @@ replace the default prompt message."
            :keys "r"
            :file malb/work-org
            :headline "Reading"
-           :template ("* READ %a%?"
+           :template ("* READ %:description%?"
                       "DEADLINE: %^t"
                       ":PROPERTIES:"
                       ":CREATED: %U"
                       ":END:"
                       ""
+                      "%:link"
                       "%i")
            :prepend t
            :empty-lines 1)
