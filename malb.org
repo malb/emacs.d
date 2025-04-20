@@ -6134,9 +6134,9 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 (use-package aidermacs
   :bind (("C-c `" . aidermacs-transient-menu))
-  :custom ((aidermacs-architect-model "ollama_chat/qwen2.5-coder:14b")
-           (aidermacs-editor-model    "ollama_chat/qwen2.5-coder:14b")
-           (aidermacs-default-model   "ollama_chat/qwen2.5-coder:14b")
+  :custom ((aidermacs-architect-model malb/aidermacs-architect-model)
+           (aidermacs-editor-model    malb/aidermacs-editor-model)
+           (aidermacs-default-model   malb/aidermacs-default-model)
            (aidermacs-use-architect-mode t)
            (aidermacs-backend 'comint))
   :config (setq aidermacs-extra-args
