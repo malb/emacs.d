@@ -26,7 +26,6 @@ We assume that the following variables are defined:
 - ~malb/org-files-dir~ - org files go here
 - ~malb/org-files~ - org files
 - ~malb/org-mode-ics~ - icalendar file
-- ~malb/paradox-github-token~ - github login
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/projects-dir~ - a super-repository of which all of my projects are subprojects
 - ~malb/sage-executable~ - full path of Sage executable
@@ -145,25 +144,6 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 (setq use-package-compute-statistics t
       use-package-verbose t
       use-package-always-ensure t)
-#+end_src
-
-[[https://github.com/Bruce-Connor/paradox/][Paradox]] is a better package list
-
-- Visit the package's homepage with =v=
-- View a list of recent commits with =l=
-- Shortcuts for package filtering:
-  - =f r= filters by regexp (occur)
-  - =f u= display only packages with upgrades
-  - =f k= filters by keyword
-  - =f c= clear filter
-- Hit =h= to see all keys
-
-#+begin_src emacs-lisp
-(use-package paradox
-  :commands (paradox-upgrade-packages paradox-list-packages)
-  :config (setq paradox-execute-asynchronously t
-                paradox-github-token malb/paradox-github-token
-                paradox-automatically-star t))
 #+end_src
 
 [[https://github.com/quelpa/quelpa][Quelpa]] to install packages directly from source.
@@ -1666,7 +1646,6 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
 
             (setq malb/helm-swoop-ignore-major-mode
                   '(dired-mode
-                    paradox-menu-mode
                     doc-view-mode
                     pdf-view-mode
                     mu4e-headers-mode
