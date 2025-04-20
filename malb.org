@@ -5580,6 +5580,15 @@ Enable spell checking in comments and documentation.
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+end_src
 
+Most code is written in Freedom English™.
+
+#+begin_src emacs-lisp
+(defun malb/be-american ()
+  (ispell-change-dictionary "american"))
+
+(add-hook 'prog-mode #'malb/be-american)
+#+end_src
+
 *** Flycheck
 
 [[https://raw.githubusercontent.com/flycheck/flycheck/master/doc/images/flycheck-annotated.png]] ([[http://www.flycheck.org/images/screencast.gif][source]])
@@ -7389,15 +7398,18 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 
 ** ReST
 
-Python’s distutils [[http://bugs.python.org/issue11913][mandate]] =README.txt= or =README= in ReST. Hence, we add =README.txt= as the kind of file which wants ReST and use [[http://docutils.sourceforge.net/docs/user/emacs.html][rst-mode]] to edit it.
+We add =README.txt= as the kind of file which wants ReST and use [[http://docutils.sourceforge.net/docs/user/emacs.html][rst-mode]] to edit it.
 
 #+begin_src emacs-lisp
 (use-package rst
   :bind (:map rst-mode-map
-              ("M-<up>" . drag-stuff-up)
-              ("M-<down>" . drag-stuff-down))
+         ("M-<up>" . drag-stuff-up)
+         ("M-<down>" . drag-stuff-down))
   :commands rst-mode-hook
-  :hook (rst-mode . visual-wrap-prefix-mode)
+  :hook ((rst-mode . visual-wrap-prefix-mode)
+         (rst-mode . flyspell-mode)
+         ;; realistically I only use ReST for Python READMEs.
+         (rst-mode . malb/be-american))
   :mode "README\\.txt$")
 #+end_src
 
