@@ -216,7 +216,7 @@ Key chords allow to execute actions by pressing one or two keys really fast. Som
 (use-package key-chord
   :custom ((key-chord-one-key-delay  0.3)
            (key-chord-two-keys-delay 0.1))
-  :hook (after-init . key-chord-mode))
+  :config (key-chord-mode))
 #+end_src
 
 *Note:* =key-chord= can slow down typing but it works e.g. in =vterm= buffers which is quite handy.
