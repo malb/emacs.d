@@ -3122,6 +3122,9 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
   (add-hook 'org-agenda-finalize-hook 'hl-line-mode)
 
+  ;; BUG I get an error otherwise but I'm too lazy to debug, trigger with / in agenda
+  (add-to-list 'helm-completing-read-handlers-alist '(org-agenda-filter . nil))
+
   (setq org-agenda-custom-commands
         '(("n" "Agenda and all TODOs"
            ((org-ql-block '(and (priority "A")
