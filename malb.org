@@ -1582,7 +1582,10 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                 (cl-letf (((symbol-function 'frame-list)
                            (lambda () (cons current-frame
                                             (remove current-frame current-frame-list)))))
-                  (apply old-function arguments))))))
+                  (apply old-function arguments))))
+
+            ;; disable helm when renaming a file
+            (add-to-list 'helm-completing-read-handlers-alist '(rename-file . nil))))
 #+end_src
 
 Actions for attaching files to e-mails and for sending them with [[https://transfer.sh/][transfer.sh]].
