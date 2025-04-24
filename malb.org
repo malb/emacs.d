@@ -1314,6 +1314,13 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
             (global-fish-completion-mode)))
 #+end_src
 
+** Emojis
+
+#+begin_src emacs-lisp
+(use-package company-emoji
+  :config (add-to-list 'company-backends 'company-emoji))
+#+end_src
+
 ** Company and YaSnippet Integration
 
 Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
@@ -6998,6 +7005,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
                             '((company-capf :with company-yasnippet)
                               (company-math-symbols-unicode :with company-yasnippet)
                               (company-files :with company-yasnippet)
+                              (company-emoji :with company-yasnippet)
                               company-ispell))
                 ;; https://github.com/redguardtoo/emacs.d/issues/473
                 (if (and (boundp 'ispell-alternate-dictionary)
@@ -12454,8 +12462,11 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.95) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Serif CJK TC") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Symbols") 0.7) t)
-      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.85) t)
-      )))
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.85) t))
+
+    (let ((emoji-font "Twitter Color Emoji"))
+      (when (member emoji-font (font-family-list))
+        (set-fontset-font t 'emoji (font-spec :family emoji-font) nil 'prepend)))))
 
 (add-hook 'after-make-frame-functions #'malb/fonts)
 (malb/fonts (selected-frame)) ;; initial frame
