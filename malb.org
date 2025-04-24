@@ -24,7 +24,6 @@ We assume that the following variables are defined:
 - ~malb/literature-notes-dir~ - notes on papers
 - ~malb/mu4e-name-replacements~ - e-mail name replacements
 - ~malb/org-files-dir~ - org files go here
-- ~malb/org-files~ - org files
 - ~malb/org-mode-ics~ - icalendar file
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/projects-dir~ - a super-repository of which all of my projects are subprojects
@@ -3041,7 +3040,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 #+begin_src emacs-lisp
 (setq org-directory malb/org-files-dir
-      org-agenda-files malb/org-files
       org-default-notes-file malb/inbox-org)
 #+end_src
 
