@@ -1320,6 +1320,15 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
 (use-package company-emoji)
 #+end_src
 
+** Setup Symbols
+
+#+begin_src emacs-lisp
+(add-to-list 'company-backends '(company-bibtex-completion
+                                 company-math-symbols-unicode
+                                 company-emoji
+                                 company-capf))
+#+end_src
+
 ** Company and YaSnippet Integration
 
 Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/spacemacs/pull/179][source]])
@@ -8282,13 +8291,6 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
 #+end_src
 
 ****** TODO turn company-bibtex-completion into library so it can be lazy loaded
-
-#+begin_src emacs-lisp
-(add-to-list 'company-backends '(company-bibtex-completion
-                                 company-math-symbols-unicode
-                                 companny-emoji
-                                 company-capf))
-#+end_src
 
 *** Adding References
 
