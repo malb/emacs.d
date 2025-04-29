@@ -1249,7 +1249,14 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
   :demand t
   :config (progn
             (global-company-mode 1)
-            (advice-add 'company-files--post-completion :around #'ignore)))
+            ;; clean up a bit, note that we re-add capf below
+            (dolist (backend '(company-oddmuse
+                               company-cmake
+                               company-clang
+                               company-semantic
+                               company-bbdb
+                               company-capf))
+              (setq company-backends (delq backend company-backends)))))
 #+end_src
 
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
@@ -1325,6 +1332,7 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
 #+begin_src emacs-lisp
 (add-to-list 'company-backends '(company-bibtex-completion
                                  company-math-symbols-unicode
+                                 company-math-symbols-latex
                                  company-emoji
                                  company-capf))
 #+end_src
