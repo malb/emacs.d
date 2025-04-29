@@ -1556,7 +1556,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                   helm-grep-default-command "ag --vimgrep -z %p %f"
                   helm-grep-default-recurse-command "ag --vimgrep -z %p %f"
                   helm-use-frame-when-more-than-two-windows nil
-                  helm-display-buffer-reuse-frame t ;; https://github.com/emacs-helm/helm/issues/2416
                   helm-display-function #'helm-default-display-buffer
                   helm-display-buffer-width 180
                   helm-display-buffer-height (ceiling (/ (alist-get 'height default-frame-alist) 1.61))
