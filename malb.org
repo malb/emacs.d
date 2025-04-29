@@ -4443,6 +4443,7 @@ replace the default prompt message."
                       "%:link"
                       "")
            :immediate-finish nil
+           :empty-lines 1
            :prepend t)
           (,(format "%s\tWebsite (selected text)" (all-the-icons-faicon "globe" :face 'all-the-icons :v-adjust 0.01))
            :keys "W"
@@ -4464,6 +4465,7 @@ replace the default prompt message."
                        "— %a"
                        "")
            :immediate-finish nil
+           :empty-lines 1
            :prepend t))))))
 
     (setq org-capture-templates-contexts
