@@ -1272,7 +1272,15 @@ For Python use [[https://github.com/proofit404/company-anaconda][company-anacond
 
 #+begin_src emacs-lisp
 (use-package company-anaconda
-  :config (add-to-list 'company-backends #'company-anaconda))
+  :defer nil
+  :config (defun malb/company-python-setup ()
+            (when (boundp 'company-backends)
+              (setq-local company-backends
+                          '((company-files :with company-yasnippet)
+                            (company-math-symbols-unicode company-emoji company-capf :with company-yasnippet)
+                            (company-anaconda :with company-yasnippet)
+                            (company-dabbrev-code company-gtags company-etags company-keywords :with company-yasnippet)
+                            (company-dabbrev :with company-yasnippet))))))
 #+end_src
 
 ** LaTeX
@@ -6302,6 +6310,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
          (python-base-mode . indent-bars-mode)
          (python-base-mode . malb/local-anaconda-mode)
          (python-base-mode . malb/local-anaconda-eldoc-mode)
+         (python-base-mode . malb/company-python-setup)
          (python-base-mode . python-docstring-mode)
          (python-base-mode . sphinx-doc-mode)
          (python-base-mode . malb/python-mode-hook)
