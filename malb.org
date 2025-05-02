@@ -9758,8 +9758,12 @@ Open raw view in message view or below.
 (setq mml2015-encrypt-to-self t)
 (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
 (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
-(setq epg-gpg-program "gpg")
 #+end_src
+
+#+begin_src emacs-lisp
+(custom-set-variables '(epg-gpg-program  "gpg2"))
+#+end_src
+
 
 ** iCal
 
