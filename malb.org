@@ -4820,15 +4820,29 @@ This also works for =.json=, =.csv= and =.xsls= file.
 
 ** Misc
 
-- We disable =projectile-track-known-projects-find-file-hook= in =org-string-width= because it causes a massive slowdown.
+We disable =projectile-track-known-projects-find-file-hook= in =org-string-width= because it causes a massive slowdown.
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (malb/defadvice! malb/org-string-width (fn &rest args)
   :around #'org-string-width
   (cl-letf (((symbol-function 'projectile-track-known-projects-find-file-hook)
              (lambda () nil)))
     (apply fn args)))
-  #+end_src
+#+end_src
+
+A quick way to get a link out:
+
+#+begin_src emacs-lisp
+(defun malb/org-link-fast-copy ()
+  (interactive)
+  (let* ((context (org-element-context))
+         (type (org-element-type context)))
+    (when (eq type 'link)
+      (message "Link: %s" (org-element-property :raw-link context))
+      (kill-new (org-element-property :raw-link context)))))
+
+(bind-key "C-c z" #'malb/org-link-fast-copy org-mode-map)
+#+end_src
 
 ** Tips
 
