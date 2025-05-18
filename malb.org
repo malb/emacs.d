@@ -3277,14 +3277,23 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 #+begin_src emacs-lisp
 (setopt org-preview-latex-process-alist
-        '((dvisvgm :programs ("latex" "dvisvgm")
+        '(
+          (dvisvgm :programs ("dvilualatex" "dvisvgm")
                    :description "dvi > svg"
-                   :message "you need to install the programs: latex and dvisvgm."
+                   :message "you need to install the programs: lualatex and dvisvgm."
                    :image-input-type "dvi"
                    :image-output-type "svg"
                    :image-size-adjust (1.7 . 1.5)
                    :latex-compiler ("dvilualatex -interaction nonstopmode -output-directory %o %f")
-                   :image-converter ("dvisvgm %f --no-fonts --exact-bbox --scale=%S --output=%O"))))
+                   :image-converter ("dvisvgm %f --no-fonts --exact-bbox --scale=%S --output=%O"))
+          (dvipng :programs ("dvilualatex" "dvipng")
+                  :description "dvi > png"
+                  :message "you need to install the programs: lualatex and dvipng."
+                  :image-input-type "dvi"
+                  :image-output-type "png" :image-size-adjust (1.0 . 1.0)
+                  :latex-compiler ("dvilualatex -interaction nonstopmode -output-directory %o %f")
+                  :image-converter ("dvipng -D %D -T tight -o %O %f")
+                  :transparent-image-converter ("dvipng -D %D -T tight -bg Transparent -o %O %f"))))
 #+end_src
 
 Pretty print some maths:
