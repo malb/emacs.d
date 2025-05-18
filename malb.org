@@ -6210,7 +6210,9 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
            (aidermacs-use-architect-mode t)
            (aidermacs-backend 'comint))
   :config (setq aidermacs-extra-args
-                '("--env-file" "/home/malb/.aider.conf.env")))
+                '("--env-file" "/home/malb/.aider.conf.env"
+                  "--edit-format" "diff"
+                  "--editor-edit-format" "editor-diff")))
 #+end_src
 
 *** Highlight Indentation
