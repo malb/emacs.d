@@ -9051,11 +9051,12 @@ it is to insert the contact.
                      :candidates  (append
                                    ;; aliases
                                    (let ((results))
-                                     (cl-do-symbols (alias mail-abbrevs results)
-                                       (when (symbol-value (intern-soft (format "%s" alias) mail-abbrevs))
-                                         (push (cons (format "%s" alias)
-                                                     (symbol-value (intern-soft (format "%s" alias) mail-abbrevs)))
-                                               results))))
+                                     (when mail-abbrevs
+                                       (cl-do-symbols (alias mail-abbrevs results)
+                                         (when (symbol-value (intern-soft (format "%s" alias) mail-abbrevs))
+                                           (push (cons (format "%s" alias)
+                                                       (symbol-value (intern-soft (format "%s" alias) mail-abbrevs)))
+                                                 results)))))
                                    ;; mu contacts
                                    (cl-loop for contact being the hash-key of mu4e--contacts-set
                                             collect (cons contact contact)))
