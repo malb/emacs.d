@@ -8556,6 +8556,14 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 (add-to-list 'mu4e-headers-mode-hook #'stripe-buffer-mode)
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package mu4e-mark
+  :ensure nil
+  :config (progn
+            (plist-put (alist-get   'flag mu4e-marks) :char (cons "+" "⚑"))
+            (plist-put (alist-get 'unflag mu4e-marks) :char (cons "-" "⏏"))))
+#+end_src
+
 ** Search
 
 ([[https://melpa.org/#/mu4e-query-fragments][source]])
