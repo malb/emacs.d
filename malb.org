@@ -10933,8 +10933,8 @@ exports.boxes = [ "INBOX"];
             :name "Ollama Server"
             :command "ollama"
             :args '("serve")
-            :env '(("OLLAMA_FLASH_ATTENTION" "1")
-                   ("OLLAMA_KV_CACHE_TYPE" "q4_0"))
+            ;; :env '(("OLLAMA_FLASH_ATTENTION" "1")
+            ;;        ("OLLAMA_KV_CACHE_TYPE" "q4_0"))
             :stop-signal 'kill
             :port 11434
             :tags '(llm))
@@ -11811,6 +11811,7 @@ Transparent encryption and decryption.
                     ellama-long-lines-length 1000000
                     ellama-fill-paragraphs nil
                     ellama-enable-keymap nil
+                    ellama-show-reasoning nil
                     ellama-naming-scheme #'malb/ellama-static-name)
 
             (malb/defadvice! malb/make-llm-ollama-parameters (old-function &rest args)
