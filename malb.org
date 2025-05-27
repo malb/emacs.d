@@ -11905,9 +11905,13 @@ Transparent encryption and decryption.
 
                    (malb/start-ollama-maybe)
 
+                   (when ,(plist-get args :model)
+                     (setq ellama-provider (apply #'make-llm-ollama ,(plist-get args :model))
+                           ellama--current-session-id nil))
+
                    (when arg
-                     (setq ellama-provider (ellama-get-ollama-local-model))
-                     (setq ellama--current-session-id nil))
+                     (setq ellama-provider (ellama-get-ollama-local-model)
+                           ellama--current-session-id nil))
 
                    (unwind-protect
                        (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
