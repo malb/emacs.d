@@ -3597,7 +3597,7 @@ I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-
            (org-modern-hide-stars nil "Don't hide leading stars using org-modern")
            (org-hide-leading-stars t "Hide leading stars using org")
            (org-modern-keyword nil "I want to see #+")
-           (org-modern-list nil "Don't stylise lists")
+           (org-modern-list '((43 . "◦") (45 . "•")) "Write bullet points")
            (org-modern-table nil "I can't see the cursor otherwise")
            (org-modern-internal-target nil "Stop it!")
            (org-modern-star ["●" "▲" "■" "◉" "○" "○"]))
