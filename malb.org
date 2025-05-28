@@ -10933,8 +10933,7 @@ exports.boxes = [ "INBOX"];
             :name "Ollama Server"
             :command "ollama"
             :args '("serve")
-            ;; :env '(("OLLAMA_FLASH_ATTENTION" "1")
-            ;;        ("OLLAMA_KV_CACHE_TYPE" "q4_0"))
+            :env '(("OLLAMA_KV_CACHE_TYPE" "q8_0"))
             :stop-signal 'kill
             :port 11434
             :tags '(llm))
@@ -11902,6 +11901,9 @@ Transparent encryption and decryption.
                                                           (prin1-to-string ,(plist-get args :format))
                                                           (current-buffer) beg end)
                                                        (buffer-substring-no-properties beg end))))))
+
+                   (when ,(plist-get args :nothink)
+                     (setq task (concat task "\n\n/no_think\n")))
 
                    (malb/start-ollama-maybe)
 
