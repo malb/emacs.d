@@ -3776,7 +3776,7 @@ iCal export is triggered after 600 seconds of inactivity.
             (defconst malb/tufte-listings
               (concat "\\lstset{showstringspaces=false,\n"
                       "  aboveskip=0.75em,\n"
-                      "  basicstyle=\\footnotesize\ttfamily,\n"
+                      "  basicstyle=\\footnotesize\\ttfamily,\n"
                       "  keywordstyle=\\bfseries\\color{gray!40!black},\n"
                       "  commentstyle=\\itshape\\color{gray!140!black},\n"
                       "  identifierstyle=\\color{gray!40!black},\n"
