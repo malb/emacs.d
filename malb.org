@@ -11995,7 +11995,7 @@ Transparent encryption and decryption.
                   (insert shell-prompt)
                   (goto-char 0)
                   (while (re-search-forward
-                          (rx (seq "/" (1+ not-newline) "/" (1+ not-newline) (or ".png" ".jpg" ".jpeg")))
+                          (rx (seq "/" (1+ not-newline) "/" (1+ not-newline) (or ".png" ".jpg" ".jpeg" ".webp")))
                           nil t)
                     (let ((filename (match-string 0))
                           (beg (match-beginning 0))
