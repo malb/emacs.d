@@ -134,8 +134,7 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 #+begin_src emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
-  (package-install 'use-package)
-  (package-install 'use-package-ensure-system-package))
+  (package-install 'use-package))
 
 (require 'use-package)
 (require 'use-package-ensure-system-package)
