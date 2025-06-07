@@ -6333,8 +6333,9 @@ I often restart Python processes (Cython development), so let’s bind a key for
   :init (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
   :hook ((python-base-mode . outline-minor-mode)
          (python-base-mode . indent-bars-mode)
-         (python-base-mode . malb/local-anaconda-mode)
-         (python-base-mode . malb/local-anaconda-eldoc-mode)
+         ;; (python-base-mode . malb/local-anaconda-mode)
+         ;; (python-base-mode . malb/local-anaconda-eldoc-mode)
+         (python-base-mode . malb/lsp-enable-maybe)
          (python-base-mode . malb/company-python-setup)
          (python-base-mode . python-docstring-mode)
          (python-base-mode . sphinx-doc-mode)
@@ -6367,7 +6368,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
              ("M-q" . fill-paragraph)))
 #+end_src
 
-*** Autocompletion
+*** COMMENT Autocompletion
 
 Use [[https://github.com/proofit404/anaconda-mode][anaconda-mode]] for auto-completion and stuff, it runs [[https://github.com/tkf/emacs-jedi][jedi]] for us. In particular it offers:
 
@@ -6404,6 +6405,22 @@ Fall back to dumb jump if anaconda fails.
                 (apply orig-fun args)))
 
             (advice-add 'anaconda-mode-start :around #'malb/vanilla-python-shell-interpreter)))
+#+end_src
+
+*** Python Language Servers
+
+[[https://github.com/pappasam/jedi-language-server][Jedi Language Server]] matches what Anaconda used to do.
+
+#+begin_src emacs-lisp
+(use-package lsp-jedi
+  :ensure t)
+#+end_src
+
+[[https://github.com/microsoft/pyright][Pyright]] seems okay, but it seems to struggle with Cython in FPyLLL.
+
+#+begin_src emacs-lisp
+(use-package lsp-pyright
+  :ensure t)
 #+end_src
 
 *** Docstrings
