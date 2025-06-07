@@ -3580,6 +3580,27 @@ Archive with some order in target file preserved. ([[https://gist.github.com/edg
   :ensure nil)
 #+end_src
 
+*Setup*
+
+Create:
+
+#+begin_src desktop :tangle ~/.local/share/applications/org-protocol.desktop :tangle-mode (identity #o444)
+# DO NOT EDIT, EDIT in malb.org
+[Desktop Entry]
+Name=org-protocol
+Exec=emacsclient %u
+Type=Application
+Terminal=False
+Categories=System;
+MimeType=x-scheme-handler/org-protocol;
+#+end_src
+
+#+begin_src shell :async
+update-desktop-database ~/.local/share/applications
+#+end_src
+
+#+RESULTS:
+
 ** Pretty
 
 I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-superstar replacement.
