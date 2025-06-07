@@ -11856,7 +11856,7 @@ Transparent encryption and decryption.
                 (unwind-protect (if change
                                     (progn
                                       (kill-region beg end)
-                                      (ellama-stream task :point beg :filter filter))
+                                      (ellama-stream task :point beg :filter filter :ephemeral-session t))
                                   (ellama-instant task))
                   ;; reset to whatever it was
                   (setq ellama-provider old-ellama-provider))))
@@ -11918,17 +11918,17 @@ Transparent encryption and decryption.
                    (unwind-protect
                        (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
                               (progn
-                                (ellama-stream task :point (point) :filter filter)))
+                                (ellama-stream task :point (point) :filter filter :ephemeral-session t)))
                              ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
                               (progn
                                 (kill-region beg end)
-                                (ellama-stream task :point beg :filter filter)))
+                                (ellama-stream task :point beg :filter filter :ephemeral-session t)))
                              ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
                               (progn
                                 (goto-char end)
                                 (insert "\n\n-----\n\n")
                                 (sit-for 1)
-                                (ellama-stream task :point (+ end 9) :filter filter)))
+                                (ellama-stream task :point (+ end 9) :filter filter :ephemeral-session t)))
                              (t
                               (ellama-instant task)))
                      (setq ellama-provider old-ellama-provider)))))
