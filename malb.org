@@ -4157,9 +4157,6 @@ In [[file:%s::%s][%s]]:
   '(bind-key "<f9>" #'malb/mu4e-view-org-capture mu4e-view-mode-map))
 #+end_src
 
-
-#+end_src
-
 #+begin_src emacs-lisp
 (defun malb/org-toggle-todo-by-id (id &optional only-today)
   (when (or (not only-today)
