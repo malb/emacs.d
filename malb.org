@@ -12498,14 +12498,7 @@ The result looks like this:
 
 #+begin_src emacs-lisp
 (use-package all-the-icons
-  :init (setq all-the-icons-color-icons nil)
-  :config
-  (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil)
-  (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
-  (set-fontset-font t 'unicode (font-spec :family "file-icons") nil 'append)
-  (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
-  (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
-  (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append))
+  :init (setq all-the-icons-color-icons nil))
 #+end_src
 
 Better unicode font support.
@@ -12566,6 +12559,14 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Symbols") 0.7) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Symbols 2") 0.7) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.85) t))
+
+    (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil)
+    (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
+    (set-fontset-font t 'unicode (font-spec :family "file-icons") nil 'append)
+    (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
+    (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
+    (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append)
+    (set-fontset-font t 'unicode (font-spec :family "Noto Sans Symbols 2") nil 'append)
 
     (let ((emoji-font "Twitter Color Emoji"))
       (when (member emoji-font (font-family-list))
