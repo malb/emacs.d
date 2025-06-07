@@ -4570,6 +4570,30 @@ Run org-capture [[https://github.com/tumashu/org-capture-pop-frame][in a frame]]
 (add-to-list 'helm-commands-using-frame 'org-agenda-refile)
 #+end_src
 
+*Setup to trigger from elsewhere*
+
+#+begin_src shell :tangle "~/.local/bin/oc" :tangle-mode (identity #o500)
+#!/usr/bin/env bash
+emacsclient -n -e '(org-capture)'
+#+end_src
+
+#+begin_src desktop :tangle "~/.local/share/applications/Org Capture.desktop" :tangle-mode (identity #o444)
+[Desktop Entry]
+Comment=
+Exec=/home/malb/.local/bin/oc
+GenericName=Capture an Org TODO
+Icon=/home/malb/.local/share/icons/org.png
+Name=Org Capture
+NoDisplay=false
+Path[$e]=
+StartupNotify=true
+Terminal=0
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+#+end_src
+
 ** Web Tools
 
 #+begin_src emacs-lisp
