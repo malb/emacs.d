@@ -136,6 +136,10 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
   (package-refresh-contents)
   (package-install 'use-package))
 
+(unless (package-installed-p 'system-packages)
+  (package-refresh-contents)
+  (package-install 'system-packages))
+
 (require 'use-package)
 (require 'use-package-ensure-system-package)
 
