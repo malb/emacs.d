@@ -4774,6 +4774,14 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
         (buffer-substring-no-properties start (point))))))
 #+end_src
 
+*** Load in Shell
+
+=C-c C-v l= loads a source block in an =M-x shell= buffer, if we name the session "!!:<foo>" then it will be a popup buffer
+
+#+begin_src emacs-lisp
+(malb/register-popup-window (rx bos "*!!:" (1+ any) "*" eos))
+#+end_src
+
 ** Ob HTTP
 
 [[https://github.com/zweifisch/ob-http][zweifisch/ob-http: make http request within org-mode babel]]
