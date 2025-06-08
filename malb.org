@@ -1695,7 +1695,8 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
                     messages-buffer-mode
                     nov-mode
                     ollama-shell-mode
-                    comint-mode))
+                    comint-mode
+                    package-menu-mode))
 
             ;; I’m going back and forth what I prefer
             (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
