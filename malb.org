@@ -5966,6 +5966,7 @@ Use GNU Global for Java ([[https://tuhdo.github.io/c-ide.html][source]]) and opt
 #+begin_src emacs-lisp
 (use-package ggtags
   :commands ggtags-mode
+  :ensure-system-package (global . global)
   :bind (:map ggtags-mode-map
               ("C-c j g s" . ggtags-find-other-symbol)
               ("C-c j g h" . ggtags-view-tag-history)
