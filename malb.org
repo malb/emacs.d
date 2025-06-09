@@ -6140,7 +6140,7 @@ Auto-format source code in many languages with one command – [[https://github.
 (use-package ob-jupyter
   :ensure nil
   :init (progn
-          (org-babel-jupyter-override-src-block "python")
+          ;; (org-babel-jupyter-override-src-block "python")
           (setq org-babel-jupyter-resource-directory "/tmp/org-babel-jupyter-resource-directory/")))
 #+end_src
 
@@ -11278,7 +11278,7 @@ then enter the text in that file's own buffer.
 
 ,#+end_src
 
-,#+begin_src python
+,#+begin_src jupyter-python
 
 ,#+end_src
 
