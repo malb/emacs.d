@@ -4524,7 +4524,23 @@ replace the default prompt message."
                        "")
            :immediate-finish nil
            :empty-lines 1
-           :prepend t))))))
+           :prepend t)))
+        (,(format "%s\tLaptop Setup " (all-the-icons-faicon "laptop" :face 'all-the-icons :v-adjust 0.01))
+         :keys "+"
+         :children
+         ((,(format "%s\tPackage" (all-the-icons-material "add_box" :face 'all-the-icons :v-adjust 0.01))
+           :keys "p"
+           :file malb/private-org
+           :headline "Packages"
+           :type table-line
+           :template "| %? |  | |")
+          (,(format "%s\tConfig File" (all-the-icons-material "edit" :face 'all-the-icons :v-adjust 0.01))
+           :keys "c"
+           :file malb/private-org
+           :headline "Local Config Files"
+           :type table-line
+           :template "| %? | |")
+          )))))
 
     (setq org-capture-templates-contexts
           '(("er" ((in-mode . "mu4e-view-mode")))
