@@ -12590,6 +12590,7 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
   (set-face-font 'fixed-pitch malb/font)
   (with-selected-frame frame
     (setq face-font-rescale-alist nil)
+
     (when (string-match "Cousine" (alist-get 'font default-frame-alist))
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "DejaVu Sans Mono") 0.9) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.85) t)
@@ -12604,23 +12605,16 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.7) t))
 
     (when (string-match "Noto Sans Mono" (alist-get 'font default-frame-alist))
-
       (set-fontset-font "fontset-default" #x22c5 "DejaVu Sans Mono") ;; otherwise ⋅ is too narrow
-
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.8) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "all-the-icons") 0.85) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "file-icons") 0.7) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "github-octicons") 0.75) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Mono CJK SC") 0.95) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Serif CJK TC") 0.85) t)
-      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.9) t)
-      ;; (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Material Icons") 0.75) t)
-      )
+      (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.9) t))
+
     (when (string-match "Iosevka Term" (alist-get 'font default-frame-alist))
-
-      ;; (set-fontset-font "fontset-default" #x22c5 "DejaVu Sans Mono")
-      ;; otherwise ⋅ is too narrow
-
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "FontAwesome") 0.8) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Material Icons") 0.8) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "all-the-icons") 0.85) t)
@@ -12632,17 +12626,13 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Noto Sans Symbols 2") 0.7) t)
       (add-to-list 'face-font-rescale-alist (cons (font-spec :family "Symbola") 0.85) t))
 
-    ;; (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil)
     (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
     (set-fontset-font t 'unicode (font-spec :family "file-icons") nil 'append)
     (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
     (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
     (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append)
     (set-fontset-font t 'unicode (font-spec :family "Noto Sans Symbols 2") nil 'append)
-
-    (let ((emoji-font "Twitter Color Emoji"))
-      (when (member emoji-font (font-family-list))
-        (set-fontset-font t 'emoji (font-spec :family emoji-font) nil 'prepend)))))
+    (set-fontset-font t 'emoji (font-spec :family "Twitter Color Emoji") nil 'prepend)))
 
 (add-hook 'after-make-frame-functions #'malb/fonts)
 (malb/fonts (selected-frame)) ;; initial frame
