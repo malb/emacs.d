@@ -8666,7 +8666,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                 mu4e-headers-new-mark       '("N" . "✉")  ; new
                 mu4e-headers-replied-mark   '("R" . "⮐")  ; replied
                 mu4e-headers-passed-mark    '("P" . "⇉")  ; passed
-                mu4e-headers-encrypted-mark '("x" . "🔒") ; encrypted
+                mu4e-headers-encrypted-mark '("x" . "🗝") ; encrypted
                 mu4e-headers-signed-mark    '("s" . "✍") ; signed
                 mu4e-headers-attach-mark    '("a" . "🗎")   ; attachments
                 mu4e-headers-list-mark      '("l" . "🌧")   ; mailing list
