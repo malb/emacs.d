@@ -5646,6 +5646,40 @@ qdbus6 org.kde.yakuake /yakuake/sessions org.kde.yakuake.runCommand "cd $1" >/de
     (shell-command (concat "ykcd " (file-name-directory fn)))))
 #+end_src
 
+** Tmux
+
+([[https://github.com/jackkamm/ob-emamux][source]])
+
+#+begin_src emacs-lisp
+(use-package emamux
+  :after (ob)
+  :config
+  (defvar org-babel-default-header-args:tmux
+    '((:results . "silent"))
+    "Default arguments to use when running rmux source blocks.")
+
+  (add-to-list 'org-src-lang-modes '("tmux" . shell))
+
+  (defun org-babel-execute:tmux (body params)
+    "Execute a block of shell code with emamux and Babel.
+This function is called by `org-babel-execute-src-block'.
+BODY is the body of the source block and PARAMS is an alist
+of the header properties."
+    (let ((target (or (cdr (assq :session params))
+                      (progn (when (not (emamux:set-parameters-p))
+                               (emamux:set-parameters))
+                             (emamux:target-session)))))
+      (when (equal target "none")
+        (error "Need a session to run"))
+      (when (or (not (emamux:tmux-running-p))
+                (not (member target (emamux:get-sessions))))
+        (emamux:tmux-run-command nil "new-session" "-d" "-s" target))
+      (emamux:reset-prompt target)
+      (emamux:send-keys body target))))
+#+end_src
+
+****** TODO This doesn’t work with :dir /sudo::/ i.e. TRAMP
+
 * Programming (Languages)
 ** General
 *** REPL / Comint
