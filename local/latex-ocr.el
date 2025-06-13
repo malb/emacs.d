@@ -22,10 +22,11 @@
   :group 'tools)
 
 ;; From org-download
-(defcustom latex-ocr-screenshot-method "gnome-screenshot -a -f %s"
+(defcustom latex-ocr-screenshot-method "spectacle -nibr -o %s"
   "The tool to capture screenshots."
   :group 'latex-ocr
   :type '(choice
+          (const :tag "spectacle" "spectacle -nibr -o %s")
           (const :tag "gnome-screenshot" "gnome-screenshot -a -f %s")
           (const :tag "scrot" "scrot -s %s")
           (const :tag "gm" "gm import %s")

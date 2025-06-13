@@ -28,7 +28,7 @@ These are tuples of (\"tag\" \"lang-code\" \"model-path\" \"speaker-number\")."
   :group 'piper
   :type '(alist :value-type (string string string integer)))
 
-(defcustom piper-command "cat ${input-filename} | piper -m ${voice} -s ${speaker-number} -f ${output-filename}"
+(defcustom piper-command "cat ${input-filename} | piper-tts -m ${voice} -s ${speaker-number} -f ${output-filename}"
   "Command to run Piper."
   :group 'piper
   :type 'string)

@@ -8062,6 +8062,7 @@ Run =latexmk -pvc= in async shell
 (use-package latex-ocr
   :ensure nil
   :defer 0
+  :ensure-system-package spectacle
   :config
   ;; ;; python GOT/demo/run_ocr_2.0.py  --model-name GOT-weights --type format --image-file "$1"
   ;; ;; run_ocr_2.0.py edited to not output the prompt
@@ -8599,8 +8600,8 @@ Spray is a speed reading mode.
 #+begin_src emacs-lisp
 (use-package piper
   :after emms
+  :ensure-system-package piper-tts
   :commands piper-region
-  :ensure-system-package piper
   :ensure nil)
 #+end_src
 
@@ -8610,6 +8611,7 @@ Spray is a speed reading mode.
 
 #+begin_src emacs-lisp
 (use-package tesseract
+  :ensure-system-package spectacle
   :ensure nil)
 #+end_src
 
@@ -10678,9 +10680,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+begin_src emacs-lisp
 (use-package fd-dired
-  :ensure-system-package (fdfind . fd-find)
-  :config  (setq fd-dired-program "fdfind"
-                 fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
+  :ensure-system-package fd
+  :config  (setq fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
 #+end_src
 
 [[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]] for eye candy.
@@ -11048,26 +11049,7 @@ Copy source code marked up in various ways.
 
 * Manage Local Services (Prodigy)
 
-[[https://github.com/rejeep/prodigy.el][Prodigy]] is a way of managing services from Emacs. Use it for IMAP idle via [[https://www.npmjs.com/package/imapnotify][imapnotify]]. For completeness here’s a matching imapnotify config.
-
-#+begin_src js :tangle no
-var child_process = require('child_process');
-
-function getStdout(cmd) {
-  var stdout = child_process.execSync(cmd);
-  return stdout.toString().trim();
-}
-
-exports.host = "imap.gmail.com";
-exports.port = 993;
-exports.tls = true;
-exports.tlsOptions = { servername: "imap.gmail.com" };
-exports.username = "martinralbrecht@gmail.com";
-exports.password = // whatever needs doing
-exports.onNewMail = "mbsync googlemail-default";
-exports.onNewMailPost = "emacsclient  -e '(mu4e-update-index)'";
-exports.boxes = [ "INBOX"];
-#+end_src
+[[https://github.com/rejeep/prodigy.el][Prodigy]] is a way of managing services from Emacs. Use it for IMAP idle via [[https://www.npmjs.com/package/imapnotify][imapnotify]].
 
 #+begin_src emacs-lisp
 (use-package prodigy
@@ -11078,16 +11060,8 @@ exports.boxes = [ "INBOX"];
             :ready-message "Checking E-mail using IMAP IDLE. Ctrl-C to shutdown.")
 
           (prodigy-define-service
-            :name "IMAPNotify (GMail)"
-            :command "imapnotify"
-            :args (list "-c" (expand-file-name ".config/imapnotify.gmail.js" (getenv "HOME")))
-            :tags '(email)
-            :kill-signal 'sigkill)
-
-          (prodigy-define-service
-            :name "IMAPNotify (KCL)"
+            :name "IMAPNotify"
             :command "goimapnotify"
-            :args (list "-conf" (expand-file-name ".config/imapnotify.kcl.json" (getenv "HOME")))
             :tags '(email)
             :kill-signal 'sigkill)
 
@@ -11112,8 +11086,7 @@ exports.boxes = [ "INBOX"];
 
           ;; start some services
           (when (and (daemonp) (not malb/startup-quick))
-            (prodigy-start-service (prodigy-find-service "IMAPNotify (GMail)"))
-            (prodigy-start-service (prodigy-find-service "IMAPNotify (KCL)")))))
+            (prodigy-start-service (prodigy-find-service "IMAPNotify")))))
 #+end_src
 
 * Media Players
