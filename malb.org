@@ -5177,7 +5177,15 @@ When `exit' from shell buffer."
                                         (when (string-match "\\(finished\\|exited\\)" change)
                                           (kill-buffer (process-buffer proc)))))))
 
+            (defun malb/shell-completion-setup ()
+              (setq-local company-backends '((company-files :with company-yasnippet)
+                                             (company-capf :with company-yasnippet)
+                                             (company-math-symbols-unicode company-emoji :with company-yasnippet)
+                                             (company-dabbrev-code company-gtags company-etags company-keywords :with  company-yasnippet)
+                                             (company-dabbrev :with company-yasnippet))))
+
             (add-hook 'shell-mode-hook #'toggle-truncate-lines)
+            (add-hook 'sh-mode-hook #'malb/shell-completion-setup)
             (add-hook 'shell-mode-hook #'malb/comint-close-buffer-when-finished)
             (fset 'malb/toggle-shell
                   (malb/make-toggle-shell "shell" '(shell)  nil t))
