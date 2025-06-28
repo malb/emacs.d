@@ -39,37 +39,6 @@ We collect our own customisations in the =malb= group.
   :group 'convenience)
 #+end_src
 
-* TLS
-
-Enable TLS cert checking ([[https://glyph.twistedmatrix.com/2015/11/editor-malware.html][source]])
-
-#+begin_src emacs-lisp
-(let ((trustfile (replace-regexp-in-string
-                  "\\\\" "/" (replace-regexp-in-string
-                              "\n" "" (shell-command-to-string "python -m certifi")))))
-  (setq tls-program (list
-                     (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
-                             (if (eq window-system 'w32) ".exe" "") trustfile))
-        gnutls-verify-error t
-        gnutls-trustfiles (list trustfile)
-        tls-checktrust t))
-
-;; (let ((bad-hosts
-;;        (cl-loop for bad
-;;              in `("https://wrong.host.badssl.com/"
-;;                   "https://self-signed.badssl.com/")
-;;              if (condition-case e
-;;                     (url-retrieve
-;;                      bad (lambda (retrieved) t))
-;;                   (error nil))
-;;              collect bad)))
-;;   (if bad-hosts
-;;       (error (format "tls misconfigured; retrieved %s ok"
-;;                      bad-hosts))
-;;     (url-retrieve "https://badssl.com"
-;;                   (lambda (retrieved) t))))
-#+end_src
-
 * Utilities
 
 Check if any regexp matches string, because OR is hard …
@@ -7352,13 +7321,13 @@ Automatically pick dictionary.
 
 ** Synonyms
 
-*[[Https://github.com/hpdeifel/synosaurus][Synosaurus]] for offline lookups.*
+*[[https://github.com/hpdeifel/synosaurus][Synosaurus]] for offline lookups.*
 
 [[https://raw.githubusercontent.com/hpdeifel/synosaurus/master/screenshots/cnr.png]]
 
 #+begin_src emacs-lisp
 (use-package synosaurus
-  :ensure-system-package ((wn . wordnet))
+  :ensure-system-package ((wn . wordnet-common))
   :hook ((org-mode . synosaurus-mode)
          (LaTeX-mode . synosaurus-mode))
   :custom ((synosaurus-prefix (kbd "C-c w S"))
