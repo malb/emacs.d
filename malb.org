@@ -7159,6 +7159,7 @@ Indicate soft wrapped lines.
 #+begin_src emacs-lisp
 (use-package typo
   :blackout typo-mode
+  :ensure nil
   :config (progn
             (typo-global-mode)
             (setq-default typo-language "English")
@@ -7312,7 +7313,7 @@ Automatically pick dictionary.
   :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
   :config (setq guess-language-langcodes '((en "en_GB" "English" "🇬🇧" "English")
-                                           (de "de" "German" "🇩🇪" "German")
+                                           (de "de_DE" "German" "🇩🇪" "German")
                                            (fr "francais" "French" "🇫🇷" "French"))
                 guess-language-languages '(en de)))
 #+end_src
