@@ -7327,11 +7327,11 @@ Automatically pick dictionary.
 #+begin_src emacs-lisp
 (use-package lexic
   :commands lexic-search lexic-list-dictionary malb/define-word-at-point-lexic
+  :ensure-system-package sdcv
   :bind (("C-c w d" . malb/define-word-at-point-lexic))
   :config (progn
             (defun malb/define-word-at-point-lexic (identifier &optional arg)
               "Look up the definition of the word at point (or selection) using `lexic-search'."
-              :override #'+lookup/dictionary-definition
               (interactive
                (list (or (thing-at-point 'word)
                          (read-string "Look up in dictionary: "))
