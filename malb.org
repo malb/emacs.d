@@ -11347,8 +11347,11 @@ then enter the text in that file's own buffer.
 
 [[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
 
+*Note.* We adapt it to work on Wayland by using [[https://github.com/jinliu/kdotool][kdotool]] and [[https://sr.ht/~geb/dotool/][dotool]].
+
 #+begin_src emacs-lisp
 (use-package grab-x-link
+  :ensure-system-package (kdotool dotool)
   :bind (("C-c i l" . grab-x-link-firefox-insert-link)
          ("C-c i o" . grab-x-link-firefox-insert-org-link)
          ("C-c i m" . grab-x-link-firefox-insert-markdown-link))
@@ -11357,19 +11360,20 @@ then enter the text in that file's own buffer.
               :override #'grab-x-link-firefox
               (let ((emacs-window
                      (grab-x-link--shell-command-to-string
-                      "xdotool getactivewindow"))
+                      "kdotool getactivewindow"))
                     (firefox-window
                      (or (car (split-string (grab-x-link--shell-command-to-string
-                                             "xdotool search --classname Navigator")
+                                             "kdotool search --classname Navigator")
                                             "\n"))
                          (error "Can't detect Firfox Window -- is it running?"))))
-                (shell-command (format "xdotool windowactivate --sync %s key ctrl+l ctrl+c" firefox-window))
-                (shell-command (format "xdotool windowactivate %s" emacs-window))
+                (shell-command (format "kdotool windowactivate %s" firefox-window))
+                (shell-command (format "echo key ctrl+l ctrl+c | dotool"))
+                (shell-command (format "kdotool windowactivate %s" emacs-window))
                 (sit-for 0.2)
                 (let ((url (substring-no-properties (grab-x-link--get-clipboard)))
                       (title (grab-x-link--title-strip
                               (grab-x-link--shell-command-to-string
-                               (concat "xdotool getwindowname " firefox-window))
+                               (concat "kdotool getwindowname " firefox-window))
                               " — Mozilla Firefox"))) ;; malb: changed
                   (cons url title))))))
 #+end_src
