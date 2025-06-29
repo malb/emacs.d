@@ -1886,6 +1886,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 #+begin_src emacs-lisp
 (use-package helm-ddgr
   :ensure nil
+  :ensure-system-package ddgr
   :after helm
   :commands helm-ddgr-return
   :bind ("C-c h g" . helm-ddgr))
