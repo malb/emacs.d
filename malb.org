@@ -4551,7 +4551,7 @@ replace the default prompt message."
            :file malb/private-org
            :headline "Packages"
            :type table-line
-           :template "| %i%? |  | |")
+           :template "| %i%? |  |")
           (,(format "%s\tConfig File" (all-the-icons-material "edit" :face 'all-the-icons :v-adjust 0.01))
            :keys "c"
            :file malb/private-org
