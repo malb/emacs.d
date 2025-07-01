@@ -2430,14 +2430,8 @@ Inverse of =rx=.
 ** Undo
 
 #+begin_src emacs-lisp
-(use-package undo-tree
-  :init (global-undo-tree-mode)
-  :config (progn
-            (unbind-key "C-M-_")
-            (setq undo-tree-auto-save-history nil
-                  undo-tree-enable-undo-in-region t
-                  undo-tree-history-directory-alist
-                  `(("." . ,(locate-user-emacs-file "undo-tree-cache"))))))
+(use-package vundo
+  :config (setq vundo-glyph-alist vundo-unicode-symbols))
 #+end_src
 
 ** Multiple Cursors
