@@ -12070,7 +12070,9 @@ Transparent encryption and decryption.
               (malb/start-ollama-maybe)
 
               (let ((old-ellama-provider ellama-provider)
-                    (ellama-provider (apply #'make-llm-ollama malb/ollama-commit-message-default)))
+                    (ellama-provider (apply #'make-llm-ollama malb/ollama-commit-message-default))
+                    (ellama-generate-commit-message-template
+                     (concat ellama-generate-commit-message-template "\n\n/no_think\n")))
                 (unwind-protect
                     (apply old-function args)
                   (setq ellama-provider old-ellama-provider))))
