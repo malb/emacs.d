@@ -8667,7 +8667,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 ** Retrieving
 
 #+begin_src emacs-lisp
-(setq mu4e-get-mail-command "timelimit -t 180 -T 180 mbsync all"
+(setq mu4e-get-mail-command "timeout 180s mbsync all"
       mu4e-update-interval nil)
 #+end_src
 
