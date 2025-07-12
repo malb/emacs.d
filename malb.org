@@ -6168,21 +6168,21 @@ Auto-format source code in many languages with one command – [[https://github.
              jupyter-server-list-kernels)
   :defer 2
   :bind (:map jupyter-repl-mode-map
-              ("M-<up>" . jupyter-repl-history-previous-matching)
-              ("C-<up>" . jupyter-repl-history-previous-matching)
-              ("M-<down>" . jupyter-repl-history-next-matching)
-              ("C-<down>" . jupyter-repl-history-next-matching)
-              ("C-d"    . malb/delchar-or-maybe-eof))
+         ("M-<up>" . jupyter-repl-history-previous-matching)
+         ("C-<up>" . jupyter-repl-history-previous-matching)
+         ("M-<down>" . jupyter-repl-history-next-matching)
+         ("C-<down>" . jupyter-repl-history-next-matching)
+         ("C-d"    . malb/delchar-or-maybe-eof))
   :init (eval-after-load 'jupyter-org-extensions
           '(unbind-key "C-c h" jupyter-org-interaction-mode-map))
   :config (progn
             (defun malb/jupyter-company-completion ()
               (setq-local company-backends
                           '((:separate company-files
-                                       company-math-symbols-unicode
-                                       company-yasnippet
-                                       company-capf
-                                       ))))
+                             company-math-symbols-unicode
+                             company-yasnippet
+                             company-capf
+                             ))))
 
             (add-hook 'jupyter-repl-mode-hook #'malb/jupyter-company-completion)
 
