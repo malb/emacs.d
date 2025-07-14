@@ -4772,7 +4772,7 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 #+begin_src emacs-lisp
 (use-package ob-async
   :after ob
-  :init (setq ob-async-no-async-languages-alist '("python" "jupyter-python" "jupyter-julia")
+  :init (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia")
               async-inject-variables-exclude-regexps
               `(,(rx "-syntax-table" eos)
                 ,(rx bos "org-babel-expand-noweb-references--cache-buffer" eos)
