@@ -7352,13 +7352,15 @@ Automatically pick dictionary.
 
 ** Grammar Checking
 
-*[[https://github.com/emacs-languagetool/lsp-ltex][Langtool]] for offline grammar checking.*
+*[[https://github.com/emacs-languagetool/lsp-ltex][LanguageTool]] for offline grammar checking.*
 
 #+begin_src emacs-lisp
 (use-package lsp-ltex
+  :ensure-system-package (ltex-ls . ltex-ls-plus-bin)
   :init
   (setq lsp-ltex-version "16.0.0"
         lsp-ltex-language "en-GB"
+        lsp-ltex-additional-rules-language-model "/usr/share/ngrams/"
         lsp-ltex-disabled-rules '(:en-GB ["OXFORD_SPELLING_Z_NOT_S"
                                           "MORFOLOGIK_RULE_EN_GB"]))
   (add-to-list 'lsp-disabled-clients 'ltex-ls))
@@ -7373,6 +7375,10 @@ Automatically pick dictionary.
           ;; never start grammarly-ls automatically, but only do it on a document-by-document basis
           (add-to-list 'lsp-disabled-clients 'grammarly-ls)))
 #+end_src
+
+Grammar checkers are disabled by default. To enable
+- LanguageTool :: ~# eval: (setq-local lsp-disabled-clients '(grammarly-ls))~
+- Grammarly    :: ~# eval: (setq-local lsp-disabled-clients '(ltex-ls))~
 
 ** Translating
 
