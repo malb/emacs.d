@@ -11072,6 +11072,15 @@ Copy source code marked up in various ways.
             :port 11434
             :tags '(llm))
 
+          (prodigy-define-service
+            :name "Open WebUI"
+            :command "conda"
+            :env '(("WEBUI_AUTH" "false")
+                   ("ENABLE_VERSION_UPDATE_CHECK" "false"))
+            :args '("run" "-n" "open-webui" "--no-capture-output" "open-webui" "serve" "--port" "8082")
+            :port 8082
+            :tags '(llm))
+
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
 
           ;; start some services
