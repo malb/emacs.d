@@ -10698,7 +10698,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                 (put-text-property (1- pos) pos 'display image)))))
 #+end_src
 
-[[https://github.com/asok/peep-dired][peep-dired]] for previewing files.
+[[https://github.com/asok/peep-dired][peep-dired]] for previewing files (think: =dired-follow-mode=)
 
 #+begin_src emacs-lisp
 (use-package peep-dired
