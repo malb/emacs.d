@@ -8099,6 +8099,10 @@ Run =latexmk -pvc= in async shell
 #+begin_src emacs-lisp
 (use-package lsp-latex
   :custom ((lsp-latex-completion-matcher "prefix")
+           (lsp-latex-experimental-label-definition-commands  '("finding"))
+           (lsp-latex-experimental-label-definition-prefixes '(("finding" "find:")))
+           (lsp-latex-experimental-label-reference-commands   '("findref"))
+           (lsp-latex-experimental-label-reference-prefixes  '(("findref" "find:")))
            (lsp-latex-diagnostics-ignored-patterns
             `(,(rx "Unused label")))))
 #+end_src
