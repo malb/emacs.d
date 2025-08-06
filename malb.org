@@ -6720,14 +6720,14 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 #+begin_src emacs-lisp
 (use-package conda
-  :custom (conda-anaconda-home "/opt/conda/")
+  :ensure-system-package ((conda . miniconda3))
+  :commands (conda-env-activate conda-env-list)
+  :custom ((conda-anaconda-home "/opt/miniconda3")
+           (conda-message-on-environment-switch nil))
   :config (progn
             (conda-env-initialize-interactive-shells)
             (conda-env-initialize-eshell)
             (conda-env-autoactivate-mode t)
-
-            (setq conda-env-home-directory (expand-file-name "~/.conda/")
-                  conda-message-on-environment-switch nil)
 
             (malb/defadvice! malb/conda-no-more-nil (fn name)
               "Don't throw an error if there's no conda env"
