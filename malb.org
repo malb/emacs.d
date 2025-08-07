@@ -7811,19 +7811,19 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\" (or (any ",.!;@")
-                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
-                                  symbol-end)))
+                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
+                                   symbol-end)))
                 0 'malb/unimportant-latex-face prepend))
              'end)
 
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\pc" (and (or "if" "then" "else" "elseif"
-                                    "for" "do" "return"
-                                    "const"
-                                    "and" "or"
-                                    "linecomment" "comment" "assert" "in")
-                                symbol-end))
+                                     "for" "do" "return"
+                                     "const"
+                                     "and" "or"
+                                     "linecomment" "comment" "assert" "in")
+                                 symbol-end))
                 0 'font-latex-bold-face prepend))
              'end)
 
