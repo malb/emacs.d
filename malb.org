@@ -12023,15 +12023,20 @@ Transparent encryption and decryption.
                                            "Output only the text and nothing else, do not chat, no preamble:\n%s")
                                    to-language text))
                      (old-ellama-provider ellama-provider)
+                     (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
+                                                       (normal-mode))))
                      (ellama-provider (apply #'make-llm-ollama malb/ollama-translate-default)))
 
                 (malb/start-ollama-maybe)
 
-                (unwind-protect (if change
-                                    (progn
-                                      (kill-region beg end)
-                                      (ellama-stream task :point beg :filter filter :ephemeral-session t))
-                                  (ellama-instant task))
+                (unwind-protect
+                    (if change
+                        (progn
+                          (kill-region beg end)
+                          (fundamental-mode)   ;; lsp might interfere with our outputs
+                          (ellama-stream task :point beg :filter filter :ephemeral-session t
+                                         :on-done restoref :on-error restoref))
+                      (ellama-instant task))
                   ;; reset to whatever it was
                   (setq ellama-provider old-ellama-provider))))
 
@@ -12061,6 +12066,8 @@ Transparent encryption and decryption.
                                           (t (save-excursion (forward-paragraph) (- (point) 1)))))
                                    (t (point-max))))
                         (filter (lambda (txt) (string-trim txt)))
+                        (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
+                                                          (normal-mode))))
                         (old-ellama-provider ellama-provider))
 
                    ;; NOTE: hack to exclude my signatures in e-mail
@@ -12089,20 +12096,27 @@ Transparent encryption and decryption.
                      (setq ellama-provider (ellama-get-ollama-local-model)
                            ellama--current-session-id nil))
 
+
                    (unwind-protect
                        (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
                               (progn
-                                (ellama-stream task :point (point) :filter filter :ephemeral-session t)))
+                                (fundamental-mode)   ;; lsp might interfere with our outputs
+                                (ellama-stream task :point (point) :filter filter :ephemeral-session t
+                                               :on-done restoref :on-error restoref)))
                              ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
                               (progn
                                 (kill-region beg end)
-                                (ellama-stream task :point beg :filter filter :ephemeral-session t)))
+                                (fundamental-mode)   ;; lsp might interfere with our outputs
+                                (ellama-stream task :point beg :filter filter :ephemeral-session t
+                                               :on-done restoref :on-error restoref)))
                              ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
                               (progn
                                 (goto-char end)
                                 (insert "\n\n-----\n\n")
                                 (sit-for 1)
-                                (ellama-stream task :point (+ end 9) :filter filter :ephemeral-session t)))
+                                (fundamental-mode)   ;; lsp might interfere with our outputs
+                                (ellama-stream task :point (+ end 9) :filter filter :ephemeral-session t
+                                               :on-done restoref :on-error restoref)))
                              (t
                               (ellama-instant task)))
                      (setq ellama-provider old-ellama-provider)))))
