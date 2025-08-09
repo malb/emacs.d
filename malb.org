@@ -5909,7 +5909,12 @@ Comments, as I mean, using [[https://github.com/remyferre/comment-dwim-2][commen
 #+begin_src emacs-lisp
 (use-package comment-dwim-2
   :bind ("M-;" . comment-dwim-2)
-  :config (setq cd2/region-command #'cd2/comment-or-uncomment-region))
+  :custom ((comment-dwim-2-region-function #'comment-dwim-2-comment-or-uncomment-region))
+  ;; I don't like the org-mode COMMENT toggle
+  :config (malb/defadvice! malb/comment-dwim-2 (&optional arg)
+            :override #'comment-dwim-2
+            (interactive "*P")
+            (comment-dwim-2--prog arg)))
 #+end_src
 
 Make bug references in comments and string clickable
