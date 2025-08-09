@@ -27,7 +27,6 @@ We assume that the following variables are defined:
 - ~malb/org-mode-ics~ - icalendar file
 - ~malb/projectile-ignored-projects~ - ignored projects
 - ~malb/projects-dir~ - a super-repository of which all of my projects are subprojects
-- ~malb/sage-executable~ - full path of Sage executable
 - ~malb/sync-dir~ - documents that are synchronised
 - ~malb/deft-directory~ - where deft files live
 
@@ -6750,6 +6749,7 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
 
 #+begin_src emacs-lisp
 (use-package sage-shell-mode
+  :ensure-system-package ( (sage . sagemath))
   :custom ((sage-shell:use-simple-prompt t)
            (sage-shell:use-prompt-toolkit nil)
            (sage-shell:set-ipython-version-on-startup nil)
@@ -6759,18 +6759,18 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
          (sage-shell-mode-hook . eldoc-mode)
          (sage-shell-after-prompt . sage-shell-view-mode))
   :bind (:map sage-shell-mode-map
-              ("C-<up>" . comint-previous-matching-input-from-input)
-              ("C-<down>" . comint-next-matching-input-from-input)
-              ("M-p" . comint-previous-matching-input-from-input)
-              ("M-n" . comint-next-matching-input-from-input))
+         ("C-<up>" . comint-previous-matching-input-from-input)
+         ("C-<down>" . comint-next-matching-input-from-input)
+         ("M-p" . comint-previous-matching-input-from-input)
+         ("M-n" . comint-next-matching-input-from-input))
   :config (progn
             (defun malb/sage-shell-company-completion ()
               (setq-local company-backends
                           '((:separate company-files
-                                       company-math-symbols-unicode
-                                       company-yasnippet
-                                       company-capf
-                                       ))))
+                             company-math-symbols-unicode
+                             company-yasnippet
+                             company-capf
+                             ))))
 
 
             (setq sage-shell-view-default-commands 'plots
@@ -6778,7 +6778,6 @@ Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for run
                   sage-shell-view-default-resolution 180)
 
             (setq sage-shell:input-history-cache-file (concat user-emacs-directory "sage_shell_input_history")
-                  sage-shell:sage-executable malb/sage-executable
                   ac-sage-show-quick-help t)
 
             (fset 'malb/toggle-sage
