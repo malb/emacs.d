@@ -6747,6 +6747,9 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
             (conda-env-initialize-eshell)
             (conda-env-autoactivate-mode t)
 
+            (add-hook 'find-file-hook (lambda () (when (bound-and-true-p conda-project-env-path)
+                                                   (conda-env-activate-for-buffer))))
+
             (malb/defadvice! malb/conda-no-more-nil (fn name)
               "Don't throw an error if there's no conda env"
               :around #'conda-env-name-to-dir
