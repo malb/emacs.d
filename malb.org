@@ -3015,7 +3015,7 @@ Dired additions for git-annex.
 
 #+begin_src emacs-lisp
 (use-package git-annex
-  :demand
+  :demand t
   :bind (:map git-annex-dired-map
          ("s" . git-annex-dired-sync)
          ("D" . git-annex-dired-hard-delete-files))
