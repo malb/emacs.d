@@ -133,18 +133,25 @@ We have RAM, lots of it.
       kill-ring-max 256)
 #+end_src
 
-We set =(setq gc-cons-threshold most-positive-fixnum)= in =early-init.el=, after init files are loaded we enable the [[https://github.com/emacsmirror/gcmh][garbage collector magic hack]] with something more sensible.
-
 #+begin_src emacs-lisp
-(use-package gcmh
+(use-package gc-maybe
   :demand t
-  :config (progn
-            (setq gcmh-high-cons-threshold (* 256 1024 1024)
-                  gcmh-low-cons-threshold (* 1 1024 1024))
-            (defun malb/enable-gcmh ()
-              (setq gc-cons-threshold (* 256 1024 1024))
-              (gcmh-mode 1))
-            (add-hook 'emacs-startup-hook #'malb/enable-gcmh)))
+  :ensure nil
+  :config
+  (setopt gc-maybe-cons-threshold (* 128 1024 1024))
+  (setopt gc-maybe-cons-percentage 0.2)
+  (setopt gc-maybe-idle-delay 8)
+  (setopt gc-maybe-idle-restore 5)
+
+  ;; Enable mode to set the idle timer and minibuffer hooks
+  (gc-maybe-mode +1)
+
+  ;; Optionally log GC data in a buffer
+  ;; (setopt gc-maybe-log-stats-in-buffer t)
+
+  ;; Advice example
+  ;; (advice-add 'org-ql-select :before #'gc-maybe-raise-threshold-briefly)
+)
 #+end_src
 
 * Clean Mode Line
