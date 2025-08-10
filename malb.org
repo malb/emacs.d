@@ -8075,8 +8075,9 @@ Run =latexmk -pvc= in async shell
 
 *Models:*
 
-- [[https://github.com/Ucas-HaoranWei/GOT-OCR2.0/][Ucas-HaoranWei/GOT-OCR2.0]]
 - [[https://github.com/lukas-blecher/LaTeX-OCR][pix2tex]]
+- [[https://github.com/datalab-to/surya][surya]]
+- [[https://github.com/Ucas-HaoranWei/GOT-OCR2.0/][Ucas-HaoranWei/GOT-OCR2.0]]
 
 #+begin_src emacs-lisp
 (use-package latex-ocr
@@ -8084,10 +8085,8 @@ Run =latexmk -pvc= in async shell
   :defer 0
   :ensure-system-package spectacle
   :config
-  ;; ;; python GOT/demo/run_ocr_2.0.py  --model-name GOT-weights --type format --image-file "$1"
-  ;; ;; run_ocr_2.0.py edited to not output the prompt
-  (setq latex-ocr-command "NO_ALBUMENTATIONS_UPDATE=1 conda run -n cuda pix2tex %s 2> /dev/null"
-        latex-ocr-secondary-command "got.sh %s"))
+  (setq latex-ocr-command "pix2tex.sh %2"
+        latex-ocr-secondary-command "surya-latex-ocr.sh %s"))
 #+end_src
 
 *** Math Delimiters
