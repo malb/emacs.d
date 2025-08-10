@@ -12039,7 +12039,7 @@ Transparent encryption and decryption.
                     (if change
                         (progn
                           (kill-region beg end)
-                          (fundamental-mode)   ;; lsp might interfere with our outputs
+                          (fundamental-mode) ;; lsp might interfere with our outputs
                           (ellama-stream task :point beg :filter filter :ephemeral-session t
                                          :on-done restoref :on-error restoref))
                       (ellama-instant task))
@@ -12103,13 +12103,13 @@ Transparent encryption and decryption.
                    (unwind-protect
                        (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
                               (progn
-                                (fundamental-mode)   ;; lsp might interfere with our outputs
+                                (fundamental-mode) ;; lsp might interfere with our outputs
                                 (ellama-stream task :point (point) :filter filter :ephemeral-session t
                                                :on-done restoref :on-error restoref)))
                              ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
                               (progn
                                 (kill-region beg end)
-                                (fundamental-mode)   ;; lsp might interfere with our outputs
+                                (fundamental-mode) ;; lsp might interfere with our outputs
                                 (ellama-stream task :point beg :filter filter :ephemeral-session t
                                                :on-done restoref :on-error restoref)))
                              ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
@@ -12117,7 +12117,7 @@ Transparent encryption and decryption.
                                 (goto-char end)
                                 (insert "\n\n-----\n\n")
                                 (sit-for 1)
-                                (fundamental-mode)   ;; lsp might interfere with our outputs
+                                (fundamental-mode) ;; lsp might interfere with our outputs
                                 (ellama-stream task :point (+ end 9) :filter filter :ephemeral-session t
                                                :on-done restoref :on-error restoref)))
                              (t
