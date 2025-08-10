@@ -11111,7 +11111,7 @@ Copy source code marked up in various ways.
             :command "conda"
             :env '(("WEBUI_AUTH" "false")
                    ("ENABLE_VERSION_UPDATE_CHECK" "false"))
-            :args '("run" "-n" "open-webui" "--no-capture-output" "open-webui" "serve" "--port" "8082")
+            :args '("run" "-n" "cuda" "--no-capture-output" "open-webui" "serve" "--port" "8082")
             :port 8082
             :tags '(llm))
 
