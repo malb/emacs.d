@@ -4725,6 +4725,7 @@ Working with source code in org-mode.
 #+begin_src emacs-lisp
 (use-package ob
   :ensure nil
+  :ensure-system-package gnuplot
   :config (progn
             ;; load more languages for org-babel
             (org-babel-do-load-languages
