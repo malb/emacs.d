@@ -9724,6 +9724,8 @@ Don’t break long lines manually.
 
 #+begin_src emacs-lisp
 (defun malb/mu4e-compose-mode-hook ()
+  ;; https://ioc.exchange/@ben@hardill.me.uk/115020431307758280
+  (save-excursion (message-add-header "x-ms-reactions: disallow\n"))
   (set-fill-column 80))
 
 (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-mode-hook)
