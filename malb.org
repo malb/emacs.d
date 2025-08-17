@@ -11976,6 +11976,13 @@ Transparent encryption and decryption.
 (use-package ellama
   :config (progn
             (require 'llm-ollama)
+            (require 'llm-openai)
+
+            (define-derived-mode malb/ellama-major-mode
+              org-mode"Ellama Major Mode"
+              "Major mode for ellama.")
+
+            (add-hook 'malb/ellama-major-mode-hook #'guess-language-mode)
 
             (defun malb/start-ollama-maybe ()
               (let ((ollama-service (prodigy-find-service "Ollama Server")))
@@ -11993,7 +12000,8 @@ Transparent encryption and decryption.
                     ellama-fill-paragraphs nil
                     ellama-enable-keymap nil
                     ellama-show-reasoning nil
-                    ellama-naming-scheme #'malb/ellama-static-name)
+                    ellama-naming-scheme #'malb/ellama-static-name
+                    ellama-major-mode 'malb/ellama-major-mode)
 
             (malb/defadvice! malb/make-llm-ollama-parameters (old-function &rest args)
               "Pass in parameters."
