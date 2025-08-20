@@ -12189,6 +12189,11 @@ Transparent encryption and decryption.
 
             (defvar ollama-shell-input-ring (make-ring 256))
 
+            (defvar-keymap ollama-shell-mode-map
+              :parent shell-maker-mode-map
+              :doc "Keymap for `ollama-shell-mode'."
+              "C-r" #'ollama-shell-reset-context)
+
             (defun ollama-base64-images-maybe (shell-prompt)
               "Check if image paths are present in PROMPT and return list of images if true."
               (let (images)
@@ -12232,15 +12237,16 @@ Transparent encryption and decryption.
                   :stream t)))
 
             (defun ollama-shell-parse-response (blob)
-              (let ((chunks (split-string blob "\n"))
+              (let ((chunks (split-string (map-elt blob :pending) "\n"))
                     response)
+                (setf (map-elt blob :pending) nil)
                 (dolist (chunk chunks)
                   (let ((json (shell-maker--json-parse-string chunk)))
                     (when (assoc 'response json)
                       (setq response (concat response (cdr (assoc 'response json)))))
                     (when (assoc 'context json)
                       (setq-local ollama-shell-context (cdr (assoc 'context json))))))
-                (s-concat response)))
+                (list  (cons :filtered (s-concat response)))))
 
             (defun ollama-shell-call-api-curl-command (object)
               (let ((json (json-encode object))
@@ -12275,7 +12281,6 @@ Transparent encryption and decryption.
                                                                           ellama-provider))))
                   :execute-command
                   (lambda (command shell)
-                    (bind-key "C-r" #'ollama-shell-reset-context ollama-shell-mode-map)
                     (let ((model (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider)))
                       (ring-insert ollama-shell-input-ring command)
                       (shell-maker-execute-command
