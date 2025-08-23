@@ -9729,6 +9729,8 @@ Don’t break long lines manually.
   (set-fill-column 80))
 
 (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-mode-hook)
+
+(add-to-list 'mu4e-draft-hidden-headers "x-ms-reactions:")
 #+end_src
 
 Don’t add an empty line after “On bla” line but add one before.
