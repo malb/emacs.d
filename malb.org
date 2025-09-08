@@ -3297,6 +3297,23 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
            nil nil :ascent center))))
 #+end_src
 
+#+begin_src emacs-lisp
+(defun malb/org-todo-done (title)
+  "Search all org-agenda-files and mark entries with TITLE as DONE."
+  (let ((count 0))
+    (dolist (file org-agenda-files)
+      (with-current-buffer (find-file-noselect file)
+        (goto-char (point-min))
+        (org-map-entries
+         (lambda ()
+           (when (string-match-p (regexp-quote title) (org-get-heading t nil t))
+             (org-todo 'done)
+             (setq count (1+ count))))
+         nil 'file)))
+    (when (> count 1)
+      (warn "Found %d>1 entries." count))))
+#+end_src
+
 ** Look
 
 #+begin_src emacs-lisp
@@ -4490,6 +4507,7 @@ replace the default prompt message."
          :file malb/private-org
          :headline "Weight"
          :type table-line
+         :after-finalize (lambda () (malb/org-todo-done "Weight"))
          :template "| %u | %? | |")
         (,(format "%s\t[External] " (all-the-icons-faicon "firefox" :face 'all-the-icons :v-adjust 0.01))
          :keys "%"
