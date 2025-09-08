@@ -2520,54 +2520,6 @@ Commands are bound to =C-x m …=
 
 See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https://github.com/magnars/expand-region.el][expand-region]]
 
-We apply [[https://github.com/magnars/expand-region.el/pull/280/commits/ca109329963a85b5fa537ff9ee55d1e0bcb91207][this patch]] (but only the first commit of [[https://github.com/magnars/expand-region.el/pull/280][PR #280]])
-
-#+begin_src diff
---- expand-region-core.el	2024-12-19 08:57:28.598613714 +0000
-+++ /home/malb/Downloads/expand-region-core.el	2025-06-11 21:36:59.095925189 +0100
-@@ -72,8 +72,7 @@
-       `(save-excursion ,@body))))
-
- (defmacro er--save-excursion (&rest body)
--  `(let ((action (lambda ()
--                   (save-mark-and-excursion ,@body))))
-+  `(let ((action (lambda () ,@body)))
-      (if er/save-mode-excursion
-          (funcall er/save-mode-excursion action)
-        (funcall action))))
-@@ -109,17 +108,18 @@
-       (skip-chars-forward er--space-str)
-       (setq start (point)))
-
--    (while try-list
--      (er--save-excursion
--       (ignore-errors
--         (funcall (car try-list))
--         (when (and (region-active-p)
--                    (er--this-expansion-is-better start end best-start best-end))
--           (setq best-start (point))
--           (setq best-end (mark))
--           (when (and er--show-expansion-message (not (minibufferp)))
--             (message "%S" (car try-list))))))
--      (setq try-list (cdr try-list)))
-+    (er--save-excursion
-+       (while try-list
-+         (ignore-errors
-+           (save-mark-and-excursion
-+             (funcall (car try-list))
-+             (when (and (region-active-p)
-+                        (er--this-expansion-is-better start end best-start best-end))
-+               (setq best-start (point))
-+               (setq best-end (mark))
-+               (when (and er--show-expansion-message (not (minibufferp)))
-+                 (message "%S" (car try-list))))))
-+         (setq try-list (cdr try-list))))
-
-     (setq deactivate-mark nil)
-     ;; if smart cursor enabled, decide to put it at start or end of region:
-
-#+end_src
-
 #+begin_src emacs-lisp
 (use-package expand-region
   :after (org)
