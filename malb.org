@@ -2350,7 +2350,7 @@ Use the built-in ~show-paren-mode~ to highlight matching parentheses.
   :ensure nil
   :custom ((show-paren-style 'expression)
            (show-paren-when-point-in-periphery nil)
-           (show-paren-when-point-inside-paren t)
+           (show-paren-when-point-inside-paren nil)
            (show-paren-delay 0.2))
   :config (show-paren-mode 1))
 #+end_src
@@ -7846,23 +7846,38 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                            :help "Run HTLaTeX")
                          t)
 
+            (defun malb/er-mark-outside-pairs-sp ()
+              (interactive)
+              (sp-backward-up-sexp)
+              (set-mark (point))
+              (sp-forward-sexp)
+              (exchange-point-and-mark))
+
+            (defun malb/er-mark-inside-pairs-sp ()
+              (interactive)
+              (sp-backward-up-sexp)
+              (sp-down-sexp)
+              (set-mark (point))
+              (sp-end-of-sexp)
+              (exchange-point-and-mark))
+
             (defun malb/expand-region-setup ()
               "Setup LaTeX expansions."
               (set (make-local-variable 'er/try-expand-list)
-                   '(er/mark-word
-                     er/mark-symbol
-                     er/mark-symbol-with-prefix
-                     er/mark-next-accessor
-                     er/mark-inside-quotes
-                     er/mark-outside-quotes
-                     er/mark-inside-pairs
-                     er/mark-outside-pairs
-                     er/mark-LaTeX-math
-                     er/mark-text-sentence
-                     er/mark-paragraph
-                     er/mark-LaTeX-inside-environment
-                     LaTeX-mark-environment
-                     LaTeX-mark-section)))
+                    '(er/mark-word
+                      er/mark-symbol
+                      er/mark-symbol-with-prefix
+                      er/mark-next-accessor
+                      er/mark-inside-quotes
+                      er/mark-outside-quotes
+                      malb/er-mark-inside-pairs-sp
+                      malb/er-mark-outside-pairs-sp
+                      er/mark-LaTeX-math
+                      er/mark-text-sentence
+                      er/mark-paragraph
+                      er/mark-LaTeX-inside-environment
+                      LaTeX-mark-environment
+                      LaTeX-mark-section)))
 
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+end_src
