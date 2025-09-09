@@ -2238,6 +2238,27 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 
             (setq-default sp-autoskip-closing-pair t)
 
+            (defun malb/mark-outside-pairs-sp ()
+              (interactive)
+              (if (texmathp)
+                  (progn
+                    (sp-backward-up-sexp)
+                    (set-mark (point))
+                    (sp-forward-sexp)
+                    (exchange-point-and-mark))
+                (er/mark-outside-pairs)))
+
+            (defun malb/mark-inside-pairs-sp ()
+              (interactive)
+              (if (texmathp)
+                  (progn
+                    (sp-backward-up-sexp)
+                    (sp-down-sexp)
+                    (set-mark (point))
+                    (sp-end-of-sexp)
+                    (exchange-point-and-mark))
+                (er/mark-inside-pairs)))
+
             (defun malb/sp-point-is-template-p (id action context)
               (and (sp-in-code-p id action context)
                    (sp-point-after-word-p id action context)))
@@ -2548,12 +2569,34 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                   (set-mark pos)
                   (exchange-point-and-mark))))
 
-            (defun malb/add-org-mode-expansions ()
-              (make-variable-buffer-local 'er/try-expand-list)
-              (setq er/try-expand-list (append
-                                        er/try-expand-list
-                                        '(malb/mark-org-inside-LaTeX-math malb/mark-org-LaTeX-math))))
-            (add-hook 'org-mode-hook #'malb/add-org-mode-expansions)))
+            (defun malb/er-org-mode-expansions ()
+              (set (make-variable-buffer-local 'er/try-expand-list)
+                   '(er/mark-word
+                     er/mark-symbol
+                     er/mark-symbol-with-prefix
+                     er/mark-next-accessor
+                     er/mark-method-call
+                     er/mark-inside-quotes
+                     er/mark-outside-quotes
+                     malb/mark-inside-pairs-sp
+                     malb/mark-outside-pairs-sp
+                     er/mark-comment
+                     er/mark-url
+                     er/mark-email
+                     er/mark-ts-node
+                     malb/mark-org-inside-LaTeX-math
+                     malb/mark-org-LaTeX-math
+                     er/mark-text-sentence
+                     er/mark-text-paragraph
+                     mark-page
+                     org-mark-subtree
+                     er/mark-org-element
+                     er/mark-org-element-parent
+                     er/mark-org-code-block
+                     er/mark-sentence
+                     er/mark-org-parent
+                     er/mark-paragraph)))
+            (add-hook 'org-mode-hook #'malb/er-org-mode-expansions)))
 #+end_src
 
 Alternatively, consider
@@ -7668,7 +7711,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
          (LaTeX-mode . malb/latex-add-environments)
          (LaTeX-mode . malb/latex-add-font-lock)
          (LaTeX-mode . malb/enable-cleveref)
-         (LaTeX-mode . malb/expand-region-setup)
+         (LaTeX-mode . malb/expand-region-LaTeX-setup)
          (LaTeX-mode . malb/lsp-enable-maybe)
          (LaTeX-mode . malb/company-latex-setup)
          (LaTeX-mode . malb/raise-flycheck-error-threshold)
@@ -7846,22 +7889,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                            :help "Run HTLaTeX")
                          t)
 
-            (defun malb/er-mark-outside-pairs-sp ()
-              (interactive)
-              (sp-backward-up-sexp)
-              (set-mark (point))
-              (sp-forward-sexp)
-              (exchange-point-and-mark))
-
-            (defun malb/er-mark-inside-pairs-sp ()
-              (interactive)
-              (sp-backward-up-sexp)
-              (sp-down-sexp)
-              (set-mark (point))
-              (sp-end-of-sexp)
-              (exchange-point-and-mark))
-
-            (defun malb/expand-region-setup ()
+            (defun malb/expand-region-LaTeX-setup ()
               "Setup LaTeX expansions."
               (set (make-local-variable 'er/try-expand-list)
                     '(er/mark-word
@@ -7870,8 +7898,8 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                       er/mark-next-accessor
                       er/mark-inside-quotes
                       er/mark-outside-quotes
-                      malb/er-mark-inside-pairs-sp
-                      malb/er-mark-outside-pairs-sp
+                      malb/mark-inside-pairs-sp
+                      malb/mark-outside-pairs-sp
                       er/mark-LaTeX-math
                       er/mark-text-sentence
                       er/mark-paragraph
