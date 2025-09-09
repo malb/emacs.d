@@ -11997,14 +11997,21 @@ Transparent encryption and decryption.
               "Generate name for ellama session by current time."
               "ellama-session")
 
+            (defun malb/llm-provider (model)
+              (cond ((llm-ollama-p model)  model)
+                    ((llm-openai-compatible-p model) model)
+                    ((stringp model) (make-llm-openai-compatible :url model))
+                    (t (apply #'make-llm-ollama model))))
+
             (setopt ellama-language "German"
-                    ellama-provider (apply #'make-llm-ollama malb/ollama-default)
+                    ellama-provider (malb/llm-provider malb/ollama-default)
                     ellama-long-lines-length 1000000
                     ellama-fill-paragraphs nil
                     ellama-enable-keymap nil
                     ellama-show-reasoning nil
                     ellama-naming-scheme #'malb/ellama-static-name
-                    ellama-major-mode 'malb/ellama-major-mode)
+                    ellama-major-mode 'malb/ellama-major-mode
+                    llm-warn-on-nonfree nil)
 
             (malb/defadvice! malb/make-llm-ollama-parameters (old-function &rest args)
               "Pass in parameters."
@@ -12045,7 +12052,7 @@ Transparent encryption and decryption.
                      (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
                                                        (when (eq major-mode 'fundamental-mode)
                                                          (normal-mode)))))
-                     (ellama-provider (apply #'make-llm-ollama malb/ollama-translate-default)))
+                     (ellama-provider (malb/llm-provider malb/ollama-translate-default)))
 
                 (malb/start-ollama-maybe)
 
@@ -12102,7 +12109,7 @@ Transparent encryption and decryption.
                    (malb/start-ollama-maybe)
 
                    (when ,(plist-get args :model)
-                     (setq ellama-provider (apply #'make-llm-ollama ,(plist-get args :model))
+                     (setq ellama-provider (malb/llm-provider ,(plist-get args :model))
                            ellama--current-session-id nil))
 
                    (when arg
@@ -12140,7 +12147,7 @@ Transparent encryption and decryption.
               (malb/start-ollama-maybe)
 
               (let ((old-ellama-provider ellama-provider)
-                    (ellama-provider (apply #'make-llm-ollama malb/ollama-commit-message-default)))
+                    (ellama-provider (malb/llm-provider malb/ollama-commit-message-default)))
                 (unwind-protect
                     (apply old-function args)
                   (setq ellama-provider old-ellama-provider))))
