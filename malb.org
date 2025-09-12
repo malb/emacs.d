@@ -7892,20 +7892,28 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (defun malb/expand-region-LaTeX-setup ()
               "Setup LaTeX expansions."
               (set (make-local-variable 'er/try-expand-list)
-                    '(er/mark-word
-                      er/mark-symbol
-                      er/mark-symbol-with-prefix
-                      er/mark-next-accessor
-                      er/mark-inside-quotes
-                      er/mark-outside-quotes
-                      malb/mark-inside-pairs-sp
-                      malb/mark-outside-pairs-sp
-                      er/mark-LaTeX-math
-                      er/mark-text-sentence
-                      er/mark-paragraph
-                      er/mark-LaTeX-inside-environment
-                      LaTeX-mark-environment
-                      LaTeX-mark-section)))
+                   '(er/mark-word
+                     er/mark-symbol
+                     er/mark-symbol-with-prefix
+                     er/mark-next-accessor
+                     er/mark-inside-quotes
+                     er/mark-outside-quotes
+                     malb/mark-inside-pairs-sp
+                     malb/mark-outside-pairs-sp
+                     er/mark-LaTeX-math
+                     er/mark-text-sentence
+                     er/mark-paragraph
+                     er/mark-LaTeX-inside-environment
+                     LaTeX-mark-environment
+                     LaTeX-mark-section)))
+
+            (defun malb/latex-open-proof-file ()
+              "A helper function for moving proofs to the appendix for the submission."
+              (interactive)
+              (unless (use-region-p) (er/mark-inside-pairs))
+              (let* ((label (buffer-substring (region-beginning) (region-end)))
+                     (fn-s (downcase (replace-regexp-in-string ":" "-" label))))
+                (find-file (format "./proofs/proof-%s.tex" fn-s))))
 
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
 #+end_src
