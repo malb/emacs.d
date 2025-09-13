@@ -2941,14 +2941,6 @@ I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][
 (use-package git-timemachine)
 #+end_src
 
-** Snapper Timemachine
-
-[[https://github.com/mrBliss/snapshot-timemachine][snapshot-timemachine: Emacs-mode to step through (Btrfs, ZFS, ...) snapshots of files]]
-
-#+begin_src emacs-lisp
-(use-package snapshot-timemachine :ensure nil)
-#+end_src
-
 ** Git Link
 
 [[https://github.com/sshaw/git-link][git-link]]:
@@ -11747,11 +11739,10 @@ Use ~(copyright-update)~ to update copyright info
 (put 'list-timers 'disabled nil)
 #+end_src
 
-** Async
+unset SESSION_MANAGER
 
 #+begin_src emacs-lisp
-(use-package async
-  :custom (async-prompt-for-password nil "Otherwise: Stack overflow in regexp matcher"))
+(setenv "SESSION_MANAGER" nil)
 #+end_src
 
 ** Functions
@@ -11897,7 +11888,41 @@ If i is pressed after, insert the result at the end of region. If r is pressed r
       (set-transient-map map))))
 #+end_src
 
-** Clickable URLs
+** Upcase, Downcase, Capitalise
+
+#+begin_src emacs-lisp
+(bind-key "M-l" #'downcase-dwim)
+(bind-key "M-c" #'capitalize-dwim)
+(bind-key "M-u" #'upcase-dwim)
+#+end_src
+
+** COMMENT Memory Usage
+
+#+begin_src emacs-lisp
+(use-package memory-usage)
+#+end_src
+
+
+* Alert
+
+#+begin_src emacs-lisp
+(use-package alert
+  :config (setq alert-default-style 'libnotify))
+#+end_src
+
+* Encryption
+
+Transparent encryption and decryption.
+
+#+begin_src emacs-lisp
+(use-package epa-file
+  :ensure nil
+  :config (progn
+            (setq epa-armor t)
+            (epa-file-enable)))
+#+end_src
+
+* Clickable URLs
 
 Make links in comments and string clickable
 
@@ -11916,26 +11941,14 @@ Make links in comments and string clickable
   :commands (goto-address-prog-mode goto-address-mode))
 #+end_src
 
-** Encryption
-
-Transparent encryption and decryption.
+* Async
 
 #+begin_src emacs-lisp
-(use-package epa-file
-  :ensure nil
-  :config (progn
-            (setq epa-armor t)
-            (epa-file-enable)))
+(use-package async
+  :custom (async-prompt-for-password nil "Otherwise: Stack overflow in regexp matcher"))
 #+end_src
 
-** Memory Usage
-
-#+begin_src emacs-lisp
-(use-package memory-usage)
-#+end_src
-
-
-** Gnuplot
+* Gnuplot
 
 #+begin_src emacs-lisp
 (use-package gnuplot)
@@ -11953,25 +11966,12 @@ Transparent encryption and decryption.
 | <2010-02-25 Thu> | 91.0 |
 | <2010-02-26 Fri> | 92.0 |
 
-** Alert
+* Snapper Timemachine
+
+[[https://github.com/mrBliss/snapshot-timemachine][snapshot-timemachine: Emacs-mode to step through (Btrfs, ZFS, ...) snapshots of files]]
 
 #+begin_src emacs-lisp
-(use-package alert
-  :config (setq alert-default-style 'libnotify))
-#+end_src
-
-** Upcase, Downcase, Capitalise
-
-#+begin_src emacs-lisp
-(bind-key "M-l" #'downcase-dwim)
-(bind-key "M-c" #'capitalize-dwim)
-(bind-key "M-u" #'upcase-dwim)
-#+end_src
-
-** unset SESSION_MANAGER
-
-#+begin_src emacs-lisp
-(setenv "SESSION_MANAGER" nil)
+(use-package snapshot-timemachine :ensure nil)
 #+end_src
 
 * LLM
@@ -12357,12 +12357,6 @@ Using [[https://github.com/doublep/logview][logview]] mode.
   :config (setq logview-auto-revert-mode 'auto-revert-tail-mode))
 #+end_src
 
-** JSON
-
-#+begin_src emacs-lisp
-(use-package json-mode)
-#+end_src
-
 ** YaML Files
 
 #+begin_src emacs-lisp
@@ -12438,7 +12432,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
                   (goto-char point))))))
 #+end_src
 
-** MailRC
+** Config Files
 
 #+begin_src emacs-lisp
 (use-package conf-mode
