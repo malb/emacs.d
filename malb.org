@@ -11032,7 +11032,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
             (setq gist-ask-for-description t)))
 #+end_src
 
-** Copy as
+** COMMENT Copy as
 
 Copy source code marked up in various ways.
 
