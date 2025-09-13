@@ -2696,7 +2696,7 @@ Refine provides a convenient UI for editing variables. Refine is not for editing
 
 * Projects (Projectile)
 
-#+BEGIN_QUOTE
+#+begin_quote
 [[https://github.com/bbatsov/projectile][Projectile]] is a project interaction library for Emacs. […]
 
 This library provides easy project management and navigation. The concept of a project is pretty basic – just a folder containing special file. Currently git, mercurial, darcs and bazaar repos are considered projects by default. So are lein, maven, sbt, scons, rebar and bundler projects. If you want to mark a folder manually as a project just create an empty =.projectile= file in it. Some of Projectile's features:
@@ -2718,7 +2718,7 @@ This library provides easy project management and navigation. The concept of a p
 - regenerate project =etags= or =gtags= (requires =ggtags=).
 - visit project in =dired=
 - run make in a project with a single key chord
-#+END_QUOTE
+#+end_quote
 
 [[https://raw.githubusercontent.com/bbatsov/projectile/master/screenshots/projectile.png]] ([[https://github.com/bbatsov/projectile/blob/master/screenshots/projectile.png][source]])
 
