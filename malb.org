@@ -940,8 +940,6 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("SPC" nil)
   ("`" other-window :color blue)
   ("C-`" other-window :color blue))
-
-;; (key-chord-define-global "\\x" #'malb/hydra-window/body)
 #+end_src
 
 ** Next/Previous Buffer
