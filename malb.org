@@ -768,7 +768,6 @@ Find a frame not named qualified as “special” if there is any, make one othe
   (apply old-function arguments))
 #+end_src
 
-Main frame dispatch function:
 
 #+begin_src emacs-lisp
 (defun malb/mu4e-buffer-p(buffer &optional compose-too)
@@ -781,6 +780,21 @@ Main frame dispatch function:
                 mu4e-raw-view-mode))
         (and compose-too (eq major-mode 'mu4e-compose-mode)))))
 #+end_src
+
+#+begin_src emacs-lisp
+(defun malb/filter-mu4e-buffers (buffers)
+  "Remove any mu4e buffer from `buffers`"
+  (seq-filter (lambda (buffer)
+                (not (memq (buffer-local-value 'major-mode buffer)
+                           '(mu4e-main-mode
+                             mu4e-view-mode
+                             mu4e-raw-view-mode
+                             mu4e-headers-mode
+                             mu4e-compose-mode))))
+              buffers))
+#+end_src
+
+Main frame dispatch function:
 
 #+begin_src emacs-lisp
 (defun malb/frame-dispatch (buffer alist)
@@ -840,21 +854,6 @@ I prefer pop to the default, as I’d rather have it pop up the buffer somewhere
 
 #+begin_src emacs-lisp
 (setq switch-to-buffer-in-dedicated-window 'pop)
-#+end_src
-
-We call this function when killing projectile project buffers.
-
-#+begin_src emacs-lisp
-(defun malb/filter-mu4e-buffers (buffers)
-  "Remove any mu4e buffer from `buffers`"
-  (seq-filter (lambda (buffer)
-                (not (memq (buffer-local-value 'major-mode buffer)
-                           '(mu4e-main-mode
-                             mu4e-view-mode
-                             mu4e-raw-view-mode
-                             mu4e-headers-mode
-                             mu4e-compose-mode))))
-              buffers))
 #+end_src
 
 ** Dedicated Mode
