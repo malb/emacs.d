@@ -2387,8 +2387,8 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
 #+begin_src emacs-lisp
 (use-package visual-regexp
   :bind (("C-c m" . vr/mc-mark)
-         ("M-%" . vr/query-replace)
-         ("C-%" . query-replace)
+         ("M-%"   . vr/query-replace)
+         ("C-%"   . query-replace)
          ("C-S-s" . isearch-forward-regexp)
          ("C-S-r" . isearch-backward-regexp)))
 #+end_src
