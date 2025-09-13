@@ -11457,10 +11457,10 @@ then enter the text in that file's own buffer.
                 (shell-command (format "kdotool windowactivate %s" emacs-window))
                 (sit-for 0.2)
                 (let ((url (substring-no-properties (grab-x-link--get-clipboard)))
-                      (title (grab-x-link--title-strip
+                      (title (replace-regexp-in-string
+                              "\\(.*?\\) — Mozilla Firefox.*" "\\1"
                               (grab-x-link--shell-command-to-string
-                               (concat "kdotool getwindowname " firefox-window))
-                              " — Mozilla Firefox"))) ;; malb: changed
+                               (concat "kdotool getwindowname " firefox-window)))))
                   (cons url title))))))
 #+end_src
 
