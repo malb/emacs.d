@@ -4912,6 +4912,7 @@ We disable =projectile-track-known-projects-find-file-hook= in =org-string-width
 #+begin_src emacs-lisp
 (malb/defadvice! malb/org-string-width (fn &rest args)
   :around #'org-string-width
+  ;; BUG
   (cl-letf (((symbol-function 'projectile-track-known-projects-find-file-hook)
              (lambda () nil)))
     (apply fn args)))
