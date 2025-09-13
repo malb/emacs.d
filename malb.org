@@ -4933,7 +4933,6 @@ A quick way to get a link out:
 #+end_src
 
 ** Tips
-
 *** Agenda commands
 
 | ~F~         | ~(org-agenda-follow-mode)~           | Toggle Follow mode                                     |
@@ -6189,7 +6188,7 @@ Auto-format source code in many languages with one command – [[https://github.
 
             (malb/register-right-side-window (rx "*jupyter-pager*") t)
 
-            ;; TODO: workaround
+            ;; BUG: workaround
             (setq jupyter-use-zmq nil)))
 #+end_src
 
@@ -7443,7 +7442,7 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
           (defun malb/deft-in-dir (dir)
             "Run deft in directory DIR"
-            (setq deft-directory dir) ;; TODO: cannot let-bind
+            (setq deft-directory dir) ;; BUG: cannot let-bind
             (pop-to-buffer "*Deft*")
             (kill-this-buffer)
             (deft)
@@ -8025,7 +8024,7 @@ Run =latexmk -pvc= in async shell
         (display-buffer (get-buffer buffer-name))))))
 #+end_src
 
-*** Mathpix
+*** MathPix
 
 [[https://mathpix.com/][https://mathpix.com/]]
 
@@ -10755,7 +10754,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                  ))
 #+end_src
 
-** Tramp
+* Tramp
 
 =.ssh/config= already contains the appropriate config for persistent sessions so we ask tramp to respect it (=tramp-use-ssh-controlmaster-options=).
 
