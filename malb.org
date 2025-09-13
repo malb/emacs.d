@@ -10917,9 +10917,9 @@ Uses baloo to find files."
 #+begin_src emacs-lisp
 (use-package plantuml-mode
   :commands (plantuml-mode)
-  :init (progn
-          (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar"
-                plantuml-default-exec-mode 'jar)))
+  :ensure-system-package plantuml
+  :custom ((plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
+           (plantuml-default-exec-mode 'jar)))
 #+end_src
 
 *Example*
