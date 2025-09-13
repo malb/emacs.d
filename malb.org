@@ -202,7 +202,7 @@ Key chords allow to execute actions by pressing one or two keys really fast. Som
 https://github.com/emacs-helm/helm/issues/1976
 
 #+begin_src emacs-lisp
-(setq x-wait-for-event-timeout 0.1)
+(setq x-wait-for-event-timeout 0.1) ;; BUG
 #+end_src
 
 ** Splitting
