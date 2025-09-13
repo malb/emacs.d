@@ -4873,7 +4873,7 @@ This extension facilitates moving images from point A (e.g. an image inside your
 (use-package wikinforg)
 #+end_src
 
-** Org Dsq
+** COMMENT Org Dsq
 
 Org interface to to [[https://github.com/multiprocessio/dsq][dsq]].
 
