@@ -11502,7 +11502,7 @@ Create convenience functions to open a shell on my servers and “cd” into the
 (malb/register-popup-window (rx "*mosh:" (one-or-more any) "*") t)
 #+end_src
 
-* ISearch
+* Search
 
 #+begin_quote
 In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, or 𝒶) when you search
