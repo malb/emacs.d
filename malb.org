@@ -1907,7 +1907,7 @@ Extracted from =helm-grep.el=
                                  directories))
 
     (helm
-     :sources (helm-build-async-source "PdfGrep"
+     :sources (helm-build-async-source "PDFGrep"
                 :init (lambda ()
                         ;; If `helm-find-files' haven't already started,
                         ;; give a default value to `helm-ff-default-directory'.
