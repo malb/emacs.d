@@ -1488,8 +1488,6 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
   :custom
   (helm-ff-keep-cached-candidates nil) ;; BUG https://issues.guix.gnu.org/43406
   (helm-completion-style 'emacs)
-  ;; (helm-external-programs-associations '(("pdf" . "okular")
-  ;;                                        ("docx" . "libreoffice")))
 
   :config (progn
             (require 'helm-for-files)
