@@ -28,7 +28,7 @@
 (defvar helm-baloo-actions
   '(("Open"                                  . helm-find-many-files)
     ("Attach to E-mail"                      . malb/helm-mml-attach-files)
-    ("Transfer.sh"                           . malb/helm-transfer-sh-files)
+    ;; ("Transfer.sh"                           . malb/helm-transfer-sh-files)
     ("Find file as root"                     . helm-find-file-as-root)
     ("Find file other window"                . helm-find-files-other-window)
     ("Find file other frame"                 . find-file-other-frame)

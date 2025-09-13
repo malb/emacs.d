@@ -1554,12 +1554,12 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             (add-to-list 'helm-completing-read-handlers-alist '(rename-file . nil))))
 #+end_src
 
-Actions for attaching files to e-mails and for sending them with [[https://transfer.sh/][transfer.sh]].
+Actions for attaching files to e-mails.
 
 #+begin_src emacs-lisp
 (use-package helm-utils
   :ensure nil
-  :after transfer-sh
+  ;; :after transfer-sh
   :config (progn
             (defun malb/helm-mml-attach-files (_candidate)
               "Attach all selected files"
@@ -1571,20 +1571,17 @@ Actions for attaching files to e-mails and for sending them with [[https://trans
               (with-helm-alive-p
                 (helm-exit-and-execute-action 'malb/helm-mml-attach-files)))
 
-            (defun malb/helm-transfer-sh-files (_candidate)
-              "Transfer.sh all selected files"
-              (let* ((files (helm-marked-candidates)))
-                (mapcar (lambda (file)
-                          (transfer-sh-upload-file-async file (file-name-nondirectory file)))
-                        files)))
+            ;; (defun malb/helm-transfer-sh-files (_candidate)
+            ;;   "Transfer.sh all selected files"
+            ;;   (let* ((files (helm-marked-candidates)))
+            ;;     (mapcar (lambda (file)
+            ;;               (transfer-sh-upload-file-async file (file-name-nondirectory file)))
+            ;;             files)))
 
-            (defun malb/helmified-transfer-sh-files ()
-              (interactive)
-              (with-helm-alive-p
-                (helm-exit-and-execute-action 'malb/helm-transfer-sh-files)))
-
-            ;; (helm-add-action-to-source "Attach to E-mail" #'malb/helm-mml-attach-files helm-source-find-files)
-            ;; (helm-add-action-to-source "Transfer.sh"      #'malb/helm-transfer-sh-files helm-source-find-files)
+            ;; (defun malb/helmified-transfer-sh-files ()
+            ;;   (interactive)
+            ;;   (with-helm-alive-p
+            ;;     (helm-exit-and-execute-action 'malb/helm-transfer-sh-files)))
             ))
 #+end_src
 
@@ -1773,12 +1770,14 @@ Please always use ~=~ separator for using long option. Don't use space as separa
   :after (helm helm-utils)
   :commands helm-locate
   :bind (:map helm-generic-files-map
-              ("C-c C-a" . malb/helmified-mml-attach-files)
-              ("C-c C-t" . malb/helmified-transfer-sh-files))
+         ("C-c C-a" . malb/helmified-mml-attach-files)
+         ;; ("C-c C-t" . malb/helmified-transfer-sh-files)
+         )
   :config (progn
             (add-to-list 'helm-commands-using-frame 'helm-locate)
             (helm-add-action-to-source "Attach to E-mail" #'malb/helm-mml-attach-files helm-source-locate)
-            (helm-add-action-to-source "Transfer.sh"      #'malb/helm-transfer-sh-files helm-source-locate)))
+            ;; (helm-add-action-to-source "Transfer.sh"      #'malb/helm-transfer-sh-files helm-source-locate)
+            ))
 #+end_src
 
 ** Helm Org
@@ -10980,7 +10979,7 @@ Note that PlantUML supports [[http://plantuml.com/latex.html][TikZ export]].
 #+end_src
 
 * File Sharing
-** Transfer.sh
+** COMMENT Transfer.sh
 
 [[https://github.com/Brillow/transfer-sh.el][transfer.sh]] for interfacing with https://transfer.sh.
 
