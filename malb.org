@@ -10987,7 +10987,7 @@ Note that PlantUML supports [[http://plantuml.com/latex.html][TikZ export]].
 (use-package transfer-sh)
 #+end_src
 
-** Pastebin/ix.io
+** COMMENT Pastebin/ix.io
 
 Interfacing with http://ix.io/, run =ix=.
 
