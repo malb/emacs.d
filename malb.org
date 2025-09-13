@@ -11271,6 +11271,8 @@ This is a client for Pocket (getpocket.com). It allows you to manage your readin
       x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 #+end_src
 
+* Printing
+
 Use GTK printing interface.
 
 #+begin_src emacs-lisp
