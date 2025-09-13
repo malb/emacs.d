@@ -2568,7 +2568,7 @@ Alternatively, consider
 4. ~C-M-h~ marks a defun (top-level-definition)
 5. ~C-x h~ marks the whole buffer
 
-** Embrace
+** COMMENT Embrace
 
 [[https://raw.githubusercontent.com/cute-jumper/embrace.el/master/screencasts/embrace.gif]]
 
