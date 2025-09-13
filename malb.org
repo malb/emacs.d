@@ -1352,11 +1352,7 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
    ;; leave the math env
    ((and (or (and (eq major-mode 'org-mode) (bound-and-true-p org-cdlatex-mode))
              (and (eq major-mode 'LaTeX-mode) (bound-and-true-p cdlatex-mode)))
-         (texmathp)
-         ;; (or (looking-at "\\\\)")
-         ;;     (looking-at "\\]")
-         ;;     (looking-at "}"))
-         )
+         (texmathp))
     (cdlatex-tab))
 
    ;; arg triggers cdlatex
