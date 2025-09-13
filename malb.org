@@ -1875,7 +1875,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 
 ** Helm KDE Desktop Search with Baloo
 
-[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search. Below, we implement a tiny helm interface for it.
+[[https://community.kde.org/Baloo][Baloo]] is KDE’s desktop search.
 
 #+begin_src emacs-lisp
 (use-package helm-baloo
