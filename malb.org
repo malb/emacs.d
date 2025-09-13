@@ -942,7 +942,7 @@ _SPC_ cancel  _D_lt other     _s_wap
   ("C-`" other-window :color blue))
 #+end_src
 
-** Next/Previous Buffer
+** Skip some Buffer
 
 ([[https://www.reddit.com/r/emacs/comments/b058f8/weekly_tipstricketc_thread/][source]])
 
