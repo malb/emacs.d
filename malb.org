@@ -527,7 +527,6 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                       (throw 'window window))))))
     (when window
       (window--display-buffer buffer window 'reuse alist))))
-
 #+end_src
 
 #+begin_src emacs-lisp
