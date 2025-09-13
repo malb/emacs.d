@@ -11105,9 +11105,33 @@ Copy source code marked up in various ways.
           (prodigy-define-service
             :name "malb.io Website"
             :cwd (expand-file-name "web/malb.io" malb/projects-dir)
-            :command "jekyll"
-            :args '("serve" "-P" "4001")
-            :port 4001
+            :command "python"
+            :args '("-m" "http.server" "4002")
+            :port 4002
+            :tags '(web))
+
+          (prodigy-define-service
+            :name "UK Crypto Day Website"
+            :cwd (expand-file-name "web/crypto-day" malb/projects-dir)
+            :command  "bundle"
+            :args '("exec"  "jekyll" "serve" "-P" "4003")
+            :port 4003
+            :tags '(web))
+
+          (prodigy-define-service
+            :name "Social Foundations Website"
+            :cwd (expand-file-name "web/social-foundations-of-cryptography.gitlab.io" malb/projects-dir)
+            :command "bundle"
+            :args '("exec" "jekyll" "serve" "-P" "4004")
+            :port 4004
+            :tags '(web))
+
+          (prodigy-define-service
+            :name "Cryptographers Website"
+            :cwd (expand-file-name "web/cryptographers.kcl.ac.uk" malb/projects-dir)
+            :command "bundle"
+            :args '("exec" "jekyll" "serve" "-P" "4005")
+            :port 4005
             :tags '(web))
 
           (prodigy-define-service
@@ -11127,6 +11151,12 @@ Copy source code marked up in various ways.
             :args '("run" "-n" "cuda" "--no-capture-output" "open-webui" "serve" "--port" "8082")
             :port 8082
             :tags '(llm))
+
+          (prodigy-define-service
+            :name "Phone Screen Sharing"
+            :command "scrcpy"
+            :args '("--new-display=2560x1600/300" "--keyboard=uhid")
+            :tags '(phone))
 
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
 
