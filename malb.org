@@ -2084,75 +2084,58 @@ Make sure to auto automatically rescan for imenu change.
 #+begin_src emacs-lisp
 (use-package imenu-list
   :after latex
-  :init (progn
-          ;; https://github.com/dsedivec/dot-emacs-d/blob/ddc3fec6a2a884ce4adf730a2eb255dab97834b7/recipes/imenu-list-in-side-buffer.el
-          (defun malb/imenu-list-install-display-buffer ()
-            "Put imenu-list buffer on a dedicated side window with a preserved size."
-            (let* ((side (cl-ecase imenu-list-position
-                           (above 'top)
-                           (below 'bottom)
-                           ((left right) imenu-list-position)))
-                   (preserve-dimen (if (memq side '(left right))
-                                       'window-width
-                                     'window-height)))
-              (setf (alist-get (concat "^" (regexp-quote imenu-list-buffer-name) "$")
-                               display-buffer-alist nil nil #'equal)
-                    `(display-buffer-in-side-window
-                      (window-parameters  . ((no-other-window . t)
-                                             (no-delete-other-windows . t)))
-                      (side . ,side)
-                      ;; It is not totally clear to me if `imenu-list-size' is
-                      ;; supposed to be the window's body height/width or the
-                      ;; window's total height/width.  The way we're using it
-                      ;; here it is definitely the total, not the body.
-                      ;;
-                      ;; If it's supposed to be the body height/width then I
-                      ;; think it might be best to pass a function as the value
-                      ;; for the `window-height'/`window-width' here, and then
-                      ;; have the function compute it once the imenu-list window
-                      ;; has come into existence.  (See documentation for those
-                      ;; alist entries in the docstring for `display-buffer'.)
-                      (,preserve-dimen . ,imenu-list-size)
-                      (preserve-size . ,(if (eq preserve-dimen 'window-width)
-                                            '(t . nil)
-                                          '(nil . t)))
-                      (dedicated . t))))))
-  :custom (imenu-list-idle-update-delay 0.5)
-  :config (progn
-            (setq imenu-list-position 'left
-                  imenu-list-size 0.15
-                  imenu-list-auto-resize nil
-                  imenu-list-focus-after-activation nil
-                  imenu-list-after-jump-hook nil)
+  :custom ((imenu-list-idle-update-delay 0.5)
+           (imenu-list-position 'left)
+           (imenu-list-size 0.15)
+           (imenu-list-auto-resize nil)
+           (imenu-list-focus-after-activation nil)
+           (imenu-list-after-jump-hook nil))
+  :init
+  (malb/defadvice! malb/imenu-list-install-display-buffer ()
+    "Put imenu-list buffer on a dedicated side window with a preserved size."
+    :override #'imenu-list-install-display-buffer
+    (let* ((side (cl-ecase imenu-list-position
+                   (above 'top)
+                   (below 'bottom)
+                   ((left right) imenu-list-position)))
+           (preserve-dimen (if (memq side '(left right)) 'window-width 'window-height)))
+      (add-to-list 'display-buffer-alist
+                   `(,(concat "^" (regexp-quote imenu-list-buffer-name) "$")
+                     display-buffer-in-side-window
+                     (window-parameters  . ((no-other-window . t)
+                                            (no-delete-other-windows . t)))
+                     (side . ,side)
+                     (,preserve-dimen . ,imenu-list-size)
+                     (preserve-size . ,(if (eq preserve-dimen 'window-width) '(t . nil) '(nil . t)))
+                     (dedicated . t)))))
 
-            (malb/imenu-list-install-display-buffer)
+  :config
+  (malb/defadvice! malb/LaTeX-imenu-create-index-function (old-function &rest args)
+    "Postprocess AucTeX's imenu list."
+    :around 'LaTeX-imenu-create-index-function
+    (let* ((input-list (apply old-function args))
+           (output-list '()))
+      (while input-list
+        (let* ((entry (car input-list))
+               (tail  (cdr input-list))
+               (label (car entry))
+               (marker (cdr entry))
+               (prefix-len))
+          (string-match "^ *" label)
+          (setq prefix-len (match-end 0))
+          (when (not (s-equals-p label "document"))
+            (if (<= prefix-len 2)
+                (progn
+                  (add-to-list 'output-list (cons (s-trim label) '()) t)
+                  (setf (cdar (last output-list))
+                        (append (cdar (last output-list))
+                                (list (cons "<go to>" marker)))))
+              (setf (cdar (last output-list))
+                    (append (cdar (last output-list))
+                            (list (cons (substring label (/ (+ prefix-len 4) 2)) marker))))))
 
-            (malb/defadvice! malb/LaTeX-imenu-create-index-function (old-function &rest args)
-              "Postprocess AucTeX's imenu list."
-              :around 'LaTeX-imenu-create-index-function
-              (let* ((input-list (apply old-function args))
-                     (output-list '()))
-                (while input-list
-                  (let* ((entry (car input-list))
-                         (tail  (cdr input-list))
-                         (label (car entry))
-                         (marker (cdr entry))
-                         (prefix-len))
-                    (string-match "^ *" label)
-                    (setq prefix-len (match-end 0))
-                    (when (not (s-equals-p label "document"))
-                      (if (<= prefix-len 2)
-                          (progn
-                            (add-to-list 'output-list (cons (s-trim label) '()) t)
-                            (setf (cdar (last output-list))
-                                  (append (cdar (last output-list))
-                                          (list (cons "<go to>" marker)))))
-                        (setf (cdar (last output-list))
-                              (append (cdar (last output-list))
-                                      (list (cons (substring label (/ (+ prefix-len 4) 2)) marker))))))
-
-                    (setq input-list tail)))
-                output-list))))
+          (setq input-list tail)))
+      output-list)))
 #+end_src
 
 * Parenthesis
