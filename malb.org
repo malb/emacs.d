@@ -8088,8 +8088,8 @@ Run =latexmk -pvc= in async shell
            (lsp-latex-experimental-label-definition-prefixes '(("finding" "find:")))
            (lsp-latex-experimental-label-reference-commands   '("findref"))
            (lsp-latex-experimental-label-reference-prefixes  '(("findref" "find:")))
-           (lsp-latex-diagnostics-ignored-patterns
-            `(,(rx "Unused label")))))
+           (lsp-latex-symbol-ignored-patterns '("Item" "Enumerate" "Description" "Equation"))
+           (lsp-latex-diagnostics-ignored-patterns `(,(rx "Unused label")))))
 #+end_src
 
 ** Utility Functions
