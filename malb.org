@@ -462,6 +462,7 @@ Select windows using [[https://github.com/deb0ch/emacs-winum][window numbers]].
                ((equal major-mode 'dired-sidebar-mode) 8)
                ((equal major-mode 'reftex-toc-mode) 8)
                ((equal major-mode 'pdf-outline-buffer-mode) 8)
+               ((equal major-mode 'treemacs-mode) 8)
                (t nil)))
 
             (add-to-list 'winum-assign-functions #'malb/winum-assign)
@@ -6287,7 +6288,20 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 #+begin_src emacs-lisp
 (use-package lsp-treemacs
-  :custom ((lsp-treemacs-error-list-current-project-only t)))
+  :custom ((lsp-treemacs-error-list-current-project-only t))
+  :config
+  ;; TODO report upstream
+  (delete lsp-treemacs-symbols-buffer-name winum-ignored-buffers)
+
+  (defun malb/toggle-lsp-treemacs-symbols ()
+    (interactive)
+    (let (found)
+      (dolist (window (window-list))
+        (with-current-buffer (window-buffer window)
+          (when (and (eq major-mode 'treemacs-mode)
+                     (string-equal (buffer-name) lsp-treemacs-symbols-buffer-name))
+            (setq found window))))
+      (if found (delete-window found) (lsp-treemacs-symbols)))))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -13007,15 +13021,16 @@ I hardly use it but my fat fingers hit it on some keyboards.
 (define-prefix-command 'malb/toggle-map)
 (define-key ctl-x-map "t" 'malb/toggle-map)
 
-(bind-key "e" #'toggle-debug-on-error        malb/toggle-map)
-(bind-key "f" #'malb/toggle-fold             malb/toggle-map)
-(bind-key "l" #'malb/toggle-light-dark       malb/toggle-map)
-(bind-key "t" #'toggle-truncate-lines        malb/toggle-map)
-(bind-key "q" #'toggle-debug-on-quit         malb/toggle-map)
-(bind-key "i" #'imenu-list-smart-toggle      malb/toggle-map)
-(bind-key "d" #'dired-sidebar-toggle-sidebar malb/toggle-map)
-(bind-key "D" #'dedicated-mode               malb/toggle-map)
-(bind-key "c" #'visual-fill-column-mode      malb/toggle-map)
+(bind-key "e" #'toggle-debug-on-error            malb/toggle-map)
+(bind-key "f" #'malb/toggle-fold                 malb/toggle-map)
+(bind-key "l" #'malb/toggle-light-dark           malb/toggle-map)
+(bind-key "t" #'toggle-truncate-lines            malb/toggle-map)
+(bind-key "q" #'toggle-debug-on-quit             malb/toggle-map)
+(bind-key "i" #'imenu-list-smart-toggle          malb/toggle-map)
+(bind-key "s" #'malb/toggle-lsp-treemacs-symbols malb/toggle-map)
+(bind-key "d" #'dired-sidebar-toggle-sidebar     malb/toggle-map)
+(bind-key "D" #'dedicated-mode                   malb/toggle-map)
+(bind-key "c" #'visual-fill-column-mode          malb/toggle-map)
 #+end_src
 
 ** Learn Key Bindings
