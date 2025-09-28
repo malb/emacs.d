@@ -9996,7 +9996,7 @@ Open raw view in message view or below.
   :config (gnus-icalendar-setup))
 #+end_src
 
-** Mu4e 🖤 Org
+** Mu4e ❤️ Org
 
 Link to mu4e messages and threads.
 
