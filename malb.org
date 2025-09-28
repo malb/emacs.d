@@ -11183,7 +11183,7 @@ Copy source code marked up in various ways.
                   (call-process "brightnessctl" nil nil nil "-d" device "s" (format "%d" brightness-new))
                   (message "brightness %d" (malb/external-brightness)))))
 
-            (defhydra malb/ambient nil
+            (defhydra malb/ambient ()
               "ambient"
               ("<up>" kodi-volume-up (concat
                                       (all-the-icons-faicon "music" :face 'all-the-icons :v-adjust 0.01)
@@ -11221,9 +11221,7 @@ Copy source code marked up in various ways.
                                                   (all-the-icons-faicon "desktop" :face 'all-the-icons :v-adjust 0.01)
                                                   " "
                                                   (all-the-icons-faicon "moon-o" :face 'all-the-icons :v-adjust 0.01)))
-              ("q" nil))
-
-            (advice-add #'malb/ambient/body :around  #'malb/switch-away-from-special-advice)))
+              ("q" nil))))
 #+end_src
 
 * Browsing
