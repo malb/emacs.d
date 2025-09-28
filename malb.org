@@ -506,7 +506,8 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
                                  (rx (seq bos "*tzc-times*" eos))
                                  (rx (seq bos "*batzenca*" eos))
                                  (rx (seq bos "*ggtags-global*" eos))
-                                 (rx (seq bos "*Org-Babel Error Output*" eos))))
+                                 (rx (seq bos "*Org-Babel Error Output*" eos))
+                                 (rx (seq bos "*Wfnames*" eos))))
 #+end_src
 
 #+begin_src emacs-lisp
