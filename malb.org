@@ -8711,11 +8711,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                            (all-the-icons-faicon "tag" :face 'all-the-icons :v-adjust 0.01)
                                            ": %m, "
                                            (all-the-icons-faicon "envelope" :face 'all-the-icons :v-adjust 0.01)
-                                           ": %M")))
-#+end_src
-
-#+begin_src emacs-lisp
-(add-to-list 'mu4e-headers-mode-hook #'stripe-buffer-mode)
+                                           ": %M"))
+  (add-to-list 'mu4e-headers-mode-hook #'stripe-buffer-mode))
 #+end_src
 
 #+begin_src emacs-lisp
