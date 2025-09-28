@@ -2515,6 +2515,12 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                   (set-mark pos)
                   (exchange-point-and-mark))))
 
+            (malb/defadvice! malb/er-add-text-mode-expansions (old-function &rest args)
+              :around 'er/add-text-mode-expansions
+              (unless (member major-mode expand-region-exclude-text-mode-expansions)
+                (apply old-function args)
+                (add-to-list 'er/try-expand-list 'er/mark-word)))
+
             (defun malb/er-org-mode-expansions ()
               (set (make-variable-buffer-local 'er/try-expand-list)
                    '(er/mark-word
