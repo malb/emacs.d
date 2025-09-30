@@ -8054,7 +8054,7 @@ Run =latexmk -pvc= in async shell
   :defer 0
   :ensure-system-package spectacle
   :config
-  (setq latex-ocr-command "pix2tex.sh %2"
+  (setq latex-ocr-command "pix2tex.sh %s"
         latex-ocr-secondary-command "surya-latex-ocr.sh %s"))
 #+end_src
 
