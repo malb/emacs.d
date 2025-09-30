@@ -9307,7 +9307,7 @@ Headers to show in header view.
 #+begin_src emacs-lisp
 (defun malb/mu4e-view-mode-hook ()
   "View e-mails with width restriction, but wider for HTML."
-  (set-fill-column 80)
+  (set-fill-column 78)
   (visual-line-mode 1))
 
 (add-hook 'gnus-article-mode-hook #'malb/mu4e-view-mode-hook)
