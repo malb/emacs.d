@@ -5548,13 +5548,24 @@ cat mylog.log >> #<buffer *scratch*>
 
 #+begin_src emacs-lisp
 (use-package detached
-  :init (detached-init)
   :ensure-system-package ((dtach . dtach))
   :bind (;; Replace `async-shell-command' with `detached-shell-command'
          ([remap async-shell-command] . detached-shell-command))
-  :custom ((detached-show-session-context nil)
+  :custom ((detached-show-session-context t)
            (detached-terminal-data-command system-type))
-
+  :init
+  (setq detached-init-package-integration
+        '(;; (compile . detached-init--compile)
+          (dired . detached-init--dired)
+          (dired-rsync . detached-init--dired-rsync)
+          ;; (embark . detached-init--embark)
+          (eshell . detached-init--eshell)
+          ;; (nano-modeline . detached-init--nano-modeline)
+          (org . detached-init--org)
+          ;; (projectile . detached-init--projectile)
+          (shell . detached-init--shell)
+          (vterm . detached-init--vterm)))
+  (detached-init)
   :config (progn
             (defun malb/detached-state-transition-notifications-message (session)
               "Issue a notification when SESSION transitions from active to inactive.
