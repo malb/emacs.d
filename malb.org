@@ -4017,7 +4017,9 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 Place rich text version of selection in clipboard ([[https://melpa.org/#/ox-clip][source]])
 
 #+begin_src emacs-lisp
-(use-package ox-clip)
+(use-package ox-clip
+  :ensure-system-package ((wl-clip . wl-clipboard-rs))
+  :custom (ox-clip-linux-cmd "wl-clip -verbose -i \"%f\" -t text/html -selection clipboard"))
 #+end_src
 
 *** HTML Clipboard
