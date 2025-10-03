@@ -668,11 +668,7 @@ If there was no error the window closes automatically.
   (when (and (eq status 'exit) (zerop code))
     ;; and delete the *compilation* window
     (let ((compilation-window (get-buffer-window (get-buffer "*compilation*"))))
-
-      (when (and (not (window-at-side-p compilation-window 'top))
-                 (window-at-side-p compilation-window 'left)
-                 (window-at-side-p compilation-window 'right))
-        (delete-window compilation-window))))
+      (delete-window compilation-window)))
   ;; Always return the anticipated result of compilation-exit-message-function
   (cons msg code))
 
@@ -5554,7 +5550,7 @@ cat mylog.log >> #<buffer *scratch*>
   :ensure-system-package ((dtach . dtach))
   :bind (;; Replace `async-shell-command' with `detached-shell-command'
          ([remap async-shell-command] . detached-shell-command))
-  :custom ((detached-show-output-on-attach t)
+  :custom ((detached-show-session-context nil)
            (detached-terminal-data-command system-type))
 
   :config (progn
