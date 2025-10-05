@@ -12216,7 +12216,7 @@ Make links in comments and string clickable
               :doc "Keymap for `ollama-shell-mode'."
               "C-r" #'ollama-shell-reset-context)
 
-            (defun ollama-base64-images-maybe (shell-prompt)
+            (defun malb/shell-maker-base64-images-maybe (shell-prompt)
               "Check if image paths are present in PROMPT and return list of images if true."
               (let (images)
                 (with-temp-buffer
@@ -12242,7 +12242,7 @@ Make links in comments and string clickable
             (defun ollama-shell-make-payload (shell-prompt model)
               "Create elisp object encoding PROMPT and MODEL."
               (let* ((ollama-buffer (current-buffer))
-                     (ret (ollama-base64-images-maybe shell-prompt))
+                     (ret (malb/shell-maker-base64-images-maybe shell-prompt))
                      (shell-prompt (car ret))
                      (images (cdr ret)))
 
@@ -12334,6 +12334,17 @@ Make links in comments and string clickable
               (setq-local ollama-shell-images nil))
 
             (malb/register-right-side-window (rx bos "*ollama*" eos) t)))
+#+end_src
+
+** Llama Swap Shell
+
+#+begin_src emacs-lisp
+(use-package llama-swap-shell
+  :ensure nil
+  :commands (llama-swap-shell)
+  :custom ((llama-swap-shell-prodigy-service-name "Llama Swap"))
+  :init (malb/register-right-side-window (rx bos "*llama-swap*" eos) t)
+  :config (setopt llama-swap-shell-models (llama-swap-shell-models-from-config "~/.config/llama-swap.conf")))
 #+end_src
 
 * File Types
