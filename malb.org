@@ -3260,7 +3260,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-startup-with-latex-preview nil
       org-preview-latex-default-process 'dvisvgm
       org-pretty-entities nil
-      org-image-actual-width 1000)
+      org-image-actual-width 768)
 #+end_src
 
 #+begin_src emacs-lisp
