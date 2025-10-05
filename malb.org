@@ -11995,6 +11995,7 @@ Make links in comments and string clickable
   :config (progn
             (require 'llm-ollama)
             (require 'llm-openai)
+            (require 'llama-swap-shell)
 
             (define-derived-mode malb/ellama-major-mode
               org-mode"Ellama Major Mode"
@@ -12018,8 +12019,13 @@ Make links in comments and string clickable
                     ((stringp model) (make-llm-openai-compatible :url model))
                     (t (apply #'make-llm-ollama model))))
 
+            (defconst malb/llm-default (make-llm-openai-compatible :url "http://localhost:38080/upstream/default/"))
+            (defconst malb/llm-grammar (make-llm-openai-compatible :url "http://localhost:38080/upstream/grammar/"))
+            (defconst malb/llm-commit (make-llm-openai-compatible :url "http://localhost:38080/upstream/commit/"))
+            (defconst malb/llm-translate (make-llm-openai-compatible :url "http://localhost:38080/upstream/translate/"))
+
             (setopt ellama-language "German"
-                    ellama-provider (malb/llm-provider malb/ollama-default)
+                    ellama-provider (malb/llm-provider malb/llm-default)
                     ellama-long-lines-length 1000000
                     ellama-fill-paragraphs nil
                     ellama-enable-keymap nil
@@ -12067,9 +12073,9 @@ Make links in comments and string clickable
                      (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
                                                        (when (eq major-mode 'fundamental-mode)
                                                          (normal-mode)))))
-                     (ellama-provider (malb/llm-provider malb/ollama-translate-default)))
+                     (ellama-provider malb/llm-translate))
 
-                (malb/start-ollama-maybe)
+                (llama-swap-shell-start-server-maybe)
 
                 (unwind-protect
                     (if change
@@ -12121,7 +12127,7 @@ Make links in comments and string clickable
                                                           (current-buffer) beg end)
                                                        (buffer-substring-no-properties beg end))))))
 
-                   (malb/start-ollama-maybe)
+                   (llama-swap-shell-start-server-maybe)
 
                    (when ,(plist-get args :model)
                      (setq ellama-provider (malb/llm-provider ,(plist-get args :model))
@@ -12159,10 +12165,10 @@ Make links in comments and string clickable
             (malb/defadvice! malb/ellama-generate-commit-message (old-function &rest args)
               :around #'ellama-generate-commit-message
 
-              (malb/start-ollama-maybe)
+              (llama-swap-shell-start-server-maybe)
 
               (let ((old-ellama-provider ellama-provider)
-                    (ellama-provider (malb/llm-provider malb/ollama-commit-message-default)))
+                    (ellama-provider malb/llm-commit))
                 (unwind-protect
                     (apply old-function args)
                   (setq ellama-provider old-ellama-provider))))
@@ -12170,33 +12176,6 @@ Make links in comments and string clickable
             (require 'llm-prompts)
             (bind-key "C-c w t l" #'malb/translate-llm)
             (malb/register-right-side-window (rx bos "ellama-session") t)))
-#+end_src
-
-** COMMENT ChatGPT Shell
-
-#+begin_src emacs-lisp
-(use-package chatgpt-shell
-  :config (progn
-            (defun shell-maker-welcome-message (config) "")
-
-            (defun malb/chatgpt-ollama-shell (arg)
-              (interactive "P")
-              (let ((ollama-service (prodigy-find-service "Ollama Server")))
-                (when (not (prodigy-service-started-p ollama-service))
-                  (prodigy-start-service ollama-service)
-                  (sit-for 2)))
-
-              (chatgpt-shell-ollama-load-models)
-
-              (when arg
-                (chatgpt-shell-swap-model))
-
-              (chatgpt-shell))
-
-            (malb/register-right-side-window (rx bos "*ollama llm") t)
-
-            (setq chatgpt-shell-model-version
-                  (cl-struct-slot-value 'llm-ollama 'chat-model ellama-provider))))
 #+end_src
 
 ** Shell Maker
@@ -12280,10 +12259,7 @@ Make links in comments and string clickable
               "Start an ollama shell."
               (interactive "P")
 
-              (let ((ollama-service (prodigy-find-service "Ollama Server")))
-                (when (not (prodigy-service-started-p ollama-service))
-                  (prodigy-start-service ollama-service)
-                  (sit-for 2)))
+              (malb/start-ollama-maybe)
 
               (when arg
                 (setq ellama-provider (ellama-get-ollama-local-model))
@@ -12342,7 +12318,8 @@ Make links in comments and string clickable
 (use-package llama-swap-shell
   :ensure nil
   :commands (llama-swap-shell)
-  :custom ((llama-swap-shell-prodigy-service-name "Llama Swap"))
+  :custom ((llama-swap-shell-prodigy-service-name "Llama Swap")
+           (llama-swap-shell-api-url "http://localhost:38080/upstream/%s/chat/completions"))
   :init (malb/register-right-side-window (rx bos "*llama-swap*" eos) t)
   :hook (llama-shell-mode . malb/company-prose-setup)
   :config (setopt llama-swap-shell-models (llama-swap-shell-models-from-config "~/.config/llama-swap.conf")))
@@ -13000,7 +12977,7 @@ Easily change the text size:
 (malb/set-menu-key "o" #'malb/helm-org-ql-agenda-files)
 (malb/set-menu-key "p" #'prodigy)
 (malb/set-menu-key "P" #'malb/toggle-latexmk)
-(malb/set-menu-key "q" #'ollama-shell)
+(malb/set-menu-key "q" #'llama-swap-shell)
 (malb/set-menu-key "S" #'malb/toggle-sage-jupyter)
 (malb/set-menu-key "s" #'malb/switch-tab)
 (malb/set-menu-key "t" #'helm-tramp)
