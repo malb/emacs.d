@@ -151,7 +151,6 @@ For example:
     ;; (dolist (chunk chunks)
     ;;   (let ((json (aref (alist-get 'choices (shell-maker--json-parse-string chunk)) 0)))
     ;;     (setq response (concat response (alist-get 'content (alist-get 'message json))))
-    ;;     (add-to-list 'llama-swap-shell-messages (alist-get 'message json))
     ;;     ))
 
     (dolist (chunk chunks)
