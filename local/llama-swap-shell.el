@@ -136,8 +136,8 @@ For example:
      history)
     result))
 
-(defun llama-swap-shell-create-request (prompt)
-  "Create request from PROMPT and history."
+(defun llama-swap-shell-create-request (prompt model)
+  "Create request from PROMPT and history to MODEL."
   (let* ((messages (llama-swap-shell-make-messages))
          (parsed (llama-swap-shell-base64-images-maybe prompt))
          (prompt (car parsed))
@@ -149,7 +149,8 @@ For example:
           (push `(:role "user" :content ,prompt) messages))
       (push `(:role "user" :content ,prompt) messages))
 
-    `(:messages ,(vconcat (nreverse messages))
+    `(:model ,model
+      :messages ,(vconcat (nreverse messages))
       :stream t)))
 
 (defun llama-swap-shell-parse-response (raw-response)
@@ -178,12 +179,12 @@ For example:
         ))
     (list (cons :filtered (concat response)))))
 
-(defun llama-swap-shell-call-api-curl-command (object model)
+(defun llama-swap-shell-call-api-curl-command (object)
   "Encode OBJECT as json and send to MODEL via curl."
   (let ((json (json-encode object))
         (json-path (make-temp-file "llama-swap-shell-request" nil ".json")))
     (with-temp-file json-path (insert json))
-    (append (list "curl" (format "%s/upstream/%s/chat/completions" llama-swap-shell-api-url-base model))
+    (append (list "curl" (format "%s/v1/chat/completions" llama-swap-shell-api-url-base))
             `("--data" ,(format "@%s" json-path)))))
 
 ;;;###autoload
@@ -210,8 +211,7 @@ When ARG is given, prompt the user for a model."
                     (shell-maker-execute-command
                      :async t
                      :command (llama-swap-shell-call-api-curl-command
-                               (llama-swap-shell-create-request command)
-                               llama-swap-shell--model)
+                               (llama-swap-shell-create-request command llama-swap-shell--model))
                      :filter #'llama-swap-shell-parse-response
                      :shell shell)))))
 
