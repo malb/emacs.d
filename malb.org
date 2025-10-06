@@ -12319,7 +12319,7 @@ Make links in comments and string clickable
   :ensure nil
   :commands (llama-swap-shell)
   :custom ((llama-swap-shell-prodigy-service-name "Llama Swap")
-           (llama-swap-shell-api-url "http://localhost:38080/upstream/%s/chat/completions"))
+           (llama-swap-shell-api-url-base "http://localhost:38080"))
   :init (malb/register-right-side-window (rx bos "*llama-swap*" eos) t)
   :hook (llama-shell-mode . malb/company-prose-setup)
   :config (setopt llama-swap-shell-models (llama-swap-shell-models-from-config "~/.config/llama-swap.conf")))

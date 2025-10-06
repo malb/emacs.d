@@ -7,6 +7,7 @@
 ;;; Code:
 
 (require 'shell-maker)
+(require 'request)
 (require 'prodigy)
 (require 'yaml)
 
@@ -14,7 +15,7 @@
   "Chat to models via llama-swap."
   :group 'tools)
 
-(defcustom llama-swap-shell-api-url "http://localhost:8080/upstream/%s/chat/completions"
+(defcustom llama-swap-shell-api-url-base "http://localhost:8080"
   "URL of lllama-swap server."
   :group 'llama-swap-shell
   :type 'string)
@@ -84,15 +85,26 @@
                                                   (insert-file-contents (expand-file-name path))
                                                   (buffer-string))
                                                 :object-type 'alist))))
+;;;###autoload
+(defun llama-swap-shell-models-from-server ()
+  "Get list of models from the server."
+  (mapcar (lambda (x) (alist-get 'id x))
+          (alist-get 'data (request-response-data
+                            (request
+                              (format "%s/v1/models" llama-swap-shell-api-url-base)
+                              :parser 'json-read
+                              :sync t)))))
 
 (defun llama-swap-shell-image-to-request (image)
   "Turn base64 encoded IMAGE into request."
   `(:role "user" :content [(:type "image_url" :image_url (:url ,image))]))
 
-(defun llama-swap-shell-select-model ()
-  "Interactively select a model."
-  (interactive)
-  (completing-read "Llama Swap Model: " llama-swap-shell-models))
+(defun llama-swap-shell-select-model (&optional use-cache)
+  "Interactively select a model, USE-CACHE if instructed."
+  (interactive "P")
+  (unless use-cache
+    (setq llama-swap-shell-models (llama-swap-shell-models-from-server)))
+  (setq llama-swap-shell--model (completing-read "Llama Swap Model: " llama-swap-shell-models)))
 
 ;; based on chatgpt-shell-openai--user-assistant-messages
 (defun llama-swap-shell-make-messages ()
@@ -171,7 +183,7 @@ For example:
   (let ((json (json-encode object))
         (json-path (make-temp-file "llama-swap-shell-request" nil ".json")))
     (with-temp-file json-path (insert json))
-    (append (list "curl" (format llama-swap-shell-api-url model))
+    (append (list "curl" (format "%s/upstream/%s/chat/completions" llama-swap-shell-api-url-base model))
             `("--data" ,(format "@%s" json-path)))))
 
 ;;;###autoload
