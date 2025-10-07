@@ -171,7 +171,7 @@ When ARG is given, allow to select the voice first."
          (set-voice (if arg (piper-voices-completing-read) nil)))
     (dolist (text texts)
       (add-to-list 'files (piper-render-speech text set-voice default-language) t))
-    ;; TODO I'm too lazy to figure out how to prevent emms from keeping th last file in the
+    ;; TODO I'm too lazy to figure out how to prevent emms from keeping the last file in the
     ;; playlist, we just add a short silence to make it unnoticeable
     (add-to-list 'files silence t)
     (dolist (file files)
