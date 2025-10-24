@@ -11118,7 +11118,7 @@ Copy source code marked up in various ways.
           (prodigy-define-service
             :name "Phone Screen Sharing"
             :command "scrcpy"
-            :args '("--new-display=2560x1600/300" "--keyboard=uhid")
+            :args '("--new-display=2560x1600/300" "--keyboard=uhid" "--stay-awake" "--turn-screen-off")
             :tags '(phone))
 
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
