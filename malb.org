@@ -11107,15 +11107,6 @@ Copy source code marked up in various ways.
             :tags '(draw))
 
           (prodigy-define-service
-            :name "Ollama Server"
-            :command "ollama"
-            :args '("serve")
-            :env '(("OLLAMA_KV_CACHE_TYPE" "q8_0"))
-            :stop-signal 'kill
-            :port 11434
-            :tags '(llm))
-
-          (prodigy-define-service
             :name "Open WebUI"
             :command "conda"
             :env '(("WEBUI_AUTH" "false")
