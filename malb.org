@@ -11122,6 +11122,7 @@ Copy source code marked up in various ways.
             :tags '(phone))
 
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
+          (malb/register-right-side-window (rx (seq bos "*prodigy*" eos)))
 
           ;; start some services
           (when (and (daemonp) (not malb/startup-quick))
