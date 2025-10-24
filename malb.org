@@ -6337,9 +6337,9 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 (use-package aidermacs
   :bind (("C-c `" . aidermacs-transient-menu))
-  :custom ((aidermacs-architect-model "openai/qwen3:30b-a3b")
-           (aidermacs-editor-model    "openai/qwen3:30b-a3b")
-           (aidermacs-default-model   "openai/qwen3:30b-a3b")
+  :custom ((aidermacs-architect-model "openai/aider")
+           (aidermacs-editor-model    "openai/aider")
+           (aidermacs-default-model   "openai/aider")
            (aidermacs-use-architect-mode t)
            (aidermacs-backend 'comint))
   :config (setq aidermacs-extra-args
