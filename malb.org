@@ -3722,6 +3722,8 @@ iCal export is triggered after 600 seconds of inactivity.
             (add-to-list 'org-latex-packages-alist '("," "babel"))
             (add-to-list 'org-latex-packages-alist '("," "stmaryrd"))
             (add-to-list 'org-latex-packages-alist '("capitalize" "cleveref"))
+            ;; BUG: https://github.com/jbezos/enumitem/issues/55
+            ;; (add-to-list 'org-latex-packages-alist '("inline" "enumitem"))
             (add-to-list 'org-latex-packages-alist (list (s-join "," '("notions"
                                                                        "operators"
                                                                        "sets"
