@@ -12502,11 +12502,12 @@ The result looks like this:
 
 *** Switch between Light and Dark Theme
 
+Do all the work to switch over to a different theme.
+
 #+begin_src emacs-lisp
-(defun malb/toggle-light-dark ()
-  "Switch between light and dark theme"
-  (interactive)
-  (if (custom-theme-enabled-p 'solarized-light-malb)
+(defun malb/switch-theme (dark)
+  "Switch to DARK theme if set, otherwise to light theme."
+  (if dark
       (progn
         (disable-theme 'solarized-light-malb)
         (load-theme 'solarized-zenburn-malb)
@@ -12515,6 +12516,7 @@ The result looks like this:
       (disable-theme 'solarized-zenburn-malb)
       (load-theme 'solarized-light-malb)
       (remove-hook 'pdf-view-mode-hook #'pdf-view-midnight-minor-mode)))
+
   (dolist (buffer (buffer-list))
     (with-current-buffer buffer
       (cond ((eq major-mode 'org-mode)
@@ -12532,6 +12534,56 @@ The result looks like this:
                  (pdf-view-midnight-minor-mode -1)
                (pdf-view-midnight-minor-mode 1))
              )))))
+#+end_src
+
+Toggle between dark and light theme.
+
+#+begin_src emacs-lisp
+(defun malb/toggle-light-dark ()
+  "Switch between light and dark theme."
+  (interactive)
+  (malb/switch-theme (custom-theme-enabled-p 'solarized-light-malb)))
+#+end_src
+
+Toggle the theme to agree with the OS theme.
+
+([[https://freerangebits.com/posts/2025/02/emacs-light-dark/][source]])
+
+#+begin_src emacs-lisp
+(use-package dbus
+  :ensure nil
+  :config
+
+  (defun malb/theme-from-dbus (value)
+    "Change the theme based on a D-Bus property.
+
+VALUE should be an integer or an arbitrarily nested list that contains
+an integer. When VALUE is equal to 2 then a light theme will be
+selected, otherwise a dark theme will be selected."
+
+    (malb/switch-theme (not (= 2 (car (flatten-list value))))))
+
+  (dbus-register-signal
+   :session "org.freedesktop.portal.Desktop"
+   "/org/freedesktop/portal/desktop"
+   "org.freedesktop.portal.Settings"
+   "SettingChanged"
+   (lambda (path var value)
+     (when (and (string-equal path "org.freedesktop.appearance")
+                (string-equal var "color-scheme"))
+       (malb/theme-from-dbus value))))
+
+  (defun malb/sync-theme-from-os ()
+    "Switch to light/dark theme based on OS."
+    (interactive)
+    (dbus-call-method-asynchronously
+     :session "org.freedesktop.portal.Desktop"
+     "/org/freedesktop/portal/desktop"
+     "org.freedesktop.portal.Settings"
+     "Read"
+     #'malb/theme-from-dbus
+     "org.freedesktop.appearance"
+     "color-scheme")))
 #+end_src
 
 *** Load Theme
