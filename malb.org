@@ -12543,8 +12543,6 @@ The result looks like this:
   (when (not malb/theme-loaded)
     (select-frame frame)
     (load-theme 'solarized-light-malb)
-    ;; (eval-after-load "unicode-fonts"
-    ;;   '(unicode-fonts-setup))
     (doom-modeline-mode t)
     (setq malb/theme-loaded t)))
 
