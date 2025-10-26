@@ -41,7 +41,8 @@
 
 (defvar-keymap llama-swap-shell-mode-map
   :parent shell-maker-mode-map
-  :doc "Keymap for `llama-swap-shell-mode'.")
+  :doc "Keymap for `llama-swap-shell-mode'."
+  "C-r" #'shell-maker-clear-buffer)
 
 (defun llama-swap-shell-base64-images-maybe (prompt)
   "Check for image paths in PROMPT and return  base64 encoded images if so."
