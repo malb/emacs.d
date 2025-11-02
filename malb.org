@@ -5340,10 +5340,10 @@ When nth is set, it will copy the nth previous command."
                           company-backends '((company-files :with company-yasnippet)
                                              (company-capf  :with company-yasnippet)))
               (define-key eshell-mode-map [remap eshell-pcomplete]
-                          (lambda ()
-                            (interactive)
-                            (let ((completion--capf-misbehave-funs nil))
-                              (call-interactively #'company-capf)))))
+                (lambda ()
+                  (interactive)
+                  (let ((completion--capf-misbehave-funs nil))
+                    (call-interactively #'company-capf)))))
 
             (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
