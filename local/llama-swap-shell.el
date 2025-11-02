@@ -57,16 +57,9 @@
               (beg (match-beginning 0))
               (end (match-end 0)))
           (if (file-exists-p filename)
-              (progn
-                (push
-                 (format "data:%s;base64,%s"
-                         (s-replace "\n" "" (shell-command-to-string (format "xdg-mime query filetype %s" filename)))
-                         (with-temp-buffer
-                           (insert-file-contents filename)
-                           (base64-encode-string (buffer-string) t)))
-                 images)
-                (delete-region beg end))
-            (message "ollama: file not found: %s" filename))))
+              (progn (push filename images)
+                     (delete-region beg end))
+            (message "llama-swap: file not found: %s" filename))))
       (setq prompt (buffer-substring-no-properties (point-min) (point-max))))
     (cons prompt (nreverse images))))
 
@@ -96,9 +89,15 @@
                               :parser 'json-read
                               :sync t)))))
 
-(defun llama-swap-shell-image-to-request (image)
-  "Turn base64 encoded IMAGE into request."
-  `(:role "user" :content [(:type "image_url" :image_url (:url ,image))]))
+(defun llama-swap-shell-image-to-request (filename)
+  "Turn image given by a FILENAME into base64 encoded request."
+  `(:type "image_url"
+    :image_url (:url
+                ,(format "data:%s;base64,%s"
+                         (s-replace "\n" "" (shell-command-to-string (format "xdg-mime query filetype %s" filename)))
+                         (with-temp-buffer
+                           (insert-file-contents filename)
+                           (base64-encode-string (buffer-string) t))))))
 
 (defun llama-swap-shell-select-model (&optional use-cache)
   "Interactively select a model, USE-CACHE if instructed."
@@ -106,6 +105,17 @@
   (unless use-cache
     (setq llama-swap-shell-models (llama-swap-shell-models-from-server)))
   (setq llama-swap-shell--model (completing-read "Llama Swap Model: " llama-swap-shell-models)))
+
+(defun llama-swap-shell-make-a-message (prompt)
+  "Parse PROMPT and prepare data structure for submission."
+  (let* ((parsed (llama-swap-shell-base64-images-maybe prompt))
+         (prompt (car parsed))
+         (images (cdr parsed))
+         content)
+    (push `(:type "text" :text ,prompt) content)
+    (dolist (image images)
+      (push (llama-swap-shell-image-to-request image) content))
+    `(:role "user" :content ,(vconcat (nreverse content)))))
 
 ;; based on chatgpt-shell-openai--user-assistant-messages
 (defun llama-swap-shell-make-messages ()
@@ -123,32 +133,16 @@ For example:
         (result))
     (mapc
      (lambda (item)
-       (when (car item)
-         (let* ((parsed (llama-swap-shell-base64-images-maybe (car item)))
-                (prompt (car parsed))
-                (images (cdr parsed)))
-           (dolist (image images)
-             (push (llama-swap-shell-image-to-request image) result))
-           (push `(:role "user" :content ,prompt)
-                 result)))
-       (when (cdr item)
-         (push `(:role "assistant" :content ,(cdr item))
-               result)))
+       (when (car item) (push (llama-swap-shell-make-a-message (car item)) result))
+       (when (cdr item) (push `(:role "assistant" :content ,(cdr item)) result)))
      history)
     result))
 
 (defun llama-swap-shell-create-request (prompt model)
   "Create request from PROMPT and history to MODEL."
   (let* ((messages (llama-swap-shell-make-messages))
-         (parsed (llama-swap-shell-base64-images-maybe prompt))
-         (prompt (car parsed))
-         (images (cdr parsed)))
-
-    (if images
-        (progn
-          (dolist (image images) (push (llama-swap-shell-image-to-request image) messages))
-          (push `(:role "user" :content ,prompt) messages))
-      (push `(:role "user" :content ,prompt) messages))
+         (message (llama-swap-shell-make-a-message prompt)))
+    (push message messages)
 
     `(:model ,model
       :messages ,(vconcat (nreverse messages))
