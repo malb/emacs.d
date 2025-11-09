@@ -23,7 +23,7 @@
 (defcustom llama-swap-shell-models nil
   "A list of models. The first entry is picked by default."
   :group 'llama-swap-shell
-  :type '(list string))
+  :type '(set string))
 
 (defcustom llama-swap-shell-pre-startup-functions '(llama-swap-shell-start-server-maybe)
   "Functions called before start, e.g. to start the server."
@@ -189,6 +189,9 @@ For example:
 When ARG is given, prompt the user for a model."
   (interactive "P")
 
+  (dolist (f llama-swap-shell-pre-startup-functions)
+    (funcall f))
+
   (setq llama-swap-shell--model
         (cond
          (arg (llama-swap-shell-select-model))
@@ -209,9 +212,6 @@ When ARG is given, prompt the user for a model."
                                (llama-swap-shell-create-request command llama-swap-shell--model))
                      :filter #'llama-swap-shell-parse-response
                      :shell shell)))))
-
-    (dolist (f llama-swap-shell-pre-startup-functions)
-      (funcall f))
 
     (shell-maker-start config)
 
