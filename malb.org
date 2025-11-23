@@ -8431,6 +8431,7 @@ index 10b1afb..0bcbbd5 100644
                      (daemonp))
                 (let ((async-prompt-for-password nil))
                   (async-start `(lambda ()
+                                  (setq package-user-dir (expand-file-name "~/.cache/emacs/elpa"))
                                   (add-to-list 'load-path (expand-file-name "local/" user-emacs-directory))
                                   (setq load-prefer-newer t)
                                   (package-initialize)
