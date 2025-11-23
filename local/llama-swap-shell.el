@@ -114,7 +114,8 @@
          content)
     (push `(:type "text" :text ,prompt) content)
     (dolist (image images)
-      (push (llama-swap-shell-image-to-request image) content))
+      (push (llama-swap-shell-image-to-request image) content)
+      (message "Attached %s" image))
     `(:role "user" :content ,(vconcat (nreverse content)))))
 
 ;; based on chatgpt-shell-openai--user-assistant-messages
