@@ -23,7 +23,7 @@
 (defcustom llama-swap-shell-models nil
   "A list of models. The first entry is picked by default."
   :group 'llama-swap-shell
-  :type '(set string))
+  :type '(repeat string))
 
 (defcustom llama-swap-shell-pre-startup-functions '(llama-swap-shell-start-server-maybe)
   "Functions called before start, e.g. to start the server."
