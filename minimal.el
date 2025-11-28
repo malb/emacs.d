@@ -6,6 +6,8 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
+(load-theme 'tsdh-dark t)
+
 (winner-mode 1)
 
 (global-set-key (kbd "¬") #'other-window)
