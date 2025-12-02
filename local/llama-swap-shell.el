@@ -139,11 +139,12 @@ For example:
      history)
     result))
 
-(defun llama-swap-shell-create-request (prompt model)
+(defun llama-swap-shell-create-request (_ model)
   "Create request from PROMPT and history to MODEL."
   (let* ((messages (llama-swap-shell-make-messages))
-         (message (llama-swap-shell-make-a-message prompt)))
-    (push message messages)
+         ;; (message (llama-swap-shell-make-a-message prompt))
+         )
+    ;; (push message messages)
 
     `(:model ,model
       :messages ,(vconcat (nreverse messages))
