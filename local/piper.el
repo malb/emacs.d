@@ -129,6 +129,7 @@ Region between BEGINNING and END is converted."
     (setq tmp (replace-regexp-in-string (rx ", d.h. ") ", das heißt " tmp))
     (setq tmp (replace-regexp-in-string (rx " i.e." (or "," " " " ")) " that is " tmp))
     (setq tmp (replace-regexp-in-string (rx " e.g." (or "," " " " "))" for example " tmp))
+    (setq tmp (replace-regexp-in-string (rx "*" (group (*? anything))  "*") "\\1" tmp))
     tmp))
 
 (defun piper-render-speech (text &optional voice default-language)
