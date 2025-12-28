@@ -6275,6 +6275,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :commands (lsp malb/lsp-enable-maybe)
   :custom ((lsp-eldoc-render-all nil)
            (lsp-modeline-diagnostics-scope :file)
+           (lsp-warn-no-matched-clients nil)
            (lsp-restart 'ignore)
            (lsp-completion-provider :none "We enable it manually"))
   :bind (:map lsp-mode-map
