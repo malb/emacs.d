@@ -10558,8 +10558,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
            (wdired-allow-to-change-permissions t)
            (wdired-use-dired-vertical-movement 'sometimes))
   :bind (:map dired-mode-map
-         ("a"   . dired-find-file-other-window)
-         ("RET" . dired-find-alternate-file)
+         ("a"   . dired-find-file)
+         ("RET" . malb/dired-find-alternate-file-maybe)
          ("^"   . (lambda () (interactive) (find-alternate-file "..")))
          ("q"   . (lambda () (interactive) (find-alternate-file "..")))
          ("Q"   . quit-window)
@@ -10567,6 +10567,16 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
          ("C-c C-o" . dired-do-open))
   :config (progn
             (require 'dired-x)
+
+            (defun malb/dired-find-alternate-file-maybe (&optional arg)
+              "kill Dired buffer when target is a Dired buffer unless ARG is given."
+              (interactive "P")
+              (when (not (string-equal major-mode "dired-mode"))
+                (user-error "not in Dired buffer"))
+              (let ((filename (dired-get-file-for-visit)))
+                (if (and (not arg) (file-directory-p filename))
+                    (dired-find-alternate-file)
+                  (dired-find-file))))
 
             (defvar malb/unimportant-files
               (rx (or (seq "." (or "aux"
