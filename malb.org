@@ -3052,7 +3052,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-use-speed-commands t
       org-catch-invisible-edits 'smart
       org-adapt-indentation nil         ; Non-nil means adapt indentation to outline node level.
-      org-tags-column -120
+      org-tags-column -115
       org-startup-folded 'fold
       org-log-into-drawer t
       org-log-done 'time
