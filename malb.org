@@ -1168,6 +1168,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 #+begin_src emacs-lisp
 (use-package company
   :bind (("M-/" . company-complete)
+         ("M-#" . company-files)
          :map company-active-map
          ("C-n" . company-select-next)
          ("C-p" . company-select-previous)
