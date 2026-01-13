@@ -3332,6 +3332,8 @@ Pretty print some maths:
               "NEXT"
               "PAY(P)"
               "BOOK(B)"
+              "BUY"
+              "SELL"
               "|" "DONE")))
 
 (org-clock-persistence-insinuate)
