@@ -12069,12 +12069,14 @@ Make links in comments and string clickable
                      (end (if (not (use-region-p))
                               (save-excursion (forward-paragraph) (- (point) 1))
                             (region-end)))
-                     (filter (lambda (text) (concat
-                                             (string-trim
-                                              (replace-regexp-in-string
-                                               (rx bol "Sure, here is the translated text in" (one-or-more any) ":" eol)
-                                               "" text))
-                                             "\n")))
+                     (filter (lambda (text) text
+                               ;; (concat
+                               ;;  (string-trim
+                               ;;   (replace-regexp-in-string
+                               ;;    (rx bol "Sure, here is the translated text in" (one-or-more any) ":" eol)
+                               ;;    "" text))
+                               ;;  "\n")
+                               ))
                      (text (buffer-substring-no-properties beg end))
                      (from-language (with-temp-buffer
                                       (insert text)
@@ -12084,8 +12086,11 @@ Make links in comments and string clickable
                      (to-language (if (s-equals-p from-language "English")
                                       ellama-language
                                     "British English"))
-                     (task (format (concat "Translate the following text to %s. "
-                                           "Output only the text and nothing else, do not chat, no preamble:\n%s")
+                     (task (format (concat "Translate the following segment into %s, without additional explanation.\n"
+                                           ;; "Translate the following text to %s. "
+                                           ;; "Output only the text and nothing else, do not chat, no preamble:\n"
+                                           "%s"
+                                           )
                                    to-language text))
                      (old-ellama-provider ellama-provider)
                      (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
