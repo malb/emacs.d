@@ -2545,7 +2545,20 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                      er/mark-sentence
                      er/mark-org-parent
                      er/mark-paragraph)))
-            (add-hook 'org-mode-hook #'malb/er-org-mode-expansions)))
+
+            (defun malb/er-mu4e-view-mode-expansions ()
+              (set (make-variable-buffer-local 'er/try-expand-list)
+                   '(er/mark-word
+                     er/mark-symbol
+                     er/mark-symbol-with-prefix
+                     er/mark-inside-quotes
+                     er/mark-outside-quotes
+                     er/mark-url
+                     er/mark-email
+                     er/mark-text-sentence
+                     er/mark-text-paragraph)))
+
+            (add-hook 'mu4e-view-mode-hook #'malb/er-mu4e-view-mode-expansions)))
 #+end_src
 
 Alternatively, consider
