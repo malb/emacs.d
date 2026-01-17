@@ -1063,7 +1063,8 @@ We disable yasnippet if there are no snippets. ([[https://github.com/joaotavora/
 The official yasnippet snippet collection
 
 #+begin_src emacs-lisp
-(use-package yasnippet-snippets)
+(use-package yasnippet-snippets
+  :after yasnippet)
 #+end_src
 
 *** Auto YASnippet
@@ -1074,6 +1075,7 @@ The official yasnippet snippet collection
 
 #+begin_src emacs-lisp
 (use-package auto-yasnippet
+  :after yasnippet
   :bind (("C-c y c" . aya-create)
          ("C-c y e" . aya-expand)))
 #+end_src
@@ -1210,16 +1212,14 @@ Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display
 ** Python
 
 #+begin_src emacs-lisp
-(use-package company-anaconda
-  :defer nil
-  :config (defun malb/company-python-setup ()
-            (when (boundp 'company-backends)
-              (setq-local company-backends
-                          '((company-files :with company-yasnippet)
-                            (company-math-symbols-unicode company-capf :with company-yasnippet)
-                            ;; (company-anaconda :with company-yasnippet)
-                            (company-dabbrev-code company-gtags company-etags company-keywords :with company-yasnippet)
-                            (company-dabbrev :with company-yasnippet))))))
+(defun malb/company-python-setup ()
+  (when (boundp 'company-backends)
+    (setq-local company-backends
+                '((company-files :with company-yasnippet)
+                  (company-math-symbols-unicode company-capf :with company-yasnippet)
+                  ;; (company-anaconda :with company-yasnippet)
+                  (company-dabbrev-code company-gtags company-etags company-keywords :with company-yasnippet)
+                  (company-dabbrev :with company-yasnippet)))))
 #+end_src
 
 ** LaTeX
@@ -1247,13 +1247,15 @@ For \LaTeX use [[https://github.com/alexeyr/company-auctex][company-auctex]]. We
             (advice-add #'company-math-symbols-latex :around #'malb/enforce-case-sensitive)
             (advice-add #'company-math-symbols-unicode :around #'malb/enforce-case-sensitive)))
 
-(use-package company-auctex)
+(use-package company-auctex
+  :after tex)
 #+end_src
 
 [[https://github.com/TheBB/company-reftex][company-refex]] is used for \LaTeX labels.
 
 #+begin_src emacs-lisp
-(use-package company-reftex)
+(use-package company-reftex
+  :after tex)
 #+end_src
 
 BibTeX is handled by Helm BibTeX below.
@@ -4858,7 +4860,8 @@ This extension facilitates moving images from point A (e.g. an image inside your
 [[https://github.com/Chobbes/org-chef][org-chef]]
 
 #+begin_src emacs-lisp
-(use-package org-chef)
+(use-package org-chef
+  :commands (org-chef-insert-recipe))
 #+end_src
 
 ** Org Wikiinfo
@@ -8755,6 +8758,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 
 #+begin_src emacs-lisp
 (use-package mu4e-query-fragments
+  :after mu4e
   :config (setq mu4e-query-fragments-list
                 `(("%trash" . ,(s-join " OR "
                                        '("flag:trashed"
@@ -8811,6 +8815,7 @@ Just press ~l~ in the headers view and any mailing list you've subscribed to wil
 
 #+begin_src emacs-lisp
 (use-package mu4e-jump-to-list
+  :after mu4e
   :config (progn
             (unbind-key "l" mu4e-main-mode-map)
             (unbind-key "l" mu4e-headers-mode-map)))
@@ -9259,6 +9264,7 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 
 #+begin_src emacs-lisp
 (use-package helm-mu
+  :after mu4e
   :custom ((helm-mu-use-mu4e-query-fragments t)
            (helm-mu-prexfix "NOT %ignore AND "))
   :config (progn
@@ -9576,6 +9582,7 @@ Action to search messages by/to sender.
 
 #+begin_src emacs-lisp
 (use-package mu4e-message
+  :after mu4e
   :ensure nil
   :defer t
   :config
@@ -9602,7 +9609,7 @@ Action to search messages involving all correspondents.
 #+begin_src emacs-lisp
 (use-package mu4e-message
   :ensure nil
-  :after helm
+  :after (mu4e helm)
   :defer t
   :config
   (progn
@@ -11159,7 +11166,8 @@ Copy source code marked up in various ways.
 
 #+begin_src emacs-lisp
 (use-package emms-setup
-  :ensure emms)
+  :ensure emms
+  :commands (emms-start emms-add-file emms-next emms-previous emms-pause))
 
 (use-package emms-player-mplayer
   :ensure nil
