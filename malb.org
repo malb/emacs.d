@@ -8702,7 +8702,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 ** Retrieving
 
 #+begin_src emacs-lisp
-(setq mu4e-get-mail-command "timeout 180s mbsync all"
+(setq mu4e-get-mail-command "timeout 180s parallel mbsync ::: sandbox-main googlemail-main kcl-main"
       mu4e-update-interval nil)
 #+end_src
 
