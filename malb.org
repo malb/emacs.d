@@ -8620,7 +8620,7 @@ Spray is a speed reading mode.
 
 #+begin_src emacs-lisp
 (use-package piper
-  :after emms
+  :commands (piper-region)
   :ensure-system-package piper-tts
   :commands piper-region
   :ensure nil)
@@ -11166,16 +11166,14 @@ Copy source code marked up in various ways.
 
 #+begin_src emacs-lisp
 (use-package emms-setup
-  :ensure emms
-  :commands (emms-start emms-add-file emms-next emms-previous emms-pause))
+  :ensure emms)
 
-(use-package emms-player-mplayer
+(use-package emms-player-mpv
   :ensure nil
   :after emms-setup
   :config (progn (emms-standard)
                  (emms-default-players)))
 #+end_src
-
 
 ** Kodi
 
