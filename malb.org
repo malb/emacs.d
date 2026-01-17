@@ -164,7 +164,7 @@ Use [[https://github.com/raxod502/blackout][blackout]] to remove mentions of min
 
 #+begin_src emacs-lisp
 (use-package exec-path-from-shell
-  :config (progn (exec-path-from-shell-initialize)))
+  :config (exec-path-from-shell-initialize))
 #+end_src
 
 * Keyboard Shortcuts
