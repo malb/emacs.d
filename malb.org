@@ -84,10 +84,6 @@ DOCSTRING and BODY are as in `defun'.
 * Package Management
 
 #+begin_src emacs-lisp
-(package-initialize)
-#+end_src
-
-#+begin_src emacs-lisp
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (setq package-archive-priorities '(("gnu" . 1)
                                    ("nongnu" . 1)
