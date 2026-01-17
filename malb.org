@@ -8696,7 +8696,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
       '((:maildir "/gmail/Inbox"            :key ?G)
         (:maildir "/sandbox/Inbox"          :key ?S)
         (:maildir "/kcl/INBOX"              :key ?K)
-        (:maildir "/kcl/Zama Internship"    :key ?z)))
+        (:maildir "/kcl/Lecturer 2026"      :key ?l)))
 #+end_src
 
 ** Retrieving
