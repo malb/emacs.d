@@ -1194,16 +1194,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
            (company-global-modes '(not) "company is 'always on', except for a few … exceptions")
            (company-lighter-base ""))
   :demand t
-  :config (progn
-            (global-company-mode 1)
-            ;; clean up a bit, note that we re-add capf below
-            (dolist (backend '(company-oddmuse
-                               company-cmake
-                               company-clang
-                               company-semantic
-                               company-bbdb
-                               company-capf))
-              (setq company-backends (delq backend company-backends)))))
+  :config (global-company-mode 1))
 #+end_src
 
 Use [[https://github.com/expez/company-quickhelp][company-quickhelp]] to display quick help.
@@ -1280,7 +1271,7 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
 (use-package company-emoji)
 #+end_src
 
-** Setup Symbols
+** Backends
 
 #+begin_src emacs-lisp
 (add-to-list 'company-backends '(company-bibtex-completion
@@ -11154,7 +11145,7 @@ Copy source code marked up in various ways.
           (prodigy-define-service
             :name "Phone Screen Sharing"
             :command "scrcpy"
-            :args '("--new-display=2560x1600/300" "--keyboard=uhid" "--stay-awake" "--turn-screen-off")
+            :args '("--new-display=1920x1200/200" "--keyboard=uhid" "--stay-awake" "--turn-screen-off")
             :tags '(phone))
 
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
