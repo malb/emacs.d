@@ -12088,29 +12088,28 @@ Make links in comments and string clickable
                      (end (if (not (use-region-p))
                               (save-excursion (forward-paragraph) (- (point) 1))
                             (region-end)))
-                     (filter (lambda (text) text
-                               ;; (concat
-                               ;;  (string-trim
-                               ;;   (replace-regexp-in-string
-                               ;;    (rx bol "Sure, here is the translated text in" (one-or-more any) ":" eol)
-                               ;;    "" text))
-                               ;;  "\n")
-                               ))
+                     (filter (lambda (text) text))
                      (text (buffer-substring-no-properties beg end))
-                     (from-language (with-temp-buffer
-                                      (insert text)
-                                      (nth 2 (assq
-                                              (guess-language-buffer)
-                                              guess-language-langcodes))))
-                     (to-language (if (s-equals-p from-language "English")
-                                      ellama-language
-                                    "British English"))
-                     (task (format (concat "Translate the following segment into %s, without additional explanation.\n"
-                                           ;; "Translate the following text to %s. "
-                                           ;; "Output only the text and nothing else, do not chat, no preamble:\n"
-                                           "%s"
-                                           )
-                                   to-language text))
+                     (from-lang (with-temp-buffer (insert text) (guess-language-buffer)))
+                     (to-lang (if (equal from-lang 'en) 'de 'en))
+                     (task (templatel-render-string
+                            (concat
+                             "You are a professional {{ fromlang }} ({{ fromlangcode }}) "
+                             "to {{ tolang }} ({{ tolangcode }}) translator. "
+                             "Your goal is to accurately convey the meaning and nuances of the "
+                             "original {{ fromlang }} text while adhering to {{ tolang }} "
+                             "grammar, vocabulary, and cultural sensitivities. "
+                             "Produce only the {{ tolang }} translation, without any additional "
+                             "explanations or commentary. "
+                             "Please translate the following {{ fromlang }} text into {{ tolang }}:\\n"
+                             "\\n"
+                             "\\n"
+                             "{{ text }}")
+                            `(("fromlang" . ,(nth 2 (assoc from-lang guess-language-langcodes)))
+                              ("fromlangcode" . ,(s-replace "_" "-" (nth 1 (assoc from-lang guess-language-langcodes))))
+                              ("tolang"   . ,(nth 2 (assoc   to-lang guess-language-langcodes)))
+                              ("tolangcode" . ,(s-replace "_" "-" (nth 1 (assoc to-lang guess-language-langcodes))))
+                              ("text" . ,text))))
                      (old-ellama-provider ellama-provider)
                      (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
                                                        (when (eq major-mode 'fundamental-mode)
