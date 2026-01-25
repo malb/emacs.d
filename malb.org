@@ -11148,6 +11148,13 @@ Copy source code marked up in various ways.
             :args '("--new-display=1920x1200/200" "--keyboard=uhid" "--stay-awake" "--turn-screen-off")
             :tags '(phone))
 
+          (prodigy-define-service
+            :name "Wikipedia"
+            :command "kiwix-serve"
+            :args '("-p" "38081" "/bulk/wikipedia_en_all_nopic_2025-12.zim")
+            :port 38081
+            :tags '(wiki))
+
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
           (malb/register-right-side-window (rx (seq bos "*prodigy*" eos)))
 
