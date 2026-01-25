@@ -12434,6 +12434,16 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 #+begin_src emacs-lisp
 (use-package doom-modeline
   :after all-the-icons
+  :custom ((doom-modeline-icon t)
+           (doom-modeline-major-mode-icon t)
+           (doom-modeline-major-mode-color-icon t)
+           (doom-modeline-unicode-number nil)
+           (doom-modeline-buffer-file-name-style 'truncate-upto-project)
+           (doom-modeline-buffer-state-icon t)
+           (doom-modeline-github nil)
+           (doom-modeline-buffer-encoding nil)
+           (doom-modeline-minor-modes nil)
+           (doom-modeline-project-detection 'projectile))
   :config (progn
             (require 'doom-modeline-segments)
             (doom-modeline-def-segment conda-env
@@ -12443,15 +12453,6 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
                             ;; 'face (doom-modeline-face)
                             'help-echo (format "Conda environment: %s"
                                                conda-env-current-name))))
-            (setq doom-modeline-icon t
-                  doom-modeline-major-mode-icon t
-                  doom-modeline-major-mode-color-icon t
-                  doom-modeline-buffer-file-name-style 'truncate-upto-project
-                  doom-modeline-buffer-state-icon t
-                  doom-modeline-github nil
-                  doom-modeline-buffer-encoding nil
-                  doom-modeline-minor-modes nil)
-
             (doom-modeline-def-modeline 'main
               '(eldoc
                 bar
@@ -12503,8 +12504,7 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
                         (:eval (buffer-name imenu-list--displayed-buffer))
                         " "
                         (:eval
-                         (doom-modeline-segment--matches))))) )
-  :custom (doom-modeline-project-detection 'projectile))
+                         (doom-modeline-segment--matches))))) ))
 #+end_src
 
 ** Theme
