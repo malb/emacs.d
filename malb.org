@@ -1146,6 +1146,10 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
                     gnus-article-mode
                     mu4e-view-mode))
 
+            (malb/defadvice! malb/yankpad-reload-first (&rest r)
+              :before #'yankpad-insert
+              (yankpad-reload))
+
             (defun malb/yp-date (fmt &optional read)
               (unless yas-modified-p
                 (format-time-string fmt (org-read-date nil t read))))
