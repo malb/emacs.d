@@ -8617,7 +8617,6 @@ Spray is a speed reading mode.
 (use-package piper
   :commands (piper-region)
   :ensure-system-package piper-tts
-  :commands piper-region
   :ensure nil)
 #+end_src
 
