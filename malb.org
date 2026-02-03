@@ -2512,6 +2512,23 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                 (apply old-function args)
                 (add-to-list 'er/try-expand-list 'er/mark-word)))
 
+            (setq-default er/try-expand-list
+                          '(er/mark-word
+                            er/mark-symbol
+                            er/mark-symbol-with-prefix
+                            er/mark-next-accessor
+                            er/mark-inside-quotes
+                            er/mark-outside-quotes
+                            malb/mark-inside-pairs-sp
+                            malb/mark-outside-pairs-sp
+                            er/mark-comment
+                            er/mark-url
+                            er/mark-email
+                            er/mark-ts-node
+                            er/mark-text-sentence
+                            er/mark-text-paragraph
+                            mark-page))
+
             (defun malb/er-org-mode-expansions ()
               (set (make-variable-buffer-local 'er/try-expand-list)
                    '(er/mark-word
