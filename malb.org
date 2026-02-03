@@ -11163,7 +11163,7 @@ Copy source code marked up in various ways.
           (prodigy-define-service
             :name "Phone Screen Sharing"
             :command "scrcpy"
-            :args '("--new-display=1920x1200/200" "--keyboard=uhid" "--stay-awake" "--turn-screen-off")
+            :args '("--new-display=1920x1200/230" "--keyboard=uhid" "--stay-awake" "--turn-screen-off")
             :tags '(phone))
 
           (prodigy-define-service
