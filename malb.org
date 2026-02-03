@@ -11916,8 +11916,6 @@ Generate new random URLs for some commonly used online services.
     url))
 #+end_src
 
-4 + 3
-
 #+begin_src emacs-lisp
 (defun malb/calc-eval-region (beg end)
   "Calculate the region and display the result in the echo area.
@@ -11927,25 +11925,23 @@ If i is pressed after, insert the result at the end of region. If r is pressed r
        (list (region-beginning) (region-end))
      (list (save-excursion
              (re-search-backward (rx (or bol " ")))
-             (point))
+             (if (looking-at-p " ") (+ (point) 1) (point)))
            (save-excursion
              (re-search-forward (rx (or eol " ")))
              (point)))))
   (let* ((expr (buffer-substring-no-properties beg end))
          (result (calc-eval expr))
-         (my-beg beg)
-         (my-end end)
          map)
     (message "%s = %s" expr result)
     (when (not (listp result))
       (setq map (make-sparse-keymap))
-      (define-key map "i" (lambda () (interactive)
-                            (goto-char my-end)
-                            (insert " = " result)))
-      (define-key map "r" (lambda () (interactive)
-                            (kill-region my-beg my-end)
-                            (goto-char my-beg)
-                            (insert result)))
+      (define-key map "i" `(lambda () (interactive)
+                             (goto-char ,end)
+                             (insert " = " ,result)))
+      (define-key map "r" `(lambda () (interactive)
+                             (kill-region ,beg ,end)
+                             (goto-char ,beg)
+                             (insert (format "%s " ,result))))
       (set-transient-map map))))
 #+end_src
 
