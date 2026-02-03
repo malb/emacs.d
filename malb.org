@@ -1274,11 +1274,12 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
 ** Backends
 
 #+begin_src emacs-lisp
-(add-to-list 'company-backends '(company-bibtex-completion
-                                 company-math-symbols-unicode
-                                 company-math-symbols-latex
-                                 company-emoji
-                                 company-capf))
+(setq company-backends '(company-files
+                         (company-bibtex-completion
+                          company-math-symbols-unicode
+                          company-math-symbols-latex
+                          company-emoji
+                          company-capf)))
 #+end_src
 
 ** Company and YaSnippet Integration
