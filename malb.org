@@ -3700,16 +3700,17 @@ iCal export is triggered after 600 seconds of inactivity.
   (setq malb/org-icalendar-export-timer
         (run-with-idle-timer
          (* 1 secs) nil (lambda ()
-                          (dolist (fn (org-agenda-files))
-                            (let ((buf (get-file-buffer fn)))
-                              (when (and buf (buffer-modified-p buf))
-                                (with-current-buffer buf
-                                  (save-buffer)))))
+                          ;; (dolist (fn (org-agenda-files))
+                          ;;   (let ((buf (get-file-buffer fn)))
+                          ;;     (when (and buf (buffer-modified-p buf))
+                          ;;       (with-current-buffer buf
+                          ;;         (save-buffer)))))
                           ;; async, check org-export-init.el
                           (with-temp-buffer
                             (let ((async-inject-variables-exclude-regexps ".*"))
                               (org-icalendar-combine-agenda-files t)))
-                          (org-agenda-redo)))))
+                          ;; (org-agenda-redo)
+                          ))))
 #+end_src
 
 #+begin_src emacs-lisp
