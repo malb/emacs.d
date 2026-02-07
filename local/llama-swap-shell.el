@@ -7,6 +7,7 @@
 ;;; Code:
 
 (require 'shell-maker)
+(require 'markdown-overlays)
 (require 'request)
 (require 'prodigy)
 (require 'yaml)
@@ -205,6 +206,7 @@ When ARG is given, prompt the user for a model."
          (config (make-shell-maker-config
                   :name "llama-swap"
                   :prompt (format "llama-swap(%s)> " llama-swap-shell--model)
+                  :prompt-regexp (rx bol "llama-swap(" (minimal-match (one-or-more not-newline)) ")> ")
                   :execute-command
                   (lambda (command shell)
                     (ring-insert llama-swap-shell-input-ring command)
@@ -213,7 +215,10 @@ When ARG is given, prompt the user for a model."
                      :command (llama-swap-shell-call-api-curl-command
                                (llama-swap-shell-create-request command llama-swap-shell--model))
                      :filter #'llama-swap-shell-parse-response
-                     :shell shell)))))
+                     :shell shell))
+                  :on-command-finished
+                  (lambda (_ _ _) ;; (command output success)
+                    (markdown-overlays-put)))))
 
     (shell-maker-start config)
 
