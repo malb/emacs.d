@@ -185,6 +185,12 @@ For example:
     (append (list "curl" (format "%s/v1/chat/completions" llama-swap-shell-api-url-base))
             `("--data" ,(format "@%s" json-path)))))
 
+(defun llama-swap-shell-prompt-pair (model)
+  "Return a prompt-for given MODEL."
+  (cons
+   (format "llama-swap(%s)> " model)
+   (rx bol "llama-swap(" (minimal-match (one-or-more not-newline)) ")> ")))
+
 ;;;###autoload
 (defun llama-swap-shell (&optional arg)
   "Start an llama-swap shell.
@@ -201,12 +207,13 @@ When ARG is given, prompt the user for a model."
          ((not llama-swap-shell--model) (car llama-swap-shell-models))
          (t llama-swap-shell--model)))
 
-  (let* ((initial-prompt (when (use-region-p)
+  (let* ((prompt-pair (llama-swap-shell-prompt-pair llama-swap-shell--model))
+         (initial-prompt (when (use-region-p)
                            (buffer-substring-no-properties (region-beginning) (region-end))))
          (config (make-shell-maker-config
                   :name "llama-swap"
-                  :prompt (format "llama-swap(%s)> " llama-swap-shell--model)
-                  :prompt-regexp (rx bol "llama-swap(" (minimal-match (one-or-more not-newline)) ")> ")
+                  :prompt (car prompt-pair)
+                  :prompt-regexp (cdr prompt-pair)
                   :execute-command
                   (lambda (command shell)
                     (ring-insert llama-swap-shell-input-ring command)
@@ -221,9 +228,9 @@ When ARG is given, prompt the user for a model."
                     (markdown-overlays-put)))))
 
     (shell-maker-start config)
+    (shell-maker-set-prompt (car prompt-pair) (cdr prompt-pair))
 
     (setq comint-input-ring (ring-copy llama-swap-shell-input-ring))
-
     (when initial-prompt (insert initial-prompt))))
 
 (provide 'llama-swap-shell)
