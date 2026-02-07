@@ -64,7 +64,7 @@
       (setq prompt (buffer-substring-no-properties (point-min) (point-max))))
     (cons prompt (nreverse images))))
 
-(defun llama-swap-shell-start-server-maybe ()
+(defun llama-swap-shell-start-server-maybe (&rest _)
   "Start server if not already running."
   (when llama-swap-shell-prodigy-service-name
     (let ((llama-swap-service (prodigy-find-service llama-swap-shell-prodigy-service-name)))

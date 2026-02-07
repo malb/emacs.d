@@ -8095,9 +8095,11 @@ Run =latexmk -pvc= in async shell
   :ensure nil
   :defer 0
   :ensure-system-package spectacle
-  :config
-  (setq latex-ocr-command "latexocr.py %s"
-        latex-ocr-secondary-command "surya-latex-ocr.sh %s"))
+  :custom ((latex-ocr-command "latexocr.py %s")
+           (latex-ocr-secondary-command "surya-latex-ocr.sh %s"))
+  :config (advice-add 'latex-ocr-screenshot
+                      :before
+                      #'llama-swap-shell-start-server-maybe))
 #+end_src
 
 *** Math Delimiters
