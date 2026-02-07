@@ -7759,6 +7759,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (defun malb/latex-add-environments ()
               (LaTeX-add-environments
                '("lemma" LaTeX-env-label)
+               '("proof" LaTeX-env-label)
                '("theorem" LaTeX-env-label)
                '("algorithm" LaTeX-env-label)
                '("corollary" LaTeX-env-label)
