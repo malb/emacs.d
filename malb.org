@@ -7722,6 +7722,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                     ("\\sendmessagerightleft*" arg-on))))
   :config (progn
             (require 'tex-mode)
+            (require 'llm-prompts)
 
             (setq TeX-auto-save t
                   TeX-parse-self t
@@ -9730,7 +9731,6 @@ This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d
 #+begin_src emacs-lisp
 (defun malb/mail-summarize (msg)
   (let ((display-buffer-alist nil))
-    (malb/register-popup-window (rx bos "ellama-session"))
     (malb/summarize-llm)))
 
 (add-to-list 'mu4e-view-actions '("/summarise" . malb/mail-summarize) t)
@@ -12067,7 +12067,6 @@ Make links in comments and string clickable
 #+begin_src emacs-lisp
 (use-package ellama
   :config (progn
-            (require 'llm-ollama)
             (require 'llm-openai)
             (require 'llama-swap-shell)
 
@@ -12075,23 +12074,18 @@ Make links in comments and string clickable
               org-mode"Ellama Major Mode"
               "Major mode for ellama.")
 
-            (add-hook 'malb/ellama-major-mode-hook #'guess-language-mode)
+            (malb/register-right-side-window (rx bos "ellama-session"))
 
-            (defun malb/start-ollama-maybe ()
-              (let ((ollama-service (prodigy-find-service "Ollama Server")))
-                (when (not (prodigy-service-started-p ollama-service))
-                  (prodigy-start-service ollama-service)
-                  (sit-for 2))))
+            (add-hook 'malb/ellama-major-mode-hook #'guess-language-mode)
 
             (defun malb/ellama-static-name (_provider _action _prompt)
               "Generate name for ellama session by current time."
               "ellama-session")
 
             (defun malb/llm-provider (model)
-              (cond ((llm-ollama-p model)  model)
-                    ((llm-openai-compatible-p model) model)
-                    ((stringp model) (make-llm-openai-compatible :url model))
-                    (t (apply #'make-llm-ollama model))))
+              (cond ((llm-openai-compatible-p model) model)
+                    ((stringp model)
+                     (make-llm-openai-compatible :url (format "http://localhost:38080/upstream/%s/" model)))))
 
             (defconst malb/llm-default (make-llm-openai-compatible :url "http://localhost:38080/upstream/default/"))
             (defconst malb/llm-grammar (make-llm-openai-compatible :url "http://localhost:38080/upstream/grammar/"))
@@ -12108,13 +12102,13 @@ Make links in comments and string clickable
                     ellama-major-mode 'malb/ellama-major-mode
                     llm-warn-on-nonfree nil)
 
-            (malb/defadvice! malb/make-llm-ollama-parameters (old-function &rest args)
-              "Pass in parameters."
-              :around 'make-llm-ollama
-              (apply old-function
-                     (append args
-                             `(:default-chat-non-standard-params
-                               ,(cdr (assoc (plist-get args :chat-model) malb/ollama-parameters))))))
+            (defun malb/ellama-session-mode-hook-fn ()
+              (setq-local org-highlight-latex-and-related '(native entities))
+              (setq-local org-pretty-entities t)
+              (setq-local org-pretty-entities-include-sub-superscripts nil)
+              (org-compute-latex-and-related-regexp))
+
+            (add-hook 'malb/ellama-major-mode-hook #'malb/ellama-session-mode-hook-fn)
 
             (defun malb/translate-llm (&optional change)
               "Translate selected region or sentence at point and replace."
@@ -12212,7 +12206,7 @@ Make links in comments and string clickable
                            ellama--current-session-id nil))
 
                    (when arg
-                     (setq ellama-provider (ellama-get-ollama-local-model)
+                     (setq ellama-provider (malb/llm-provider (llama-swap-shell-select-model))
                            ellama--current-session-id nil))
 
 
