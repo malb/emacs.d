@@ -7948,6 +7948,26 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
 #+end_src
 
 
+*** COMMENT MathPix
+
+[[https://mathpix.com/][https://mathpix.com/]]
+
+#+begin_src emacs-lisp
+(use-package mathpix
+  :ensure nil
+  :custom ((mathpix-app-id
+            (plist-get
+             (car
+              (auth-source-search :host "mathpix" :max 1 :create nil :require '(:user)))
+             :user))
+           (mathpix-app-key
+            (funcall
+             (plist-get
+              (car
+               (auth-source-search :host "mathpix" :max 1 :create nil :require '(:secret)))
+              :secret)))))
+#+end_src
+
 *** CDLaTeX
 
 We do fast mathematics entry using a mix of [[https://github.com/cdominik/cdlatex][CDLaTeX]] and YaSnippet (for stuff like ~!=~).
@@ -8061,26 +8081,6 @@ Run =latexmk -pvc= in async shell
             (with-current-buffer buffer-name
               (compilation-mode))))
         (display-buffer (get-buffer buffer-name))))))
-#+end_src
-
-*** MathPix
-
-[[https://mathpix.com/][https://mathpix.com/]]
-
-#+begin_src emacs-lisp
-(use-package mathpix
-  :ensure nil
-  :custom ((mathpix-app-id
-            (plist-get
-             (car
-              (auth-source-search :host "mathpix" :max 1 :create nil :require '(:user)))
-             :user))
-           (mathpix-app-key
-            (funcall
-             (plist-get
-              (car
-               (auth-source-search :host "mathpix" :max 1 :create nil :require '(:secret)))
-              :secret)))))
 #+end_src
 
 *** LaTeX OCR
