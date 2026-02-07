@@ -3105,7 +3105,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                                 (bookmark-jump . lineage)
                                 (isearch . lineage)
                                 (default . ancestors))
-      org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+      org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
 (add-hook 'org-agenda-mode-hook (lambda () (toggle-truncate-lines 1)))
