@@ -8107,9 +8107,7 @@ Run =latexmk -pvc= in async shell
 
 #+begin_src emacs-lisp
 (use-package math-delimiters
-  :commands (math-delimiters-no-dollars math-delimiters-mode)
-  :hook ((LaTeX-mode . math-delimiters-mode)
-           (org-mode . math-delimiters-mode))
+  :commands (math-delimiters-no-dollars)
   :ensure nil
   :config (progn
             (setq math-delimiters-compressed-display-math nil)
@@ -8120,15 +8118,37 @@ Run =latexmk -pvc= in async shell
               (save-restriction
                 (when (region-active-p)
                   (narrow-to-region (caar (region-bounds)) (cdar (region-bounds))))
-                (apply old-function args)))
+                (apply old-function args)))))
+#+end_src
 
-            (define-minor-mode math-delimiters-mode
-              "Math Delimeters"
-              :init-value nil
-              :lighter " MD"
-              :keymap (let ((map (make-sparse-keymap)))
-                        (define-key map (kbd "$")  #'math-delimiters-insert)
-                        map))))
+[[https://tony-zorman.com/images/latex-change-env/basic-functionality.webm]]
+
+([[https://tony-zorman.com/posts/latex-change-env-0.3.html][source]])
+
+#+begin_src emacs-lisp
+(use-package latex-change-env
+  :after latex
+  :commands (latex-change-env math-delimiters-mode)
+  :hook ((LaTeX-mode . math-delimiters-mode)
+         (org-mode . math-delimiters-mode))
+  :bind (:map LaTeX-mode-map ("C-c r" . latex-change-env))
+  :custom
+  (latex-change-env-math-display '("\\[" . "\\]"))
+  (latex-change-env-math-inline  '("\\("   . "\\)"))
+  :config
+
+  (defun malb/insert-toggle-math ()
+    (interactive)
+    (latex-change-env-cycle
+     '(display-math equation* align* equation align)))
+
+  (define-minor-mode math-delimiters-mode
+    "Math Delimeters"
+    :init-value nil
+    :lighter " MD"
+    :keymap (let ((map (make-sparse-keymap)))
+              (define-key map (kbd "$")  #'malb/insert-toggle-math)
+              map)))
 #+end_src
 
 *** LSP LaTeX
