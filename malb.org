@@ -7722,7 +7722,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                     ("\\sendmessagerightleft*" arg-on))))
   :config (progn
             (require 'tex-mode)
-            (require 'llm-prompts)
 
             (setq TeX-auto-save t
                   TeX-parse-self t
@@ -12066,9 +12065,36 @@ Make links in comments and string clickable
 
 #+begin_src emacs-lisp
 (use-package ellama
+  :bind (:map git-commit-mode-map
+         ("C-c w c" . ellama-generate-commit-message))
   :config (progn
             (require 'llm-openai)
             (require 'llama-swap-shell)
+
+            (setopt ellama-generate-commit-message-template
+                    (format
+                     "<INSTRUCTIONS>
+You are professional software developer.
+
+Write concise commit message based on diff in the following format:
+<FORMAT>
+First line should contain short title described major change in functionality.
+The first line should have at most %d characters.
+Then one empty line. Then detailed description of all changes.
+The text should be written in British English.
+</FORMAT>
+<EXAMPLE>
+Improve abc
+
+Improved abc feature by adding new xyz module.
+</EXAMPLE>
+
+,**Reply with commit message only without any quotes.**
+</INSTRUCTIONS>
+
+<DIFF>
+%%s
+</DIFF>" git-commit-summary-max-length))
 
             (define-derived-mode malb/ellama-major-mode
               org-mode"Ellama Major Mode"
@@ -12245,9 +12271,16 @@ Make links in comments and string clickable
                     (apply old-function args)
                   (setq ellama-provider old-ellama-provider))))
 
-            (require 'llm-prompts)
             (bind-key "C-c w t l" #'malb/translate-llm)
             (malb/register-right-side-window (rx bos "ellama-session") t)))
+#+end_src
+
+** LLM Prompts
+
+#+begin_src emacs-lisp
+(use-package llm-prompts
+  :ensure nil
+  :after ellama)
 #+end_src
 
 ** Shell Maker
