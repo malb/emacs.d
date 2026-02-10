@@ -12066,8 +12066,10 @@ Make links in comments and string clickable
 
 #+begin_src emacs-lisp
 (use-package ellama
+  :defer nil
   :bind (:map git-commit-mode-map
          ("C-c w c" . ellama-generate-commit-message))
+  :init (setopt ellama-response-process-method 32)
   :config (progn
             (require 'llm-openai)
             (require 'llama-swap-shell)
@@ -12280,16 +12282,16 @@ Improved abc feature by adding new xyz module.
 
 #+begin_src emacs-lisp
 (use-package llm-prompts
-  :ensure nil
-  :after ellama)
+  :defer nil
+  :after ellama
+  :ensure nil)
 #+end_src
 
 ** Shell Maker
 
 #+begin_src emacs-lisp
 (use-package shell-maker
-  :after ellama
-  :custom ((shell-maker-prompt-before-killing-buffer . nil)))
+  :init (setopt shell-maker-prompt-before-killing-buffer nil))
 #+end_src
 
 ** Llama Swap Shell
@@ -12298,7 +12300,7 @@ Improved abc feature by adding new xyz module.
 (use-package llama-swap-shell
   :ensure nil
   :commands (llama-swap-shell)
-  :custom ((markdown-overlays-render-latex )
+  :custom ((markdown-overlays-render-latex t)
            (llama-swap-shell-prodigy-service-name "Llama Swap")
            (llama-swap-shell-api-url-base "http://localhost:38080"))
   :init (malb/register-right-side-window (rx bos "*llama-swap*" eos) t)
