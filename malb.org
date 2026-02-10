@@ -12110,10 +12110,10 @@ Improved abc feature by adding new xyz module.
                     ((stringp model)
                      (make-llm-openai-compatible :url (format "http://localhost:38080/upstream/%s/" model)))))
 
-            (defconst malb/llm-default (make-llm-openai-compatible :url "http://localhost:38080/upstream/default/"))
-            (defconst malb/llm-grammar (make-llm-openai-compatible :url "http://localhost:38080/upstream/grammar/"))
-            (defconst malb/llm-commit (make-llm-openai-compatible :url "http://localhost:38080/upstream/commit/"))
-            (defconst malb/llm-translate (make-llm-openai-compatible :url "http://localhost:38080/upstream/translate/"))
+            (defconst malb/llm-default   (malb/llm-provider "default"))
+            (defconst malb/llm-grammar   (malb/llm-provider "grammar"))
+            (defconst malb/llm-commit    (malb/llm-provider "commit"))
+            (defconst malb/llm-translate (malb/llm-provider "translate"))
 
             (setopt ellama-language "German"
                     ellama-provider (malb/llm-provider malb/llm-default)
