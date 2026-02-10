@@ -11184,12 +11184,6 @@ Copy source code marked up in various ways.
             :tags '(llm))
 
           (prodigy-define-service
-            :name "Phone Screen Sharing"
-            :command "scrcpy"
-            :args '("--new-display=1920x1200/230" "--keyboard=uhid" "--stay-awake" "--turn-screen-off")
-            :tags '(phone))
-
-          (prodigy-define-service
             :name "Wikipedia"
             :command "kiwix-serve"
             :args '("-p" "38081" "/bulk/wikipedia_en_all_nopic_2025-12.zim")
