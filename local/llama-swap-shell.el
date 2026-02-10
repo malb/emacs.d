@@ -36,6 +36,12 @@
   :group 'llama-swap-shell
   :type 'string)
 
+(defcustom llama-swap-shell-streaming t
+  "Stream responses."
+  :group 'llama-swap-shell
+  :type 'boolean)
+
+
 (defvar llama-swap-shell-input-ring (make-ring 256))
 
 (defvar llama-swap-shell--model nil)
@@ -142,14 +148,10 @@ For example:
 
 (defun llama-swap-shell-create-request (_ model)
   "Create request from PROMPT and history to MODEL."
-  (let* ((messages (llama-swap-shell-make-messages))
-         ;; (message (llama-swap-shell-make-a-message prompt))
-         )
-    ;; (push message messages)
-
+  (let* ((messages (llama-swap-shell-make-messages)))
     `(:model ,model
       :messages ,(vconcat (nreverse messages))
-      :stream t)))
+      :stream ,llama-swap-shell-streaming)))
 
 (defun llama-swap-shell-parse-response (raw-response)
   "Parse RAW-RESPONSE."
@@ -158,23 +160,18 @@ For example:
 
     (setf (map-elt raw-response :pending) nil)
 
-    ;; ;;stream nil
-    ;; (dolist (chunk chunks)
-    ;;   (let ((json (aref (alist-get 'choices (shell-maker--json-parse-string chunk)) 0)))
-    ;;     (setq response (concat response (alist-get 'content (alist-get 'message json))))
-    ;;     ))
+    (if llama-swap-shell-streaming
+        (dolist (chunk chunks)
 
-    (dolist (chunk chunks)
-      (let* ((chunk (replace-regexp-in-string "data: " "" chunk))
-             (json (alist-get 'choices (shell-maker--json-parse-string chunk))))
-        (when json
-          (setq json (aref json 0))
-          (cond
-           ((assoc 'role (alist-get 'delta json)) t)
-           (t
-            (setq response (concat response (alist-get 'content (alist-get 'delta json)))))
-           ))
-        ))
+          (let* ((chunk (replace-regexp-in-string "data: " "" chunk))
+                 (json (alist-get 'choices (shell-maker--json-parse-string chunk))))
+            (when json
+              (setq json (aref json 0))
+              (cond ((assoc 'role (alist-get 'delta json)) t)
+                    (t (setq response (concat response (alist-get 'content (alist-get 'delta json)))))))))
+      (dolist (chunk chunks)
+        (let ((json (aref (alist-get 'choices (shell-maker--json-parse-string chunk)) 0)))
+          (setq response (concat response (alist-get 'content (alist-get 'message json)))))))
     (list (cons :filtered (concat response)))))
 
 (defun llama-swap-shell-call-api-curl-command (object)
