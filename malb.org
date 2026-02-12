@@ -8085,22 +8085,60 @@ Run =latexmk -pvc= in async shell
 
 *** LaTeX OCR
 
-*Models:*
+The elisp code below
+- uses [[file:local/latex-ocr.el][latex-ocr]]
+- to call the following Python script
+- which calls [[https://huggingface.co/noctrex/LightOnOCR-2-1B-GGUF][noctrex/LightOnOCR-2-1B-GGUF:BF16]] running on [[https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md][llama-server]]
+- via [[https://github.com/mostlygeek/llama-swap][llama-swap]].
 
-- [[https://github.com/lukas-blecher/LaTeX-OCR][pix2tex]]
-- [[https://github.com/datalab-to/surya][surya]]
-- [[https://github.com/Ucas-HaoranWei/GOT-OCR2.0/][Ucas-HaoranWei/GOT-OCR2.0]]
+#+begin_src python :tangle /home/malb/.local/bin/latexocr.py  :tangle-mode (identity #o555)
+#!/usr/bin/env python
+# DO NOT EDIT, EDIT malb.org INSTEAD
+
+import requests
+import base64
+import argparse
+
+parser = argparse.ArgumentParser(description="Extract LaTeX source code.")
+parser.add_argument("filename", type=str, help="Input impage.")
+args = parser.parse_args()
+
+model = "latex-ocr"
+
+with open(args.filename, "rb") as img_file:
+    b64_data = base64.b64encode(img_file.read()).decode("utf-8")
+
+prompt = ""
+
+content = [
+    {"type": "text", "text": prompt},
+    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64_data}"}},
+]
+
+response = requests.post(
+    f"http://localhost:38080/v1/chat/completions",
+    headers={"Content-Type": "application/json"},
+    json={"model": model,
+          "messages": [
+              {"role": "system", "content": "You are a helpful assistant."},
+              {"role": "user", "content": content}]},
+)
+
+response = response.json()
+content = response["choices"][0]["message"]["content"]
+print(content)
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package latex-ocr
   :ensure nil
-  :defer 0
+  :commands (latex-ocr-screenshot)
   :ensure-system-package spectacle
-  :custom ((latex-ocr-command "latexocr.py %s")
-           (latex-ocr-secondary-command "surya-latex-ocr.sh %s"))
-  :config (advice-add 'latex-ocr-screenshot
-                      :before
-                      #'llama-swap-shell-start-server-maybe))
+  :config
+  (advice-add 'latex-ocr-screenshot
+              :before
+              #'llama-swap-shell-start-server-maybe)
+  (setq latex-ocr-command "latexocr.py %s"))
 #+end_src
 
 *** Math Delimiters
