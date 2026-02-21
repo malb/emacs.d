@@ -11214,16 +11214,6 @@ Copy source code marked up in various ways.
             :tags '(draw))
 
           (prodigy-define-service
-            :name "Open WebUI"
-            :command "conda"
-            :env '(("WEBUI_AUTH" "false")
-                   ("ENABLE_VERSION_UPDATE_CHECK" "false"))
-            :args '("run" "-n" "cuda" "--no-capture-output" "open-webui" "serve" "--port" "8082")
-            :kill-process-buffer-on-stop t
-            :port 8082
-            :tags '(llm))
-
-          (prodigy-define-service
             :name "Wikipedia"
             :command "kiwix-serve"
             :args '("-p" "38081" "/bulk/wikipedia_en_all_nopic_2025-12.zim")
