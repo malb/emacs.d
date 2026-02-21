@@ -8122,9 +8122,7 @@ print(content)
   :commands (latex-ocr-screenshot)
   :ensure-system-package spectacle
   :config
-  (advice-add 'latex-ocr-screenshot
-              :before
-              #'llama-swap-shell-start-server-maybe)
+  (advice-add 'latex-ocr-screenshot :before #'llama-swap-shell-start-server-maybe)
   (setq latex-ocr-command "latexocr.py %s"))
 #+end_src
 
