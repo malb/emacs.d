@@ -6355,21 +6355,16 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 *** Aider
 
-([[https://github.com/MatthewZMD/aidermacs][source]])
+([[https://github.com/tninja/aider.el][source]])
 
 #+begin_src emacs-lisp
-(use-package aidermacs
-  :bind (("C-c `" . aidermacs-transient-menu))
-  :custom ((aidermacs-architect-model "openai/aider")
-           (aidermacs-editor-model    "openai/aider")
-           (aidermacs-default-model   "openai/aider")
-           (aidermacs-use-architect-mode t)
-           (aidermacs-backend 'comint))
-  :config (setq aidermacs-extra-args
-                '("--env-file" "/home/malb/.aider.conf.env"
-                  "--no-show-model-warnings"
-                  "--edit-format" "diff"
-                  "--editor-edit-format" "editor-diff")))
+(use-package aider
+  :bind (("C-c `" . aider-transient-menu))
+  :config
+  (require 'aider-helm)
+  (setq aider-args '("--env-file" "/home/malb/.aider.conf.env"))
+  (aider-magit-setup-transients)
+  (advice-add 'aider-transient-menu :before #'llama-swap-shell-start-server-maybe))
 #+end_src
 
 *** Highlight Indentation
