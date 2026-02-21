@@ -1598,9 +1598,16 @@ Actions for attaching files to e-mails.
 #+begin_src emacs-lisp
 (use-package helm-swoop
   :bind (("C-c o" . helm-multi-swoop-org)
-         ("C-s"   . malb/swoop-or-search))
+         :map isearch-mode-map
+         ("M-i" . helm-swoop-from-isearch)
+         :map helm-swoop-map
+         ("M-i" . helm-multi-swoop-all-from-helm-swoop)
+         ("C-r" . helm-previous-line)
+         ("C-s" . malb/helm-swoop-C-s)
+         :map helm-multi-swoop-map
+         ("C-r" . helm-previous-line)
+         ("C-s" . malb/helm-swoop-C-s))
   :config (progn
-
             (setq malb/helm-swoop-ignore-major-mode
                   '(dired-mode
                     doc-view-mode
@@ -1620,17 +1627,11 @@ Actions for attaching files to e-mails.
                     ollama-shell-mode
                     comint-mode
                     package-menu-mode
-                    prodigy-view-mode
-                    ))
+                    prodigy-view-mode))
 
-            ;; I’m going back and forth what I prefer
-            (setq helm-swoop-pre-input-function  #'malb/helm-swoop-pre-fill
+            (setq helm-swoop-pre-input-function  (lambda ())
                   helm-swoop-split-with-multiple-windows t
                   helm-swoop-speed-or-color t)
-
-            (defun malb/helm-swoop-pre-fill ()
-              ;; (thing-at-point 'symbol)
-              )
 
             (defun malb/swoop-or-search ()
               (interactive)
@@ -1646,14 +1647,7 @@ Actions for attaching files to e-mails.
                   (if (equal helm-swoop-pattern "")
                       (previous-history-element 1)
                     (helm-next-line))
-                (helm-next-line)))
-
-            (bind-key "M-i" #'helm-swoop-from-isearch isearch-mode-map)
-            (bind-key "M-i" #'helm-multi-swoop-all-from-helm-swoop helm-swoop-map)
-            (bind-key "C-r"   #'helm-previous-line helm-swoop-map)
-            (bind-key "C-s"   #'malb/helm-swoop-C-s helm-swoop-map)
-            (bind-key "C-r"   #'helm-previous-line helm-multi-swoop-map)
-            (bind-key "C-s"   #'malb/helm-swoop-C-s helm-multi-swoop-map)))
+                (helm-next-line)))))
 #+end_src
 
 ** Helm Ag
