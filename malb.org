@@ -12336,6 +12336,7 @@ Improved abc feature by adding new xyz module.
   :commands (llama-swap-shell)
   :custom ((markdown-overlays-render-latex t)
            (llama-swap-shell-prodigy-service-name "Llama Swap")
+           (llama-swap-shell-default-model "default")
            (llama-swap-shell-api-url-base "http://localhost:38080"))
   :init (malb/register-right-side-window (rx bos "*llama-swap*" eos) t)
   :hook (llama-shell-mode . malb/company-prose-setup)

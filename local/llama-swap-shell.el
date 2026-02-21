@@ -41,6 +41,10 @@
   :group 'llama-swap-shell
   :type 'boolean)
 
+(defcustom llama-swap-shell-default-model nil
+  "Default model to pick."
+  :group 'llama-swap-shell
+  :type 'string)
 
 (defvar llama-swap-shell-input-ring (make-ring 256))
 
@@ -201,7 +205,9 @@ When ARG is given, prompt the user for a model."
   (setq llama-swap-shell--model
         (cond
          (arg (llama-swap-shell-select-model))
-         ((not llama-swap-shell--model) (car llama-swap-shell-models))
+         ((not llama-swap-shell--model) (if llama-swap-shell-default-model
+                                            llama-swap-shell-default-model
+                                          (car llama-swap-shell-models)))
          (t llama-swap-shell--model)))
 
   (let* ((prompt-pair (llama-swap-shell-prompt-pair llama-swap-shell--model))
