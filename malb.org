@@ -4738,6 +4738,35 @@ Working with source code in org-mode.
             (add-to-list 'org-src-lang-modes '("latex" . LaTeX))))
 #+end_src
 
+([[https://emacs.stackexchange.com/questions/68823/minimal-working-example-of-tikz-to-svg-in-orgmode][source]])
+
+With this setting
+
+#+begin_src emacs-lisp
+(use-package ob
+  :ensure nil
+  :init
+  (setq org-babel-latex-preamble
+        (lambda (_) (string-join '("\\documentclass[tikz]{standalone}"
+                                   "\n")
+                                 "\n"))))
+#+end_src
+
+we can evaluate TiKZ pictures
+
+#+header: :results file drawer :file org-babel-latex-tikx.svg
+#+begin_src latex
+\begin{tikzpicture}[font=\sffamily]
+\fill[red!80!black] (0,0) circle (3cm);
+\end{tikzpicture}
+#+end_src
+
+#+RESULTS:
+:results:
+[[file:org-babel-latex-tikx.svg]]
+:end:
+
+
 #+begin_src emacs-lisp
 (add-to-list 'display-buffer-alist
              `(,(rx "*Org Src " (zero-or-more nonl) "[" (zero-or-more nonl) "]*")
