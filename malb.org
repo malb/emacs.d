@@ -4754,7 +4754,7 @@ With this setting
 
 we can evaluate TiKZ pictures
 
-#+header: :results file drawer :file org-babel-latex-tikx.svg
+#+header: :results file drawer :file org-babel-latex-tikx.svg :exports both
 #+begin_src latex
 \begin{tikzpicture}[font=\sffamily]
 \fill[red!80!black] (0,0) circle (3cm);
