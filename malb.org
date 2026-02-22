@@ -4748,7 +4748,7 @@ With this setting
   :init
   (setq org-babel-latex-preamble
         (lambda (_) (string-join '("\\documentclass[tikz]{standalone}"
-                                   "\n")
+                                   "\\usetikzlibrary{positioning,arrows,decorations,,calc,shapes,shadows}")
                                  "\n"))))
 #+end_src
 
