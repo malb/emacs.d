@@ -11233,12 +11233,21 @@ Copy source code marked up in various ways.
             :port 38081
             :tags '(wiki))
 
+          (prodigy-define-service
+            :name "Llama Swap"
+            :command "llama-swap"
+            :args '("--config" "/home/malb/.config/llama-swap.conf" "--watch-config" "--listen" "localhost:38080")
+            :port 38080
+            :url "http://localhost:38080/ui/#/models"
+            :tags '(llm))
+
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
           (malb/register-right-side-window (rx (seq bos "*prodigy*" eos)))
 
           ;; start some services
           (when (and (daemonp) (not malb/startup-quick))
-            (prodigy-start-service (prodigy-find-service "IMAPNotify")))))
+            (prodigy-start-service (prodigy-find-service "IMAPNotify"))
+            (prodigy-start-service (prodigy-find-service "Llama Swap")))))
 #+end_src
 
 * Media Players
