@@ -6784,6 +6784,15 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
                 (apply fn (list params))))))
 #+end_src
 
+*** Virtual Environments (Uv)
+
+([[https://github.com/z80dev/uv-mode][source]])
+
+#+begin_src emacs-lisp
+(use-package uv-mode
+  :hook (python-base-mode . uv-mode-auto-activate-hook))
+#+end_src
+
 ** Sage
 
 Enable [[https://github.com/stakemori/sage-shell-mode][sage-shell-mode]] for running [[http://sagemath.org][Sage]] from within Emacs. It’s available on MELPA and hence easier to keep around when we switch Sage installs all the time. To edit a file in sage-shell-mode put ~# -*- mode: sage-shell:sage -*-~ on top.
