@@ -3273,7 +3273,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-ellipsis " ▼ "
       org-highlight-latex-and-related nil
       org-src-fontify-natively t        ; fontify code blocks
-      org-startup-with-inline-images t  ; show images when opening a file.
+      org-startup-with-link-previews t  ; show images when opening a file.
       org-startup-with-latex-preview nil
       org-preview-latex-default-process 'dvisvgm
       org-pretty-entities nil
@@ -3642,7 +3642,8 @@ UTF-8 everywhere.
       org-export-in-background nil
       org-export-use-babel t
       org-export-with-toc nil
-      org-export-with-timestamps 'active
+      org-export-with-timestamps 'active-exclude-diary
+      org-icalendar-with-timestamps 'active-exclude-diary
       org-latex-pdf-process '("latexmk -g -pdf -pdflatex=\"%latex --shell-escape -halt-on-error\" -outdir=%o %f")
       org-export-async-init-file (expand-file-name "org-export-init.el" user-emacs-directory))
 #+end_src
