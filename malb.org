@@ -2572,30 +2572,6 @@ Alternatively, consider
 4. ~C-M-h~ marks a defun (top-level-definition)
 5. ~C-x h~ marks the whole buffer
 
-** COMMENT Embrace
-
-[[https://raw.githubusercontent.com/cute-jumper/embrace.el/master/screencasts/embrace.gif]]
-
-https://github.com/cute-jumper/embrace.el
-
-#+begin_src emacs-lisp
-(use-package embrace
-  :config (progn
-
-            (defun malb/embrace-latex-mode-hook ()
-              (embrace-add-pair ?\( "\\(" "\\)")
-              (embrace-add-pair ?\[ "\\[" "\\]")
-              (embrace-add-pair ?\) "(" ")")
-              (embrace-add-pair ?\] "[" "]")
-              (embrace-add-pair ?$  "$" "$")
-              (embrace-add-pair ?£  "$$" "$$"))
-
-            (bind-key "M-\\" #'embrace-commander)
-            (add-hook 'org-mode-hook #'embrace-org-mode-hook)
-            (add-hook 'LaTeX-mode-hook #'malb/embrace-latex-mode-hook)
-            (add-hook 'org-mode-hook #'malb/embrace-latex-mode-hook)))
-#+end_src
-
 ** Wrap Region
 
 [[https://github.com/rejeep/wrap-region.el][Wrap Region]] is a minor mode for Emacs that wraps a region with punctuations. For "tagged" markup modes, such as HTML and XML, it wraps with tags.
