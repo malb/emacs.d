@@ -4301,8 +4301,7 @@ replace the default prompt message."
            :prepend t)
           (,(format "%s\tKCL Herrschaftswissen" (all-the-icons-octicon "checklist" :face 'all-the-icons :v-adjust 0.01))
            :keys "k"
-           :file malb/work-org
-           :headline "Herrschaftswissen"
+           :id "59aab5bc-34a5-4634-9f8b-bfe790c9b170"
            :template ("* %?"
                       ":PROPERTIES:"
                       ":CREATED: %U"
@@ -4371,8 +4370,7 @@ replace the default prompt message."
          :prepend t)
         (,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01))
          :keys "r"
-         :file malb/work-org
-         :headline "Reading"
+         :id "278e4270-f9c6-4339-9862-058893e92ef3"
          :template ("* READ %?"
                     "DEADLINE: %^t"
                     ":PROPERTIES:"
@@ -4384,8 +4382,7 @@ replace the default prompt message."
          :empty-lines 1)
         (,(format "%s\tResearch Idea" (all-the-icons-faicon "lightbulb-o" :face 'all-the-icons :v-adjust 0.01))
          :keys "i"
-         :file malb/work-org
-         :headline "Ideas"
+         :id "b56c2f06-f7c6-4b47-a1e1-338bf7b64fd7"
          :template ("* EXPLORE %?"
                     ":PROPERTIES:"
                     ":CREATED: %U"
@@ -4447,8 +4444,7 @@ replace the default prompt message."
          :children
          ((,(format "%s\tReading" (all-the-icons-faicon "book" :face 'all-the-icons :v-adjust 0.01))
            :keys "r"
-           :file malb/work-org
-           :headline "Reading"
+           :id "278e4270-f9c6-4339-9862-058893e92ef3"
            :template ("* READ %:description%?"
                       "DEADLINE: %^t"
                       ":PROPERTIES:"
@@ -4503,14 +4499,12 @@ replace the default prompt message."
          :children
          ((,(format "%s\tPackage" (all-the-icons-material "add_box" :face 'all-the-icons :v-adjust 0.01))
            :keys "p"
-           :file malb/private-org
-           :headline "Packages"
+           :id "178a604b-e385-48b4-89e3-7b728903b049"
            :type table-line
            :template "| %i%? |  |")
           (,(format "%s\tConfig File" (all-the-icons-material "edit" :face 'all-the-icons :v-adjust 0.01))
            :keys "c"
-           :file malb/private-org
-           :headline "Local Config Files"
+           :id "6e0c99a5-9a00-4735-ba12-9e8f3b50c5c1"
            :type table-line
            :template "| %i%? | |")
           )))))
