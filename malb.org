@@ -2590,7 +2590,7 @@ Alternatively, consider
              ("\\(" "\\)" "$" org-mode)
              ("#+begin_quote\n" "#+end_quote\n" "q" org-mode)
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
-             ("#+begin_src \n" "\n#+end_src" "s" org-mode)
+             ("#+begin_example \n" "\n#+end_example" "e" org-mode)
              ("#+begin_center \n" "\n#+end_center" "c" org-mode)
              ("#+begin_export latex\n" "\n#+end_export" "l" org-mode)))
   (add-hook 'org-mode-hook 'wrap-region-mode))
