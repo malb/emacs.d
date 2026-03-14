@@ -2588,7 +2588,6 @@ Alternatively, consider
              ("=" "=" nil org-mode)
              ("_" "_" nil org-mode)
              ("\\(" "\\)" "$" org-mode)
-             ("\\[" "\\]" "£" org-mode)
              ("#+begin_quote\n" "#+end_quote\n" "q" org-mode)
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
              ("#+begin_src \n" "\n#+end_src" "s" org-mode)
