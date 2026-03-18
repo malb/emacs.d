@@ -3602,6 +3602,7 @@ I’m using [[https://github.com/minad/org-modern][org-modern]] as a faster org-
            (org-modern-keyword nil "I want to see #+")
            (org-modern-list '((43 . "◦") (45 . "•")) "Write bullet points")
            (org-modern-table nil "I can't see the cursor otherwise")
+           (org-modern-fold-stars '(("▶" . "▼") ("▷" . "▽") ("▶" . "▼") ("▷" . "▽") ("▶" . "▼")) "Don't shrink")
            (org-modern-internal-target nil "Stop it!"))
   :config (add-hook 'org-mode-hook #'org-modern-mode))
 #+end_src
