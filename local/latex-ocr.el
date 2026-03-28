@@ -86,9 +86,7 @@
                               latex-ocr-secondary-command
                             latex-ocr-command)
                           file))
-         (result (replace-regexp-in-string
-                  ".*: \\(.*\\)$" "\\1"
-                  (shell-command-to-string command))))
+         (result (shell-command-to-string command)))
     result))
 
 (provide 'latex-ocr)
