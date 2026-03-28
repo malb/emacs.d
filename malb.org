@@ -8923,7 +8923,7 @@ Canned queries.
                                :query ,(mu4e-query-fragments-expand "%junk")) t)
 (add-to-list 'mu4e-bookmarks `(:key ?D :name "Documents (31 days)"
                                :query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month")) t)
-(add-to-list 'mu4e-bookmarks `(:key ?S :name "Fresh Reviews"
+(add-to-list 'mu4e-bookmarks `(:key ?r :name "Fresh Reviews"
                                :query ,(mu4e-query-fragments-expand "maildir:/gmail/research/reviews date:1d..now")) t)
 #+end_src
 
