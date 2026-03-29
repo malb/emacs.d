@@ -12175,6 +12175,13 @@ Improved abc feature by adding new xyz module.
 
             (add-hook 'malb/ellama-major-mode-hook #'malb/ellama-session-mode-hook-fn)
 
+            (malb/defadvice! malb/ellama-provider-select ()
+              "Use llama-swap models for ellama."
+              :override #'ellama-provider-select
+              (interactive)
+              (setq ellama-provider (malb/llm-provider (llama-swap-shell-select-model))
+                    ellama--current-session-id nil))
+
             (defun malb/translate-llm (&optional change)
               "Translate selected region or sentence at point and replace."
               (interactive "P")
