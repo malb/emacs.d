@@ -53,7 +53,8 @@
 (defvar-keymap llama-swap-shell-mode-map
   :parent shell-maker-mode-map
   :doc "Keymap for `llama-swap-shell-mode'."
-  "C-r" #'shell-maker-clear-buffer)
+  "C-r" #'shell-maker-clear-buffer
+  "C-o" (lambda () (interactive) (markdown-overlays-put)))
 
 (defun llama-swap-shell-base64-images-maybe (prompt)
   "Check for image paths in PROMPT and return  base64 encoded images if so."
@@ -226,9 +227,10 @@ When ARG is given, prompt the user for a model."
                                (llama-swap-shell-create-request command llama-swap-shell--model))
                      :filter #'llama-swap-shell-parse-response
                      :shell shell))
-                  :on-command-finished
-                  (lambda (_ _ _) ;; (command output success)
-                    (markdown-overlays-put)))))
+                  ;; :on-command-finished
+                  ;; (lambda (_ _ _) ;; (command output success)
+                  ;;   (markdown-overlays-put))
+                  )))
 
     (shell-maker-start config)
     (shell-maker-set-prompt (car prompt-pair) (cdr prompt-pair))
