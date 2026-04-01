@@ -3058,6 +3058,8 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-reverse-note-order t
       org-footnote-auto-adjust t          ; renumber footnotes automagically
       org-link-elisp-confirm-function nil ;
+      org-id-link-consider-parent-id t
+      org-id-link-to-org-use-id 'use-existing
       org-hidden-keywords nil
       org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
       org-list-allow-alphabetical t
@@ -6358,10 +6360,10 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 #+begin_src emacs-lisp
 (use-package aider
-  :bind (("C-c `" . aider-transient-menu))
+  :commands aider-transient-menu
   :config
   (require 'aider-helm)
-  (setq aider-args '("--env-file" "/home/malb/.aider.conf.env"))
+  (setq aider-args '("--env-file" "/home/malb/.aider.conf.env" "--no-check-update"))
   (aider-magit-setup-transients)
   (advice-add 'aider-transient-menu :before #'llama-swap-shell-start-server-maybe))
 #+end_src
@@ -13064,6 +13066,7 @@ Easily change the text size:
 (malb/set-menu-key "<f6>" #'emms-next)
 (malb/set-menu-key "<up>" #'drag-stuff-up)
 (malb/set-menu-key "<down>" #'drag-stuff-down)
+(malb/set-menu-key "`" #'aider-transient-menu)
 (malb/set-menu-key ";" (defun malb/org-babel-tangle-one () (interactive) (org-babel-tangle '(4))))
 (malb/set-menu-key "=" #'malb/org-icalendar-combine-agenda-files-async)
 (malb/set-menu-key "#" #'jupyter-org-hydra/body)
