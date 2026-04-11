@@ -12238,7 +12238,7 @@ Improved abc feature by adding new xyz module.
                     (if change
                         (progn
                           (kill-region beg end)
-                          (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
+                          ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
                           (ellama-stream task :point beg :filter filter :ephemeral-session t
                                          :on-done restoref :on-error restoref))
                       (ellama-instant task))
@@ -12298,13 +12298,13 @@ Improved abc feature by adding new xyz module.
                    (unwind-protect
                        (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
                               (progn
-                                (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
+                                ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
                                 (ellama-stream task :point (point) :filter filter :ephemeral-session t
                                                :on-done restoref :on-error restoref)))
                              ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
                               (progn
                                 (kill-region beg end)
-                                (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
+                                ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
                                 (ellama-stream task :point beg :filter filter :ephemeral-session t
                                                :on-done restoref :on-error restoref)))
                              ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
@@ -12312,7 +12312,7 @@ Improved abc feature by adding new xyz module.
                                 (goto-char end)
                                 (insert "\n\n-----\n\n")
                                 (sit-for 1)
-                                (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
+                                ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
                                 (ellama-stream task :point (+ end 9) :filter filter :ephemeral-session t
                                                :on-done restoref :on-error restoref)))
                              (t
