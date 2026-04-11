@@ -2466,6 +2466,15 @@ Commands are bound to =C-x m …=
          ("C-x n n" . recursive-narrow-or-widen-dwim)))
 #+end_src
 
+** Expand Region Reborn
+
+#+begin_src emacs-lisp
+(use-package expreg
+  :ensure t
+  :bind (("C-\\" . expreg-expand)
+         ("C-s-\\" . expreg-contract)))
+#+end_src
+
 ** Expand Region
 
 See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https://github.com/magnars/expand-region.el][expand-region]]
