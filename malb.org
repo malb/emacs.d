@@ -2481,32 +2481,9 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 
 #+begin_src emacs-lisp
 (use-package expand-region
-  :after (org)
-  :bind ("C-\\" . er/expand-region)
+  :commands (er/expand-region)
   :init (setq expand-region-fast-keys-enabled nil)
   :config (progn
-            (defun malb/mark-org-LaTeX-math ()
-              "Mark current math environment in org-mode."
-              (interactive)
-              (when (texmathp)
-                (let* ((pos (save-excursion
-                              (+ (re-search-backward texmathp-onoff-regexp) 1))))
-                  (re-search-forward texmathp-onoff-regexp)
-                  (set-mark pos)
-                  (exchange-point-and-mark))))
-
-            (defun malb/mark-org-inside-LaTeX-math ()
-              "Mark current math environment in org-mode."
-              (interactive)
-              (when (texmathp)
-                (let* ((pos (save-excursion (re-search-backward texmathp-onoff-regexp)
-                                            (re-search-forward texmathp-onoff-regexp))))
-                  (re-search-forward texmathp-onoff-regexp)
-                  (re-search-backward texmathp-onoff-regexp)
-                  (forward-char)
-                  (set-mark pos)
-                  (exchange-point-and-mark))))
-
             (malb/defadvice! malb/er-add-text-mode-expansions (old-function &rest args)
               :around 'er/add-text-mode-expansions
               (unless (member major-mode expand-region-exclude-text-mode-expansions)
@@ -2528,49 +2505,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                             er/mark-ts-node
                             er/mark-text-sentence
                             er/mark-text-paragraph
-                            mark-page))
-
-            (defun malb/er-org-mode-expansions ()
-              (set (make-variable-buffer-local 'er/try-expand-list)
-                   '(er/mark-word
-                     er/mark-symbol
-                     er/mark-symbol-with-prefix
-                     er/mark-next-accessor
-                     er/mark-method-call
-                     er/mark-inside-quotes
-                     er/mark-outside-quotes
-                     malb/mark-inside-pairs-sp
-                     malb/mark-outside-pairs-sp
-                     er/mark-comment
-                     er/mark-url
-                     er/mark-email
-                     er/mark-ts-node
-                     malb/mark-org-inside-LaTeX-math
-                     malb/mark-org-LaTeX-math
-                     er/mark-text-sentence
-                     er/mark-text-paragraph
-                     mark-page
-                     org-mark-subtree
-                     er/mark-org-element
-                     er/mark-org-element-parent
-                     er/mark-org-code-block
-                     er/mark-sentence
-                     er/mark-org-parent
-                     er/mark-paragraph)))
-
-            (defun malb/er-mu4e-view-mode-expansions ()
-              (set (make-variable-buffer-local 'er/try-expand-list)
-                   '(er/mark-word
-                     er/mark-symbol
-                     er/mark-symbol-with-prefix
-                     er/mark-inside-quotes
-                     er/mark-outside-quotes
-                     er/mark-url
-                     er/mark-email
-                     er/mark-text-sentence
-                     er/mark-text-paragraph)))
-
-            (add-hook 'mu4e-view-mode-hook #'malb/er-mu4e-view-mode-expansions)))
+                            mark-page))))
 #+end_src
 
 Alternatively, consider
@@ -3021,17 +2956,27 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 *Note:* Ideally, we’d want to put all org-mode stuff into one big =:config= blog, but that makes it harder to read/explain.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb no-export
 (use-package org
   :bind (("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          :map org-mode-map
+         ("C-\\" . er/expand-region)
          ("C-c [" . nil)
          ("C-c ;" . nil)
+         ("<home>" . org-beginning-of-line)
+         ("<end>"  . org-end-of-line)
+         ("C-c C-." . org-time-stamp) ; ede binds C-c . too
+         ("C-c C-," . org-time-stamp-inactive) ; fylcheck binds C-c !
          ("M-/" . company-complete-common)) ;; I keep pressing it by accident, clumsy me
   :mode ("\\.org$" . org-mode)
   :blackout (orgtbl-mode)
-  :custom ((org-export-backends '(md odt latex icalendar html ascii))))
+  :custom ((org-export-backends '(md odt latex icalendar html ascii)))
+  :hook ((org-mode-hook . malb/er-org-mode-expansions))
+  :config
+  <<org-mode-options>>
+  <<org-mode-expand-region>>
+  )
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3047,7 +2992,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 
 ** Options
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-options
 (setq org-enforce-todo-dependencies nil ; enforce todo dependencies
       org-habit-graph-column 117
       org-use-speed-commands t
@@ -3084,17 +3029,13 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
                                 (isearch . lineage)
                                 (default . ancestors))
       org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+#+end_src
 
-(add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+#+begin_src emacs-lisp
 (add-hook 'org-agenda-mode-hook (lambda () (toggle-truncate-lines 1)))
 (add-hook 'org-agenda-mode-hook (lambda ()
                                   (setq-local imenu-generic-expression
                                               '((nil "^\\([a-zA-Z]+ +[0-9]+ [a-zA-Z]+ 20[0-9][0-9]\\)$" 1)))))
-
-(bind-key "<home>" #'org-beginning-of-line org-mode-map)
-(bind-key "<end>" #'org-end-of-line org-mode-map)
-(bind-key "C-c C-." #'org-time-stamp org-mode-map) ; ede binds C-c . too
-(bind-key "C-c C-," #'org-time-stamp-inactive org-mode-map) ; fylcheck binds C-c !
 #+end_src
 
 ** Agenda
@@ -3104,8 +3045,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
   :ensure nil
   :defer nil
   :after org
-  :bind (("C-c a" . org-agenda)
-         :map org-agenda-keymap
+  :bind (:map org-agenda-keymap
          ("C-_" . org-agenda-undo))
   :config
   (setq org-agenda-tags-column -124
@@ -3640,7 +3580,6 @@ UTF-8 everywhere.
 (add-to-list 'org-babel-default-header-args '(:eval . "never-export"))
 (add-to-list 'org-babel-default-inline-header-args '(:eval . "never-export"))
 #+end_src
-
 
 #+begin_src emacs-lisp
 (setq org-latex-to-mathml-convert-command "java -jar %j -unicode -force -df %o %I"
@@ -4665,6 +4604,60 @@ The equivalent of a TeX-Master. To use add ~eval: (add-hook 'after-save-hook #'m
       (org-latex-export-to-latex))))
 #+end_src
 
+** Expansions
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-expand-region
+(defun malb/mark-org-LaTeX-math ()
+  "Mark current math environment in org-mode."
+  (interactive)
+  (when (texmathp)
+    (let* ((pos (save-excursion
+                  (+ (re-search-backward texmathp-onoff-regexp) 1))))
+      (re-search-forward texmathp-onoff-regexp)
+      (set-mark pos)
+      (exchange-point-and-mark))))
+
+(defun malb/mark-org-inside-LaTeX-math ()
+  "Mark current math environment in org-mode."
+  (interactive)
+  (when (texmathp)
+    (let* ((pos (save-excursion (re-search-backward texmathp-onoff-regexp)
+                                (re-search-forward texmathp-onoff-regexp))))
+      (re-search-forward texmathp-onoff-regexp)
+      (re-search-backward texmathp-onoff-regexp)
+      (forward-char)
+      (set-mark pos)
+      (exchange-point-and-mark))))
+
+(defun malb/er-org-mode-expansions ()
+  (set (make-variable-buffer-local 'er/try-expand-list)
+       '(er/mark-word
+         er/mark-symbol
+         er/mark-symbol-with-prefix
+         er/mark-next-accessor
+         er/mark-method-call
+         er/mark-inside-quotes
+         er/mark-outside-quotes
+         malb/mark-inside-pairs-sp
+         malb/mark-outside-pairs-sp
+         er/mark-comment
+         er/mark-url
+         er/mark-email
+         er/mark-ts-node
+         malb/mark-org-inside-LaTeX-math
+         malb/mark-org-LaTeX-math
+         er/mark-text-sentence
+         er/mark-text-paragraph
+         mark-page
+         org-mark-subtree
+         er/mark-org-element
+         er/mark-org-element-parent
+         er/mark-org-code-block
+         er/mark-sentence
+         er/mark-org-parent
+         er/mark-paragraph)))
+#+end_src
+
 ** Org Babel
 
 Working with source code in org-mode.
@@ -4673,6 +4666,7 @@ Working with source code in org-mode.
 (use-package ob
   :ensure nil
   :ensure-system-package gnuplot
+  :hook ((org-babel-after-execute-hook . org-link-preview-region))
   :config (progn
             ;; load more languages for org-babel
             (org-babel-do-load-languages
@@ -7704,7 +7698,8 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
          ("M-<left>" . sp-backward-sexp)
          ("M-<up>" . outline-move-subtree-up)
          ("M-<down>" . outline-move-subtree-down)
-         ("C-c h ." . devdocs-browser-open))
+         ("C-c h ." . devdocs-browser-open)
+         ("C-\\" . er/expand-region))
   :hook ((LaTeX-mode . electric-indent-local-mode)
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . turn-on-flyspell)
@@ -8731,36 +8726,46 @@ emacsclient -c --eval "(browse-url-mail \"$@\")"
 
 E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and parsed by [[http://www.djcbsoftware.nl/code/mu/][mu]]. Then, we use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]]. See this [[https://martinralbrecht.wordpress.com/2016/05/30/handling-email-with-emacs/#more-1336][blog post]] for details.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb no-export
 (use-package mu4e
   :ensure nil
   :ensure-system-package (mu wkhtmltopdf)
   :commands (mu4e mu4e-update-index)
-  :bind (:map mu4e-main-mode-map ("u" . mu4e-update-index))
-  :config  (setq mu4e-headers-skip-duplicates t
-                 mu4e-view-show-images t
-                 message-kill-buffer-on-exit t
-                 mu4e-hide-index-messages t
-                 mu4e-auto-retrieve-keys t
-                 message-dont-reply-to-names #'mu4e-personal-or-alternative-address-p
-                 mu4e-completing-read-function 'completing-read
-                 mu4e-compose-switch 'display-buffer
-                 mu4e-split-view 'vertical
-                 mu4e-headers-visible-columns 132
-                 mu4e-headers-visible-lines 16
-                 mu4e-context-policy 'pick-first
-                 mu4e-compose-context-policy 'ask
-                 mu4e-change-filenames-when-moving t
-                 mu4e-confirm-quit nil
-                 mu4e-index-cleanup t
-                 mu4e-view-show-addresses t
-                 mu4e-headers-precise-alignment t
-                 mu4e-compose-complete-only-after nil
-                 mu4e-index-lazy-check nil
-                 mu4e-headers-auto-update nil
-                 mu4e-org-link-query-in-headers-mode t
-                 mu4e-eldoc-support t
-                 mu4e-modeline-support nil))
+  :hook ((mu4e-view-mode-hook . malb/er-mu4e-view-mode-expansions))
+  :bind (:map mu4e-main-mode-map
+         ("u" . mu4e-update-index)
+         :map mu4e-view-mode-map
+         ("C-\\" . er/expand-region)
+         ("<home>" . beginning-of-visual-line)
+         ("<end>" . end-of-visual-line)
+         ("g" . ace-link))
+  :config
+  (setq mu4e-headers-skip-duplicates t
+        mu4e-view-show-images t
+        message-kill-buffer-on-exit t
+        mu4e-hide-index-messages t
+        mu4e-auto-retrieve-keys t
+        message-dont-reply-to-names #'mu4e-personal-or-alternative-address-p
+        mu4e-completing-read-function 'completing-read
+        mu4e-compose-switch 'display-buffer
+        mu4e-split-view 'vertical
+        mu4e-headers-visible-columns 132
+        mu4e-headers-visible-lines 16
+        mu4e-context-policy 'pick-first
+        mu4e-compose-context-policy 'ask
+        mu4e-change-filenames-when-moving t
+        mu4e-confirm-quit nil
+        mu4e-index-cleanup t
+        mu4e-view-show-addresses t
+        mu4e-headers-precise-alignment t
+        mu4e-compose-complete-only-after nil
+        mu4e-index-lazy-check nil
+        mu4e-headers-auto-update nil
+        mu4e-org-link-query-in-headers-mode t
+        mu4e-eldoc-support t
+        mu4e-modeline-support nil)
+  <<mu4e-view-expansions>>
+  )
 #+end_src
 
 ** Folders
@@ -9386,19 +9391,6 @@ Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
 [[http://puntoblogspot.blogspot.de/2016/02/with-this-little-trick-helm-dash-gets.html][Tip:]] =C-c C-f= aka =helm-follow-mode= is your friend.
 
 ** Viewing
-
-Visual-line mode all the way.
-
-#+begin_src emacs-lisp
-(bind-key "<home>" #'beginning-of-visual-line mu4e-view-mode-map)
-(bind-key "<end>" #'end-of-visual-line mu4e-view-mode-map)
-#+end_src
-
-Use ace-link for links as it is compatible with gnus.
-
-#+begin_src emacs-lisp
-(bind-key "g" #'ace-link mu4e-view-mode-map)
-#+end_src
 
 Dropping =[mouse-1]= otherwise I end up with links being clicked twice.
 
@@ -10129,7 +10121,7 @@ Link to mu4e messages and threads.
   :config (setq mu4e-org-link-query-in-headers-mode t))
 #+end_src
 
-** Mail merge
+** Mail Merge
 :PROPERTIES:
 :BCC:       Eve <eve@example.com>
 :END:
@@ -10216,6 +10208,22 @@ Martin
   (let ((display-buffer-alist nil))
     (when (and (nth 2 (org-heading-components)) just-send)
       (org-todo "DONE"))))
+#+end_src
+
+** Expansions
+
+#+begin_src emacs-lisp :tangle no :noweb-ref mu4e-view-expansions
+(defun malb/er-mu4e-view-mode-expansions ()
+  (set (make-variable-buffer-local 'er/try-expand-list)
+       '(er/mark-word
+         er/mark-symbol
+         er/mark-symbol-with-prefix
+         er/mark-inside-quotes
+         er/mark-outside-quotes
+         er/mark-url
+         er/mark-email
+         er/mark-text-sentence
+         er/mark-text-paragraph)))
 #+end_src
 
 ** Debugging
