@@ -11218,7 +11218,7 @@ Copy source code marked up in various ways.
           (prodigy-define-service
             :name "Wikipedia"
             :command "kiwix-serve"
-            :args '("-p" "38081" "/bulk/wikipedia_en_all_nopic_2025-12.zim")
+            :args '("-p" "38081" "/bulk/wikipedia_en_all_nopic_2026-03.zim")
             :port 38081
             :tags '(wiki))
 
