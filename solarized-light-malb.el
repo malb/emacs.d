@@ -94,6 +94,7 @@
      `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#cccccc" s-base3 0.2)
                                            :inherit (highlight)))))
      `(markdown-line-break-face ((t  (:inherit nil :underline t))))
+     `(markdown-link-face ((t (:foreground ,yellow :background unspecified))))
 
      `(hl-sentence ((t (:background ,yellow-1bg :inherit (highlight)))))
      `(hl-line ((t (:background ,yellow-1bg :inherit (highlight)))))
