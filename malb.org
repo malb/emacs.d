@@ -11830,13 +11830,12 @@ Use =xdg-open= by default.
 (setq mailcap-user-mime-data '(((viewer . "xdg-open %s") (type . ".*/.*"))))
 #+end_src
 
-Make long lines kinda work ([[https://200ok.ch/posts/2020-09-29_comprehensive_guide_on_handling_long_lines_in_emacs.html][source]])
+([[https://emacsredux.com/blog/2026/04/07/stealing-from-the-best-emacs-configs/][source]])
 
 #+begin_src emacs-lisp
-(setq bidi-paragraph-direction 'left-to-right)
-(when (version<= "27.1" emacs-version)
-  (setq bidi-inhibit-bpa t)
-  (global-so-long-mode 1))
+(setq-default bidi-display-reordering 'left-to-right
+              bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
 #+end_src
 
 Don’t prompt to save passwords.
@@ -11861,6 +11860,21 @@ unset SESSION_MANAGER
 
 #+begin_src emacs-lisp
 (setenv "SESSION_MANAGER" nil)
+#+end_src
+
+([[https://emacsredux.com/blog/2026/04/07/stealing-from-the-best-emacs-configs/][source]])
+
+#+begin_src emacs-lisp
+(setq redisplay-skip-fontification-on-input t)
+#+end_src
+
+#+begin_src emacs-lisp
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
+#+end_src
+
+#+begin_src emacs-lisp
+(setq save-interprogram-paste-before-kill t)
 #+end_src
 
 ** Functions
