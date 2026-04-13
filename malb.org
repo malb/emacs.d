@@ -7889,9 +7889,18 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                           TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
 
             (add-to-list 'TeX-command-list
+                         '("LaTeX Undefined"
+                           "latex-undefined %s"
+                           TeX-run-command
+                           nil          ; ask for confirmation
+                           (LaTeX-mode) ; active in all modes
+                           :help "Missing Definitions"))
+
+            (add-to-list 'TeX-command-list
                          '("HTLaTeX"
                            "htlatex %s \"xhtml,html5,mathml,charset=utf-8\" \" -cunihtf -utf8\""
-                           TeX-run-TeX nil
+                           TeX-run-TeX
+                           nil
                            (LaTeX-mode docTeX-mode)
                            :help "Run HTLaTeX")
                          t)
@@ -8207,7 +8216,8 @@ print(content)
            (lsp-latex-diagnostics-ignored-patterns `(,(rx "Unused label")))))
 #+end_src
 
-** Utility Functions
+
+*** Utility Functions
 
 ([[https://sriramkswamy.github.io/dotemacs/][source]])
 
@@ -8247,6 +8257,34 @@ print(content)
   (save-excursion
     (align-regexp start end
                   "\\(\\s-*\\):" 1 0 t)))
+#+end_src
+
+*** Check for Undefined Commands
+
+Find missing definitions by compiling and parsing LaTeX logs.
+
+#+begin_src shell :tangle /home/malb/.local/bin/latex-undefined  :shebang "#!/bin/bash" :tangle-mode (identity #o555)
+# DO NOT EDIT DIRECTLY
+input=$(realpath "$1")
+dir=$(dirname "$input")
+cd $dir
+
+filename_with_ext=$(basename "$input")
+filename="${filename_with_ext%.*}"
+extension="${filename_with_ext##*.}"
+
+if [ "$extension" = "org" ]; then
+   if [ -f "$filename.tex"  ] ; then
+     input=$dir/$filename.tex
+   else
+     echo "No $dir/$filename.tex file found for $input."
+     exit 1
+   fi
+fi
+
+lualatex --interaction=nonstopmode $input | \
+grep --no-group-separator -A1 "! Undefined control sequence." | \
+grep -v "! Undefined control sequence." | sed -E "s/.*(\\\\.*)/\1/" | sort | uniq
 #+end_src
 
 ** BibTeX
