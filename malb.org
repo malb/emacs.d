@@ -2706,6 +2706,10 @@ This library provides easy project management and navigation. The concept of a p
                     (funcall malb/projectile-repl)
                   (malb/toggle-eshell))))
 
+            (add-to-list 'projectile-other-file-alist '("org" "tex"))
+            (add-to-list 'projectile-other-file-alist '("pdf" "org" "tex"))
+            (add-to-list 'projectile-other-file-alist '("tex" "org"))
+
             (when (not (boundp 'malb/projectile-switch-tab-project-names))
               (defvar malb/projectile-switch-tab-project-names nil))
 
