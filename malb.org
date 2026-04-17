@@ -8043,17 +8043,6 @@ When pressed twice, make the sub/superscript roman."
 
 *** LaTeXMK
 
-#+begin_src emacs-lisp
-(use-package auctex-latexmk
-  :ensure nil
-  :after tex
-  :config (progn
-            (auctex-latexmk-setup)
-            (add-to-list 'LaTeX-clean-intermediate-suffixes (rx ".fdb_latexmk" eos))
-            (add-to-list 'LaTeX-clean-intermediate-suffixes (rx ".fls" eos))
-            (add-to-list 'LaTeX-clean-intermediate-suffixes (rx ".tdo" eos))))
-#+end_src
-
 Run =latexmk -pvc= in async shell
 
 #+begin_src emacs-lisp
