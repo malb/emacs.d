@@ -2359,7 +2359,7 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
   :bind (("C-c m" . vr/mc-mark)
          ("M-%"   . vr/query-replace)
          ("C-%"   . query-replace)
-         ("C-S-s" . isearch-forward-regexp)
+         ("C-s"   . isearch-forward-regexp)
          ("C-S-r" . isearch-backward-regexp)))
 #+end_src
 
@@ -2474,7 +2474,7 @@ Commands are bound to =C-x m …=
 (use-package expreg
   :ensure t
   :bind (("C-\\" . expreg-expand)
-         ("C-s-\\" . expreg-contract)))
+         ("C-|" . expreg-contract)))
 #+end_src
 
 ** Expand Region
