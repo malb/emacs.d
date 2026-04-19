@@ -7423,17 +7423,6 @@ Grammar checkers are disabled by default. To enable
 
 ** Translating
 
-*[[https://www.reverso.net/][Reverso]] offers translation, grammar checks, synonyms and context.*
-
-#+begin_src emacs-lisp
-(use-package reverso
-  :bind (("C-c w t r" . reverso))
-  :hook ((reverso-result-mode . visual-line-mode))
-  :config (progn
-            (setq reverso-languages '(english german))
-            (malb/register-right-side-window (rx (seq bos "*Reverso*" eos)))))
-#+end_src
-
 *[[Https://github.com/atykhonov/google-translate][Google-translate]] queries just that.*
 
 #+begin_src emacs-lisp
