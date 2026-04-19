@@ -7779,6 +7779,11 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                '("pcvstack" LaTeX-env-label)
                '("pchstack" LaTeX-env-label)))
 
+            ;; C-c C-f C-l produces \lstinline
+            (setq LaTeX-font-list (remove '(?\C-l "\\textulc{"    "}") LaTeX-font-list))
+            (push '(?\C-l "\\lstinline{"    "}") LaTeX-font-list)
+
+
             (defun malb/latex-add-font-lock ()
               (font-latex-add-keywords '(("mat" "{")
                                          ("vec" "{"))
