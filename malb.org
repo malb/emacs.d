@@ -7223,7 +7223,6 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
 
 [[https://raw.githubusercontent.com/larstvei/Focus/master/demo-light.gif]] ([[https://github.com/larstvei/Focus][source]])
 
-
 #+begin_src emacs-lisp
 (use-package focus)
 #+end_src
