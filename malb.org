@@ -6220,7 +6220,17 @@ Auto-format source code in many languages with one command – [[https://github.
 (use-package ob-jupyter
   :ensure nil
   :init (progn
-          ;; (org-babel-jupyter-override-src-block "python")
+          ;; BUG https://github.com/emacs-jupyter/jupyter/issues/607
+          (malb/defadvice! my/jupyter-org-results-drawer-pre-blank-fix (element)
+            "Advice to ensure the RESULTS drawer has a :pre-blank 0 property.
+This prevents 'wrong-type-argument wholenump nil' errors in newer Org versions."
+            :filter-return #'jupyter-org-results-drawer
+            (if (and element (eq (org-element-type element) 'drawer))
+                (progn
+                  (org-element-put-property element :pre-blank 0)
+                  element)
+              element))
+
           (setq org-babel-jupyter-resource-directory "/tmp/org-babel-jupyter-resource-directory/")))
 #+end_src
 
