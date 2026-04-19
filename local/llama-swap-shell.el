@@ -9,7 +9,6 @@
 (require 'shell-maker)
 (require 'markdown-overlays)
 (require 'request)
-(require 'prodigy)
 (require 'yaml)
 
 (defgroup llama-swap-shell nil
@@ -30,11 +29,6 @@
   "Functions called before start, e.g. to start the server."
   :group 'llama-swap-shell
   :type '(list function))
-
-(defcustom llama-swap-shell-prodigy-service-name nil
-  "Name of the prodigy service for llama-swap if any."
-  :group 'llama-swap-shell
-  :type 'string)
 
 (defcustom llama-swap-shell-streaming t
   "Stream responses."
@@ -75,13 +69,6 @@
       (setq prompt (buffer-substring-no-properties (point-min) (point-max))))
     (cons prompt (nreverse images))))
 
-(defun llama-swap-shell-start-server-maybe (&rest _)
-  "Start server if not already running."
-  (when llama-swap-shell-prodigy-service-name
-    (let ((llama-swap-service (prodigy-find-service llama-swap-shell-prodigy-service-name)))
-      (when (not (prodigy-service-started-p llama-swap-service))
-        (prodigy-start-service llama-swap-service)
-        (sit-for 2)))))
 
 ;;;###autoload
 (defun llama-swap-shell-models-from-config (path)

@@ -6374,8 +6374,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :config
   (require 'aider-helm)
   (setq aider-args '("--env-file" "/home/malb/.aider.conf.env" "--no-check-update"))
-  (aider-magit-setup-transients)
-  (advice-add 'aider-transient-menu :before #'llama-swap-shell-start-server-maybe))
+  (aider-magit-setup-transients))
 #+end_src
 
 *** Highlight Indentation
@@ -8141,7 +8140,6 @@ print(content)
   :commands (latex-ocr-screenshot)
   :ensure-system-package spectacle
   :config
-  (advice-add 'latex-ocr-screenshot :before #'llama-swap-shell-start-server-maybe)
   (setq latex-ocr-command "latexocr.py %s"))
 #+end_src
 
@@ -11217,16 +11215,6 @@ Copy source code marked up in various ways.
 (use-package prodigy
   :hook ((prodigy-view-mode . toggle-truncate-lines))
   :init (progn
-          (prodigy-define-tag
-            :name 'email
-            :ready-message "Checking E-mail using IMAP IDLE. Ctrl-C to shutdown.")
-
-          (prodigy-define-service
-            :name "IMAPNotify"
-            :command "goimapnotify"
-            :tags '(email)
-            :kill-signal 'sigkill)
-
           (prodigy-define-service
             :name "malb.io Website"
             :cwd (expand-file-name "web/malb.io" malb/projects-dir)
@@ -11273,21 +11261,8 @@ Copy source code marked up in various ways.
             :port 38081
             :tags '(wiki))
 
-          (prodigy-define-service
-            :name "Llama Swap"
-            :command "llama-swap"
-            :args '("--config" "/home/malb/.config/llama-swap.conf" "--watch-config" "--listen" "localhost:38080")
-            :port 38080
-            :url "http://localhost:38080/ui/#/models"
-            :tags '(llm))
-
           (malb/register-wide-popup-window (rx (seq bos "*prodigy-" (zero-or-more nonl) "*" eos)))
-          (malb/register-right-side-window (rx (seq bos "*prodigy*" eos)))
-
-          ;; start some services
-          (when (and (daemonp) (not malb/startup-quick))
-            (prodigy-start-service (prodigy-find-service "IMAPNotify"))
-            (prodigy-start-service (prodigy-find-service "Llama Swap")))))
+          (malb/register-right-side-window (rx (seq bos "*prodigy*" eos)))))
 #+end_src
 
 * Media Players
@@ -12283,8 +12258,6 @@ Improved abc feature by adding new xyz module.
                                                          (normal-mode)))))
                      (ellama-provider malb/llm-translate))
 
-                (llama-swap-shell-start-server-maybe)
-
                 (unwind-protect
                     (if change
                         (progn
@@ -12334,9 +12307,6 @@ Improved abc feature by adding new xyz module.
                                                           (prin1-to-string ,(plist-get args :format))
                                                           (current-buffer) beg end)
                                                        (buffer-substring-no-properties beg end))))))
-
-                   (llama-swap-shell-start-server-maybe)
-
                    (when ,(plist-get args :model)
                      (setq ellama-provider (malb/llm-provider ,(plist-get args :model))
                            ellama--current-session-id nil))
@@ -12372,8 +12342,6 @@ Improved abc feature by adding new xyz module.
 
             (malb/defadvice! malb/ellama-generate-commit-message (old-function &rest args)
               :around #'ellama-generate-commit-message
-
-              (llama-swap-shell-start-server-maybe)
 
               (let ((old-ellama-provider ellama-provider)
                     (ellama-provider malb/llm-commit))
