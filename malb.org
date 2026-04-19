@@ -2510,13 +2510,13 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
                             mark-page))))
 #+end_src
 
-Alternatively, consider
+*Alternatives*
 
-1. ~M-@~ marks a word
-2. ~M-h~ marks a paragraph
-3. ~C-M-@~ marks a balanced expression or s-expression
-4. ~C-M-h~ marks a defun (top-level-definition)
-5. ~C-x h~ marks the whole buffer
+| ~M-@~   | marks a word                                |
+| ~M-h~   | marks a paragraph                           |
+| ~C-M-@~ | marks a balanced expression or s-expression |
+| ~C-M-h~ | marks a defun (top-level-definition)        |
+| ~C-x h~ | marks the whole buffer                      |
 
 ** Wrap Region
 
@@ -2649,28 +2649,28 @@ This library provides easy project management and navigation. The concept of a p
 
 *Commands:*
 
-- =C-c p D=   ~projectile-dired~
-- =C-c p F=   ~helm-projectile-find-file-in-known-projects~
-- =C-c p P=   ~projectile-test-project~
-- =C-c p S=   ~projectile-save-project-buffers~
-- =C-c p b=   ~helm-projectile-switch-to-buffer~
-- =C-c p f=   ~helm-projectile-find-file~
-- =C-c p g=   ~helm-projectile-find-file-dwim~
-- =C-c p h=   ~helm-projectile~
-- =C-c p p=   ~helm-projectile-switch-project~
-- =C-c p r=   ~projectile-replace~
-- =C-c p s s= ~helm-projectile-ag~
-- =C-c p x=   ~projectile-run-term~ etc.
+| =C-c p D=   | ~projectile-dired~                            |
+| =C-c p F=   | ~helm-projectile-find-file-in-known-projects~ |
+| =C-c p P=   | ~projectile-test-project~                     |
+| =C-c p S=   | ~projectile-save-project-buffers~             |
+| =C-c p b=   | ~helm-projectile-switch-to-buffer~            |
+| =C-c p f=   | ~helm-projectile-find-file~                   |
+| =C-c p g=   | ~helm-projectile-find-file-dwim~              |
+| =C-c p h=   | ~helm-projectile~                             |
+| =C-c p p=   | ~helm-projectile-switch-project~              |
+| =C-c p r=   | ~projectile-replace~                          |
+| =C-c p s s= | ~helm-projectile-ag~                          |
+| =C-c p x=   | ~projectile-run-term~ etc.                    |
 
 *When switching projects:*
 
-- ~C-d~ open Dired in project's directory
-- ~M-g~ open project root in vc-dir or magit
-- ~M-e~ switch to Eshell: Open a project in Eshell.
-- ~C-s~ grep in projects (add prefix C-u to recursive grep)
-- ~C-c~ Compile project: Run a compile command at the project root.
-- ~M-D~ Remove project(s): Delete marked projects from the list of known projects.
-- ~C-c @~ insert the current file that highlight bar is on as an org link.
+| ~C-d~   | open Dired in project's directory                                          |
+| ~M-g~   | open project root in vc-dir or magit                                       |
+| ~M-e~   | switch to Eshell: Open a project in Eshell.                                |
+| ~C-s~   | grep in projects (add prefix C-u to recursive grep)                        |
+| ~C-c~   | Compile project: Run a compile command at the project root.                |
+| ~M-D~   | Remove project(s): Delete marked projects from the list of known projects. |
+| ~C-c @~ | insert the current file that highlight bar is on as an org link.           |
 
 *Note*: =next-error= has nothing to do with projectile, but =<f5>= and =<f6>= kind of go together. ~previous-error~ is bound to =M-g p=.
 
