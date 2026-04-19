@@ -7314,13 +7314,6 @@ Use [[https://github.com/cute-jumper/ace-flyspell][ace-flyspell]] for fixing typ
 Automatically pick dictionary.
 
 #+begin_src emacs-lisp
-(use-package auto-dictionary
-  :disabled
-  :config (progn
-            (setf (cdr (rassoc "en" adict-dictionary-list)) "en_GB")))
-#+end_src
-
-#+begin_src emacs-lisp
 (use-package guess-language
   :commands (guess-language-buffer)
   :hook (message-mode . guess-language-mode)
