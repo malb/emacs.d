@@ -8723,7 +8723,7 @@ Spray is a speed reading mode.
 
 ** Piper
 
-[[https://github.com/rhasspy/piper][Text to speech]]
+[[https://github.com/OHF-Voice/piper1-gpl][Text to speech]]
 
 #+begin_src emacs-lisp
 (use-package piper
