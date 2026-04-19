@@ -3593,7 +3593,7 @@ UTF-8 everywhere.
 
 *** iCalendar
 
-iCal export is triggered after 600 seconds of inactivity.
+iCal export is triggered after 30 seconds of inactivity.
 
 *Note*: this code is definitely from somewhere else. I don’t remember where, though.
 
