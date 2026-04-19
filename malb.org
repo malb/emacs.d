@@ -7642,9 +7642,10 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
                                       ,reader
                                       "--write"
                                       ,writer
-                                      ,(when (s-equals-p writer "latex") "--listings")
+                                      ,@(when (s-equals-p writer "latex") '("--listings"))
                                       "--quiet"
                                       "--wrap=none")))
+
                 (with-current-buffer pandoc-buffer
                   (setq text (buffer-string)))
                 text))
