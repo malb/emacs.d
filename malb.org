@@ -6377,6 +6377,16 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   (aider-magit-setup-transients))
 #+end_src
 
+*** ECA
+
+([[https://eca.dev][source]])
+
+#+begin_src emacs-lisp
+(use-package eca
+  :commands eca)
+#+end_src
+
+
 *** Highlight Indentation
 
 [[https://github.com/jdtsmith/indent-bars][jdtsmith/indent-bars]]
