@@ -11150,22 +11150,6 @@ Note that PlantUML supports [[http://plantuml.com/latex.html][TikZ export]].
 #+end_src
 
 * File Sharing
-** COMMENT Transfer.sh
-
-[[https://github.com/Brillow/transfer-sh.el][transfer.sh]] for interfacing with https://transfer.sh.
-
-#+begin_src emacs-lisp
-(use-package transfer-sh)
-#+end_src
-
-** COMMENT Pastebin/ix.io
-
-Interfacing with http://ix.io/, run =ix=.
-
-#+begin_src emacs-lisp
-(use-package ix)
-#+end_src
-
 ** Gists
 
 To list [[https://github.com/defunkt/gist.el][gists]], run ~gist-list~:
@@ -11201,19 +11185,6 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
                                        (gist-mode-edit-buffer))))
 
             (setq gist-ask-for-description t)))
-#+end_src
-
-** COMMENT Copy as
-
-Copy source code marked up in various ways.
-
-#+begin_src emacs-lisp
-(use-package copy-as-format
-  :commands (copy-as-format-github
-             copy-as-format-jira
-             copy-as-format-markdown
-             copy-as-format-org-mode
-             copy-as-format-slack))
 #+end_src
 
 * Manage Local Services (Prodigy)
