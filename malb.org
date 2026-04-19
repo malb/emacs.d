@@ -2842,11 +2842,9 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 
 *** GitHub
 
-
 #+begin_src emacs-lisp
 (use-package forge
-  :after magit
-  :config (setq ghub-use-workaround-for-emacs-bug 'force))
+  :after magit)
 #+end_src
 
 *** Org Links for Magit Buffers
