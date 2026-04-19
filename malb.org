@@ -7902,7 +7902,8 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                            TeX-run-command
                            nil          ; ask for confirmation
                            (LaTeX-mode) ; active in all modes
-                           :help "Missing Definitions"))
+                           :help "Missing Definitions")
+                         t)
 
             (add-to-list 'TeX-command-list
                          '("HTLaTeX"
