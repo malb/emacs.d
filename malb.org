@@ -7446,6 +7446,79 @@ Grammar checkers are disabled by default. To enable
             (malb/register-right-side-window (rx bos "*argos-translate*" eos))))
 #+end_src
 
+*Call a (local) language model to translate.*
+
+#+begin_src emacs-lisp :tangle no :noweb-ref malb-translate-llm
+(defun malb/translate-llm (&optional change)
+  "Translate selected region or sentence at point and replace."
+  (interactive "P")
+  (let* ((beg (if (not (use-region-p))
+                  (save-excursion (backward-paragraph) (+ (point) 1))
+                (region-beginning)))
+         (end (if (not (use-region-p))
+                  (save-excursion (forward-paragraph) (- (point) 1))
+                (region-end)))
+         (filter (lambda (text) text))
+         (text (buffer-substring-no-properties beg end))
+         (from-lang (with-temp-buffer (insert text) (guess-language-buffer)))
+         (to-lang (if (equal from-lang 'en) 'de 'en))
+         (task (templatel-render-string
+                (concat
+                 "You are a professional {{ fromlang }} ({{ fromlangcode }}) "
+                 "to {{ tolang }} ({{ tolangcode }}) translator. "
+                 "Your goal is to accurately convey the meaning and nuances of the "
+                 "original {{ fromlang }} text while adhering to {{ tolang }} "
+                 "grammar, vocabulary, and cultural sensitivities. "
+                 "Produce only the {{ tolang }} translation, without any additional "
+                 "explanations or commentary. "
+                 "Please translate the following {{ fromlang }} text into {{ tolang }}:\\n"
+                 "\\n"
+                 "\\n"
+                 "{{ text }}")
+                `(("fromlang" . ,(nth 2 (assoc from-lang guess-language-langcodes)))
+                  ("fromlangcode" . ,(s-replace "_" "-" (nth 1 (assoc from-lang guess-language-langcodes))))
+                  ("tolang"   . ,(nth 2 (assoc   to-lang guess-language-langcodes)))
+                  ("tolangcode" . ,(s-replace "_" "-" (nth 1 (assoc to-lang guess-language-langcodes))))
+                  ("text" . ,text))))
+         (old-ellama-provider ellama-provider)
+         (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
+                                           (when (eq major-mode 'fundamental-mode)
+                                             (normal-mode)))))
+         (ellama-provider malb/llm-translate))
+
+    (unwind-protect
+        (if change
+            (progn
+              (kill-region beg end)
+              ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
+              (ellama-stream task :point beg :filter filter :ephemeral-session t
+                             :on-done restoref :on-error restoref))
+          (ellama-instant task))
+      ;; reset to whatever it was
+      (setq ellama-provider old-ellama-provider))))
+#+end_src
+
+** Text to Speech (Piper)
+
+[[https://github.com/OHF-Voice/piper1-gpl][Text to speech]]
+
+#+begin_src emacs-lisp
+(use-package piper
+  :commands (piper-region)
+  :ensure-system-package piper-tts
+  :ensure nil)
+#+end_src
+
+** OCR (Tesseract)
+
+[[https://github.com/tesseract-ocr/tesseract][OCR screenshots]] via [[file:local/tesseract.el][tesseract.el]].
+
+#+begin_src emacs-lisp
+(use-package tesseract
+  :ensure-system-package spectacle
+  :ensure nil)
+#+end_src
+
 ** Taking Notes (Deft)
 
 Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a listing of blog entries.
@@ -7456,65 +7529,66 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 (use-package deft
   :bind ("<f8>" . malb/deft)
   :bind ("S-<f8>" . malb/blog)
-  :init (progn
-          (setq deft-extensions '("org" "md")
-                deft-default-extension "org"
-                deft-directory malb/deft-directory
-                deft-text-mode 'org-mode
-                deft-use-filename-as-title nil
-                deft-auto-save-interval 300.0
-                deft-use-filter-string-for-filename t
-                deft-current-sort-method 'mtime
-                deft-file-naming-rules '((noslash . "-")
-                                         (nospace . "-")
-                                         (case-fn . downcase)))
+  :config
+  (progn
+    (setq deft-extensions '("org" "md")
+          deft-default-extension "org"
+          deft-directory malb/deft-directory
+          deft-text-mode 'org-mode
+          deft-use-filename-as-title nil
+          deft-auto-save-interval 300.0
+          deft-use-filter-string-for-filename t
+          deft-current-sort-method 'mtime
+          deft-file-naming-rules '((noslash . "-")
+                                   (nospace . "-")
+                                   (case-fn . downcase)))
 
-          (defun malb/deft-fill-columns ()
-            (setq-local fill-column 140)
-            (visual-fill-column-mode))
+    (defun malb/deft-fill-columns ()
+      (setq-local fill-column 140)
+      (visual-fill-column-mode))
 
-          (add-hook 'deft-mode-hook #'malb/deft-fill-columns)
+    (add-hook 'deft-mode-hook #'malb/deft-fill-columns)
 
-          (defun malb/deft-in-dir (dir)
-            "Run deft in directory DIR"
-            (setq deft-directory dir) ;; BUG: cannot let-bind
-            (pop-to-buffer "*Deft*")
-            (kill-this-buffer)
-            (deft)
-            (delete-other-windows))
+    (defun malb/deft-in-dir (dir)
+      "Run deft in directory DIR"
+      (setq deft-directory dir) ;; BUG: cannot let-bind
+      (pop-to-buffer "*Deft*")
+      (kill-this-buffer)
+      (deft)
+      (delete-other-windows))
 
-          (defun malb/blog ()
-            (interactive)
-            (malb/with-tab "blog"
-                           (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir))))
+    (defun malb/blog ()
+      (interactive)
+      (malb/with-tab "blog"
+                     (malb/deft-in-dir (expand-file-name "web/blog" malb/projects-dir))))
 
-          (defun malb/deft ()
-            (interactive)
-            (malb/with-tab "deft"
-                           (malb/deft-in-dir malb/deft-directory)))
+    (defun malb/deft ()
+      (interactive)
+      (malb/with-tab "deft"
+                     (malb/deft-in-dir malb/deft-directory)))
 
-          ;; https://github.com/jrblevin/deft/issues/100
-          (defun malb/deft-parse-summary (contents title)
-            "Parse the file CONTENTS, given the TITLE, and extract a summary.
+    ;; https://github.com/jrblevin/deft/issues/100
+    (defun malb/deft-parse-summary (contents title)
+      "Parse the file CONTENTS, given the TITLE, and extract a summary.
 The summary is a string extracted from the contents following the
 title."
-            (let* ((summary (let ((case-fold-search nil))
-                              (replace-regexp-in-string deft-strip-summary-regexp " " contents)))
-                   (summary-processed (deft-chomp
-                                       (if (and title
-                                                (not deft-use-filename-as-title)
-                                                (string-match (regexp-quote
-                                                               (if deft-org-mode-title-prefix
-                                                                   (concat "^#+TITLE: " title)
-                                                                 title))
-                                                              summary))
-                                           (substring summary (match-end 0) nil)
-                                         summary))))
-              (substring summary-processed 0 (min 512 (string-width summary-processed)))))
+      (let* ((summary (let ((case-fold-search nil))
+                        (replace-regexp-in-string deft-strip-summary-regexp " " contents)))
+             (summary-processed (deft-chomp
+                                  (if (and title
+                                           (not deft-use-filename-as-title)
+                                           (string-match (regexp-quote
+                                                          (if deft-org-mode-title-prefix
+                                                              (concat "^#+TITLE: " title)
+                                                            title))
+                                                         summary))
+                                      (substring summary (match-end 0) nil)
+                                    summary))))
+        (substring summary-processed 0 (min 512 (string-width summary-processed)))))
 
-          (advice-add #'deft-parse-summary :override #'malb/deft-parse-summary)
+    (advice-add #'deft-parse-summary :override #'malb/deft-parse-summary)
 
-          (add-hook 'deft-mode-hook #'hl-line-mode)))
+    (add-hook 'deft-mode-hook #'hl-line-mode)))
 #+end_src
 
 ** Markdown
@@ -7689,7 +7763,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
 | ~C-c @~   | outline minor mode   |
 | ~C-c ?~   | symbol documentation |
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb no-export
 (use-package tex
   :ensure auctex
   :mode (("\\.tikz$" . LaTeX-mode))
@@ -7716,9 +7790,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
          (LaTeX-mode . malb/lsp-enable-maybe)
          (LaTeX-mode . malb/company-latex-setup)
          (LaTeX-mode . malb/raise-flycheck-error-threshold)
-         (LaTeX-mode . visual-wrap-prefix-mode)
-         ;; (LaTeX-mode . indent-bars-mode)
-         )
+         (LaTeX-mode . visual-wrap-prefix-mode))
   :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
                                     ("\\sendmessageleft*" arg-on)
                                     ("\\sendmessagerightleft*" arg-on))))
@@ -7775,7 +7847,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (setq LaTeX-font-list (remove '(?\C-l "\\textulc{"    "}") LaTeX-font-list))
             (push '(?\C-l "\\lstinline{"    "}") LaTeX-font-list)
 
-
             (defun malb/latex-add-font-lock ()
               (font-latex-add-keywords '(("mat" "{")
                                          ("vec" "{"))
@@ -7802,8 +7873,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                              (company-reftex-labels
                                               company-auctex-macros
                                               company-dabbrev
-                                              :with company-yasnippet)
-                                             )))
+                                              :with company-yasnippet))))
 
             (defun malb/enable-cleveref ()
               ;; TODO dunno why cleveref.el isn't loaded
@@ -7888,14 +7958,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (setq-default TeX-master 'dwim
                           TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
 
-            (add-to-list 'TeX-command-list
-                         '("LaTeX Undefined"
-                           "latex-undefined %s"
-                           TeX-run-command
-                           nil          ; ask for confirmation
-                           (LaTeX-mode) ; active in all modes
-                           :help "Missing Definitions")
-                         t)
 
             (add-to-list 'TeX-command-list
                          '("HTLaTeX"
@@ -7905,6 +7967,8 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                            (LaTeX-mode docTeX-mode)
                            :help "Run HTLaTeX")
                          t)
+
+            <<auctex-command-latex-undefined>>
 
             (defun malb/expand-region-LaTeX-setup ()
               "Setup LaTeX expansions."
@@ -7954,37 +8018,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
               #'reftex-toc-goto-line)))
 #+end_src
 
-*** COMMENT Yanking
-
-- https://abizjak.github.io/emacs/2016/03/05/latex-environment-yank.html
-- https://abizjak.github.io/emacs/2016/03/05/latex-environment.html
-
-#+begin_src emacs-lisp
-(use-package latex-math-yank
-  :ensure nil)
-#+end_src
-
-
-*** COMMENT MathPix
-
-[[https://mathpix.com/][https://mathpix.com/]]
-
-#+begin_src emacs-lisp
-(use-package mathpix
-  :ensure nil
-  :custom ((mathpix-app-id
-            (plist-get
-             (car
-              (auth-source-search :host "mathpix" :max 1 :create nil :require '(:user)))
-             :user))
-           (mathpix-app-key
-            (funcall
-             (plist-get
-              (car
-               (auth-source-search :host "mathpix" :max 1 :create nil :require '(:secret)))
-              :secret)))))
-#+end_src
-
 *** CDLaTeX
 
 We do fast mathematics entry using a mix of [[https://github.com/cdominik/cdlatex][CDLaTeX]] and YaSnippet (for stuff like ~!=~).
@@ -8028,14 +8061,14 @@ When pressed twice, make the sub/superscript roman."
                                               (?F "\\mathfrak" nil t nil nil)
                                               (?B "\\mathbb" nil t nil nil))
                   cdlatex-command-alist
-                  '(("ZZ"  	"\\ZZ" 		"\\ZZ?" 				cdlatex-position-cursor nil nil t)
-                    ("QQ"  	"\\QQ" 		"\\QQ?" 				cdlatex-position-cursor nil nil t)
-                    ("RR"  	"\\RR" 		"\\RR?" 				cdlatex-position-cursor nil nil t)
-                    ("CC"  	"\\CC" 		"\\CC?" 				cdlatex-position-cursor nil nil t)
-                    ("OO"  	"\\mathcal{O}()" "\\mathcal{O}\\left({?}\\right)" cdlatex-position-cursor nil nil t)
-                    ("Rq"  	"\\ring_q" "\\ring_q?" 	  	cdlatex-position-cursor nil nil t)
-                    ("nrm" 	"||x||" 	"\\|?\\|" 	cdlatex-position-cursor nil nil t)
-                    ("abs" 	"|x|" 	"\\lvert ? \\rvert" 	cdlatex-position-cursor nil nil t))
+                  '(("ZZ"  "\\ZZ" 		 "\\ZZ?" 			cdlatex-position-cursor nil nil t)
+                    ("QQ"  "\\QQ" 		 "\\QQ?" 			cdlatex-position-cursor nil nil t)
+                    ("RR"  "\\RR" 		 "\\RR?" 			cdlatex-position-cursor nil nil t)
+                    ("CC"  "\\CC" 		 "\\CC?" 			cdlatex-position-cursor nil nil t)
+                    ("OO"  "\\mathcal{O}()" "\\mathcal{O}\\left({?}\\right)" 	cdlatex-position-cursor nil nil t)
+                    ("Rq"  "\\ring_q" 	 "\\ring_q?" 	  		cdlatex-position-cursor nil nil t)
+                    ("nrm" "||x||" 	 "\\|?\\|" 				cdlatex-position-cursor nil nil t)
+                    ("abs" "|x|" 		 "\\lvert ? \\rvert" 		cdlatex-position-cursor nil nil t))
                   cdlatex-math-symbol-alist '(( ?a  ("\\alpha" "\\alert{?}"))
                                               ( ?c  ("\\circ"  "" "\\cos"))
                                               ( ?R  ("\\ring" "\\ring_q"))
@@ -8276,6 +8309,19 @@ grep --no-group-separator -A1 "! Undefined control sequence." | \
 grep -v "! Undefined control sequence." | sed -E "s/.*(\\\\.*)/\1/" | sort | uniq
 #+end_src
 
+Add command to AucTeX command list to call the script.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref auctex-command-latex-undefined
+(add-to-list 'TeX-command-list
+             '("LaTeX Undefined"
+               "latex-undefined %s"
+               TeX-run-command
+               nil          ; ask for confirmation
+               (LaTeX-mode) ; active in all modes
+               :help "Missing Definitions")
+             t)
+#+end_src
+
 ** BibTeX
 
 My standard BibTeX sources are
@@ -8298,8 +8344,7 @@ These are stored in some =common-latex= folder which has my [[https://bitbucket.
                                 (expand-file-name "jacm.bib" malb/common-latex)
                                 (expand-file-name "dcc.bib" malb/common-latex)
                                 (expand-file-name "local.bib" malb/common-latex)
-                                (expand-file-name "social-science.bib" malb/common-latex)
-                                ))
+                                (expand-file-name "social-science.bib" malb/common-latex)))
 
 (setq reftex-default-bibliography malb/bibtex-files)
 #+end_src
@@ -8650,19 +8695,19 @@ A [[https://company-mode.github.io/][company]] interface to bibtex-completion.
 
 I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] better, [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] covers more bases.
 
-- [[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.
+*[[https://github.com/cpitclaudel/biblio.el][biblio]] browses and gathers bibliographic references and publications from various sources, by keywords or by DOI.*
 
   #+begin_src emacs-lisp
 (use-package biblio
   :config (setq biblio-bibtex-use-autokey t))
   #+end_src
 
-- [[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.
+*[[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.*
 
   #+begin_src emacs-lisp
 (use-package gscholar-bibtex
-  :init (progn
-            (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir))))
+  :config
+  (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir)))
   #+end_src
 
 *** Org Cite
@@ -8712,34 +8757,13 @@ Spray is a speed reading mode.
 
 #+begin_src emacs-lisp
 (use-package spray
-  :config (progn
-            (setq spray-wpm 400
-                  spray-margin-left 4
-                  spray-margin-top 12)
-            (bind-key "+" 'spray-faster spray-mode-map)
-            (bind-key "-" 'spray-slower spray-mode-map)
-            (add-to-list 'spray-unsupported-minor-modes 'beacon-mode)))
-#+end_src
-
-** Piper
-
-[[https://github.com/OHF-Voice/piper1-gpl][Text to speech]]
-
-#+begin_src emacs-lisp
-(use-package piper
-  :commands (piper-region)
-  :ensure-system-package piper-tts
-  :ensure nil)
-#+end_src
-
-** Tesseract
-
-[[https://github.com/tesseract-ocr/tesseract][OCR screenshots]]
-
-#+begin_src emacs-lisp
-(use-package tesseract
-  :ensure-system-package spectacle
-  :ensure nil)
+  :commands (spray-mode)
+  :bind (:map spray-mode-map
+         ("+" . spray-faster)
+         ("-" . spray-slower))
+  :custom ((spray-wpm 400)
+           (spray-margin-left 4)
+           (spray-margin-top 12)))
 #+end_src
 
 * E-Mail (Mu4e)
@@ -10897,27 +10921,19 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                          (defun malb/auto-revert-local ()
                            (unless (file-remote-p default-directory)
                              (auto-revert-mode)))))
-  :config (progn (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
-                 (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-                 (setq dired-sidebar-theme 'icons
-                       dired-sidebar-should-follow-file t
-                       dired-sidebar-use-term-integration t
-                       dired-sidebar-width malb/left-side-window-width
-                       dired-sidebar-display-alist '((side . left)
-                                                     (slot . -1)
-                                                     (window-parameters
-                                                      (no-other-window . t)
-                                                      (no-delete-other-windows . t))))
-                 ;; (defun malb/dired-sidebar-drop-icons (orig-fun &rest args)
-                 ;;   (if (member 'all-the-icons-dired-mode dired-mode-hook)
-                 ;;       (progn
-                 ;;         (remove-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-                 ;;         (let ((r (apply orig-fun args)))
-                 ;;           (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-                 ;;           r))
-                 ;;     (apply orig-fun args)))
-                 ;; (advice-add #'dired-sidebar-get-or-create-buffer :around #'malb/dired-sidebar-drop-icons)
-                 ))
+  :config
+  (progn
+    (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+    (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+    (setq dired-sidebar-theme 'icons
+          dired-sidebar-should-follow-file t
+          dired-sidebar-use-term-integration t
+          dired-sidebar-width malb/left-side-window-width
+          dired-sidebar-display-alist '((side . left)
+                                        (slot . -1)
+                                        (window-parameters
+                                         (no-other-window . t)
+                                         (no-delete-other-windows . t))))))
 #+end_src
 
 * Tramp
@@ -12111,7 +12127,7 @@ Make links in comments and string clickable
 
 * LLM
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb no-export
 (use-package ellama
   :defer nil
   :bind (:map git-commit-mode-map
@@ -12193,53 +12209,7 @@ Improved abc feature by adding new xyz module.
               (setq ellama-provider (malb/llm-provider (llama-swap-shell-select-model))
                     ellama--current-session-id nil))
 
-            (defun malb/translate-llm (&optional change)
-              "Translate selected region or sentence at point and replace."
-              (interactive "P")
-              (let* ((beg (if (not (use-region-p))
-                              (save-excursion (backward-paragraph) (+ (point) 1))
-                            (region-beginning)))
-                     (end (if (not (use-region-p))
-                              (save-excursion (forward-paragraph) (- (point) 1))
-                            (region-end)))
-                     (filter (lambda (text) text))
-                     (text (buffer-substring-no-properties beg end))
-                     (from-lang (with-temp-buffer (insert text) (guess-language-buffer)))
-                     (to-lang (if (equal from-lang 'en) 'de 'en))
-                     (task (templatel-render-string
-                            (concat
-                             "You are a professional {{ fromlang }} ({{ fromlangcode }}) "
-                             "to {{ tolang }} ({{ tolangcode }}) translator. "
-                             "Your goal is to accurately convey the meaning and nuances of the "
-                             "original {{ fromlang }} text while adhering to {{ tolang }} "
-                             "grammar, vocabulary, and cultural sensitivities. "
-                             "Produce only the {{ tolang }} translation, without any additional "
-                             "explanations or commentary. "
-                             "Please translate the following {{ fromlang }} text into {{ tolang }}:\\n"
-                             "\\n"
-                             "\\n"
-                             "{{ text }}")
-                            `(("fromlang" . ,(nth 2 (assoc from-lang guess-language-langcodes)))
-                              ("fromlangcode" . ,(s-replace "_" "-" (nth 1 (assoc from-lang guess-language-langcodes))))
-                              ("tolang"   . ,(nth 2 (assoc   to-lang guess-language-langcodes)))
-                              ("tolangcode" . ,(s-replace "_" "-" (nth 1 (assoc to-lang guess-language-langcodes))))
-                              ("text" . ,text))))
-                     (old-ellama-provider ellama-provider)
-                     (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
-                                                       (when (eq major-mode 'fundamental-mode)
-                                                         (normal-mode)))))
-                     (ellama-provider malb/llm-translate))
-
-                (unwind-protect
-                    (if change
-                        (progn
-                          (kill-region beg end)
-                          ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
-                          (ellama-stream task :point beg :filter filter :ephemeral-session t
-                                         :on-done restoref :on-error restoref))
-                      (ellama-instant task))
-                  ;; reset to whatever it was
-                  (setq ellama-provider old-ellama-provider))))
+            <<malb-translate-llm>>
 
             (defmacro malb/llm-do-task (cmd task &rest args)
               `(defun ,(intern (concat "malb/" cmd "-llm")) (arg)
