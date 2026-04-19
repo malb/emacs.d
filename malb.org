@@ -7439,10 +7439,10 @@ Grammar checkers are disabled by default. To enable
 #+begin_src emacs-lisp
 (use-package argos-translate
   :ensure nil
-  :bind ("C-c w t t" . argos-translate-region)
+  :bind ("C-c w t a" . argos-translate-region)
   :config (progn
             (setq argos-translate-command
-                  "conda run -n cuda --no-capture-output argos-translate -f ${from} -t ${to} ${text}")
+                  "conda run -n argostranslate --no-capture-output argos-translate -f ${from} -t ${to} ${text}")
             (malb/register-right-side-window (rx bos "*argos-translate*" eos))))
 #+end_src
 
