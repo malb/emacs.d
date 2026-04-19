@@ -7327,7 +7327,7 @@ Automatically pick dictionary.
 
 [[https://media.githubusercontent.com/media/tecosaur/lexic/refs/heads/master/lexic.gif]]
 
-*[[https://github.com/tecosaur/lexic][Lexic]] for offline lookups.*
+*[[https://github.com/tecosaur/lexic][Lexic]] for offline lookups* using https://www.dictinfo.com/stardict/wikt-en-en-2025-10-05.7z ([[https://www.dictinfo.com/][source]])
 
 #+begin_src emacs-lisp
 (use-package lexic
@@ -7348,7 +7348,7 @@ Automatically pick dictionary.
             (malb/register-right-side-window (rx bos "*lexic*" eos))))
 #+end_src
 
-*[[http://oremacs.com/2015/05/22/define-word/][Define-word]] for online [[https://www.wordnik.com/][wordnik]] lookups.*
+*[[http://oremacs.com/2015/05/22/define-word/][Define-word]] for online [[https://www.wordnik.com/][wordnik]] lookups*, rarely needed due to wiktionary corpus size.
 
 #+begin_src emacs-lisp
 (use-package define-word
