@@ -10392,335 +10392,370 @@ https://github.com/org2blog/org2blog/wiki/Debugging-Stories
 
 [[https://github.com/politza/pdf-tools][PDF tools]] is a nice PDF viewer for Emacs.
 
-We also add support to extract PDF annotations to a temporary org-mode/markdown buffer, based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]], and calling [[https://github.com/tabulapdf/tabula-java][tabular]] or [[https://en.wikipedia.org/wiki/Pdftotext][pdftotext]].
+*Call [[https://github.com/tabulapdf/tabula-java][tabular]]:*
 
-#+begin_src emacs-lisp
-(use-package pdf-tools
-  :magic ("%PDF" . pdf-view-mode)
-  :after (org tex)
-  :config (progn
-            (pdf-tools-install)
-            (setq-default pdf-view-display-size 'fit-page)
+#+begin_src emacs-lisp :noweb-ref pdf-extract-table :tangle no
+(defun malb/pdf-extract-table (&optional format)
+  (let* ((format- (upcase (or format "CSV")))
+         (pdf-filename (buffer-file-name))
+         (txt-filename (make-temp-name "/tmp/tabula-"))
+         (buffer (generate-new-buffer
+                  (generate-new-buffer-name (format "*tabular<%s>*"
+                                                    (file-name-base pdf-filename))))))
+    (shell-command (format "java -jar %s -f %s -p %d -o \"%s\" \"%s\""
+                           malb/tabular-jar
+                           format-
+                           (pdf-view-current-page)
+                           txt-filename
+                           pdf-filename)
+                   nil)
+    (pop-to-buffer buffer)
+    (insert-file-contents txt-filename)
+    (cond
+     ((eq format nil) (progn
+                        (org-mode)
+                        (call-interactively 'mark-whole-buffer)
+                        (call-interactively 'org-table-convert-region)))
+     ((string-equal format "JSON") (progn
+                                     (json-mode)
+                                     (json-pretty-print-buffer))))
+    (delete-file txt-filename)))
+#+end_src
 
-            (require 'pdf-annot)
+*Call [[https://en.wikipedia.org/wiki/Pdftotext][pdftotext]]:*
 
-            (setq pdf-annot-default-annotation-properties
-                  `((t (label . "M"))
-                    (text (icon . "Note")
-                          (color . "#dc322f"))
-                    (highlight (color . "#fef3d5"))
-                    (squiggly (color . "#dc322f"))
-                    (strike-out(color . "#dc322f"))
-                    (underline (color . "#268bd2"))))
+#+begin_src emacs-lisp :noweb-ref pdf-extract-text :tangle no
+(defun malb/pdf-extract-text ()
+  (let* ((pdf-filename (buffer-file-name))
+         (txt-filename (make-temp-name "/tmp/pdf-text-"))
+         (buffer (generate-new-buffer
+                  (generate-new-buffer-name (format "*pdftotext<%s>*"
+                                                    (file-name-base pdf-filename))))))
+    (shell-command (format "pdftotext -layout -nopgbrk \"%s\" \"%s\""
+                           pdf-filename txt-filename)
+                   nil)
+    (pop-to-buffer buffer)
+    (insert-file-contents txt-filename)
+    (delete-file txt-filename)))
+#+end_src
 
-            (setq pdf-view-resize-factor 1.1
-                  pdf-annot-activate-created-annotations t
-                  pdf-view-midnight-invert nil
-                  pdf-misc-print-programm "gtklp")
+*Extract PDF annotations to a temporary org-mode buffer*, based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]]:
 
-            (add-hook 'pdf-annot-list-mode-hook #'pdf-annot-list-follow-minor-mode)
+#+begin_src emacs-lisp :noweb-ref pdf-annot-export-as-org :tangle no
+(defun malb/pdf-annot-export-as-org (compact)
+  "Export annotations to Org Buffer."
+  (interactive "P")
+  (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
+         (source-buffer (current-buffer))
+         (source-buffer-name (file-name-sans-extension (buffer-name)))
+         (source-file-name (buffer-file-name source-buffer))
+         (target-buffer-name (format "*Notes for %s*" source-buffer-name))
+         (target-buffer (get-buffer-create target-buffer-name)))
 
-            (defun malb/pdf-extract-table (&optional format)
-              (let* ((format- (upcase (or format "CSV")))
-                     (pdf-filename (buffer-file-name))
-                     (txt-filename (make-temp-name "/tmp/tabula-"))
-                     (buffer (generate-new-buffer
-                              (generate-new-buffer-name (format "*tabular<%s>*"
-                                                                (file-name-base pdf-filename))))))
-                (shell-command (format "java -jar %s -f %s -p %d -o \"%s\" \"%s\""
-                                       malb/tabular-jar
-                                       format-
-                                       (pdf-view-current-page)
-                                       txt-filename
-                                       pdf-filename)
-                               nil)
-                (pop-to-buffer buffer)
-                (insert-file-contents txt-filename)
-                (cond
-                 ((eq format nil) (progn
-                                    (org-mode)
-                                    (call-interactively 'mark-whole-buffer)
-                                    (call-interactively 'org-table-convert-region)))
-                 ((string-equal format "JSON") (progn
-                                                 (json-mode)
-                                                 (json-pretty-print-buffer))))
-                (delete-file txt-filename)))
+    (with-current-buffer target-buffer
+      (org-mode)
+      (erase-buffer)
+      (visual-fill-column-mode)
 
-            (defun malb/pdf-extract-text ()
-              (let* ((pdf-filename (buffer-file-name))
-                     (txt-filename (make-temp-name "/tmp/tabula-"))
-                     (buffer (generate-new-buffer
-                              (generate-new-buffer-name (format "*pdftotext<%s>*"
-                                                                (file-name-base pdf-filename))))))
-                (shell-command (format "pdftotext -layout -nopgbrk \"%s\" \"%s\""
-                                       pdf-filename txt-filename)
-                               nil)
-                (pop-to-buffer buffer)
-                (insert-file-contents txt-filename)
-                (delete-file txt-filename)))
+      (insert (format "#+title: Notes for %s\n" source-buffer-name))
+      (insert (format "#+startup: indent\n\n"))
+      (insert (format "source: [[%s][%s]]\n\n" source-file-name source-buffer))
 
-            (defun malb/pdf-view-llncs-from-bounding-box (arg &optional window)
-              "Set the height from the page's bounding-box."
-              (interactive "P")
-              (let* ((bb (pdf-cache-boundingbox (pdf-view-current-page window)))
-                     (h-margin (max 0.28 (or pdf-view-bounding-box-margin 0.0)))
-                     (w-margin (max 0.05 (or pdf-view-bounding-box-margin 0.0)))
-                     (slice (if arg (list (- (nth 0 bb)
-                                             (/ h-margin 2.0))
-                                          (- (nth 1 bb)
-                                             (/ w-margin 2.0))
-                                          (+ (- (nth 2 bb) (nth 0 bb))
-                                             h-margin)
-                                          (+ (- (nth 3 bb) (nth 1 bb))
-                                             w-margin)))
-                            ;; hardcoded from the above
-                            (slice '(0.078954 0.127778 0.848628 0.7444440000000001))))
-                (apply 'pdf-view-set-slice
-                       (append slice (and window (list window))))))
+      (mapc (lambda (annot) ;; traverse all annotations
+              (progn
+                (let ((page (cdr (assoc 'page annot)))
+                      (highlighted-text
+                       (if (pdf-annot-get annot 'markup-edges)
+                           (let ((highlighted-text
+                                  (with-current-buffer source-buffer
+                                    (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                      (pdf-tools-org-edges-to-region
+                                                       (pdf-annot-get annot 'markup-edges))))))
+                             (replace-regexp-in-string "\n" " " highlighted-text))
+                         nil))
+                      (note (pdf-annot-get annot 'contents)))
 
-            (defun pdf-tools-org-edges-to-region (edges)
-              "Attempt to get 4-entry region \(LEFT TOP RIGHT BOTTOM\) from several EDGES.
-We need this to import annotations and to get marked-up text, because
-annotations are referenced by its edges, but functions for these tasks
-need region."
-              (let ((left0 (nth 0 (car edges)))
-                    (top0 (nth 1 (car edges)))
-                    (bottom0 (nth 3 (car edges)))
-                    (top1 (nth 1 (car (last edges))))
-                    (right1 (nth 2 (car (last edges))))
-                    (bottom1 (nth 3 (car (last edges))))
-                    (n (safe-length edges)))
-                ;; we try to guess the line height to move
-                ;; the region away from the boundary and
-                ;; avoid double lines
-                (list left0
-                      (+ top0 (/ (- bottom0 top0) 3))
-                      right1
-                      (- bottom1 (/ (- bottom1 top1) 3)))))
+                  (when (or highlighted-text (> (length note) 0))
+                    (insert (if compact "- " "* "))
+                    (insert (format "page %s" page))
 
-            (defun malb/pdf-annot-export-as-org (compact)
-              "Export annotations to Org Buffer."
-              (interactive "P")
-              (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
-                     (source-buffer (current-buffer))
-                     (source-buffer-name (file-name-sans-extension (buffer-name)))
-                     (source-file-name (buffer-file-name source-buffer))
-                     (target-buffer-name (format "*Notes for %s*" source-buffer-name))
-                     (target-buffer (get-buffer-create target-buffer-name)))
+                    (when highlighted-text
+                      (insert (if compact (format ": “%s” " highlighted-text)
+                                (concat "\n\n#+begin_quote\n"
+                                        highlighted-text
+                                        "\n#+end_quote"))))
+                    (if (> (length note) 0)
+                        (insert (if compact (format " %s\n" note)
+                                  (format "\n\n%s\n\n" note)))
+                      (insert (if compact "\n" "\n\n")))))))
+            (cl-remove-if
+             (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
+             annots))
+      )
+    (pop-to-buffer target-buffer '(display-buffer-pop-up-window))))
+#+end_src
 
-                (with-current-buffer target-buffer
-                  (org-mode)
-                  (erase-buffer)
-                  (visual-fill-column-mode)
+*Extract PDF annotations to a temporary markdown buffer,* based on [[https://github.com/machc/pdf-tools-org][pdf-tools-org]].
 
-                  (insert (format "#+title: Notes for %s\n" source-buffer-name))
-                  (insert (format "#+startup: indent\n\n"))
-                  (insert (format "source: [[%s][%s]]\n\n" source-file-name source-buffer))
+#+begin_src emacs-lisp :noweb-ref pdf-annot-export-as-md :tangle no
+(defun malb/pdf-annot-export-as-md (compact)
+  "Export annotations to Makrdown buffer."
+  (interactive "P")
+  (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
+         (source-buffer (current-buffer))
+         (source-buffer-name (file-name-sans-extension (buffer-name)))
+         (source-file-name (buffer-file-name source-buffer))
+         (target-buffer-name (format "*Notes for %s*" source-buffer-name))
+         (target-buffer (get-buffer-create target-buffer-name)))
+    (with-current-buffer target-buffer
+      (markdown-mode)
+      (erase-buffer)
+      (visual-fill-column-mode)
 
-                  (mapc (lambda (annot) ;; traverse all annotations
-                          (progn
-                            (let ((page (cdr (assoc 'page annot)))
-                                  (highlighted-text
-                                   (if (pdf-annot-get annot 'markup-edges)
-                                       (let ((highlighted-text
-                                              (with-current-buffer source-buffer
-                                                (pdf-info-gettext (pdf-annot-get annot 'page)
-                                                                  (pdf-tools-org-edges-to-region
-                                                                   (pdf-annot-get annot 'markup-edges))))))
-                                         (replace-regexp-in-string "\n" " " highlighted-text))
-                                     nil))
-                                  (note (pdf-annot-get annot 'contents)))
+      (insert (format "---\ntitle: Notes for %s\n---\n\n" source-buffer-name))
+      (insert (format "source: [%s](%s)\n\n" source-buffer source-file-name))
+      (mapc (lambda (annot) ;; traverse all annotations
+              (progn
+                (let ((page (cdr (assoc 'page annot)))
+                      (highlighted-text
+                       (if (pdf-annot-get annot 'markup-edges)
+                           (let ((highlighted-text
+                                  (with-current-buffer source-buffer
+                                    (pdf-info-gettext (pdf-annot-get annot 'page)
+                                                      (pdf-tools-org-edges-to-region
+                                                       (pdf-annot-get annot 'markup-edges))))))
+                             (replace-regexp-in-string "\n" " " highlighted-text))
+                         nil))
+                      (note (pdf-annot-get annot 'contents)))
 
-                              (when (or highlighted-text (> (length note) 0))
-                                (insert (if compact "- " "* "))
-                                (insert (format "page %s" page))
+                  (when (or highlighted-text (> (length note) 0))
+                    (insert (if compact "- " "On "))
+                    (insert (format "page %s" page))
 
-                                (when highlighted-text
-                                  (insert (if compact (format ": “%s” " highlighted-text)
-                                            (concat "\n\n#+begin_quote\n"
-                                                    highlighted-text
-                                                    "\n#+end_quote"))))
-                                (if (> (length note) 0)
-                                    (insert (if compact (format " %s\n" note)
-                                              (format "\n\n%s\n\n" note)))
-                                  (insert (if compact "\n" "\n\n")))))))
-                        (cl-remove-if
-                         (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
-                         annots))
-                  )
-                (pop-to-buffer target-buffer '(display-buffer-pop-up-window))))
+                    (when highlighted-text
+                      (insert (if compact (format ": “%s” " highlighted-text)
+                                (concat ":  \n> "
+                                        (replace-regexp-in-string "\n" "\n> " highlighted-text)
+                                        "\n"))))
+                    (if (> (length note) 0)
+                        (insert (if compact (format " %s\n" note)
+                                  (format "\n\n%s\n\n" note)))
+                      (insert (if compact "\n" "\n\n")))))))
+            (cl-remove-if
+             (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
+             annots)))
+    (pop-to-buffer target-buffer '(display-buffer-pop-up-window))))
+#+end_src
 
-            (defun malb/pdf-annot-export-as-md (compact)
-              "Export annotations to Makrdown buffer."
-              (interactive "P")
-              (let* ((annots (sort (pdf-annot-getannots) 'pdf-annot-compare-annotations))
-                     (source-buffer (current-buffer))
-                     (source-buffer-name (file-name-sans-extension (buffer-name)))
-                     (source-file-name (buffer-file-name source-buffer))
-                     (target-buffer-name (format "*Notes for %s*" source-buffer-name))
-                     (target-buffer (get-buffer-create target-buffer-name)))
-                (with-current-buffer target-buffer
-                  (markdown-mode)
-                  (erase-buffer)
-                  (visual-fill-column-mode)
+*PDF extraction hydra:*
 
-                  (insert (format "---\ntitle: Notes for %s\n---\n\n" source-buffer-name))
-                  (insert (format "source: [%s](%s)\n\n" source-buffer source-file-name))
-                  (mapc (lambda (annot) ;; traverse all annotations
-                          (progn
-                            (let ((page (cdr (assoc 'page annot)))
-                                  (highlighted-text
-                                   (if (pdf-annot-get annot 'markup-edges)
-                                       (let ((highlighted-text
-                                              (with-current-buffer source-buffer
-                                                (pdf-info-gettext (pdf-annot-get annot 'page)
-                                                                  (pdf-tools-org-edges-to-region
-                                                                   (pdf-annot-get annot 'markup-edges))))))
-                                         (replace-regexp-in-string "\n" " " highlighted-text))
-                                     nil))
-                                  (note (pdf-annot-get annot 'contents)))
-
-                              (when (or highlighted-text (> (length note) 0))
-                                (insert (if compact "- " "On "))
-                                (insert (format "page %s" page))
-
-                                (when highlighted-text
-                                  (insert (if compact (format ": “%s” " highlighted-text)
-                                            (concat ":  \n> "
-                                                    (replace-regexp-in-string "\n" "\n> " highlighted-text)
-                                                    "\n"))))
-                                (if (> (length note) 0)
-                                    (insert (if compact (format " %s\n" note)
-                                              (format "\n\n%s\n\n" note)))
-                                  (insert (if compact "\n" "\n\n")))))))
-                        (cl-remove-if
-                         (lambda (annot) (member (pdf-annot-get-type annot) (list 'link)))
-                         annots)))
-                (pop-to-buffer target-buffer '(display-buffer-pop-up-window))))
-
-            (defhydra malb/hydra-pdf-extract (:color blue)
-              "
+#+begin_src emacs-lisp :noweb-ref hydra-pdf-extract :tangle no
+(defhydra malb/hydra-pdf-extract (:color blue)
+  "
 Org:       _o_ compact  _O_ normal     _t_ table
 Markdown:  _m_ compact  _M_ normal
 Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 "
-              ("o" (lambda () (interactive) (malb/pdf-annot-export-as-org 1)))
-              ("O" malb/pdf-annot-export-as-org)
-              ("m" (lambda () (interactive) (malb/pdf-annot-export-as-md  1)))
-              ("M" malb/pdf-annot-export-as-md)
-              ("c" (lambda () (interactive) (malb/pdf-extract-table "CSV")))
-              ("j" (lambda () (interactive) (malb/pdf-extract-table "JSON")))
-              ("t" (lambda () (interactive) (malb/pdf-extract-table)))
-              ("p" (lambda () (interactive) (malb/pdf-extract-text)))
-              ("x" (lambda () (interactive) (start-process (format "ocr %s" buffer-file-name)
-                                                           nil "ocrmypdf" buffer-file-name buffer-file-name)))
-              ("q" nil "cancel"))
+  ("o" (lambda () (interactive) (malb/pdf-annot-export-as-org 1)))
+  ("O" malb/pdf-annot-export-as-org)
+  ("m" (lambda () (interactive) (malb/pdf-annot-export-as-md  1)))
+  ("M" malb/pdf-annot-export-as-md)
+  ("c" (lambda () (interactive) (malb/pdf-extract-table "CSV")))
+  ("j" (lambda () (interactive) (malb/pdf-extract-table "JSON")))
+  ("t" (lambda () (interactive) (malb/pdf-extract-table)))
+  ("p" (lambda () (interactive) (malb/pdf-extract-text)))
+  ("x" (lambda () (interactive) (start-process (format "ocr %s" buffer-file-name)
+                                               nil "ocrmypdf" buffer-file-name buffer-file-name)))
+  ("q" nil "cancel"))
+#+end_src
 
-            (bind-key "s h" #'malb/pdf-view-llncs-from-bounding-box pdf-view-mode-map)
-            (bind-key "D" #'dedicated-mode pdf-view-mode-map)
-            (bind-key "x" #'malb/hydra-pdf-extract/body pdf-view-mode-map)
+*Switch between annotations and yank the highlight:*
 
-            (defun malb/pdf-annot-move (forward)
-              (let ((annot-list (with-current-buffer
-                                    (pdf-annot-get-buffer pdf-annot-edit-contents--annotation)
-                                  pdf-annot-list-buffer)))
-                (if annot-list
-                    (progn
-                      (pdf-annot-edit-contents-commit)
-                      (if forward
-                          (call-interactively 'tablist-next-line)
-                        (call-interactively 'tablist-previous-line))
-                      (call-interactively 'tablist-find-entry))
-                  (let ((this nil)
-                        (next nil)
-                        (annotations
-                         (sort (pdf-annot-getannots
-                                nil nil
-                                (cdar pdf-annot-edit-contents--annotation))
-                               'pdf-annot-compare-annotations)))
-                    (dolist (annot (if forward annotations (reverse annotations)))
-                      (when (equal this t)
-                        (setq next annot)
-                        (setq this nil))
-                      (when (equal (pdf-annot-get-id annot)
-                                   (pdf-annot-get-id pdf-annot-edit-contents--annotation))
-                        (setq this t)))
-                    (pdf-annot-edit-contents-finalize t)
-                    (when next
-                      (pdf-view-goto-page (pdf-annot-get next 'page))
-                      (pdf-annot-edit-contents next))))))
+#+begin_src emacs-lisp :noweb-ref pdf-annot-fns :tangle no
+(defun malb/pdf-annot-move (forward)
+  (let ((annot-list (with-current-buffer
+                        (pdf-annot-get-buffer pdf-annot-edit-contents--annotation)
+                      pdf-annot-list-buffer)))
+    (if annot-list
+        (progn
+          (pdf-annot-edit-contents-commit)
+          (if forward
+              (call-interactively 'tablist-next-line)
+            (call-interactively 'tablist-previous-line))
+          (call-interactively 'tablist-find-entry))
+      (let ((this nil)
+            (next nil)
+            (annotations
+             (sort (pdf-annot-getannots
+                    nil nil
+                    (cdar pdf-annot-edit-contents--annotation))
+                   'pdf-annot-compare-annotations)))
+        (dolist (annot (if forward annotations (reverse annotations)))
+          (when (equal this t)
+            (setq next annot)
+            (setq this nil))
+          (when (equal (pdf-annot-get-id annot)
+                       (pdf-annot-get-id pdf-annot-edit-contents--annotation))
+            (setq this t)))
+        (pdf-annot-edit-contents-finalize t)
+        (when next
+          (pdf-view-goto-page (pdf-annot-get next 'page))
+          (pdf-annot-edit-contents next))))))
 
-            (defun malb/pdf-annot-next ()
-              (interactive)
-              (malb/pdf-annot-move t))
+(defun malb/pdf-annot-next () (interactive) (malb/pdf-annot-move t))
+(defun malb/pdf-annot-prev () (interactive) (malb/pdf-annot-move nil))
 
-            (defun malb/pdf-annot-prev ()
-              (interactive)
-              (malb/pdf-annot-move nil))
+(defun malb/pdf-annot-yank-highlight ()
+  (interactive)
+  (let* ((a pdf-annot-edit-contents--annotation)
+         (text
+          (replace-regexp-in-string
+           "\n" " "
+           (pdf-info-gettext
+            (pdf-annot-get a 'page)
+            (pdf-tools-org-edges-to-region (pdf-annot-get a 'markup-edges))
+            0
+            (pdf-annot-get a 'buffer)))))
+    (insert (format "\"%s\"" text))))
+#+end_src
 
-            (defun malb/pdf-annot-yank-highlight ()
-              (interactive)
-              (let* ((a pdf-annot-edit-contents--annotation)
-                     (text
-                      (replace-regexp-in-string
-                       "\n" " "
-                       (pdf-info-gettext
-                        (pdf-annot-get a 'page)
-                        (pdf-tools-org-edges-to-region (pdf-annot-get a 'markup-edges))
-                        0
-                        (pdf-annot-get a 'buffer)))))
-                (insert (format "\"%s\"" text))))
+*Control PDF buffer from LaTeX or org-mode buffer:*
 
-            (bind-key "C-c C-n" 'malb/pdf-annot-next pdf-annot-edit-contents-minor-mode-map)
-            (bind-key "C-c C-p" 'malb/pdf-annot-prev pdf-annot-edit-contents-minor-mode-map)
-            (bind-key "C-c C-y" 'malb/pdf-annot-yank-highlight pdf-annot-edit-contents-minor-mode-map)
+#+begin_src emacs-lisp :noweb-ref do-to-pdf-view-buffer :tangle no
+(defun malb/do-to-pdf-view-buffer (fn)
+  (let ((cur-window (get-buffer-window)))
+    (dolist (window (window-list))
+      (let ((buffer (window-buffer window)))
+        (with-current-buffer buffer
+          (when (eq major-mode 'pdf-view-mode)
+            (select-window window)
+            (call-interactively fn)
+            (select-window cur-window)
+            ))))))
 
-            (defun malb/do-to-pdf-view-buffer (fn)
-              (let ((cur-window (get-buffer-window)))
-                (dolist (window (window-list))
-                  (let ((buffer (window-buffer window)))
-                    (with-current-buffer buffer
-                      (when (eq major-mode 'pdf-view-mode)
-                        (select-window window)
-                        (call-interactively fn)
-                        (select-window cur-window)
-                        ))))))
+(defun malb/other-pdf-view-next-page ()
+  (interactive)
+  (malb/do-to-pdf-view-buffer #'pdf-view-next-page))
 
-            (defun malb/other-pdf-view-next-page ()
-              (interactive)
-              (malb/do-to-pdf-view-buffer #'pdf-view-next-page))
+(defun malb/other-pdf-view-prev-page ()
+  (interactive)
+  (malb/do-to-pdf-view-buffer #'pdf-view-previous-page))
+#+end_src
 
-            (defun malb/other-pdf-view-prev-page ()
-              (interactive)
-              (malb/do-to-pdf-view-buffer #'pdf-view-previous-page))
+#+begin_src emacs-lisp :noweb no-export
+(use-package pdf-tools
+  :magic ("%PDF" . pdf-view-mode)
+  :after (org tex)
+  :bind (:map pdf-view-mode-map
+         ("s h" . malb/pdf-view-llncs-from-bounding-box)
+         ("D" . dedicated-mode)
+         ("x" . malb/hydra-pdf-extract/body)
+         :map pdf-annot-edit-contents-minor-mode-map
+         ("C-c C-n" . malb/pdf-annot-next)
+         ("C-c C-p" . malb/pdf-annot-prev)
+         ("C-c C-y" . malb/pdf-annot-yank-highlight)
+         :map org-mode-map
+         ("C->" . malb/other-pdf-view-next-page)
+         ("C-<" . malb/other-pdf-view-prev-page)
+         :map LaTeX-mode-map
+         ("C->" . malb/other-pdf-view-next-page)
+         ("C-<" . malb/other-pdf-view-prev-page))
 
-            (bind-key "C->" #'malb/other-pdf-view-next-page org-mode-map)
-            (bind-key "C-<" #'malb/other-pdf-view-prev-page org-mode-map)
-            (bind-key "C->" #'malb/other-pdf-view-next-page LaTeX-mode-map)
-            (bind-key "C-<" #'malb/other-pdf-view-prev-page LaTeX-mode-map)
+  :custom ((pdf-annot-default-annotation-properties '((t (label . "M"))
+                                                      (text (icon . "Note") (color . "#dc322f"))
+                                                      (highlight (color . "#fef3d5"))
+                                                      (squiggly (color . "#dc322f"))
+                                                      (strike-out(color . "#dc322f"))
+                                                      (underline (color . "#268bd2"))))
+           (pdf-view-resize-factor 1.1)
+           (pdf-annot-activate-created-annotations t)
+           (pdf-view-midnight-invert nil)
+           (pdf-misc-print-programm "gtklp")
+           (pdf-view-display-size 'fit-page))
 
-            ;; BUG https://github.com/vedang/pdf-tools/issues/339
-            (defun +fix-pdf-view-image-size (&optional displayed-p window page)
-              "Return the size in pixel of the current image in WINDOW.
+  :config
+  (pdf-tools-install)
+  (require 'pdf-annot)
+  (add-hook 'pdf-annot-list-mode-hook #'pdf-annot-list-follow-minor-mode)
+
+  (defun malb/pdf-view-llncs-from-bounding-box (arg &optional window)
+    "Set the height from the page's bounding-box."
+    (interactive "P")
+    (let* ((bb (pdf-cache-boundingbox (pdf-view-current-page window)))
+           (h-margin (max 0.28 (or pdf-view-bounding-box-margin 0.0)))
+           (w-margin (max 0.05 (or pdf-view-bounding-box-margin 0.0)))
+           (slice (if arg (list (- (nth 0 bb)
+                                   (/ h-margin 2.0))
+                                (- (nth 1 bb)
+                                   (/ w-margin 2.0))
+                                (+ (- (nth 2 bb) (nth 0 bb))
+                                   h-margin)
+                                (+ (- (nth 3 bb) (nth 1 bb))
+                                   w-margin)))
+                  ;; hardcoded from the above
+                  (slice '(0.078954 0.127778 0.848628 0.7444440000000001))))
+      (apply 'pdf-view-set-slice
+             (append slice (and window (list window))))))
+
+  (defun pdf-tools-org-edges-to-region (edges)
+    "Attempt to get 4-entry region (LEFT TOP RIGHT BOTTOM) from several EDGES.
+     We need this to import annotations and to get marked-up text, because
+     annotations are referenced by its edges, but functions for these tasks
+     need region."
+    (let ((left0 (nth 0 (car edges)))
+          (top0 (nth 1 (car edges)))
+          (bottom0 (nth 3 (car edges)))
+          (top1 (nth 1 (car (last edges))))
+          (right1 (nth 2 (car (last edges))))
+          (bottom1 (nth 3 (car (last edges))))
+          (n (safe-length edges)))
+      ;; we try to guess the line height to move
+      ;; the region away from the boundary and
+      ;; avoid double lines
+      (list left0
+            (+ top0 (/ (- bottom0 top0) 3))
+            right1
+            (- bottom1 (/ (- bottom1 top1) 3)))))
+
+  <<pdf-extract-text>>
+  <<pdf-extract-table>>
+
+  <<pdf-annot-export-as-org>>
+  <<pdf-annot-export-as-md>>
+
+  <<pdf-annot-fns>>
+
+  <<hydra-pdf-extract>>
+
+  <<do-to-pdf-view-buffer>>
+
+  <<bug-pdf-view-image-size>>
+)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no :noweb-ref bug-pdf-view-image-size
+;; BUG https://github.com/vedang/pdf-tools/issues/339
+(defun +fix-pdf-view-image-size (&optional displayed-p window page)
+  "Return the size in pixel of the current image in WINDOW.
 
 If DISPLAYED-P is non-nil, return the size of the displayed
 image.  These values may be different, if slicing is used.
 
 If PAGE is non-nil return its size instead of current page."
-              (let ((display-prop (if pdf-view-roll-minor-mode
-                                      (progn (setq window (if (windowp window) window (selected-window)))
-                                             (setq page (or page (pdf-view-current-page window)))
-                                             (unless (memq page (image-mode-window-get 'displayed-pages window))
-                                               (pdf-view-display-page page window))
-                                             (overlay-get (pdf-roll-page-overlay page window) 'display))
-                                    (image-get-display-property))))
-                (if (eq (car display-prop) 'image)
-                    (image-size display-prop t)
-                  (if displayed-p
-                      (image-display-size display-prop t)
-                    (image-size (nth 1 display-prop) t))))))
+  (let ((display-prop (if pdf-view-roll-minor-mode
+                          (progn (setq window (if (windowp window) window (selected-window)))
+                                 (setq page (or page (pdf-view-current-page window)))
+                                 (unless (memq page (image-mode-window-get 'displayed-pages window))
+                                   (pdf-view-display-page page window))
+                                 (overlay-get (pdf-roll-page-overlay page window) 'display))
+                        (image-get-display-property))))
+    (if (eq (car display-prop) 'image)
+        (image-size display-prop t)
+      (if displayed-p
+          (image-display-size display-prop t)
+        (image-size (nth 1 display-prop) t)))))
 
-  (advice-add 'pdf-view-image-size :override #'+fix-pdf-view-image-size))
+(advice-add 'pdf-view-image-size :override #'+fix-pdf-view-image-size)
 #+end_src
 
 ** Org Links to PDF Pages
