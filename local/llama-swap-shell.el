@@ -25,7 +25,7 @@
   :group 'llama-swap-shell
   :type '(repeat string))
 
-(defcustom llama-swap-shell-pre-startup-functions '(llama-swap-shell-start-server-maybe)
+(defcustom llama-swap-shell-pre-startup-functions nil
   "Functions called before start, e.g. to start the server."
   :group 'llama-swap-shell
   :type '(list function))
