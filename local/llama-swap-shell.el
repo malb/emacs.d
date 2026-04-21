@@ -10,6 +10,7 @@
 (require 'markdown-overlays)
 (require 'request)
 (require 'yaml)
+(require 's)
 
 (defgroup llama-swap-shell nil
   "Chat to models via llama-swap."
@@ -145,26 +146,99 @@ For example:
       :messages ,(vconcat (nreverse messages))
       :stream ,llama-swap-shell-streaming)))
 
-(defun llama-swap-shell-parse-response (raw-response)
-  "Parse RAW-RESPONSE."
-  (let ((chunks (split-string (map-elt raw-response :pending) "\n"))
-        response)
+;; source https://github.com/xenodium/chatgpt-shell/blob/main/chatgpt-shell-openai.el
+(defun llama-swap-shell-parse-response (output)
+  "Process pending OUTPUT to extract response.
 
-    (setf (map-elt raw-response :pending) nil)
+OUTPUT is always of the form:
 
-    (if llama-swap-shell-streaming
-        (dolist (chunk chunks)
+  ((:function-calls . ...)
+   (:pending . ...)
+   (:filtered . ...))
 
-          (let* ((chunk (replace-regexp-in-string "data: " "" chunk))
-                 (json (alist-get 'choices (shell-maker--json-parse-string chunk))))
-            (when json
-              (setq json (aref json 0))
-              (cond ((assoc 'role (alist-get 'delta json)) t)
-                    (t (setq response (concat response (alist-get 'content (alist-get 'delta json)))))))))
-      (dolist (chunk chunks)
-        (let ((json (aref (alist-get 'choices (shell-maker--json-parse-string chunk)) 0)))
-          (setq response (concat response (alist-get 'content (alist-get 'message json)))))))
-    (list (cons :filtered (concat response)))))
+and must be returned in the same form.
+
+Processing means processing :pending content into :filtered.
+
+When responses are streamed, :pending arrives as:
+  data: {...json...}
+  data: {...json...}
+Otherwise:
+  {...json...}."
+  (cond ((stringp output)
+         (error "Please upgrade shell-maker to 0.79.1 or newer")
+         (setq output (list (cons :pending output))))
+        ((equal (string-trim (map-elt output :pending))
+                "data: [DONE]")
+         (setf (map-elt output :pending) "")))
+  (if-let* ((whole (shell-maker--json-parse-string (map-elt output :pending)))
+            (response-text (or (let-alist whole
+                                 .error.message)
+                               (let-alist whole
+                                 (mapconcat (lambda (choice)
+                                              (let-alist choice
+                                                (or .delta.content
+                                                    .message.content)))
+                                            .choices "")))))
+      (list (cons :filtered response-text))
+    (when-let ((chunks (shell-maker--split-text (map-elt output :pending))))
+      (let ((response-text)
+            (pending)
+            (function-calls (map-elt output :function-calls)))
+        (mapc
+         (lambda (chunk)
+           (if-let* ((is-data (equal (map-elt chunk :key) "data:"))
+                     (obj (shell-maker--json-parse-string (map-elt chunk :value))))
+               (let-alist obj
+                 ;; Extract content
+                 (let ((text (mapconcat (lambda (choice)
+                                          (let-alist choice
+                                            (or (and (not (eq .delta.content :null))
+                                                     .delta.content)
+                                                .message.content
+                                                "")))
+                                        .choices "")))
+                   (unless (string-empty-p text)
+                     (setq response-text (concat response-text text))))
+                 ;; Extract function calls/arguments
+                 (mapc (lambda (choice)
+                         (let-alist choice
+                           (mapc
+                            (lambda (tool-call)
+                              ;; Function/tool call is of the form:
+                              ;; '((:name . ...)
+                              ;;    (:id . ...)
+                              ;;    (:index . ...)
+                              ;;    (:arguments . ...))
+                              (let-alist tool-call
+                                (when .index ;; LOOKS LIKE ID IS NOT ACCESSIBLE HERE!!!! or MAYBE we should be resolving by index
+                                  (let ((call (map-elt function-calls .index)))
+                                    (when .index
+                                      (setf (map-elt call :index) .index))
+                                    (when .id
+                                      (setf (map-elt call :id) .id))
+                                    (when .function.name
+                                      (setf (map-elt call :name) .function.name))
+                                    (when .function.arguments
+                                      (setf (map-elt call :arguments)
+                                            (concat (map-elt call :arguments)
+                                                    .function.arguments)))
+                                    (setf (map-elt function-calls .index) call)))))
+                            .delta.tool_calls)
+                           (when (equal .finish_reason
+                                        "tool_calls")
+                             (setf (map-elt output :incoming-requests)
+                                   (map-values function-calls)))))
+                       .choices))
+             (setq pending (concat pending
+                                   (or (map-elt chunk :key) "")
+                                   (map-elt chunk :value)))))
+         chunks)
+        (setf (map-elt output :function-calls) function-calls)
+        (setf (map-elt output :filtered) (unless (string-empty-p response-text)
+                                           response-text))
+        (setf (map-elt output :pending) pending)
+        output))))
 
 (defun llama-swap-shell-call-api-curl-command (object)
   "Encode OBJECT as json and send to MODEL via curl."

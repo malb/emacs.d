@@ -134,20 +134,13 @@ We have RAM, lots of it.
   :demand t
   :ensure nil
   :config
-  (setopt gc-maybe-cons-threshold (* 128 1024 1024))
+  (setopt gc-maybe-cons-threshold (* 256 1024 1024))
   (setopt gc-maybe-cons-percentage 0.2)
   (setopt gc-maybe-idle-delay 8)
   (setopt gc-maybe-idle-restore 5)
 
   ;; Enable mode to set the idle timer and minibuffer hooks
-  (gc-maybe-mode +1)
-
-  ;; Optionally log GC data in a buffer
-  ;; (setopt gc-maybe-log-stats-in-buffer t)
-
-  ;; Advice example
-  ;; (advice-add 'org-ql-select :before #'gc-maybe-raise-threshold-briefly)
-)
+  (gc-maybe-mode +1))
 #+end_src
 
 * Clean Mode Line
