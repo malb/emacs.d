@@ -7510,7 +7510,8 @@ Grammar checkers are disabled by default. To enable
   :ensure nil)
 #+end_src
 
-** OCR (Tesseract)
+** OCR
+*** Tesseract
 
 [[https://github.com/tesseract-ocr/tesseract][OCR screenshots]] via [[file:local/tesseract.el][tesseract.el]].
 
@@ -7518,6 +7519,158 @@ Grammar checkers are disabled by default. To enable
 (use-package tesseract
   :ensure-system-package spectacle
   :ensure nil)
+#+end_src
+
+*** VLM
+:PROPERTIES:
+:ID:       6a14f8ff-854f-47ac-8dce-02fab4e932a9
+:END:
+
+Convert PDF to markdown with a script which calls [[https://huggingface.co/noctrex/LightOnOCR-2-1B-GGUF][noctrex/LightOnOCR-2-1B-GGUF:BF16]] running on [[https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md][llama-server]] via [[https://github.com/mostlygeek/llama-swap][llama-swap]].
+
+#+begin_src emacs-lisp
+(defun malb/ocr-vlm (arg)
+  "OCR current page of current PDF.
+With ARG, OCR entire document instead."
+  (interactive "P")
+  (when (not (eq major-mode 'pdf-view-mode))
+    (user-error "This command only works for PDFs."))
+  (let* ((buffer (current-buffer))
+         (pdf-file-name (buffer-file-name))
+         (page-number (pdf-view-current-page))
+         (buffer-name (if arg (format "*markdown: %s*" pdf-file-name)
+                        (format "*markdown: %s (page %d)*" pdf-file-name page-number)))
+         (buffer (get-buffer-create buffer-name)))
+    (if arg
+        (async-shell-command (format "ocr-vlm.py %s" buffer-name))
+      (async-shell-command (format "ocr-vlm.py -p %d-%d %s"
+                                   page-number page-number pdf-file-name)
+                           buffer-name))
+    (pop-to-buffer buffer)))
+#+end_src
+
+#+begin_src python :tangle /home/malb/.local/bin/ocr-vlm.py  :shebang "#!/usr/bin/env python"
+# DO NOT EDIT, EDIT malb.org INSTEAD
+
+from pathlib import Path
+import argparse
+import base64
+import os
+import re
+import requests
+import subprocess
+import sys
+import tempfile
+
+def process_pdf(filename, tmpdir, page_range=None):
+    """
+    Convert PDF to PNG images.
+
+    :param filename: PDF filename.
+    :param tmpdir: Temporary working directory.
+    :param page_range: Page range to convert.
+
+    """
+
+    page_start, page_end = None, None
+    if page_range:
+        match = re.fullmatch(r"(\d+)-(\d+)", page_range)
+        if match:
+            page_start, page_end = map(int, match.groups())
+        else:
+            print("Invalid page range. Use -p X-Y (e.g, -p 1-5)", file=sys.stderr)
+            sys.exit(1)
+
+    cmd = ["pdftocairo", "-png", "-r", "300", filename]
+    if page_start is not None and page_end is not None:
+        cmd.extend(["-f", str(page_start), "-l", str(page_end)])
+
+    cmd.append(tmpdir + "/")
+
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error: pdftocairo failed with exit code {e.returncode}", file=sys.stderr)
+        sys.exit(1)
+
+    png_files = sorted(Path(tmpdir).glob("*.png"))
+
+    if not png_files:
+        print("Error: No PNG files generated", file=sys.stderr)
+        sys.exit(1)
+
+    return png_files
+
+def ocr_image(png_filename, model="ocr"):
+    """
+    Call VLM ``model`` on image ``png_filename``.
+
+    :param png_filename: PMG image.
+    :param model: VL model.
+    :returns:
+
+    """
+    prompt = ""
+
+    with open(png_filename, "rb") as img_file:
+        b64_data = base64.b64encode(img_file.read()).decode("utf-8")
+
+    content = [
+        {"type": "text", "text": prompt},
+        {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64_data}"}},
+    ]
+
+    response = requests.post(
+        f"http://localhost:38080/v1/chat/completions",
+        headers={"Content-Type": "application/json"},
+        json={"model": model,
+              "messages": [
+                  {"role": "system", "content": "You are a helpful assistant."},
+                  {"role": "user", "content": content}]},
+    )
+    response = response.json()
+    content = response["choices"][0]["message"]["content"]
+    return content
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Convert PDF or images to Markdown.")
+    parser.add_argument("filename", help="Input PDF file")
+    parser.add_argument("-p", "--page-range", dest="page_range",
+                        help="Page range in format X-Y (e., 1-5)")
+    parser.add_argument("-m", "--model", dest="model", default="ocr",
+                        help="A visual language model")
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+
+    if not os.path.isfile(args.filename):
+        print(f"Error: File '{args.filename}' not found", file=sys.stderr)
+        sys.exit(1)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        if args.filename.endswith(".pdf"):
+            png_files = process_pdf(args.filename, tmpdir, args.page_range)
+        elif args.filename.endswith(".png"):
+            png_files = [args.filename]
+        else:
+            print(f"Error: File '{args.filename}' not supported", file=sys.stderr)
+            sys.exit(1)
+
+        for i, png in enumerate(png_files):
+            try:
+                result = ocr_image(str(png), model=args.model)
+                print(result)
+                if i < len(png_files)-1:
+                    print("\f")  # Form feed character for page break
+            except subprocess.CalledProcessError as e:
+                print(f"Error: ocr.py failed for {png.name} ({e}) ", file=sys.stderr)
+                sys.exit(1)
+
+if __name__ == "__main__":
+    main()
 #+end_src
 
 ** Taking Notes (Deft)
@@ -8125,49 +8278,7 @@ Run =latexmk -pvc= in async shell
 
 *** LaTeX OCR
 
-The elisp code below
-- uses [[file:local/latex-ocr.el][latex-ocr]]
-- to call the following Python script
-- which calls [[https://huggingface.co/noctrex/LightOnOCR-2-1B-GGUF][noctrex/LightOnOCR-2-1B-GGUF:BF16]] running on [[https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md][llama-server]]
-- via [[https://github.com/mostlygeek/llama-swap][llama-swap]].
-
-#+begin_src python :tangle /home/malb/.local/bin/latexocr.py  :tangle-mode (identity #o555)
-#!/usr/bin/env python
-# DO NOT EDIT, EDIT malb.org INSTEAD
-
-import requests
-import base64
-import argparse
-
-parser = argparse.ArgumentParser(description="Extract LaTeX source code.")
-parser.add_argument("filename", type=str, help="Input impage.")
-args = parser.parse_args()
-
-model = "latex-ocr"
-
-with open(args.filename, "rb") as img_file:
-    b64_data = base64.b64encode(img_file.read()).decode("utf-8")
-
-prompt = ""
-
-content = [
-    {"type": "text", "text": prompt},
-    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64_data}"}},
-]
-
-response = requests.post(
-    f"http://localhost:38080/v1/chat/completions",
-    headers={"Content-Type": "application/json"},
-    json={"model": model,
-          "messages": [
-              {"role": "system", "content": "You are a helpful assistant."},
-              {"role": "user", "content": content}]},
-)
-
-response = response.json()
-content = response["choices"][0]["message"]["content"]
-print(content)
-#+end_src
+Use [[file:local/latex-ocr.el][latex-ocr]] to call [[id:6a14f8ff-854f-47ac-8dce-02fab4e932a9][ocr-vlm.py]].
 
 #+begin_src emacs-lisp
 (use-package latex-ocr
@@ -8175,7 +8286,7 @@ print(content)
   :commands (latex-ocr-screenshot)
   :ensure-system-package spectacle
   :config
-  (setq latex-ocr-command "latexocr.py %s"))
+  (setq latex-ocr-command "ocr-vlm.py %s"))
 #+end_src
 
 *** Math Delimiters
