@@ -172,14 +172,10 @@ Otherwise:
                 "data: [DONE]")
          (setf (map-elt output :pending) "")))
   (if-let* ((whole (shell-maker--json-parse-string (map-elt output :pending)))
-            (response-text (or (let-alist whole
-                                 .error.message)
-                               (let-alist whole
-                                 (mapconcat (lambda (choice)
-                                              (let-alist choice
-                                                (or .delta.content
-                                                    .message.content)))
-                                            .choices "")))))
+            (response-text (or (let-alist whole .error.message)
+                               (let-alist whole (mapconcat (lambda (choice)
+                                                             (let-alist choice (or .delta.content .message.content)))
+                                                           .choices "")))))
       (list (cons :filtered response-text))
     (when-let ((chunks (shell-maker--split-text (map-elt output :pending))))
       (let ((response-text)
@@ -193,10 +189,7 @@ Otherwise:
                  ;; Extract content
                  (let ((text (mapconcat (lambda (choice)
                                           (let-alist choice
-                                            (or (and (not (eq .delta.content :null))
-                                                     .delta.content)
-                                                .message.content
-                                                "")))
+                                            (or (and (not (eq .delta.content :null)) .delta.content) .message.content "")))
                                         .choices "")))
                    (unless (string-empty-p text)
                      (setq response-text (concat response-text text))))
@@ -213,16 +206,12 @@ Otherwise:
                               (let-alist tool-call
                                 (when .index ;; LOOKS LIKE ID IS NOT ACCESSIBLE HERE!!!! or MAYBE we should be resolving by index
                                   (let ((call (map-elt function-calls .index)))
-                                    (when .index
-                                      (setf (map-elt call :index) .index))
-                                    (when .id
-                                      (setf (map-elt call :id) .id))
-                                    (when .function.name
-                                      (setf (map-elt call :name) .function.name))
-                                    (when .function.arguments
-                                      (setf (map-elt call :arguments)
-                                            (concat (map-elt call :arguments)
-                                                    .function.arguments)))
+                                    (when .index (setf (map-elt call :index) .index))
+                                    (when .id (setf (map-elt call :id) .id))
+                                    (when .function.name (setf (map-elt call :name) .function.name))
+                                    (when .function.arguments (setf (map-elt call :arguments)
+                                                                    (concat (map-elt call :arguments)
+                                                                            .function.arguments)))
                                     (setf (map-elt function-calls .index) call)))))
                             .delta.tool_calls)
                            (when (equal .finish_reason
@@ -230,13 +219,10 @@ Otherwise:
                              (setf (map-elt output :incoming-requests)
                                    (map-values function-calls)))))
                        .choices))
-             (setq pending (concat pending
-                                   (or (map-elt chunk :key) "")
-                                   (map-elt chunk :value)))))
+             (setq pending (concat pending (or (map-elt chunk :key) "") (map-elt chunk :value)))))
          chunks)
         (setf (map-elt output :function-calls) function-calls)
-        (setf (map-elt output :filtered) (unless (string-empty-p response-text)
-                                           response-text))
+        (setf (map-elt output :filtered) (unless (string-empty-p response-text) response-text))
         (setf (map-elt output :pending) pending)
         output))))
 
