@@ -10788,16 +10788,17 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
     (let* ((bb (pdf-cache-boundingbox (pdf-view-current-page window)))
            (h-margin (max 0.28 (or pdf-view-bounding-box-margin 0.0)))
            (w-margin (max 0.05 (or pdf-view-bounding-box-margin 0.0)))
-           (slice (if arg (list (- (nth 0 bb)
-                                   (/ h-margin 2.0))
-                                (- (nth 1 bb)
-                                   (/ w-margin 2.0))
-                                (+ (- (nth 2 bb) (nth 0 bb))
-                                   h-margin)
-                                (+ (- (nth 3 bb) (nth 1 bb))
-                                   w-margin)))
-                  ;; hardcoded from the above
-                  (slice '(0.078954 0.127778 0.848628 0.7444440000000001))))
+           (slice (if arg
+                      (list (- (nth 0 bb)
+                               (/ h-margin 2.0))
+                            (- (nth 1 bb)
+                               (/ w-margin 2.0))
+                            (+ (- (nth 2 bb) (nth 0 bb))
+                               h-margin)
+                            (+ (- (nth 3 bb) (nth 1 bb))
+                               w-margin))
+                    ;; hardcoded from the above
+                    '(0.078954 0.127778 0.848628 0.7444440000000001))))
       (apply 'pdf-view-set-slice
              (append slice (and window (list window))))))
 
