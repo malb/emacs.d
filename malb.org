@@ -11123,6 +11123,14 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
   :config (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package tramp-rpc
+  :after tramp
+  :vc (:url "https://github.com/ArthurHeymans/emacs-tramp-rpc"
+       :rev "v0.8.0"
+       :lisp-dir "lisp"))
+#+end_src
+
 [[https://github.com/masasam/emacs-helm-tramp/blob/master/image/helm-tramp.gif]]
 
 #+begin_src emacs-lisp
