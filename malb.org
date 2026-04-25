@@ -10836,7 +10836,7 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
   <<do-to-pdf-view-buffer>>
 
   <<bug-pdf-view-image-size>>
-)
+  )
 #+end_src
 
 #+begin_src emacs-lisp :tangle no :noweb-ref bug-pdf-view-image-size
