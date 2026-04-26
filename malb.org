@@ -11113,6 +11113,65 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                                          (no-delete-other-windows . t))))))
 #+end_src
 
+** DWIM Shell Commands
+
+([[https://github.com/xenodium/dwim-shell-command][source]])
+
+#+begin_src emacs-lisp :noweb no-export
+(use-package dwim-shell-command
+  :after (dired)
+  :defer nil
+  :bind (([remap shell-command] . dwim-shell-command)
+         :map dired-mode-map
+         ([remap dired-do-async-shell-command] . dwim-shell-command)
+         ([remap dired-do-shell-command] . dwim-shell-command)
+         ([remap dired-smart-shell-command] . dwim-shell-command))
+  :config
+  <<dwim-shell-commands>>
+)
+#+end_src
+
+- =<<f>>=  (file path)
+- =<<fne>>=  (file path without extension)
+- =<<e>>=  (extension)
+- =<<td>>=  (generate a temporary directory)
+- =<<*>>=  (all files joined)
+- =<<cb>>=  (clipboard)
+
+([[https://github.com/xenodium/dwim-shell-command/blob/main/dwim-shell-commands.el][source]])
+
+#+begin_src emacs-lisp :tangle no :noweb-ref dwim-shell-commands
+(defun malb/dwim-shell-commands-join-as-pdf ()
+  "Join all marked images as a single pdf."
+  (interactive)
+  (dwim-shell-command-on-marked-files
+   "Join as pdf"
+   (format "convert -verbose '<<*>>' '<<%s(u)>>'"
+           (dwim-shell-command-read-file-name
+            "Join as pdf named (default \"joined.pdf\"): "
+            :extension "pdf"
+            :default "joined.pdf"))
+   :utils "convert"))
+
+(defun malb/dwim-shell-commands-kdeconnect-share ()
+  "Send file(s) to a device through KDE Connect."
+  (interactive)
+  (let* ((devices (process-lines "kdeconnect-cli" "--list-available" "--name-only"))
+         (device (completing-read "Device: " devices nil t)))
+    (dwim-shell-command-on-marked-files
+     "Send file(s) to DEVICE through KDE Connect."
+     (format "kdeconnect-cli -n '%s' --share '<<f>>'" device)
+     :utils "kdeconnect-cli")))
+
+(defun malb/dwim-shell-commands-video-to-x265 ()
+  "Convert all marked vidos to x265."
+  (interactive)
+  (dwim-shell-command-on-marked-files
+   "Convert to x265"
+   "nice ffmpeg -stats -i '<<f>>' -c:v libx265 -c:a copy -x265-params crf=23 '<<fne>>.h265.mp4'"
+   :utils "ffmpeg"))
+#+end_src
+
 * Tramp
 
 #+begin_src emacs-lisp
