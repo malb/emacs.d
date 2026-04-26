@@ -10973,15 +10973,17 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (put 'dired-find-alternate-file 'disabled nil)
 
             ;; https://www.reddit.com/r/emacs/comments/u2lf9t/weekly_tips_tricks_c_thread/
-            (defun dired-dim-git-ignores ()
+            (defun malb/dired-dim-git-ignores ()
               "Dim out .gitignore contents"
-              (when-let ((foo (require 'vc))
-                         (ignores (vc-default-ignore-completion-table 'git ".gitignore"))
-                         (exts (make-local-variable 'completion-ignored-extensions)))
-                (dolist (item ignores)
-                  (add-to-list exts item))))
+              (unless (and (buffer-file-name)
+                           (file-remote-p (buffer-file-name)))
+                (when-let ((foo (require 'vc))
+                           (ignores (vc-default-ignore-completion-table 'git ".gitignore"))
+                           (exts (make-local-variable 'completion-ignored-extensions)))
+                  (dolist (item ignores)
+                    (add-to-list exts item)))))
 
-            (add-hook 'dired-mode-hook #'dired-dim-git-ignores)))
+            (add-hook 'dired-mode-hook #'malb/dired-dim-git-ignores)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -11012,7 +11014,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+begin_src emacs-lisp
 (use-package dired-subtree
-  :after all-the-icons
+  :after all-the-icons-dired
   :config (progn
             (defun malb/dired-subtree-all-the-icons ()
               (when all-the-icons-dired-mode (revert-buffer)))
@@ -11052,22 +11054,23 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 (use-package all-the-icons-dired
   :defer t
   :after all-the-icons
-  :init (add-hook 'dired-mode-hook  #'all-the-icons-dired-mode)
+  :hook ((dired-mode . all-the-icons-dired-mode))
+  :config
   ;; https://github.com/jtbm37/all-the-icons-dired/pull/31/files
-  :config (malb/defadvice! malb/all-the-icons-dired--put-icon (pos)
-            "Propertize POS with icon."
-            :override #'all-the-icons-dired--put-icon
-            (let* ((file (dired-get-filename 'relative 'noerror))
-                   (icon (all-the-icons-dired--icon file))
-                   (image (get-text-property 0 'display icon)))
-              (if (or (not (eq (car image) 'image)) (member file '("." "..")))
-                  (put-text-property (1- pos) pos 'display
-                                     (if (member file '("." ".."))
-                                         "\t"
-                                       (concat " " icon "\t")))
-                (setf (image-property image :margin)
-                      (cons (/ (window-text-width nil t) (window-text-width)) 0))
-                (put-text-property (1- pos) pos 'display image)))))
+  (malb/defadvice! malb/all-the-icons-dired--put-icon (pos)
+    "Propertize POS with icon."
+    :override #'all-the-icons-dired--put-icon
+    (let* ((file (dired-get-filename 'relative 'noerror))
+           (icon (all-the-icons-dired--icon file))
+           (image (get-text-property 0 'display icon)))
+      (if (or (not (eq (car image) 'image)) (member file '("." "..")))
+          (put-text-property (1- pos) pos 'display
+                             (if (member file '("." ".."))
+                                 "\t"
+                               (concat " " icon "\t")))
+        (setf (image-property image :margin)
+              (cons (/ (window-text-width nil t) (window-text-width)) 0))
+        (put-text-property (1- pos) pos 'display image)))))
 #+end_src
 
 [[https://github.com/asok/peep-dired][peep-dired]] for previewing files (think: =dired-follow-mode=)
