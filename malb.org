@@ -12683,17 +12683,15 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
 
 #+begin_src emacs-lisp
 (use-package stripe-buffer
-  :config (progn
-
-            (malb/defadvice! malb/no-stripe-table-mode (old-function &rest args)
-              :around #'org-babel-execute-src-block
-              :around #'org-table-align
-              (let ((is-on stripe-table-mode))
-                (stripe-table-mode -1)
-                (apply old-function args)
-                (stripe-table-mode (if is-on 1 0))))
-
-            (add-hook 'dired-mode-hook #'turn-on-stripe-buffer-mode)))
+  :hook ((dired-mode . turn-on-stripe-buffer-mode))
+  :config
+  (malb/defadvice! malb/no-stripe-table-mode (old-function &rest args)
+    :around #'org-babel-execute-src-block
+    :around #'org-table-align
+    (let ((is-on stripe-table-mode))
+      (stripe-table-mode -1)
+      (apply old-function args)
+      (stripe-table-mode (if is-on 1 0)))))
 #+end_src
 
 ** Modeline
