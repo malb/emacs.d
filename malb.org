@@ -2677,6 +2677,10 @@ This library provides easy project management and navigation. The concept of a p
          ("#" . #'malb/projectile-repl))
   :init  (setq projectile-keymap-prefix (kbd "C-c p"))
   :config (progn
+            (advice-add 'projectile-project-root :before-while
+                        (lambda (&optional dir)
+                          (not (file-remote-p (or dir default-directory)))))
+
             (setq projectile-indexing-method 'hybrid
                   projectile-make-test-cmd "make check"
                   projectile-ignored-projects malb/projectile-ignored-projects
@@ -11055,6 +11059,9 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
   :defer t
   :after all-the-icons
   :hook ((dired-mode . all-the-icons-dired-mode))
+  :init (advice-add 'all-the-icons-dired-mode :before-while
+                    (lambda (&optional dir)
+                      (not (file-remote-p (or dir default-directory)))))
   :config
   ;; https://github.com/jtbm37/all-the-icons-dired/pull/31/files
   (malb/defadvice! malb/all-the-icons-dired--put-icon (pos)
