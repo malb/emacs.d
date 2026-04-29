@@ -11062,10 +11062,10 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+begin_src emacs-lisp
 (use-package nerd-icons-dired
- :init (advice-add 'nerd-icons-dired-mode :before-while
-                   (lambda (&optional dir)
+  :init (advice-add 'nerd-icons-dired-mode :before-while
+                    (lambda (&optional dir)
                      (not (file-remote-p (or dir default-directory)))))
-  :hook (dired-mode . nerd-icons-dired-mode))
+   :hook (dired-mode . nerd-icons-dired-mode))
 #+end_src
 
 [[https://github.com/asok/peep-dired][peep-dired]] for previewing files (think: =dired-follow-mode=)
