@@ -6158,17 +6158,14 @@ This packages tries to smartly go to definition leveraging several methods to do
 
 *** Code Formatting
 
-#+begin_quote
-Auto-format source code in many languages with one command – [[https://github.com/lassik/emacs-format-all-the-code][format-all]]
-#+end_quote
+[[https://github.com/radian-software/apheleia][apheleia]]
 
 #+begin_src emacs-lisp
-(use-package format-all
-  :commands format-all-mode
-  :config (setq-default format-all-formatters
-                        '(("C"   clang-format)
-                          ("C++" clang-format)
-                          ("Go"  gofmt))))
+(use-package apheleia
+  :hook ((c-ts-mode        . apheleia-mode)
+         (c++-ts-mode      . apheleia-mode)
+         (go-ts-mode       . apheleia-mode)
+         (python-ts-mode   . apheleia-mode)))
 #+end_src
 
 *** Jupyter
@@ -6689,15 +6686,6 @@ INDENT is the current indentation level of the Python function."
 #+begin_src emacs-lisp
 (use-package flycheck-cython
   :after (cython-mode flycheck))
-#+end_src
-
-*** Black
-
-Code formatting “do what they want”: [[https://github.com/psf/black][https://github.com/psf/black]]
-
-#+begin_src emacs-lisp
-(use-package blacken
-  :config (setq blacken-line-length 'fill))
 #+end_src
 
 *** Managing Imports
