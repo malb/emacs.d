@@ -6039,7 +6039,7 @@ mouse-3: go to end")
 #+begin_src emacs-lisp
 (use-package hi-lock
   :ensure nil
-  :config (setq hi-lock-auto-select-face t))
+  :custom ((hi-lock-auto-select-face t)))
 #+end_src
 
 *** Looking Stuff Up (Devdocs)
