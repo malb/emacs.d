@@ -153,6 +153,8 @@
      `(lsp-headerline-breadcrumb-project-prefix-face ((t (:underline unspecified))))
      `(lsp-headerline-breadcrumb-unknown-project-prefix-face ((t (:underline unspecified))))
 
+     `(define-it-pop-tip-color ((,class (:background "#fef3d5" :foreground ,base3))))
+
      `(helm-ff-file-extension ((t ())))
      `(bm-face ((t (:background "#FFE6E4"))))
 

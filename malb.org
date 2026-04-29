@@ -7340,7 +7340,7 @@ Automatically pick dictionary.
 (use-package lexic
   :commands lexic-search lexic-list-dictionary malb/define-word-at-point-lexic
   :ensure-system-package sdcv
-  :bind (("C-c w d" . malb/define-word-at-point-lexic))
+  :bind (("C-c w D" . malb/define-word-at-point-lexic))
   :config (progn
             (defun malb/define-word-at-point-lexic (identifier &optional arg)
               "Look up the definition of the word at point (or selection) using `lexic-search'."
@@ -7355,11 +7355,37 @@ Automatically pick dictionary.
             (malb/register-right-side-window (rx bos "*lexic*" eos))))
 #+end_src
 
+*Tooltip version via [[https://github.com/jcs-elpa/define-it][define-it]].*
+
+#+begin_src emacs-lisp
+(use-package define-it
+  :custom ((define-it-show-wiki-summary nil)
+           (define-it-show-google-translate nil)
+           (define-it-output-choice 'pop))
+  :bind (("C-c w d" . define-it-at-point))
+  :config
+  (malb/defadvice! malb/define-it--get-dictionary-definition-as-string (search-str)
+    :override #'define-it--get-dictionary-definition-as-string
+    (let* ((json (json-parse-string
+                  (shell-command-to-string
+                   (concat "sdcv -e --json " search-str))
+                  :object-type 'alist)))
+      (if (> (length json) 0)
+          (let* ((definition (alist-get 'definition (aref json 0)))
+                 (plural (s-match (rx "(plural of en " (group (one-or-more anychar)) ")") definition)))
+            (if plural
+                (define-it--get-dictionary-definition-as-string (nth 1 plural))
+              (setq define-it--dictionary-content definition
+                    define-it--dictionary-it t)))
+        (setq define-it--dictionary-content nil
+              define-it--dictionary-it nil)))))
+#+end_src
+
 *[[http://oremacs.com/2015/05/22/define-word/][Define-word]] for online [[https://www.wordnik.com/][wordnik]] lookups*, rarely needed due to wiktionary corpus size.
 
 #+begin_src emacs-lisp
 (use-package define-word
-  :bind (("C-c w D" . define-word-at-point)))
+  :commands (define-word-at-point))
 #+end_src
 
 ** Synonyms

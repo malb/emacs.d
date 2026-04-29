@@ -24,6 +24,8 @@
      `(jupyter-repl-output-prompt ((t (:foreground ,red :weight bold))))
      `(jupyter-repl-traceback ((t (:background ,red-1bg))))
 
+     `(define-it-pop-tip-color ((,class (:background ,base02 :foreground ,base0))))
+
      `(git-annex-dired-annexed-available ((t (:foreground ,green :weight bold))))
      `(git-annex-dired-annexed-unavailable ((t (:foreground ,red :weight bold))))
 
