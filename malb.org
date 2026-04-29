@@ -11021,11 +11021,11 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+begin_src emacs-lisp
 (use-package dired-subtree
-  :after all-the-icons-dired
+  :after nerd-icons-dired
   :config (progn
-            (defun malb/dired-subtree-all-the-icons ()
-              (when all-the-icons-dired-mode (revert-buffer)))
-            (advice-add 'dired-subtree-toggle :after #'malb/dired-subtree-all-the-icons))
+            (defun malb/dired-subtree-nerd-icons ()
+              (when nerd-icons-dired-mode (revert-buffer)))
+            (advice-add 'dired-subtree-toggle :after #'malb/dired-subtree-nerd-icons))
   :bind (:map dired-mode-map
               ("TAB" . dired-subtree-toggle)
               ("<backtab>" . dired-subtree-cycle)))
@@ -11055,32 +11055,16 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
   :config  (setq fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
 #+end_src
 
-[[https://github.com/jtbm37/all-the-icons-dired][all-the-icons-dired]] for eye candy.
+[[https://github.com/rainstormstudio/nerd-icons-dired][nerd-icons-dired]] for eye candy.
+
+[[https://github.com/rainstormstudio/nerd-icons-dired/raw/main/screenshots/demo.png]]
 
 #+begin_src emacs-lisp
-(use-package all-the-icons-dired
-  :defer t
-  :after all-the-icons
-  :hook ((dired-mode . all-the-icons-dired-mode))
-  :init (advice-add 'all-the-icons-dired-mode :before-while
-                    (lambda (&optional dir)
-                      (not (file-remote-p (or dir default-directory)))))
-  :config
-  ;; https://github.com/jtbm37/all-the-icons-dired/pull/31/files
-  (malb/defadvice! malb/all-the-icons-dired--put-icon (pos)
-    "Propertize POS with icon."
-    :override #'all-the-icons-dired--put-icon
-    (let* ((file (dired-get-filename 'relative 'noerror))
-           (icon (all-the-icons-dired--icon file))
-           (image (get-text-property 0 'display icon)))
-      (if (or (not (eq (car image) 'image)) (member file '("." "..")))
-          (put-text-property (1- pos) pos 'display
-                             (if (member file '("." ".."))
-                                 "\t"
-                               (concat " " icon "\t")))
-        (setf (image-property image :margin)
-              (cons (/ (window-text-width nil t) (window-text-width)) 0))
-        (put-text-property (1- pos) pos 'display image)))))
+(use-package nerd-icons-dired
+ :init (advice-add 'nerd-icons-dired-mode :before-while
+                   (lambda (&optional dir)
+                     (not (file-remote-p (or dir default-directory)))))
+  :hook (dired-mode . nerd-icons-dired-mode))
 #+end_src
 
 [[https://github.com/asok/peep-dired][peep-dired]] for previewing files (think: =dired-follow-mode=)
