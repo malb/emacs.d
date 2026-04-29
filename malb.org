@@ -10806,7 +10806,7 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
                             (+ (- (nth 3 bb) (nth 1 bb))
                                w-margin))
                     ;; hardcoded from the above
-                    '(0.078954 0.127778 0.848628 0.7444440000000001))))
+                    '(0.06 0.112931 0.888403 0.703983))))
       (apply 'pdf-view-set-slice
              (append slice (and window (list window))))))
 
