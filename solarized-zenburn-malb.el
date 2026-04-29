@@ -10,12 +10,12 @@
      `(org-block ((t (:foreground ,s-base0 :background ,(solarized-color-blend "#222222" s-base03 0.2) :extend t))))
      `(org-agenda-structure
        ((,class (:foreground ,base1 :background ,base02
-                             :weight bold :slant normal :inverse-video nil :height ,solarized-height-plus-1
-                             :underline nil :extend t
-                             :box (:line-width 2 :color ,base03)))))
+                 :weight bold :slant normal :inverse-video nil :height ,solarized-height-plus-1
+                 :underline nil :extend t
+                 :box (:line-width 2 :color ,base03)))))
      `(markdown-code-face ((t (:background ,(solarized-color-blend "#222222" s-base03 0.2) :inherit nil  :extend t))))
      `(markdown-language-keyword-face ((t (:background ,(solarized-color-blend "#222222" s-base03 0.2)
-                                                       :inherit (highlight)))))
+                                           :inherit (highlight)))))
      `(hl-sentence ((t (:background ,orange-2bg :inherit (highlight)))))
      `(hl-line ((t (:background ,orange-2bg :inherit (highlight)))))
      `(mu4e-header-highlight-face ((t (:background ,orange-2bg :inherit (highlight)))))
