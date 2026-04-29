@@ -2876,7 +2876,8 @@ functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... 
 
 #+begin_src emacs-lisp
 (use-package git-link
-  :bind (("C-c g" . git-link)))
+  :custom ((git-link-use-commit t "we want long lived links"))
+  :bind (("C-c C-g" . git-link)))
 #+end_src
 
 ** Git Autocommit
