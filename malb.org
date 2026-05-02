@@ -11155,12 +11155,12 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
   (interactive)
   (dwim-shell-command-on-marked-files
    "Join as pdf"
-   (format "convert -verbose '<<*>>' '<<%s(u)>>'"
+   (format "pdftk <<*>> cat output '<<%s(u)>>'"
            (dwim-shell-command-read-file-name
             "Join as pdf named (default \"joined.pdf\"): "
             :extension "pdf"
             :default "joined.pdf"))
-   :utils "convert"))
+   :utils "pdftk"))
 
 (defun malb/dwim-shell-commands-kdeconnect-share ()
   "Send file(s) to a device through KDE Connect."
