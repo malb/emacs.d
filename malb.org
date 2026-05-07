@@ -7986,6 +7986,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                   TeX-quote-after-quote nil
                   font-latex-fontify-sectioning 1.0)
             (setq-default TeX-engine 'luatex)
+            (setq-default TeX-command-default "LaTeXMk")
 
             ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
             (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
