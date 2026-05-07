@@ -11052,14 +11052,14 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 (use-package dired-ranger
   :after dired
   :bind (:map dired-mode-map
-              ("C-w" . (lambda (arg)
-                         (interactive "P")
-                         (dired-ranger-copy arg)
-                         (bind-key "C-y" #'dired-ranger-move dired-mode-map)))
-              ("M-w" . (lambda (arg)
-                         (interactive "P")
-                         (dired-ranger-copy arg)
-                         (bind-key "C-y" #'dired-ranger-paste dired-mode-map)))))
+         ("C-w" . (lambda (arg)
+                    (interactive "P")
+                    (dired-ranger-copy arg)
+                    (bind-key "C-y" #'dired-ranger-move dired-mode-map)))
+         ("M-w" . (lambda (arg)
+                    (interactive "P")
+                    (dired-ranger-copy arg)
+                    (bind-key "C-y" #'dired-ranger-paste dired-mode-map)))))
 #+end_src
 
 [[https://github.com/yqrashawn/fd-dired][fd-dired]] run =fd= to produce dired buffers.
