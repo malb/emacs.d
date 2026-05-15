@@ -7356,7 +7356,7 @@ Automatically pick dictionary.
     :override #'define-it--get-dictionary-definition-as-string
     (let* ((json (json-parse-string
                   (shell-command-to-string
-                   (concat "sdcv -e --json " search-str))
+                   (concat "sdcv -e --json " (downcase search-str)))
                   :object-type 'alist)))
       (if (> (length json) 0)
           (let* ((definition (alist-get 'definition (aref json 0)))
