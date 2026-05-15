@@ -3312,7 +3312,7 @@ delete SCHEDULED if new state is a WAITing state
 #+begin_src emacs-lisp
 (setq org-tag-persistent-alist '((:startgroup . nil)
                                  ("@office" . ?o)
-                                 ("@train" . ?t)
+                                 ("@plane" . ?p)
                                  ("@home" . ?h)
                                  (:endgroup . nil)
                                  ("quick" . ?q)
