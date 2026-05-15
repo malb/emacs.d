@@ -9728,14 +9728,17 @@ Automate standard “form filling“ workflow
           (mm-save-part-to-file (plist-get part :handle) path)
           (add-to-list 'files path))))
     ;; 3. reply
-    (with-current-buffer (mu4e-compose-reply)
-      (dolist (file files)
-        ;; 4. attach
-        (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t))
-                  ((symbol-function 'y-or-n-p) (lambda (prompt) t)))
-          (gnus-dired-attach (list file)))
-        ;; 2. edit
-        (helm-open-file-with-default-tool file)))))
+    (if files
+        (with-current-buffer (mu4e-compose-reply)
+          (dolist (file files)
+            ;; 4. attach
+            (cl-letf (((symbol-function 'yes-or-no-p) (lambda (prompt) t))
+                      ((symbol-function 'y-or-n-p) (lambda (prompt) t)))
+              (gnus-dired-attach (list file)))
+            ;; 2. edit
+            (helm-open-file-with-default-tool file))
+          t)
+      nil)))
 #+end_src
 
 *** Save all
