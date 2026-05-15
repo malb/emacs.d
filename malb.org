@@ -9928,20 +9928,16 @@ DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subj
          (subject (mu4e-message-field msg :subject))
          (triggered nil))
     (dolist (action malb/mu4e-dwim-actions)
-      (let ((from-regexp (car action))
-            (subject-regexp (cadr action))
-            (f (caddr action)))
-        (when (and
-               (not triggered)
-               (string-match from-regexp from)
-               (string-match subject-regexp subject))
-          (setq triggered t)
-          (funcall f msg))))))
+      (let ((from-regexp (nth 0 action))
+            (subject-regexp (nth 1 action))
+            (f (nth 2 action)))
+        (when (and (not triggered)
+                   (string-match from-regexp from)
+                   (string-match subject-regexp subject))
+          (setq triggered (funcall f msg)))))))
 
-(add-to-list 'mu4e-view-actions
-             '("dwim" . malb/mu4e-dwim-action) t)
-(add-to-list 'mu4e-headers-actions
-             '("dwim" . malb/mu4e-dwim-action) t)
+(add-to-list 'mu4e-view-actions '("dwim" . malb/mu4e-dwim-action) t)
+(add-to-list 'mu4e-headers-actions '("dwim" . malb/mu4e-dwim-action) t)
 #+end_src
 
 This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d/mu4e.html][source]])
