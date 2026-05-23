@@ -5977,6 +5977,7 @@ Browse [[https://devdocs.io][devdocs.io]] documents inside Emacs
 #+begin_src emacs-lisp
 (use-package devdocs-browser
   :bind ("C-c h ." . devdocs-browser-open)
+  :custom ((devdocs-browser-data-directory (expand-file-name "devdocs-browser" malb/cache-dir)))
   :config (progn
             (add-to-list 'devdocs-browser-major-mode-docs-alist '(LaTeX-mode "latex"))
             (malb/register-right-side-window (rx "*devdocs") t)))
