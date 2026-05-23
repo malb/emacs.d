@@ -1167,6 +1167,7 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
 
 #+begin_src emacs-lisp
 (use-package company
+  :commands (company-complete-common)
   :bind (("M-/" . company-complete)
          ("M-#" . company-files)
          :map company-active-map
@@ -1191,7 +1192,6 @@ Use [[https://github.com/company-mode/company-mode][company-mode]] for auto-comp
            (company-minimum-prefix-length 1)
            (company-global-modes '(not) "company is 'always on', except for a few … exceptions")
            (company-lighter-base ""))
-  :demand t
   :config (global-company-mode 1))
 #+end_src
 
@@ -2426,37 +2426,34 @@ Commands are bound to =C-x m …=
 
 #+begin_src emacs-lisp
 (use-package multiple-cursors
-  :config (progn
-            (defun malb/mc-typo-mode ()
-              (add-to-list 'mc/unsupported-minor-modes 'typo-mode))
-            (add-hook 'multiple-cursors-mode-hook #'malb/mc-typo-mode)
-
-            (defhydra malb/hydra-multiple-cursors (:hint nil)
-              "
+  :custom ((mc/list-file (expand-file-name "mc-lists.el" malb/cache-dir)))
+  :bind (("C-x m" . malb/hydra-multiple-cursors/body))
+  :config
+  (add-to-list 'mc/unsupported-minor-modes 'typo-mode)
+  (defhydra malb/hydra-multiple-cursors (:hint nil)
+    "
  Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
 ------------------------------------------------------------------
  [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
  [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
  [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search
  [Click] Cursor at point       [_q_] Quit"
-              ("l" mc/edit-lines :exit t)
-              ("a" mc/mark-all-like-this :exit t)
-              ("n" mc/mark-next-like-this)
-              ("N" mc/skip-to-next-like-this)
-              ("M-n" mc/unmark-next-like-this)
-              ("p" mc/mark-previous-like-this)
-              ("P" mc/skip-to-previous-like-this)
-              ("M-p" mc/unmark-previous-like-this)
-              ("s" mc/mark-all-in-region-regexp :exit t)
-              ("0" mc/insert-numbers :exit t)
-              ("A" mc/insert-letters :exit t)
-              ("<mouse-1>" mc/add-cursor-on-click)
-              ;; Help with click recognition in this hydra
-              ("<down-mouse-1>" ignore)
-              ("<drag-mouse-1>" ignore)
-              ("q" nil))
-
-            (bind-key "C-x m" #'malb/hydra-multiple-cursors/body)))
+    ("l" mc/edit-lines :exit t)
+    ("a" mc/mark-all-like-this :exit t)
+    ("n" mc/mark-next-like-this)
+    ("N" mc/skip-to-next-like-this)
+    ("M-n" mc/unmark-next-like-this)
+    ("p" mc/mark-previous-like-this)
+    ("P" mc/skip-to-previous-like-this)
+    ("M-p" mc/unmark-previous-like-this)
+    ("s" mc/mark-all-in-region-regexp :exit t)
+    ("0" mc/insert-numbers :exit t)
+    ("A" mc/insert-letters :exit t)
+    ("<mouse-1>" mc/add-cursor-on-click)
+    ;; Help with click recognition in this hydra
+    ("<down-mouse-1>" ignore)
+    ("<drag-mouse-1>" ignore)
+    ("q" nil)))
 #+end_src
 
 ** Recursively Narrow
@@ -3032,6 +3029,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-link-elisp-confirm-function nil ;
       org-id-link-consider-parent-id t
       org-id-link-to-org-use-id 'use-existing
+      org-id-locations-file (expand-file-name "org-id-locations" malb/cache-dir)
       org-hidden-keywords nil
       org-list-demote-modify-bullet  '(("+" . "-") ("-" . "+") ("*" . "+"))
       org-list-allow-alphabetical t
@@ -6223,15 +6221,6 @@ t
 #+RESULTS:
 : t
 
-*** Tree Sitter
-
-[[https://blog.markhepburn.com/posts/experimenting-with-the-built-in-treesitter-support-in-emacs/][Experimenting With the Built-in Tree-sitter Support in Emacs]]
-[[https://archive.casouri.cc/note/2023/tree-sitter-in-emacs-29/index.html?utm_source=pocket_reader][Tree-sitter in Emacs 29 and Beyond]]
-
-#+begin_src emacs-lisp
-(use-package tree-sitter-langs)
-#+end_src
-
 *** Language Server Protocol (LSP)
 
 #+begin_quote
@@ -6243,6 +6232,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :after (projectile)
   :commands (lsp malb/lsp-enable-maybe)
   :custom ((lsp-eldoc-render-all nil)
+           (lsp-session-file (expand-file-name "lsp-session-v1" malb/cache-dir))
+           (lsp-server-install-dir (expand-file-name "lsp-servers" malb/cache-dir))
            (lsp-modeline-diagnostics-scope :file)
            (lsp-warn-no-matched-clients nil)
            (lsp-restart 'ignore)
