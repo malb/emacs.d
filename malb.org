@@ -8085,7 +8085,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                 (call-interactively 'query-replace-regexp)))
 
             (setq-default TeX-master 'dwim
-                          TeX-auto-local (expand-file-name "auctex-auto" user-emacs-directory))
+                          TeX-auto-local (expand-file-name "auctex-auto" malb/cache-dir))
 
 
             (add-to-list 'TeX-command-list
@@ -10965,7 +10965,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
   :custom ((image-dired-thumbnail-storage 'standard-xx-large)
            (image-dired-thumb-margin 16)
            (image-dired-thumb-relief 2)
-           (image-dired-show-all-from-dir-max-files 4096)))
+           (image-dired-show-all-from-dir-max-files 4096)
+           (image-dired-dir (expand-file-name "image-dired/" malb/cache-dir))))
 #+end_src
 
 [[https://github.com/Fuco1/dired-hacks][dired-collapse]] renders directories with just one file like GitHub does.
@@ -11141,6 +11142,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
            (tramp-verbose 1)
            (tramp-use-connection-share t)
            (tramp-default-method "rpc")
+           (tramp-persistency-file-name (expand-file-name "tramp" malb/cache-dir))
            (vc-ignore-dir-regexp (format "\\(%s\\)\\|\\(%s\\)" vc-ignore-dir-regexp tramp-file-name-regexp)))
   :config (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+end_src
@@ -11462,6 +11464,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 
 #+begin_src emacs-lisp
 (use-package emms-setup
+  :custom ((emms-directory (expand-file-name "emms" malb/cache-dir)))
   :ensure emms)
 
 (use-package emms-player-mpv
@@ -11609,30 +11612,17 @@ Use GTK printing interface.
 
 * Autosave & Backups
 
-Put autosave files (ie =#foo#=) in one place, not scattered across the file system.
+Put auto-save files (ie =#foo#=) in one place, not scattered across the file system.
 
 #+begin_src emacs-lisp
-(defvar malb/autosave-dir
-  (expand-file-name "autosaves" user-emacs-directory))
-
-(make-directory malb/autosave-dir t)
-
-(defun auto-save-file-name-p (filename)
-  (string-match "^#.*#$" (file-name-nondirectory filename)))
-
-(defun make-auto-save-file-name ()
-  (concat malb/autosave-dir
-          (if buffer-file-name
-              (concat "#" (file-name-nondirectory buffer-file-name) "#")
-            (expand-file-name
-             (concat "#%" (buffer-name) "#")))))
+(setq auto-save-list-file-prefix (expand-file-name "auto-saves/sessions" malb/cache-dir)
+	  auto-save-file-name-transform `((".*" ,(expand-file-name "auto-saves" malb/cache-dir) t)))
 #+end_src
 
 Put backup files (ie =foo~=) in one place too. The ~backup-directory-alist~ list contains regexp → directory mappings. Filenames matching a regexp are backed up in the corresponding directory. Emacs will mkdir it if necessary.
 
 #+begin_src emacs-lisp
-(defvar backup-dir (expand-file-name "autosaves" user-emacs-directory))
-(setq backup-directory-alist (list (cons "." backup-dir)))
+(setq backup-directory-alist `(("." . ,(expand-file-name "backups" malb/cache-dir))))
 #+end_src
 
 * UTF-8 Everywhere
@@ -12091,8 +12081,14 @@ unset SESSION_MANAGER
 (setq highlight-nonselected-windows nil)
 #+end_src
 
+[[https://www.rahuljuliato.com/posts/emacs-cache-paths][source]]
+
 #+begin_src emacs-lisp
-(setq save-interprogram-paste-before-kill t)
+(setopt transient-history-file (expand-file-name "transient/history.el" malb/cache-dir)
+      transient-levels-file (expand-file-name "transient/levels.el" malb/cache-dir)
+      transient-values-file (expand-file-name "transient/values.el" malb/cache-dir))
+(setopt ido-save-directory-list-file (expand-file-name "ido.last" malb/cache-dir))
+(setopt pcache-directory (expand-file-name "var/pcache/" malb/cache-dir))
 #+end_src
 
 ** Functions
@@ -12247,6 +12243,13 @@ If i is pressed after, insert the result at the end of region. If r is pressed r
 
 #+begin_src emacs-lisp
 (use-package memory-usage)
+#+end_src
+
+* URLs, Requests
+
+#+begin_src emacs-lisp
+(setopt url-configuration-directory (expand-file-name "url" malb/cache-dir))
+(setopt request-storage-directory   (expand-file-name "request" malb/cache-dir))
 #+end_src
 
 * Man Pages
