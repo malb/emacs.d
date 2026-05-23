@@ -56,23 +56,10 @@
       x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 ;; AUTOSAVING
-(defvar malb/autosave-dir
-  (expand-file-name "autosaves" user-emacs-directory))
+(setq auto-save-list-file-prefix (expand-file-name "auto-saves/sessions" malb/cache-dir)
+	  auto-save-file-name-transform `((".*" ,(expand-file-name "auto-saves" malb/cache-dir) t)))
 
-(make-directory malb/autosave-dir t)
-
-(defun auto-save-file-name-p (filename)
-  (string-match "^#.*#$" (file-name-nondirectory filename)))
-
-(defun make-auto-save-file-name ()
-  (concat malb/autosave-dir
-          (if buffer-file-name
-              (concat "#" (file-name-nondirectory buffer-file-name) "#")
-            (expand-file-name
-             (concat "#%" (buffer-name) "#")))))
-
-(defvar backup-dir (expand-file-name "autosaves" user-emacs-directory))
-(setq backup-directory-alist (list (cons "." backup-dir)))
+(setq backup-directory-alist `(("." ,(expand-file-name "backups" malb/cache-dir))))
 
 (require 'savehist)
 
@@ -81,7 +68,8 @@
       savehist-save-minibuffer-history t
       savehist-additional-variables '(kill-ring
                                       search-ring
-                                      regexp-search-ring))
+                                      regexp-search-ring)
+      savehist-file (expand-file-name "history" malb/cache-dir))
 
 (savehist-mode t)
 
