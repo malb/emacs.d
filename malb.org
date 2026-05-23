@@ -5096,51 +5096,6 @@ The function behaves as follows:
   (kill-buffer (current-buffer)))
 #+end_src
 
-** COMMENT [#B] Multi-Term
-
-[[https://www.emacswiki.org/emacs/MultiTerm][MultiTerm]] is a mode based on term.el, for managing multiple terminal buffers in Emacs.
-
-#+begin_src emacs-lisp
-(use-package multi-term
-  :commands (malb/toggle-multi-term multi-term)
-  :config (progn
-            (setq term-buffer-maximum-size 16384)
-
-            (add-to-list 'term-bind-key-alist '("S-<left>"  . multi-term-prev))
-            (add-to-list 'term-bind-key-alist '("S-<right>" . multi-term-next))
-            (add-to-list 'term-bind-key-alist '("TAB" . malb/term-send-tab))
-            (add-to-list 'term-bind-key-alist '("C-r" . term-send-reverse-search-history))
-
-            (bind-key "C-y" #'term-paste term-raw-map)
-
-            ;; rebind C-r to the terminal's native one
-            (setq term-bind-key-alist (remove* '"C-r" term-bind-key-alist :test 'equal :key 'car))
-
-            (setq multi-term-switch-after-close nil)
-
-            (defun malb/toggle-term-mode ()
-              (interactive)
-              (if (term-in-char-mode)
-                  (term-line-mode)
-                (term-char-mode)))
-
-            (defun malb/term-send-tab ()
-              "Send tab in term mode."
-              (interactive)
-              (term-send-raw-string "\t"))
-
-            (fset 'malb/toggle-multi-term
-                  (malb/make-toggle-shell "multi-term"
-                                          '(let ((current-prefix-arg nil)) (multi-term))
-                                          '(progn
-                                             (when (and (boundp 'conda-env-current-name) conda-env-current-name)
-                                               (insert (format "conda activate %s" conda-env-current-name))
-                                               (term-send-input))
-                                             (insert "ls")
-                                             (term-send-input))
-                                          t))))
-#+end_src
-
 ** Shell
 
 #+begin_src emacs-lisp
