@@ -12616,7 +12616,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
   :mode ("Dockerfile\\." . dockerfile-mode))
 #+end_src
 
-** ePub
+** eBooks
 
 [[https://github.com/wasamasa/nov.el][Nov.el]] is surprisingly useful.
 
@@ -12624,14 +12624,15 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 (use-package nov
   :mode ("\\.epub$" . nov-mode)
   :bind (:map nov-mode-map
-              ("<end>" . forward-paragraph)
-              ("<home>" . backward-paragraph)
-              ("B" . nov-history-back)
-              ("F" . nov-history-forward))
+         ("<end>" . forward-paragraph)
+         ("<home>" . backward-paragraph)
+         ("B" . nov-history-back)
+         ("F" . nov-history-forward))
   :hook ((nov-mode turn-on-visual-fill-column-mode)
          (nov-mode turn-on-visual-line-mode))
   :custom ((nov-variable-pitch nil "Don't use variable pitch font")
-           (nov-text-width t))
+           (nov-text-width t)
+           (nov-save-place-file (expand-file-name "nov-places" malb/cache-dir)))
   :config (progn
             ;; https://codereview.stackexchange.com/questions/282497/nov-el-function-to-search-the-entire-epub-ebook
             (defun nov-search (pattern)
