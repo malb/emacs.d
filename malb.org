@@ -5665,7 +5665,7 @@ We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.c
 Directory where comint history will be stored
 
   #+begin_src emacs-lisp
-(defvar malb/comint-history-dir (locate-user-emacs-file "comint-history"))
+(defvar malb/comint-history-dir (expand-file-name "comint-history" malb/cache-dir))
 
 (unless (file-exists-p malb/comint-history-dir)
   (make-directory malb/comint-history-dir))
@@ -6314,6 +6314,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 (use-package eca
   :ensure-system-package (jai)
+  :custom ((eca-server-install-path (expand-file-name "eca/eca" malb/cache-dir))
+           (eca-server-version-file-path (expand-file-name "eca/eca-version" malb/cache-dir)))
   :commands eca
   :config
   (defun malb/eca-jail-wrapper (command roots)
