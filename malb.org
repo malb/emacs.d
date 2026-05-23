@@ -6316,7 +6316,29 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 #+begin_src emacs-lisp
 (use-package eca
-  :commands eca)
+  :ensure-system-package (jai)
+  :commands eca
+  :config
+  (defun malb/eca-jail-wrapper (command roots)
+    "Wrap the eca server COMMAND with `jai', exposing ROOTS."
+    (append (list "jai" "-j" "eca"
+                  "-D"                  ; do not expose $CWD
+                  "--unsetenv=*"        ; hide all environment vars
+                  "--setenv" "TERM"
+                  "--setenv" "PATH"
+                  "--setenv" "BIBINPUTS")
+            ;; Workspace roots picked at session startup.
+            (cl-loop for d in roots
+                     append (list "-d" (expand-file-name d)))
+            ;; Always-needed directories for ECA itself.
+            (list "-d" (expand-file-name "~/.config/eca/")
+                  "-d" (expand-file-name "~/.cache/eca/")
+                  "-d" (expand-file-name "~/.config/emacs/")
+                  "-d" (expand-file-name "~/.cache/emacs/"))
+            command))
+
+  (setq eca-process-wrapper-function #'malb/eca-jail-wrapper)
+  (setq eca-send-process-id nil))
 #+end_src
 
 
