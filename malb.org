@@ -1926,17 +1926,19 @@ Don’t include boring or remote stuff in list of recently visited files.
 #+begin_src emacs-lisp
 (use-package recentf
   :after helm
-  :config  (progn
-             (setq recentf-max-saved-items 64
-                   recentf-exclude (list "COMMIT_EDITMSG"
-                                         "~$"
-                                         "/tmp/"
-                                         "/ssh:"
-                                         "/sudo:"
-                                         malb/maildir-path
-                                         "/scp:"))
-             (cl-loop for ext in helm-boring-file-regexp-list
-                      do (add-to-list 'recentf-exclude ext t))))
+  :custom
+  ((recentf-max-saved-items 256)
+   (recentf-exclude (list "COMMIT_EDITMSG"
+                          "~$"
+                          "/tmp/"
+                          "/ssh:"
+                          "/sudo:"
+                          malb/maildir-path
+                          "/scp:"))
+   (recentf-save-file (expand-file-name "recentf" malb/cache-dir)))
+  :config
+  (cl-loop for ext in helm-boring-file-regexp-list
+           do (add-to-list 'recentf-exclude ext t)))
 #+end_src
 
 ** Saveplace
