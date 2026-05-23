@@ -5511,39 +5511,39 @@ cat mylog.log >> #<buffer *scratch*>
   :bind (;; Replace `async-shell-command' with `detached-shell-command'
          ([remap async-shell-command] . detached-shell-command))
   :custom ((detached-show-session-context t)
+           (detached-session-directory (expand-file-name "detached/sessions" malb/cache-dir))
+           (detached-db-directory (expand-file-name "detached" malb/cache-dir))
            (detached-terminal-data-command system-type))
   :init
   (setq detached-init-package-integration
-        '(;; (compile . detached-init--compile)
-          (dired . detached-init--dired)
+        '((dired . detached-init--dired)
           (dired-rsync . detached-init--dired-rsync)
-          ;; (embark . detached-init--embark)
           (eshell . detached-init--eshell)
-          ;; (nano-modeline . detached-init--nano-modeline)
           (org . detached-init--org)
           ;; (projectile . detached-init--projectile)
           (shell . detached-init--shell)
           (vterm . detached-init--vterm)))
   (detached-init)
-  :config (progn
-            (defun malb/detached-state-transition-notifications-message (session)
-              "Issue a notification when SESSION transitions from active to inactive.
+  :config
+  (progn
+    (defun malb/detached-state-transition-notifications-message (session)
+      "Issue a notification when SESSION transitions from active to inactive.
 This function uses the `notifications' library."
-              (let ((status (detached-session-status session))
-                    (host (detached-session-host-name session)))
-                (notifications-notify
-                 :title (pcase status
-                          ('success (format "Detached finished [%s]" host))
-                          ('failure (format "Detached failed [%s]" host)))
-                 :body (detached-session-command session)
-                 :urgency (pcase status
-                            ('success 'normal)
-                            ('failure 'normal))
-                 ;; malb: added timeout
-                 :timeout (pcase status
-                            ('success 10000)
-                            ('failure 60000)))))
-            (setq detached-notification-function #'malb/detached-state-transition-notifications-message)))
+      (let ((status (detached-session-status session))
+            (host (detached-session-host-name session)))
+        (notifications-notify
+         :title (pcase status
+                  ('success (format "Detached finished [%s]" host))
+                  ('failure (format "Detached failed [%s]" host)))
+         :body (detached-session-command session)
+         :urgency (pcase status
+                    ('success 'normal)
+                    ('failure 'normal))
+         ;; malb: added timeout
+         :timeout (pcase status
+                    ('success 10000)
+                    ('failure 60000)))))
+    (setq detached-notification-function #'malb/detached-state-transition-notifications-message)))
 #+end_src
 
 ** Yakuake
