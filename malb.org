@@ -1944,7 +1944,10 @@ Don’t include boring or remote stuff in list of recently visited files.
 ** Saveplace
 
 #+begin_src emacs-lisp
-(save-place-mode 1)
+(use-package saveplace
+  :ensure nil
+  :custom ((save-place-file (expand-file-name "places" malb/cache-dir)))
+  :init (save-place-mode 1))
 #+end_src
 
 ** Commands
