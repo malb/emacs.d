@@ -4989,7 +4989,7 @@ In org-mode we can style inline elements with *bold*, /italic/, _underlined_, =v
 *Note* the order matters, i.e. open the file first then call =org-latex-export-to-pdf=
 
 #+begin_src shell :tangle no
-emacs --batch -l ~/.emacs.d/org-export-init.el file.org -f org-latex-export-to-pdf
+emacs --batch -l ~/.config/emacs/org-export-init.el file.org -f org-latex-export-to-pdf
 #+end_src
 
 * Shells
@@ -10372,12 +10372,12 @@ Martin
 ** Debugging
 
 #+begin_src shell :tangle no
-emacs -Q -l ~/.emacs.d/mu4e-test.el
+emacs -Q -l ~/.config/emacs/mu4e-test.el
 #+end_src
 
 #+begin_src emacs-lisp :tangle mu4e-test.el
 (package-initialize)
-(add-to-list 'load-path "~/.emacs.d/local/mu4e/")
+(add-to-list 'load-path "~/.config/emacs/local/mu4e/")
 (require 'mu4e)
 
 (setq mu4e-headers-skip-duplicates t
