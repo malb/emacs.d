@@ -3016,6 +3016,7 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
       org-log-done 'time
       org-return-follows-link nil       ; don’t follow links by pressing ENTER
       org-clock-persist 'history
+      org-clock-persist-file (expand-file-name "org-clock-save.el" malb/cache-dir)
       org-special-ctrl-a/e t             ; begin/end of line to skip starts …
       org-special-ctrl-k t               ; special keys for killing a headline
       org-edit-src-content-indentation 0 ; don't indent source code
