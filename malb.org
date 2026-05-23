@@ -5142,254 +5142,231 @@ When `exit' from shell buffer."
 #+begin_src emacs-lisp
 (use-package eshell
   :after (eat)
-  :config (progn
+  :custom ((eshell-directory-name (expand-file-name "eshell" malb/cache-dir))
+           (eshell-scroll-to-bottom-on-input t)
+           (eshell-destroy-buffer-when-process-dies t)
+           (eshell-history-size 8192)
+           (eshell-buffer-maximum-lines 16384)
+           (eshell-hist-ignoredups t)
+           (eshell-list-files-after-cd t)
+           (eshell-ls-initial-args "-hk")
+           (eshell-buffer-shorthand t)
+           (eshell-plain-echo-behavior t))
+  :config
+  (progn
+    ;; TOGGLE ESHELL
+    (fset 'malb/toggle-eshell
+          (malb/make-toggle-shell "eshell"
+                                  '(eshell "new")
+                                  '(progn (insert "ls") (eshell-send-input)) t))
 
-            ;; -------------
-            ;; TOGGLE ESHELL
-            ;; -------------
+    (malb/register-popup-window (rx "*eshell["  (0+ any) "*") t)
 
-            (fset 'malb/toggle-eshell
-                  (malb/make-toggle-shell "eshell"
-                                          '(eshell "new")
-                                          '(progn (insert "ls") (eshell-send-input)) t))
+    ;; KEY BINDINGS
 
-            (malb/register-popup-window (rx "*eshell["  (0+ any) "*") t)
+    (defun malb/eshell-keys ()
+      (bind-key "<home>" #'eshell-bol eshell-mode-map)
+      (bind-key "M-r" #'helm-eshell-history eshell-mode-map)
+      (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map)
+      (bind-key "M-w" #'malb/eshell-kill-ring-save eshell-mode-map)
+      (bind-key "ESC ." #'malb/eshell-insert-last-word eshell-mode-map)
+      (unbind-key "TAB" eshell-cmpl-mode-map))
 
-            ;; ------------
-            ;; KEY BINDINGS
-            ;; ------------
+    ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
+    ;; for some reason this needs to be a hook
+    (add-hook 'eshell-mode-hook #'malb/eshell-keys)
 
-            (defun malb/eshell-keys ()
-              (bind-key "<home>" #'eshell-bol eshell-mode-map)
-              (bind-key "M-r" #'helm-eshell-history eshell-mode-map)
-              (bind-key "M-/" #'helm-esh-pcomplete eshell-mode-map)
-              (bind-key "M-w" #'malb/eshell-kill-ring-save eshell-mode-map)
-              (bind-key "ESC ." #'malb/eshell-insert-last-word eshell-mode-map)
-              (unbind-key "TAB" eshell-cmpl-mode-map))
+    ;; VISUAL COMMANDS
 
-            ;; https://github.com/bbatsov/emacs-dev-kit/blob/master/eshell-config.el
-            ;; for some reason this needs to be a hook
-            (add-hook 'eshell-mode-hook #'malb/eshell-keys)
+    (defun malb/eshell-add-visual-commands ()
+      (add-to-list 'eshell-visual-commands "ssh"))
 
-            ;; ---------------
-            ;; VISUAL COMMANDS
-            ;; ---------------
+    (eat-eshell-mode)
+    (eat-eshell-visual-command-mode)
+    (setq eshell-visual-commands nil)
 
-            ;; (setq eshell-visual-subcommands '(("git" "diff" "show")
-            ;;                                   ("tmux" "attach" "new")))
+    (malb/defadvice! malb/visual-command-frame (old-function &rest arguments)
+      :around #'eshell-exec-visual
+      (let  ((frame (make-frame '((width . 160) (height . 40)))))
+        (select-frame frame)
+        (apply old-function arguments)
+        (set-window-dedicated-p (get-buffer-window) t)
+        (set-frame-parameter frame 'malb/special-frame t)))
 
-            (defun malb/eshell-add-visual-commands ()
-              (add-to-list 'eshell-visual-commands "htop")
-              (add-to-list 'eshell-visual-commands "ssh")
-              (add-to-list 'eshell-visual-commands "ipython")
-              (add-to-list 'eshell-visual-commands "mscdb.sh")
-              (add-to-list 'eshell-visual-commands "vim"))
 
-            ;; (add-hook 'eshell-mode-hook #'malb/eshell-add-visual-commands)
-            (eat-eshell-mode)
-            (eat-eshell-visual-command-mode)
-            (setq eshell-visual-commands nil)
+    ;; ALIASES
 
-            (defun malb/visual-command-frame (old-function &rest arguments)
-              (let  ((frame (make-frame '((width . 160) (height . 40)))))
-                (select-frame frame)
-                (apply old-function arguments)
-                ;; (set-process-sentinel (get-buffer-process (current-buffer))
-                ;;                       (lambda (proc change)
-                ;;                         (when (string-match "\\(finished\\|exited\\)" change)
-                ;;                           (delete-frame (window-frame
-                ;;                                          (get-buffer-window
-                ;;                                           (process-buffer proc)))))))
-                (set-window-dedicated-p (get-buffer-window) t)
-                (set-frame-parameter frame 'malb/special-frame t)))
+    ;; https://github.com/algernon/emacs.d/blob/master/layers/%2Bapps/algernon-eshell/packages.el#L85-L95
+    (defun eshell/git (command &rest args)
+      (pcase command
+        ("status" (progn
+                    (magit-status)
+                    (eshell/echo)))
+        (_ (let ((command (s-join " " (flatten-list (list "git" command args)))))
+             (message command)
+             (shell-command-to-string command)))))
 
-            (advice-add #'eshell-exec-visual :around #'malb/visual-command-frame)
+    (defun eshell/conda (command &rest args)
+      (pcase command
+        ("activate"   (progn (conda-env-activate (car args))))
+        ("deactivate" (progn (conda-env-deactivate)))
+        (_ (let ((command (s-join " " (flatten-list (list "conda" command args)))))
+             (message command)
+             (shell-command-to-string command)))))
 
-            ;; -------
-            ;; ALIASES
-            ;; -------
+    ;; mapped to 'x' in eshell
+    (defun eshell/x ()
+      (delete-window)
+      (eshell/exit))
 
-            ;; https://github.com/algernon/emacs.d/blob/master/layers/%2Bapps/algernon-eshell/packages.el#L85-L95
-            (defun eshell/git (command &rest args)
-              (pcase command
-                ("status" (progn
-                            (magit-status)
-                            (eshell/echo)))
-                (_ (let ((command (s-join " " (flatten-list (list "git" command args)))))
-                     (message command)
-                     (shell-command-to-string command)))))
+    (defalias 'eshell/q     'malb/quit-bottom-disposable-windows)
+    (defalias 'eshell/en    'find-file)
+    (defalias 'eshell/e     'find-file)
+    (defalias 'eshell/vim   'find-file) ;; muscle memory
+    (defalias 'eshell/d     'dired)
+    (defalias 'eshell/emacs 'find-file)
+    (defalias 'eshell/less  'view-file)
 
-            (defun eshell/conda (command &rest args)
-              (pcase command
-                ("activate"   (progn (conda-env-activate (car args))))
-                ("deactivate" (progn (conda-env-deactivate)))
-                (_ (let ((command (s-join " " (flatten-list (list "conda" command args)))))
-                     (message command)
-                     (shell-command-to-string command)))))
+    (require 'helm-find)
 
-            ;; mapped to 'x' in eshell
-            (defun eshell/x ()
-              (delete-window)
-              (eshell/exit))
+    (defun eshell/fd (pattern &optional path)
+      (let ((default-directory (file-name-as-directory (or path default-directory)))
+            (helm-display-function #'helm-display-buffer-in-own-frame))
+        (helm :sources 'helm-source-findutils
+              :buffer "*helm find*"
+              :input pattern
+              :ff-transformer-show-only-basename nil
+              :case-fold-search helm-file-name-case-fold-search)))
 
-            (defalias 'eshell/q     'malb/quit-bottom-disposable-windows)
-            (defalias 'eshell/en    'find-file)
-            (defalias 'eshell/e     'find-file)
-            (defalias 'eshell/vim   'find-file) ;; muscle memory
-            (defalias 'eshell/d     'dired)
-            (defalias 'eshell/emacs 'find-file)
-            (defalias 'eshell/less  'view-file)
+    (defun eshell/ag (pattern &optional path)
+      (let ((helm-display-function #'helm-display-buffer-in-own-frame))
+        (helm-do-ag (file-name-as-directory (or path default-directory)) nil pattern)))
 
-            (require 'helm-find)
+    (defun eshell/clear ()
+      "Clear the eshell buffer."
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (eshell-send-input)))
 
-            (defun eshell/fd (pattern &optional path)
-              (let ((default-directory (file-name-as-directory (or path default-directory)))
-                    (helm-display-function #'helm-display-buffer-in-own-frame))
-                (helm :sources 'helm-source-findutils
-                      :buffer "*helm find*"
-                      :input pattern
-                      :ff-transformer-show-only-basename nil
-                      :case-fold-search helm-file-name-case-fold-search)))
+    (setq eshell-input-filter #'eshell-input-filter-initial-space)
 
-            (defun eshell/ag (pattern &optional path)
-              (let ((helm-display-function #'helm-display-buffer-in-own-frame))
-                (helm-do-ag (file-name-as-directory (or path default-directory)) nil pattern)))
+    (defun eshell/disable-eshell-history ()
+      (setq-local eshell-input-filter (lambda (input) nil))
+      nil)
 
-            (defun eshell/clear ()
-              "Clear the eshell buffer."
-              (let ((inhibit-read-only t))
-                (erase-buffer)
-                (eshell-send-input)))
+    (defun eshell/enable-eshell-history ()
+      (setq-local eshell-input-filter #'eshell-input-filter-initial-space)
+      nil)
 
-            (setq eshell-input-filter #'eshell-input-filter-initial-space)
+    ;; -----------
+    ;; MINOR MODES
+    ;; -----------
 
-            (defun eshell/disable-eshell-history ()
-              (setq-local eshell-input-filter (lambda (input) nil))
-              nil)
+    (defun malb/eshell-minor-modes ()
+      (smartparens-mode t)
+      (let ((bracket-qualifiers '(sp-point-before-word-p
+                                  sp-point-before-same-p)))
+        (sp-with-modes '(eshell-mode)
+          (sp-local-pair "\"" "\"" :unless bracket-qualifiers)
+          (sp-local-pair  "(" ")"  :unless bracket-qualifiers)
+          (sp-local-pair  "[" "]"  :unless bracket-qualifiers))))
 
-            (defun eshell/enable-eshell-history ()
-              (setq-local eshell-input-filter #'eshell-input-filter-initial-space)
-              nil)
+    (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
 
-            ;; -----------
-            ;; MINOR MODES
-            ;; -----------
+    ;; COPY PREVIOUS OUTPUT
 
-            (defun malb/eshell-minor-modes ()
-              (smartparens-mode t)
-              (let ((bracket-qualifiers '(sp-point-before-word-p
-                                          sp-point-before-same-p)))
-                (sp-with-modes '(eshell-mode)
-                  (sp-local-pair "\"" "\"" :unless bracket-qualifiers)
-                  (sp-local-pair  "(" ")"  :unless bracket-qualifiers)
-                  (sp-local-pair  "[" "]"  :unless bracket-qualifiers))))
-
-            (add-hook 'eshell-mode-hook #'malb/eshell-minor-modes)
-
-            ;; --------------------
-            ;; COPY PREVIOUS OUTPUT
-            ;; --------------------
-
-            ;; http://fasciism.com/2017/01/27/eshell-kill-previous-output/
-            (defun eshell/kpo (&optional nth)
-              "Copies the output of the previous command to the kill ring.
+    ;; http://fasciism.com/2017/01/27/eshell-kill-previous-output/
+    (defun eshell/kpo (&optional nth)
+      "Copies the output of the previous command to the kill ring.
 When nth is set, it will copy the nth previous command."
-              (save-excursion
-                ;; Move to the end of the eshell buffer.
-                (goto-char (point-max))
-                ;; Move to the start of the last prompt.
-                (search-backward-regexp eshell-prompt-regexp nil nil nth)
-                ;; Move to the start of the line, before the prompt.
-                (beginning-of-line)
-                ;; Remember this position as the end of the region.
-                (let ((end (point)))
-                  ;; Move to the start of the last prompt.
-                  (search-backward-regexp eshell-prompt-regexp)
-                  ;; Move one line below the prompt, where the output begins.
-                  (next-line)
-                  ;; Find first line that's not blank.
-                  (while (looking-at "^[[:space:]]*$")
-                    (beginning-of-line)
-                    (next-line))
-                  ;; Copy region to kill ring.
-                  (copy-region-as-kill (point) end)
-                  ;; Output stats on what was copied as a sanity check.
-                  (format "Copied %s words to kill ring." (count-words-region (point) end)))))
+      (save-excursion
+        ;; Move to the end of the eshell buffer.
+        (goto-char (point-max))
+        ;; Move to the start of the last prompt.
+        (search-backward-regexp eshell-prompt-regexp nil nil nth)
+        ;; Move to the start of the line, before the prompt.
+        (beginning-of-line)
+        ;; Remember this position as the end of the region.
+        (let ((end (point)))
+          ;; Move to the start of the last prompt.
+          (search-backward-regexp eshell-prompt-regexp)
+          ;; Move one line below the prompt, where the output begins.
+          (next-line)
+          ;; Find first line that's not blank.
+          (while (looking-at "^[[:space:]]*$")
+            (beginning-of-line)
+            (next-line))
+          ;; Copy region to kill ring.
+          (copy-region-as-kill (point) end)
+          ;; Output stats on what was copied as a sanity check.
+          (format "Copied %s words to kill ring." (count-words-region (point) end)))))
 
-            (defun malb/eshell-kill-ring-save (arg)
-              "Copy selection or previous command's output to kill ring."
-              (interactive "P")
-              (if (or arg (region-active-p))
-                  (call-interactively #'kill-ring-save)
-                (eshell/kpo)))
+    (defun malb/eshell-kill-ring-save (arg)
+      "Copy selection or previous command's output to kill ring."
+      (interactive "P")
+      (if (or arg (region-active-p))
+          (call-interactively #'kill-ring-save)
+        (eshell/kpo)))
 
-            ;; --------------
-            ;; TAB COMPLETION
-            ;; --------------
+    ;; TAB COMPLETION
 
-            (defun malb/config-eshell-completion ()
-              (setq pcomplete-cycle-completions t
-                    pcomplete-ignore-case t)
-              (setq-local company-idle-delay 1.0
-                          company-backends '((company-capf  :with company-yasnippet)
-                                             ;; (company-files :with company-yasnippet)
-                                             ))
-              (define-key eshell-mode-map [remap eshell-pcomplete]
-                (lambda ()
-                  (interactive)
-                  (let ((completion--capf-misbehave-funs nil))
-                    (call-interactively #'company-capf)))))
+    (defun malb/config-eshell-completion ()
+      (setq pcomplete-cycle-completions t
+            pcomplete-ignore-case t)
+      (setq-local company-idle-delay 1.0
+                  company-backends '((company-capf  :with company-yasnippet)))
+      (define-key eshell-mode-map [remap eshell-pcomplete]
+        (lambda ()
+          (interactive)
+          (let ((completion--capf-misbehave-funs nil))
+            (call-interactively #'company-capf)))))
 
-            (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
+    (add-hook 'eshell-mode-hook #'malb/config-eshell-completion)
 
 
-            ;; -----
-            ;; ESC-.
-            ;; -----
+    ;; ESC-.
 
-            ;; https://gist.github.com/kanru/8680931
-            (defun malb/eshell-last-argument (n)
-              (let* ((input (substring-no-properties
-                             (eshell-previous-input-string (1- n))))
-                     (parse (with-temp-buffer
-                              (insert input)
-                              (car (reverse (eshell-parse-arguments
-                                             (point-min) (point-max)))))))
-                (eval parse)))
+    ;; https://gist.github.com/kanru/8680931
+    (defun malb/eshell-last-argument (n)
+      (let* ((input (substring-no-properties
+                     (eshell-previous-input-string (1- n))))
+             (parse (with-temp-buffer
+                      (insert input)
+                      (car (reverse (eshell-parse-arguments
+                                     (point-min) (point-max)))))))
+        (eval parse)))
 
-            ;; https://gist.github.com/kanru/8680931
-            (defun malb/eshell-insert-last-word (n)
-              (interactive "p")
-              (unless (eq last-command this-command)
-                (put 'malb/eshell-insert-last-word 'pre-n n)
-                (put 'malb/eshell-insert-last-word 'pre-p nil))
-              (let ((n (get 'malb/eshell-insert-last-word 'pre-n))
-                    (pre-p (get 'malb/eshell-insert-last-word 'pre-p)))
-                (when pre-p
-                  (delete-region pre-p (point)))
-                (put 'malb/eshell-insert-last-word 'pre-n (1+ n))
-                (put 'malb/eshell-insert-last-word 'pre-p (point))
-                (if (s-contains-p " " (malb/eshell-last-argument n))
-                    (insert "\"" (malb/eshell-last-argument n) "\"")
-                  (insert (malb/eshell-last-argument n) ))))
+    ;; https://gist.github.com/kanru/8680931
+    (defun malb/eshell-insert-last-word (n)
+      (interactive "p")
+      (unless (eq last-command this-command)
+        (put 'malb/eshell-insert-last-word 'pre-n n)
+        (put 'malb/eshell-insert-last-word 'pre-p nil))
+      (let ((n (get 'malb/eshell-insert-last-word 'pre-n))
+            (pre-p (get 'malb/eshell-insert-last-word 'pre-p)))
+        (when pre-p
+          (delete-region pre-p (point)))
+        (put 'malb/eshell-insert-last-word 'pre-n (1+ n))
+        (put 'malb/eshell-insert-last-word 'pre-p (point))
+        (if (s-contains-p " " (malb/eshell-last-argument n))
+            (insert "\"" (malb/eshell-last-argument n) "\"")
+          (insert (malb/eshell-last-argument n) ))))
 
-            ;;
-            ;; https://github.com/howardabrams/hamacs/blob/main/ha-eshell.org#last-results
-            ;;
-            (defvar malb/eshell-output (make-ring 10)
-              "A ring (looped list) storing history of eshell command output.")
+    ;; https://github.com/howardabrams/hamacs/blob/main/ha-eshell.org#last-results
+    (defvar malb/eshell-output (make-ring 10)
+      "A ring (looped list) storing history of eshell command output.")
 
-            (defun malb/eshell-store-last-output ()
-              "Store the output from the last eshell command.
-            Called after every command by connecting to the `eshell-post-command-hook'."
-              (let ((output
-                     (buffer-substring-no-properties eshell-last-input-end eshell-last-output-start)))
-                (ring-insert malb/eshell-output output)))
+    (defun malb/eshell-store-last-output ()
+      "Store the output from the last eshell command.
+Called after every command by connecting to the `eshell-post-command-hook'."
+      (let ((output
+             (buffer-substring-no-properties eshell-last-input-end eshell-last-output-start)))
+        (ring-insert malb/eshell-output output)))
 
-            (add-hook 'eshell-post-command-hook 'malb/eshell-store-last-output)
+    (add-hook 'eshell-post-command-hook 'malb/eshell-store-last-output)
 
-            (defun eshell/output (&rest args)
-              "Return an eshell command output from its history.
+    (defun eshell/output (&rest args)
+      "Return an eshell command output from its history.
 
 The first argument is the index into the historical past, where
 `0' is the most recent, `1' is the next oldest, etc.
@@ -5402,67 +5379,53 @@ The second argument represents the returned output:
 If the first argument is not a number, it assumes the format
 to be `:text'.
 "
-              (let (frmt element)
-                (cond
-                 ((> (length args) 1)  (setq frmt (cadr args)
-                                             element (car args)))
-                 ((= (length args) 0)  (setq frmt "text"
-                                             element 0))
-                 ((numberp (car args)) (setq frmt "text"
-                                             element (car args)))
-                 ((= (length args) 1)  (setq frmt (car args)
-                                             element 0)))
+      (let (frmt element)
+        (cond
+         ((> (length args) 1)  (setq frmt (cadr args)
+                                     element (car args)))
+         ((= (length args) 0)  (setq frmt "text"
+                                     element 0))
+         ((numberp (car args)) (setq frmt "text"
+                                     element (car args)))
+         ((= (length args) 1)  (setq frmt (car args)
+                                     element 0)))
 
-                (if-let ((results (ring-ref malb/eshell-output (or element 0))))
-                    (cl-case (string-to-char frmt)
-                      (?l     (split-string results))
-                      (?f     (malb/eshell-store-file-output results))
-                      (otherwise (s-trim results)))
-                  "")))
+        (if-let ((results (ring-ref malb/eshell-output (or element 0))))
+            (cl-case (string-to-char frmt)
+              (?l     (split-string results))
+              (?f     (malb/eshell-store-file-output results))
+              (otherwise (s-trim results)))
+          "")))
 
-            (defun malb/eshell-store-file-output (results)
-              "Writes the string, RESULTS, to a temporary file and returns that file name."
-              (let ((filename (make-temp-file "malb-eshell-")))
-                (with-temp-file filename
-                  (insert results))
-                filename))
+    (defun malb/eshell-store-file-output (results)
+      "Writes the string, RESULTS, to a temporary file and returns that file name."
+      (let ((filename (make-temp-file "malb-eshell-")))
+        (with-temp-file filename
+          (insert results))
+        filename))
 
-            (defvar eshell-variable-aliases-list nil "Autoloading this eshell-defined variable")
-            (add-to-list 'eshell-variable-aliases-list '("$"  malb/eshell-output-text))
-            (add-to-list 'eshell-variable-aliases-list '("_"  malb/eshell-output-list))
-            (add-to-list 'eshell-variable-aliases-list '("OUTPUT" malb/eshell-output-file))
+    (defvar eshell-variable-aliases-list nil "Autoloading this eshell-defined variable")
+    (add-to-list 'eshell-variable-aliases-list '("$"  malb/eshell-output-text))
+    (add-to-list 'eshell-variable-aliases-list '("_"  malb/eshell-output-list))
+    (add-to-list 'eshell-variable-aliases-list '("OUTPUT" malb/eshell-output-file))
 
-            (defun malb/eshell-output (format-type indices)
-              "Wrapper around `eshell/output' for the `eshell-variable-aliases-list'."
-              (if indices
-                  (eshell/output (string-to-number (caar indices)) format-type)
-                (eshell/output 0 format-type)))
+    (defun malb/eshell-output (format-type indices)
+      "Wrapper around `eshell/output' for the `eshell-variable-aliases-list'."
+      (if indices
+          (eshell/output (string-to-number (caar indices)) format-type)
+        (eshell/output 0 format-type)))
 
-            (defun malb/eshell-output-text (&optional indices &rest ignored)
-              "A _text_ wrapper around `eshell/output' for the `eshell-variable-aliases-list'."
-              (malb/eshell-output "text" indices))
+    (defun malb/eshell-output-text (&optional indices &rest ignored)
+      "A _text_ wrapper around `eshell/output' for the `eshell-variable-aliases-list'."
+      (malb/eshell-output "text" indices))
 
-            (defun malb/eshell-output-list (&optional indices &rest ignored)
-              "A _list_ wrapper around `eshell/output' for the `eshell-variable-aliases-list'."
-              (malb/eshell-output "list" indices))
+    (defun malb/eshell-output-list (&optional indices &rest ignored)
+      "A _list_ wrapper around `eshell/output' for the `eshell-variable-aliases-list'."
+      (malb/eshell-output "list" indices))
 
-            (defun malb/eshell-output-file (&optional indices &rest ignored)
-              "A _file_ wrapper around `eshell/output' for the `eshell-variable-aliases-list'."
-              (malb/eshell-output "file" indices))
-
-            ;; ------
-            ;; CONFIG
-            ;; ------
-
-            (setq eshell-scroll-to-bottom-on-input t
-                  eshell-destroy-buffer-when-process-dies t
-                  eshell-history-size 8192
-                  eshell-buffer-maximum-lines 16384
-                  eshell-hist-ignoredups t
-                  eshell-list-files-after-cd t
-                  eshell-ls-initial-args "-hk"
-                  eshell-buffer-shorthand t
-                  eshell-plain-echo-behavior t)))
+    (defun malb/eshell-output-file (&optional indices &rest ignored)
+      "A _file_ wrapper around `eshell/output' for the `eshell-variable-aliases-list'."
+      (malb/eshell-output "file" indices)) ))
 #+end_src
 
 *** COMMENT Plan 9 Smart Shell
