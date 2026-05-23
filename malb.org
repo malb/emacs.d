@@ -105,7 +105,9 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
   (package-install 'system-packages))
 
 (require 'use-package)
-(require 'use-package-ensure-system-package)
+
+(use-package use-package-ensure-system-package
+  :commands (use-package-ensure-system-package))
 
 (setq use-package-compute-statistics t
       use-package-verbose t
@@ -115,8 +117,11 @@ Use [[https://github.com/jwiegley/use-package/][use-package]] to keep our config
 [[https://github.com/quelpa/quelpa][Quelpa]] to install packages directly from source.
 
 #+begin_src emacs-lisp
-(use-package quelpa)
-(use-package quelpa-use-package)
+(use-package quelpa
+  :commands (quelpa quelpa-self-upgrade))
+
+(use-package quelpa-use-package
+  :commands (quelpa-use-package))
 #+end_src
 
 * Memory
@@ -6273,6 +6278,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 (use-package lsp-treemacs
   :custom ((lsp-treemacs-error-list-current-project-only t))
+  :commands (malb/toggle-lsp-treemacs-symbols)
   :config
   ;; TODO report upstream
   (delete lsp-treemacs-symbols-buffer-name winum-ignored-buffers)
@@ -12342,7 +12348,6 @@ Make links in comments and string clickable
   :init (setopt ellama-response-process-method 32)
   :config (progn
             (require 'llm-openai)
-            (require 'llama-swap-shell)
 
             (setopt ellama-generate-commit-message-template
                     (format
@@ -12523,7 +12528,7 @@ Improved abc feature by adding new xyz module.
 #+begin_src emacs-lisp
 (use-package llama-swap-shell
   :ensure nil
-  :commands (llama-swap-shell)
+  :commands (llama-swap-shell llama-swap-shell-select-model)
   :custom ((markdown-overlays-render-latex t)
            (llama-swap-shell-prodigy-service-name "Llama Swap")
            (llama-swap-shell-default-model "default")
