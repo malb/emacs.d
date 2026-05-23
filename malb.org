@@ -1955,11 +1955,14 @@ Don’t include boring or remote stuff in list of recently visited files.
 Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html][source]])
 
 #+begin_src emacs-lisp
-(setq history-length 1024
-      history-delete-duplicates t
-      savehist-save-minibuffer-history nil
-      savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-(savehist-mode t)
+(use-package savehist
+  :ensure nil
+  :init (savehist-mode t)
+  :custom ((history-length 1024)
+           (history-delete-duplicates t)
+           (savehist-save-minibuffer-history nil)
+           (savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+           (savehist-file (expand-file-name "history" malb/cache-dir))))
 #+end_src
 
 
