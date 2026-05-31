@@ -10929,11 +10929,6 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             (dolist (ext  '(".brf" ".bmt" ".out" ".nav" ".snm" ".vrb" ".synctex.gz"))
               (push ext dired-latex-unclean-extensions))
 
-            (defun malb/enable-dired-omit-mode ()
-              (dired-omit-mode))
-
-            (add-hook 'dired-mode-hook #'malb/enable-dired-omit-mode)
-
             (defun malb/dired-layout ()
               (setq-local tab-width 1)
               (toggle-truncate-lines 1))
@@ -10961,12 +10956,14 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 #+begin_src emacs-lisp
 (use-package image-dired
   :ensure nil
+  :commands image-dired
   :custom ((image-dired-thumbnail-storage 'standard-xx-large)
            (image-dired-thumb-margin 16)
            (image-dired-thumb-relief 2)
            (image-dired-marking-shows-next nil)
            (image-dired-show-all-from-dir-max-files 4096)
-           (image-dired-dir (expand-file-name "image-dired/" malb/cache-dir))))
+           (image-dired-dir (expand-file-name "image-dired/" malb/cache-dir))
+           (image-dired-db-file (expand-file-name "image-dired.db" malb/cache-dir))))
 #+end_src
 
 [[https://github.com/Fuco1/dired-hacks][dired-collapse]] renders directories with just one file like GitHub does.
@@ -10989,13 +10986,12 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 #+begin_src emacs-lisp
 (use-package dired-subtree
   :after nerd-icons-dired
-  :config (progn
-            (defun malb/dired-subtree-nerd-icons ()
-              (when nerd-icons-dired-mode (revert-buffer)))
-            (advice-add 'dired-subtree-toggle :after #'malb/dired-subtree-nerd-icons))
   :bind (:map dired-mode-map
-              ("TAB" . dired-subtree-toggle)
-              ("<backtab>" . dired-subtree-cycle)))
+         ("TAB" . dired-subtree-toggle)
+         ("<backtab>" . dired-subtree-cycle))
+  :config (malb/defadvice! malb/dired-subtree-nerd-icons ()
+            :after 'dired-subtree-toggle
+            (when nerd-icons-dired-mode (revert-buffer))))
 #+end_src
 
 [[https://github.com/Fuco1/dired-hacks/blob/master/dired-ranger.el][dired-ranger]] for easy copy’n’pasting.
@@ -11018,8 +11014,8 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+begin_src emacs-lisp
 (use-package fd-dired
-  :ensure-system-package fd
-  :config  (setq fd-dired-ls-option '("| xargs -0 ls -Nld" . "-Nld")))
+  :commands fd-dired
+  :ensure-system-package fd)
 #+end_src
 
 [[https://github.com/rainstormstudio/nerd-icons-dired][nerd-icons-dired]] for eye candy.
@@ -11028,22 +11024,23 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+begin_src emacs-lisp
 (use-package nerd-icons-dired
-  :init (advice-add 'nerd-icons-dired-mode :before-while
-                    (lambda (&optional dir)
-                     (not (file-remote-p (or dir default-directory)))))
-   :hook (dired-mode . nerd-icons-dired-mode))
+  :commands nerd-icons-dired-mode
+  :init (malb/defadvice! malb/no-nerd-icons-on-remote (&optional dir)
+          :before-while 'nerd-icons-dired-mode
+          (not (file-remote-p (or dir default-directory))))
+  :hook (dired-mode . nerd-icons-dired-mode))
 #+end_src
 
 [[https://github.com/asok/peep-dired][peep-dired]] for previewing files (think: =dired-follow-mode=)
 
 #+begin_src emacs-lisp
 (use-package peep-dired
-  :defer t
-  :config (setq peep-dired-cleanup-eagerly nil
-                peep-dired-cleanup-on-disable t
-                peep-dired-enable-on-directories t)
+  :commands peep-dired
+  :custom ((peep-dired-cleanup-eagerly nil)
+           (peep-dired-cleanup-on-disable t)
+           (peep-dired-enable-on-directories t))
   :bind (:map dired-mode-map
-              ("P" . peep-dired)))
+         ("P" . peep-dired)))
 #+end_src
 
 ** Directory Trees (Dired Sidebar)
