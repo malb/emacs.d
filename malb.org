@@ -11130,6 +11130,15 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
    "Convert to x265"
    "nice ffmpeg -stats -i '<<f>>' -c:v libx265 -c:a copy -x265-params crf=23 '<<fne>>.h265.mp4'"
    :utils "ffmpeg"))
+
+(defun malb/dwim-shell-commands-sd-metadata ()
+  "Extract prompt from image."
+  (interactive)
+  (dwim-shell-command-on-marked-files
+   "Extract prompt"
+   "for file in '<<f>>'; do sd-cli -M metadata  --metadata-format json --image $file | jq '.entries[1].data.text'; done"
+   :utils "sd-cli"))
+
 #+end_src
 
 * Tramp
