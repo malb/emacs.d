@@ -10964,6 +10964,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
   :custom ((image-dired-thumbnail-storage 'standard-xx-large)
            (image-dired-thumb-margin 16)
            (image-dired-thumb-relief 2)
+           (image-dired-marking-shows-next nil)
            (image-dired-show-all-from-dir-max-files 4096)
            (image-dired-dir (expand-file-name "image-dired/" malb/cache-dir))))
 #+end_src
