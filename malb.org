@@ -1526,9 +1526,10 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
             ;; disable helm when renaming a file
             (add-to-list 'helm-completing-read-handlers-alist '(rename-file . nil))
-
             ;; disable helm when writing a file
             (add-to-list 'helm-completing-read-handlers-alist '(write-file . nil))
+            ;; disable helm when creating a directory
+            (add-to-list 'helm-completing-read-handlers-alist '(dired-create-directory . nil))
 
             (add-to-list 'helm-commands-using-frame #'helm-bookmarks)
 
