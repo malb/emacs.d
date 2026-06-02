@@ -7368,15 +7368,15 @@ Automatically pick dictionary.
 *[[https://github.com/emacs-languagetool/lsp-ltex][LanguageTool]] for offline grammar checking.*
 
 #+begin_src emacs-lisp
-(use-package lsp-ltex
+(use-package lsp-ltex-plus
   :ensure-system-package (ltex-ls . ltex-ls-plus-bin)
+  :custom ((lsp-ltex-plus-ls-plus-executable "ltex-ls")
+           (lsp-ltex-plus-language "en-GB")
+           (lsp-ltex-plus-additional-rules-language-model "/usr/share/ngrams/")
+           (lsp-ltex-plus-disabled-rules '(:en-GB ["OXFORD_SPELLING_Z_NOT_S"
+                                                   "MORFOLOGIK_RULE_EN_GB"])))
   :init
-  (setq lsp-ltex-version "16.0.0"
-        lsp-ltex-language "en-GB"
-        lsp-ltex-additional-rules-language-model "/usr/share/ngrams/"
-        lsp-ltex-disabled-rules '(:en-GB ["OXFORD_SPELLING_Z_NOT_S"
-                                          "MORFOLOGIK_RULE_EN_GB"]))
-  (add-to-list 'lsp-disabled-clients 'ltex-ls))
+  (add-to-list 'lsp-disabled-clients 'ltex-ls-plus))
 #+end_src
 
 *[[https://github.com/emacs-grammarly/lsp-grammarly][Grammarly]] for online grammar checking.*
@@ -7391,7 +7391,7 @@ Automatically pick dictionary.
 
 Grammar checkers are disabled by default. To enable
 - LanguageTool :: ~# eval: (setq-local lsp-disabled-clients '(grammarly-ls))~
-- Grammarly    :: ~# eval: (setq-local lsp-disabled-clients '(ltex-ls))~
+- Grammarly    :: ~# eval: (setq-local lsp-disabled-clients '(ltex-ls-plus))~
 
 ** Translating
 
