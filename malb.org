@@ -7374,10 +7374,10 @@ Automatically pick dictionary.
            (lsp-ltex-plus-language "en-GB")
            (lsp-ltex-plus-additional-rules-language-model "/usr/share/ngrams/")
            (lsp-ltex-plus-disabled-rules '(:en-GB ["OXFORD_SPELLING_Z_NOT_S"
-                                                   "MORFOLOGIK_RULE_EN_GB"])))
-  :init
-  (add-to-list 'lsp-disabled-clients 'ltex-ls-plus))
+                                                   "MORFOLOGIK_RULE_EN_GB"]))))
 #+end_src
+
+to enable ~(lsp-ltex-plus-mode)~
 
 *[[https://github.com/emacs-grammarly/lsp-grammarly][Grammarly]] for online grammar checking.*
 
@@ -7389,9 +7389,7 @@ Automatically pick dictionary.
           (add-to-list 'lsp-disabled-clients 'grammarly-ls)))
 #+end_src
 
-Grammar checkers are disabled by default. To enable
-- LanguageTool :: ~# eval: (setq-local lsp-disabled-clients '(grammarly-ls))~
-- Grammarly    :: ~# eval: (setq-local lsp-disabled-clients '(ltex-ls-plus))~
+to enable  ~# eval: (setq-local lsp-disabled-clients nil)~
 
 ** Translating
 
