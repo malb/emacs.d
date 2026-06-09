@@ -7538,7 +7538,7 @@ import tempfile
 
 def process_pdf(filename, tmpdir, page_range=None):
     """
-    Convert PDF to PNG images.
+    Convert PDF to images.
 
     :param filename: PDF filename.
     :param tmpdir: Temporary working directory.
@@ -7555,11 +7555,11 @@ def process_pdf(filename, tmpdir, page_range=None):
             print("Invalid page range. Use -p X-Y (e.g, -p 1-5)", file=sys.stderr)
             sys.exit(1)
 
-    cmd = ["pdftocairo", "-png", "-r", "300", filename]
+    cmd = ["pdftocairo", "-jpeg", "-r", "300", filename]
     if page_start is not None and page_end is not None:
         cmd.extend(["-f", str(page_start), "-l", str(page_end)])
 
-    cmd.append(tmpdir + "/")
+    cmd.append(tmpdir + "/scan")
 
     try:
         subprocess.run(cmd, check=True)
@@ -7567,13 +7567,13 @@ def process_pdf(filename, tmpdir, page_range=None):
         print(f"Error: pdftocairo failed with exit code {e.returncode}", file=sys.stderr)
         sys.exit(1)
 
-    png_files = sorted(Path(tmpdir).glob("*.png"))
+    image_files = sorted(Path(tmpdir).glob("*.jpg"))
 
-    if not png_files:
-        print("Error: No PNG files generated", file=sys.stderr)
+    if not image_files:
+        print("Error: No JPEG files generated", file=sys.stderr)
         sys.exit(1)
 
-    return png_files
+    return image_files
 
 def ocr_image(image_filename, model="ocr"):
     """
@@ -7587,7 +7587,7 @@ def ocr_image(image_filename, model="ocr"):
     prompt = ""
 
     ext = Path(image_filename).suffix.lower()
-    mime_type = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg"}.get(ext, "image/png")
+    mime_type = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}.get(ext, "image/png")
 
     with open(image_filename, "rb") as img_file:
         b64_data = base64.b64encode(img_file.read()).decode("utf-8")
