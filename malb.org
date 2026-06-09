@@ -6326,6 +6326,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                   "--unsetenv=*"        ; hide all environment vars
                   "--setenv" "TERM"
                   "--setenv" "PATH"
+                  "--setenv" "LANG"
+                  "--setenv" "TEXMFHOME"
                   "--setenv" "BIBINPUTS")
             ;; Workspace roots picked at session startup.
             (cl-loop for d in roots
@@ -6334,7 +6336,10 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (list "-d" (expand-file-name "~/.config/eca/")
                   "-d" (expand-file-name "~/.cache/eca/")
                   "-d" (expand-file-name "~/.config/emacs/")
-                  "-d" (expand-file-name "~/.cache/emacs/"))
+                  "-d" (expand-file-name "~/.cache/emacs/")
+                  "-r" malb/common-latex
+                  "-r" (expand-file-name "~/.cache/literature-ocr/")
+                  "-d" (expand-file-name "~/.texlive/texmf-var/"))
             command))
 
   (setq eca-process-wrapper-function #'malb/eca-jail-wrapper)
@@ -9000,7 +9005,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
                                           "maildir:\"/kcl/Drafts\"")))
                   ("%ignore" . "%trash OR %junk")
                   ("%unread" . "flag:unread AND NOT %ignore  ")
-                  ("%today"  . "date:today..now AND NOT %ignore")
+                  ("%today"  . "date:1d..now AND NOT %ignore")
                   ("%week"   . "date:7d..now AND NOT %ignore")
                   ("%month"  . "date:31d..now AND NOT %ignore")
                   ("%inbox"  . ,(concat "(" (s-join " OR "
@@ -11110,6 +11115,15 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
             :default "joined.pdf"))
    :utils "pdftk"))
 
+(defun malb/dwim-shell-commands-keep-pdf-page ()
+  "Keep a page from pdf."
+  (interactive)
+  (let ((page-num (read-number "Keep page number: " 1)))
+    (dwim-shell-command-on-marked-files
+     "Keep pdf page"
+     (format "qpdf '<<f>>' --pages . %d -- '<<fne>>_%d.<<e>>'" page-num page-num)
+     :utils "qpdf")))
+
 (defun malb/dwim-shell-commands-kdeconnect-share ()
   "Send file(s) to a device through KDE Connect."
   (interactive)
@@ -11144,12 +11158,16 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 (use-package tramp
   :ensure nil
   :custom ((remote-file-name-inhibit-locks t)
+           (remote-file-name-inhibit-auto-save-visited t)
+           (tramp-use-scp-direct-remote-copying t)
+           (tramp-copy-size-limit (* 1024 1024))
            (tramp-verbose 1)
            (tramp-use-connection-share t)
            (tramp-default-method "rpc")
            (tramp-persistency-file-name (expand-file-name "tramp" malb/cache-dir))
            (vc-ignore-dir-regexp (format "\\(%s\\)\\|\\(%s\\)" vc-ignore-dir-regexp tramp-file-name-regexp)))
-  :config (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+  :config
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 #+end_src
 
 #+begin_src emacs-lisp

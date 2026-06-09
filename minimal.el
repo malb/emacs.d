@@ -1,6 +1,8 @@
 ;;; init.el --- minimal personal emacs config file -*- lexical-binding: t -*-
 (setq inhibit-startup-screen t)
 
+(defconst malb/cache-dir (expand-file-name ".cache/emacs/" "~"))
+
 ;; DISABLE CLUTTER
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
