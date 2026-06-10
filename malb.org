@@ -2367,7 +2367,7 @@ Use [[https://github.com/benma/visual-regexp.el][visual-regexp]] for visual regu
          ("M-%"   . vr/query-replace)
          ("C-%"   . query-replace)
          ("C-s"   . isearch-forward-regexp)
-         ("C-S-r" . isearch-backward-regexp)))
+         ("C-r"   . isearch-backward-regexp)))
 #+end_src
 
 ([[http://howardism.org/Technical/Emacs/eshell-why.html][source]])
