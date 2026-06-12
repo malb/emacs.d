@@ -231,7 +231,9 @@ Otherwise:
   (let ((json (json-encode object))
         (json-path (make-temp-file "llama-swap-shell-request" nil ".json")))
     (with-temp-file json-path (insert json))
-    (append (list "curl" (format "%s/v1/chat/completions" llama-swap-shell-api-url-base))
+    (append (list "curl"
+                  (format "%s/v1/chat/completions" llama-swap-shell-api-url-base)
+                  "-H" "Content-Type: application/json")
             `("--data" ,(format "@%s" json-path)))))
 
 (defun llama-swap-shell-prompt-pair (model)
