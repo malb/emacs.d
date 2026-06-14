@@ -13243,23 +13243,18 @@ Easily change the text size:
 
 ** Dim Other Buffers
 
-[[https://codeberg.org/Anoncheg/selected-window-contrast][selected-window-contrast]]
+[[https://github.com/gonewest818/dimmer.el][gonewest818/dimmer.el]]
 
-[[https://raw.githubusercontent.com/Anoncheg1/public-share/refs/heads/main/selected-window-contrast.png]]
+[[https://github.com/gonewest818/dimmer.el/raw/master/doc/dimmer-demo.gif]]
 
 #+begin_src emacs-lisp
-;; somehow this screws with text sizes when switching buffers
-
-;; (use-package selected-window-contrast
-;;   :defer nil
-;;   :hook
-;;   ((buffer-list-update . selected-window-contrast-highlight-selected-window)
-;;    (server-after-make-frame . selected-window-contrast-highlight-selected-window))
-;;   :custom
-;;   ((selected-window-contrast-selected-magnitude-text 1.0)
-;;    (selected-window-contrast-selected-magnitude-background 1.0)
-;;    (selected-window-contrast-not-sel-magnitude-text 1.03)
-;;    (selected-window-contrast-not-sel-magnitude-background 1.03)))
+(use-package dimmer
+  :config
+  (dimmer-configure-which-key)
+  (dimmer-configure-helm)
+  (dimmer-configure-magit)
+  (dimmer-configure-posframe)
+  (dimmer-mode t))
 #+end_src
 
 ** Hide Mode Line
