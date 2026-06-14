@@ -6348,6 +6348,14 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   (setq eca-send-process-id nil))
 #+end_src
 
+*Example:*
+
+#+begin_src emacs-lisp :tangle no
+(s-join " " (malb/eca-jail-wrapper '("COMMAND") '("~/ROOT-DIR" "~/ROOR-DIR2")))
+#+end_src
+
+#+RESULTS:
+: jai -j eca -D --unsetenv=* --setenv TERM --setenv PATH --setenv LANG --setenv TEXMFHOME --setenv BIBINPUTS -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 -d /home/malb/.config/eca/ -d /home/malb/.cache/eca/ -d /home/malb/.config/emacs/ -d /home/malb/.cache/emacs/ -r /home/malb/Projects/common-latex -r /home/malb/.cache/literature-ocr/ -d /home/malb/.texlive/texmf-var/ COMMAND
 
 *** Highlight Indentation
 
