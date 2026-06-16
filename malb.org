@@ -6331,6 +6331,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                   "-D"                  ; do not expose $CWD
                   "--unsetenv=*"        ; hide all environment vars
                   "--setenv" "TERM"
+                  "--setenv" "HOME"
                   "--setenv" "PATH"
                   "--setenv" "LANG"
                   "--setenv" "TEXMFHOME"
@@ -6343,9 +6344,9 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                   "-d" (expand-file-name "~/.cache/eca/")
                   "-d" (expand-file-name "~/.config/emacs/")
                   "-d" (expand-file-name "~/.cache/emacs/")
+                  "-d" (expand-file-name "~/.texlive/")
                   "-r" malb/common-latex
-                  "-r" (expand-file-name "~/.cache/literature-ocr/")
-                  "-d" (expand-file-name "~/.texlive/texmf-var/"))
+                  "-r" (expand-file-name "~/Misc/OCR/"))
             command))
 
   (setq eca-process-wrapper-function #'malb/eca-jail-wrapper)
@@ -6359,7 +6360,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+end_src
 
 #+RESULTS:
-: jai -j eca -D --unsetenv=* --setenv TERM --setenv PATH --setenv LANG --setenv TEXMFHOME --setenv BIBINPUTS -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 -d /home/malb/.config/eca/ -d /home/malb/.cache/eca/ -d /home/malb/.config/emacs/ -d /home/malb/.cache/emacs/ -r /home/malb/Projects/common-latex -r /home/malb/.cache/literature-ocr/ -d /home/malb/.texlive/texmf-var/ COMMAND
+: jai -j eca -D --unsetenv=* --setenv TERM --setenv HOME --setenv PATH --setenv LANG --setenv TEXMFHOME --setenv BIBINPUTS -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 -d /home/malb/.config/eca/ -d /home/malb/.cache/eca/ -d /home/malb/.config/emacs/ -d /home/malb/.cache/emacs/ -d /home/malb/.texlive/ -r /home/malb/Projects/common-latex -r /home/malb/Misc/OCR/ COMMAND
 
 *** Highlight Indentation
 
