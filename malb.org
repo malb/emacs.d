@@ -13263,6 +13263,7 @@ Easily change the text size:
 
 #+begin_src emacs-lisp
 (use-package dimmer
+  :custom ((dimmer-watch-frame-focus-events nil))
   :config
   (dimmer-configure-which-key)
   (dimmer-configure-helm)
