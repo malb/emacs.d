@@ -12737,6 +12737,15 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 (autoload 'cryptoverifo-mode "cryptoverif" "Major mode for editing CryptoVerif code." t)
 #+end_src
 
+** Images
+
+#+begin_src emacs-lisp
+(use-package image-mode
+  :ensure nil
+  :bind (:map image-mode-map
+         ("q" . image-kill-buffer)))
+#+end_src
+
 * Theme & Look
 ** Frame Title
 
