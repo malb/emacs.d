@@ -12384,7 +12384,7 @@ Make links in comments and string clickable
             (setopt ellama-generate-commit-message-template
                     (format
                      "<INSTRUCTIONS>
-You are professional software developer.
+You are a professional software developer.
 
 Write concise commit message based on diff in the following format:
 <FORMAT>
@@ -12421,7 +12421,7 @@ Improved abc feature by adding new xyz module.
             (defun malb/llm-provider (model)
               (cond ((llm-openai-compatible-p model) model)
                     ((stringp model)
-                     (make-llm-openai-compatible :url (format "http://localhost:38080/upstream/%s/" model)))))
+                     (make-llm-openai-compatible :url "http://localhost:38080/v1/" :chat-model model))))
 
             (defconst malb/llm-default   (malb/llm-provider "default"))
             (defconst malb/llm-grammar   (malb/llm-provider "grammar"))
