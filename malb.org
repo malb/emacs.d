@@ -575,13 +575,13 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
 #+begin_src emacs-lisp
 (defun malb/register-left-side-window (buffer-name-rx &optional winum-8)
   (add-to-list 'display-buffer-alist
-             `(,buffer-name-rx
-               (malb/frame-dispatch
-                display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (side . left)
-               (slot . 0)
-               (window-width . ,malb/left-side-window-width)))
+               `(,buffer-name-rx
+                 (malb/frame-dispatch
+                  display-buffer-reuse-window
+                  display-buffer-in-side-window)
+                 (side . left)
+                 (slot . 0)
+                 (window-width . ,malb/left-side-window-width)))
 
   (if winum-8
       (add-to-list 'winum-assign-functions
@@ -591,13 +591,13 @@ Some buffers should behave like pop ups, i.e. display at the bottom with small h
 #+begin_src emacs-lisp
 (defun malb/register-right-side-window (buffer-name-rx &optional winum-9)
   (add-to-list 'display-buffer-alist
-             `(,buffer-name-rx
-               (malb/frame-dispatch
-                display-buffer-reuse-window
-                display-buffer-in-side-window)
-               (side . right)
-               (slot . 0)
-               (window-width . ,malb/right-side-window-width)))
+               `(,buffer-name-rx
+                 (malb/frame-dispatch
+                  display-buffer-reuse-window
+                  display-buffer-in-side-window)
+                 (side . right)
+                 (slot . 0)
+                 (window-width . ,malb/right-side-window-width)))
 
   (if winum-9
       (add-to-list 'winum-assign-functions
@@ -865,8 +865,8 @@ I prefer pop to the default, as I’d rather have it pop up the buffer somewhere
   (set-window-dedicated-p (selected-window) dedicated-mode)
   (if (not (assq 'dedicated-mode minor-mode-alist))
       (setq minor-mode-alist
-	    (cons '(dedicated-mode " D")
-		  minor-mode-alist))))
+	        (cons '(dedicated-mode " D")
+		          minor-mode-alist))))
 #+end_src
 
 ** Window Management Hydra
