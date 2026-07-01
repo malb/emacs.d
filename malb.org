@@ -7673,8 +7673,9 @@ Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a list
 
 #+begin_src emacs-lisp
 (use-package deft
-  :bind ("<f8>" . malb/deft)
-  :bind ("S-<f8>" . malb/blog)
+  :bind (("<f8>" . malb/deft)
+         ("S-<f8>" . malb/blog))
+  :commands (malb/deft-in-dir)
   :config
   (progn
     (setq deft-extensions '("org" "md")
