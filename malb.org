@@ -1788,6 +1788,8 @@ Please always use ~=~ separator for using long option. Don't use space as separa
                      (call-interactively #'helm-org-in-buffer-headings))
                     ((eq major-mode 'org-agenda-mode)
                      (call-interactively #'helm-org-agenda-files-headings))
+                    ((eq major-mode 'LaTeX-mode)
+                     (call-interactively #'malb/helm-reftex-xref-find-definitions))
                     ((and (bound-and-true-p lsp-mode) (not (eq major-mode 'LaTeX-mode)))
                      (call-interactively #'helm-lsp-workspace-symbol))
                     (t
@@ -7914,6 +7916,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
 (use-package tex
   :ensure auctex
   :mode (("\\.tikz$" . LaTeX-mode))
+
   :bind (:map LaTeX-mode-map
          ("C-<tab>" . outline-cycle)
          ("M-<right>" . sp-forward-sexp)
@@ -7922,6 +7925,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
          ("M-<down>" . outline-move-subtree-down)
          ("C-c h ." . devdocs-browser-open)
          ("C-\\" . er/expand-region))
+
   :hook ((LaTeX-mode . electric-indent-local-mode)
          (LaTeX-mode . turn-on-visual-line-mode)
          (LaTeX-mode . turn-on-flyspell)
@@ -7938,23 +7942,26 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
          (LaTeX-mode . malb/company-latex-setup)
          (LaTeX-mode . malb/raise-flycheck-error-threshold)
          (LaTeX-mode . visual-wrap-prefix-mode))
+
   :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
                                     ("\\sendmessageleft*" arg-on)
-                                    ("\\sendmessagerightleft*" arg-on))))
+                                    ("\\sendmessagerightleft*" arg-on)))
+           (TeX-auto-save t)
+           (TeX-parse-self t)
+           (reftex-plug-into-AUCTeX t)
+           (reftex-toc-max-level 4)
+           (LaTeX-math-menu-unicode t)
+           (TeX-PDF-mode t)
+           (TeX-source-correlate-mode t)
+           (TeX-save-query nil)
+           (TeX-error-overview-open-after-TeX-run t)
+           (TeX-electric-sub-and-superscript t)
+           (TeX-quote-after-quote nil)
+           (font-latex-fontify-sectioning 1.0))
+
   :config (progn
             (require 'tex-mode)
 
-            (setq TeX-auto-save t
-                  TeX-parse-self t
-                  reftex-plug-into-AUCTeX t
-                  LaTeX-math-menu-unicode t
-                  TeX-PDF-mode t
-                  TeX-source-correlate-mode t
-                  TeX-save-query nil
-                  TeX-error-overview-open-after-TeX-run t
-                  TeX-electric-sub-and-superscript t
-                  TeX-quote-after-quote nil
-                  font-latex-fontify-sectioning 1.0)
             (setq-default TeX-engine 'luatex)
             (setq-default TeX-command-default "LaTeXMk")
 
@@ -8060,19 +8067,19 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\" (or (any ",.!;@")
-                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
-                                   symbol-end)))
+                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
+                                  symbol-end)))
                 0 'malb/unimportant-latex-face prepend))
              'end)
 
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\pc" (and (or "if" "then" "else" "elseif"
-                                     "for" "do" "return"
-                                     "const"
-                                     "and" "or"
-                                     "linecomment" "comment" "assert" "in")
-                                 symbol-end))
+                                    "for" "do" "return"
+                                    "const"
+                                    "and" "or"
+                                    "linecomment" "comment" "assert" "in")
+                                symbol-end))
                 0 'font-latex-bold-face prepend))
              'end)
 
@@ -8144,7 +8151,60 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                      (fn-s (downcase (replace-regexp-in-string ":" "-" label))))
                 (find-file (format "./proofs/proof-%s.tex" fn-s))))
 
-            (add-to-list 'LaTeX-verbatim-environments "lstlisting")))
+            (add-to-list 'LaTeX-verbatim-environments "lstlisting")
+
+            (defun malb/helm-reftex-get-candidates ()
+              "Extract \\label{} entries from RefTeX's internal docstruct."
+              (reftex-access-scan-info)
+
+              (let* ((docstruct (when (and (boundp 'reftex-docstruct-symbol)
+                                           reftex-docstruct-symbol)
+                                  (symbol-value reftex-docstruct-symbol)))
+                     (candidates nil))
+
+                (when docstruct
+                  (dolist (entry docstruct)
+                    (when (and (listp entry)
+                               (stringp (car entry))
+                               (stringp (nth 1 entry))
+                               (stringp (nth 2 entry))
+                               (stringp (nth 3 entry)))
+                      (let ((label-name (car entry))
+                            (label-type (nth 1 entry))
+                            (context    (nth 2 entry)))
+                        (push (cons (format "%-30s %s" label-name (or context "")) entry)
+                              candidates)))))
+
+                (delete-dups (nreverse candidates))))
+
+            (defun malb/helm-reftex-xref-find-definitions ()
+              "Use Helm to select a RefTeX label and jump to it in the current window."
+              (interactive)
+              (let ((candidates (malb/helm-reftex-get-candidates)))
+                (if (null candidates)
+                    (message "No labels found in the document.")
+                  (helm :sources
+                    (helm-build-sync-source "Find Label Definitions"
+                      :candidates candidates
+                      :fuzzy-match t
+                      :action (lambda (entry)
+                                (xref-push-marker-stack)
+
+                                ;; Temporarily redefine switch-to-buffer-other-window
+                                ;; to just use switch-to-buffer, forcing it into the current window.
+                                (cl-letf (((symbol-function 'switch-to-buffer-other-window)
+                                           (lambda (buffer-or-name &optional norecord)
+                                             (switch-to-buffer buffer-or-name norecord))))
+                                  (reftex-show-label-location
+                                   entry ; data
+                                   t     ; forward
+                                   nil   ; no-revisit (open file if needed)
+                                   nil   ; stay (leave Helm, go to target)
+                                   t)))) ; error (error if not found)
+                    :buffer "*helm reftex xref*"
+                    :prompt "Label: "))))
+
+            (add-to-list 'helm-commands-using-frame #'malb/helm-reftex-xref-find-definitions)))
 #+end_src
 
 #+begin_src emacs-lisp
