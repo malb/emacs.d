@@ -6324,9 +6324,22 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 (use-package eca
   :ensure-system-package (jai)
   :custom ((eca-server-install-path (expand-file-name "eca/eca" malb/cache-dir))
+           (eca-chat-use-side-window nil)
            (eca-server-version-file-path (expand-file-name "eca/eca-version" malb/cache-dir)))
   :commands eca
   :config
+  (add-to-list 'display-buffer-alist
+               `(,(rx "<eca-chat[" (zero-or-more nonl) "]:" (one-or-more digit) ":" (one-or-more digit) ">")
+                 (display-buffer-reuse-window
+                  display-buffer-pop-up-frame)
+                 (dedicated . t)
+                 (window-parameters
+                  (no-other-window . t)
+                  (no-delete-other-windows . t))
+                 (pop-up-frame-parameters . ((malb/special-frame . t)
+                                             (height . 60)
+                                             (width . 100)))))
+
   (defun malb/eca-jail-wrapper (command roots)
     "Wrap the eca server COMMAND with `jai', exposing ROOTS."
     (append (list "jai" "-j" "eca"
