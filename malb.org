@@ -13329,8 +13329,7 @@ Easily change the text size:
   (dimmer-configure-which-key)
   (dimmer-configure-helm)
   (dimmer-configure-magit)
-  (dimmer-configure-posframe)
-  (dimmer-mode t))
+  (dimmer-configure-posframe))
 #+end_src
 
 ** Hide Mode Line
