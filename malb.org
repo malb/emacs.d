@@ -2295,12 +2295,11 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                 (sp-local-pair  "[" "]" :unless bracket-qualifiers)))
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
-            (add-to-list 'sp-ignore-modes-list 'ein:notebook-multilang-mode)
             (add-to-list 'sp-ignore-modes-list 'markdown-mode)
             (add-to-list 'sp-ignore-modes-list 'hotcrp-mode)
-            (add-to-list 'sp-ignore-modes-list 'slack-message-buffer-mode)
             (add-to-list 'sp-ignore-modes-list 'sage-shell-mode)
-            (add-to-list 'sp-ignore-modes-list 'jupyter-repl-mode)))
+            (add-to-list 'sp-ignore-modes-list 'jupyter-repl-mode)
+            (add-to-list 'sp-ignore-modes-list 'eca-chat-mode)))
 #+end_src
 
 Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing delimiter]]
