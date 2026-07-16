@@ -11529,7 +11529,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
             :name "UK Crypto Day Website"
             :cwd (expand-file-name "web/crypto-day" malb/projects-dir)
             :command  "bundle"
-            :args '("exec"  "jekyll" "serve" "-P" "4003")
+            :args '("exec"  "jekyll" "serve" "--livereload" "--incremental" "-P" "4003")
             :port 4003
             :tags '(web))
 
@@ -11537,7 +11537,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
             :name "Social Foundations Website"
             :cwd (expand-file-name "web/social-foundations-of-cryptography.gitlab.io" malb/projects-dir)
             :command "bundle"
-            :args '("exec" "jekyll" "serve" "-P" "4004")
+            :args '("exec" "jekyll" "serve" "--livereload" "--incremental" "-P" "4004")
             :port 4004
             :tags '(web))
 
@@ -11545,8 +11545,16 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
             :name "Cryptographers Website"
             :cwd (expand-file-name "web/cryptographers.kcl.ac.uk" malb/projects-dir)
             :command "bundle"
-            :args '("exec" "jekyll" "serve" "-P" "4005")
+            :args '("exec" "jekyll" "serve" "--livereload" "--incremental" "-P" "4005")
             :port 4005
+            :tags '(web))
+
+          (prodigy-define-service
+            :name "Lattice Assumptions Zoo"
+            :cwd (expand-file-name "web/lattice-assumption-zoo" malb/projects-dir)
+            :command "bundle"
+            :args '("exec" "jekyll" "serve" "--livereload" "--incremental" "-P" "4006")
+            :port 4006
             :tags '(web))
 
           (prodigy-define-service
