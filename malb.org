@@ -8495,6 +8495,14 @@ Add command to AucTeX command list to call the script.
                (LaTeX-mode) ; active in all modes
                :help "Missing Definitions")
              t)
+
+;; (add-to-list 'TeX-command-list
+;;              '("LaTeX Run"
+;;                "latexrun --latex-cmd lualatex --latex-args='--synctex=1 --shell-escape' %s"
+;;                TeX-run-compile
+;;                nil          ; ask for confirmation
+;;                (LaTeX-mode) ; active in all modes
+;;                :help "Run LaTeX Run"))
 #+end_src
 
 ** BibTeX
