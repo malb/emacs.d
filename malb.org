@@ -8181,7 +8181,9 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                       (let ((label-name (car entry))
                             (label-type (nth 1 entry))
                             (context    (nth 2 entry)))
-                        (push (cons (format "%-30s %s" label-name (or context "")) entry)
+                        (push (cons (format "%-30s %s"
+                                            (propertize label-name 'face 'font-lock-variable-name-face) (or context ""))
+                                    entry)
                               candidates)))))
 
                 (delete-dups (nreverse candidates))))
@@ -8196,20 +8198,22 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                     (helm-build-sync-source "Find Label Definitions"
                       :candidates candidates
                       :fuzzy-match t
-                      :action (lambda (entry)
-                                (xref-push-marker-stack)
-
-                                ;; Temporarily redefine switch-to-buffer-other-window
-                                ;; to just use switch-to-buffer, forcing it into the current window.
-                                (cl-letf (((symbol-function 'switch-to-buffer-other-window)
-                                           (lambda (buffer-or-name &optional norecord)
-                                             (switch-to-buffer buffer-or-name norecord))))
-                                  (reftex-show-label-location
-                                   entry ; data
-                                   t     ; forward
-                                   nil   ; no-revisit (open file if needed)
-                                   nil   ; stay (leave Helm, go to target)
-                                   t)))) ; error (error if not found)
+                      :action '(("Jump to label" .
+                                 (lambda (candidate)
+                                   (xref-push-marker-stack)
+                                   ;; Temporarily redefine switch-to-buffer-other-window
+                                   ;; to just use switch-to-buffer, forcing it into the current window.
+                                   (cl-letf (((symbol-function 'switch-to-buffer-other-window)
+                                              (lambda (buffer-or-name &optional norecord)
+                                                (switch-to-buffer buffer-or-name norecord))))
+                                     (reftex-show-label-location
+                                      candidate     ; data
+                                      t             ; forward
+                                      nil           ; no-revisit (open file if needed)
+                                      nil           ; stay (leave Helm, go to target)
+                                      t))))
+                                ("Insert label" . (lambda (candidate) (insert (car candidate))))
+                                ("Kill label" . (lambda (candidate) (kill-new (car candidate))))))
                     :buffer "*helm reftex xref*"
                     :prompt "Label: "))))
 
