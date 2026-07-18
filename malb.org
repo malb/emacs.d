@@ -11584,7 +11584,7 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
           (prodigy-define-service
             :name "Wikipedia"
             :command "kiwix-serve"
-            :args '("-i" "127.0.0.1" "-p" "38081" "/bulk/wikipedia_en_all_nopic_2026-03.zim")
+            :args '("-i" "127.0.0.1" "-p" "38081" "/bulk/wikipedia_en_all_nopic_2026-06.zim")
             :port 38081
             :tags '(wiki))
 
