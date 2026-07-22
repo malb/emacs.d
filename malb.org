@@ -8949,7 +8949,7 @@ Spray is a speed reading mode.
   :bind (:map spray-mode-map
          ("+" . spray-faster)
          ("-" . spray-slower))
-  :custom ((spray-wpm 400)
+  :custom ((spray-wpm 450)
            (spray-margin-left 4)
            (spray-margin-top 12)))
 #+end_src
