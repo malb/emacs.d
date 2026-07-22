@@ -2702,6 +2702,7 @@ This library provides easy project management and navigation. The concept of a p
             (setq projectile-indexing-method 'hybrid
                   projectile-make-test-cmd "make check"
                   projectile-known-projects-file (expand-file-name "projectile-bookmarks.eld" malb/cache-dir)
+                  projectile-frecency-file (expand-file-name "projectile-frecency.eld.eld" malb/cache-dir)
                   projectile-ignored-projects malb/projectile-ignored-projects
                   projectile-ignored-project-function #'malb/projectile-ignore-projects
                   projectile-globally-unignored-files '(".dir-locals.el")
