@@ -10825,6 +10825,7 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 (use-package pdf-tools
   :magic ("%PDF" . pdf-view-mode)
   :after (org tex)
+  :hook ((pdf-view-mode . pdf-view-auto-slice-minor-mode))
   :bind (:map pdf-view-mode-map
          ("s h" . malb/pdf-view-llncs-from-bounding-box)
          ("D" . dedicated-mode)
