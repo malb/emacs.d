@@ -8219,7 +8219,9 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                     :buffer "*helm reftex xref*"
                     :prompt "Label: "))))
 
-            (add-to-list 'helm-commands-using-frame #'malb/helm-reftex-xref-find-definitions)))
+            (add-to-list 'helm-commands-using-frame #'malb/helm-reftex-xref-find-definitions)
+
+            (malb/register-right-side-window (rx "*TeX Help*") t)))
 #+end_src
 
 #+begin_src emacs-lisp
