@@ -8209,10 +8209,10 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                               (lambda (buffer-or-name &optional norecord)
                                                 (switch-to-buffer buffer-or-name norecord))))
                                      (reftex-show-label-location
-                                      candidate     ; data
-                                      t             ; forward
-                                      nil           ; no-revisit (open file if needed)
-                                      nil           ; stay (leave Helm, go to target)
+                                      candidate ; data
+                                      t         ; forward
+                                      nil       ; no-revisit (open file if needed)
+                                      nil       ; stay (leave Helm, go to target)
                                       t))))
                                 ("Insert label" . (lambda (candidate) (insert (car candidate))))
                                 ("Kill label" . (lambda (candidate) (kill-new (car candidate))))))
