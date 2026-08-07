@@ -13183,7 +13183,9 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
     (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
     (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append)
     (set-fontset-font t 'unicode (font-spec :family "Noto Sans Symbols 2") nil 'append)
-    (set-fontset-font t 'emoji (font-spec :family "Twitter Color Emoji") nil 'prepend)))
+
+    (set-fontset-font t 'emoji        (font-spec :family "Twitter Color Emoji")  nil 'prepend)
+    (set-fontset-font t 'mathematical (font-spec :family "DejaVu Math TeX Gyre") nil 'prepend)))
 
 (add-hook 'after-make-frame-functions #'malb/fonts)
 (malb/fonts (selected-frame)) ;; initial frame
