@@ -8085,7 +8085,8 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\pc" (and (or "if" "then" "else" "elseif"
-                                     "for" "do" "return"
+                                     "for" "do"
+                                     "return" "abort" "continue"
                                      "const"
                                      "and" "or"
                                      "linecomment" "comment" "assert" "in")
