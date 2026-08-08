@@ -5620,6 +5620,25 @@ of the header properties."
 
 * Programming (Languages)
 ** General
+*** Tree Sitter
+
+1. Download the grammars from https://github.com/emacs-tree-sitter/tree-sitter-langs/releases
+2. Rename files:
+   #+begin_quote
+   The names of the files are =<LANGUAGE>.so= which is not in keeping with the expected naming style in Emacs. You must first rename them so they’re named =libtree-sitter-<LANGUAGE>.so=. — [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][source]]
+   #+end_quote
+3. Move to Emacs folder
+   #+begin_quote
+  Once they’re named appropriately, put them in the directory called =tree-sitter= in =user-emacs-directory=.  — [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][source]]
+   #+end_quote
+
+#+begin_src emacs-lisp :tangle no
+(treesit-language-available-p 'python)
+#+end_src
+
+#+RESULTS:
+: t
+
 *** REPL / Comint
 
 We want to pick previous inputs based on prefix ([[https://emacs.stackexchange.com/questions/14072/replicate-ipython-history-behaviour-in-emacs][source]])
