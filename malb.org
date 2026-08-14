@@ -6363,6 +6363,16 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                                              (height . 60)
                                              (width . 100)))))
 
+  (malb/defadvice! malb/eca--handle-message (old-function &rest args)
+    :around #'eca--handle-message
+    (let* ((window (selected-window))
+           (dedicated (window-dedicated-p window)))
+      (unwind-protect
+          (progn
+            (set-window-dedicated-p window nil)
+            (apply old-function args))
+        (set-window-dedicated-p window dedicated))))
+
   (defun malb/eca-jail-wrapper (command roots)
     "Wrap the eca server COMMAND with `jai', exposing ROOTS."
     (append (list "jai" "-j" "eca"
