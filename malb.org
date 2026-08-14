@@ -6292,7 +6292,6 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                   lsp-ui-sideline-ignore-duplicate t
                   lsp-ui-peek-enable t
                   lsp-ui-doc-enable t
-                  lsp-ui-flycheck-enable t
                   lsp-ui-imenu-enable t
                   lsp-ui-imenu-buffer-position 'left
                   lsp-ui-imenu-window-fix-width t
