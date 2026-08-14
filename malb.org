@@ -8008,6 +8008,15 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
   :config (progn
             (require 'tex-mode)
 
+            ;; Findings for social foundations
+
+            (defun malb/reftex-finding-context (env-or-mac)
+              (buffer-substring-no-properties (- (point) 94) (- (point) 10)))
+
+            (add-to-list 'reftex-label-alist (list "\\finding{*}" ?F "find:" "~\\findref{%s}"
+                                                   #'malb/reftex-finding-context
+                                                   nil))
+
             (setq-default TeX-engine 'luatex)
             (setq-default TeX-command-default "LaTeXMk")
 
@@ -8061,7 +8070,9 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                          ("hlbug" "{")
                                          ("anonymous" "{{")
                                          ("fullversion" "{{")
-                                         ("pgfkeysvalueof" "{"))
+                                         ("pgfkeysvalueof" "{")
+                                         ("finding" "{")
+                                         ("findref" "{"))
                                        'function))
 
             (defun malb/company-latex-setup ()
@@ -8216,13 +8227,11 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                (stringp (nth 1 entry))
                                (stringp (nth 2 entry))
                                (stringp (nth 3 entry)))
-                      (let ((label-name (car entry))
-                            (label-type (nth 1 entry))
-                            (context    (nth 2 entry)))
-                        (push (cons (format "%-30s %s"
-                                            (propertize label-name 'face 'font-lock-variable-name-face) (or context ""))
-                                    entry)
-                              candidates)))))
+                      (let* ((label-name (car entry))
+                             (label-type (nth 1 entry))
+                             (context    (nth 2 entry))
+                             (display-label (propertize label-name 'face 'font-lock-variable-name-face)))
+                        (push (cons (format "%-30s %s" display-label context) entry) candidates)))))
 
                 (delete-dups (nreverse candidates))))
 
