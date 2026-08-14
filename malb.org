@@ -9024,7 +9024,8 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
          ("<end>" . end-of-visual-line)
          ("g" . ace-link))
   :config
-  (setq mu4e-headers-skip-duplicates t
+  (setq mu4e-view-always-show-url-indicators t
+        mu4e-headers-skip-duplicates t
         mu4e-view-show-images t
         message-kill-buffer-on-exit t
         mu4e-hide-index-messages t
