@@ -6423,7 +6423,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             command))
 
   (setq eca-process-wrapper-function #'malb/eca-jail-wrapper)
-  (setq eca-send-process-id nil))
+  (setq eca-send-process-id nil)
+  (setq eca-chat-hide-markdown-markup nil))
 #+end_src
 
 *Example:*
