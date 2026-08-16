@@ -8197,7 +8197,9 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (advice-add #'reftex-toc :around #'malb/reftex-toc-advice)
 
             (defun malb/helm-reftex-get-candidates ()
-              "Extract \\label{} entries from RefTeX's internal docstruct."
+              "Extract \\label{} entries from RefTeX's internal docstruct.
+Returns (DISPLAY . LABEL-NAME) candidates where the value is the bare
+label so that ~C-c TAB~ inserts only the label."
               (reftex-access-scan-info)
 
               (let* ((docstruct (when (and (boundp 'reftex-docstruct-symbol)
@@ -8213,10 +8215,12 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                (stringp (nth 2 entry))
                                (stringp (nth 3 entry)))
                       (let* ((label-name (car entry))
-                             (label-type (nth 1 entry))
                              (context    (nth 2 entry))
                              (display-label (propertize label-name 'face 'font-lock-variable-name-face)))
-                        (push (cons (format "%-30s %s" display-label context) entry) candidates)))))
+                        ;; The value must be the bare label: `C-c TAB'
+                        ;; (`helm-insert-or-copy') inserts the candidate's
+                        ;; value, not its display part.
+                        (push (cons (format "%-30s %s" display-label context) label-name) candidates)))))
 
                 (delete-dups (nreverse candidates))))
 
@@ -8231,21 +8235,30 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                       :candidates candidates
                       :fuzzy-match t
                       :action '(("Jump to label" .
-                                 (lambda (candidate)
+                                 (lambda (label)
                                    (xref-push-marker-stack)
-                                   ;; Temporarily redefine switch-to-buffer-other-window
-                                   ;; to just use switch-to-buffer, forcing it into the current window.
-                                   (cl-letf (((symbol-function 'switch-to-buffer-other-window)
-                                              (lambda (buffer-or-name &optional norecord)
-                                                (switch-to-buffer buffer-or-name norecord))))
-                                     (reftex-show-label-location
-                                      candidate ; data
-                                      t         ; forward
-                                      nil       ; no-revisit (open file if needed)
-                                      nil       ; stay (leave Helm, go to target)
-                                      t))))
-                                ("Insert label" . (lambda (candidate) (insert (car candidate))))
-                                ("Kill label" . (lambda (candidate) (kill-new (car candidate))))))
+                                   (let* ((docstruct (when (and (boundp 'reftex-docstruct-symbol)
+                                                                reftex-docstruct-symbol)
+                                                       (symbol-value reftex-docstruct-symbol)))
+                                          ;; `reftex-show-label-location' needs the
+                                          ;; whole docstruct entry (label/type/context/file),
+                                          ;; like `reftex-goto-label' does.
+                                          (entry (assoc label docstruct)))
+                                     (when entry
+                                       ;; Temporarily redefine switch-to-buffer-other-window
+                                       ;; to just use switch-to-buffer, forcing it into the current window.
+                                       (cl-letf (((symbol-function 'switch-to-buffer-other-window)
+                                                  (lambda (buffer-or-name &optional norecord)
+                                                    (switch-to-buffer buffer-or-name norecord))))
+                                         (reftex-show-label-location
+                                          entry ; data
+                                          t     ; forward
+                                          nil   ; no-revisit (open file if needed)
+                                          nil   ; stay (leave Helm, go to target)
+                                          t))))))
+                                ;; ("Insert label" . (lambda (label) (insert label)))
+                                ;; ("Kill label" . (lambda (label) (kill-new label)))
+                                ))
                     :buffer "*helm reftex xref*"
                     :prompt "Label: "))))
 
