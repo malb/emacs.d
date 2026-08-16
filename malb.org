@@ -11482,24 +11482,24 @@ Note that PlantUML supports [[http://plantuml.com/latex.html][TikZ export]].
 [[https://github.com/kiwanami/emacs-calfw][calfw]] for displaying calendars, because why not.
 
 #+begin_src emacs-lisp
-(use-package calfw
-  :commands (malb/calendar cfw:open-calendar-buffer)
-  :bind (:map cfw:calendar-mode-map ("q" . kill-this-buffer))
-  :config (progn
-            (setq calendar-week-start-day 1)
-            (use-package calfw-cal :ensure t)
-            (use-package calfw-ical :ensure t)
-            (use-package calfw-org :ensure t)
+(use-package calfw-cal)
+(use-package calfw-ical)
+(use-package calfw-org)
 
-            ;; Those "\r" make everything kaputt
-            (defun malb/cfw:ical-url-to-buffer (orig-fun &rest args)
-              (let ((buf (apply orig-fun args)))
-                (with-current-buffer buf
-                  (while (search-forward "\r" nil t)
-                    (replace-match "" nil t)))
-                buf))
-            (setq cfw:org-agenda-schedule-args '(:timestamp :scheduled))
-            (advice-add 'cfw:ical-url-to-buffer :around #'malb/cfw:ical-url-to-buffer)))
+(use-package calfw
+  :commands (malb/calendar calfw-open-calendar-buffer)
+  :bind (:map calfw-calendar-mode-map ("q" . kill-this-buffer))
+  :custom ((calfw-org-agenda-schedule-args '(:timestamp :scheduled))
+           (calendar-week-start-day 1))
+  :config
+  ;; Those "\r" make everything kaputt
+  (malb/defadvice! malb/callf-ical-url-to-buffer (orig-fun &rest args)
+    :around #'calfw-ical-url-to-buffer
+    (let ((buf (apply orig-fun args)))
+      (with-current-buffer buf
+        (while (search-forward "\r" nil t)
+          (replace-match "" nil t)))
+      buf)))
 #+end_src
 
 * File Sharing
