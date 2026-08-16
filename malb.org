@@ -13106,17 +13106,35 @@ selected, otherwise a dark theme will be selected."
                 (string-equal var "color-scheme"))
        (malb/theme-from-dbus value))))
 
-  (defun malb/sync-theme-from-os ()
-    "Switch to light/dark theme based on OS."
+  (defun malb/sync-theme-from-os (&optional sync)
+    "Switch to light/dark theme based on OS.
+
+If SYNC is non-nil, the D-Bus read is performed synchronously (blocking)
+and the theme is switched immediately; used at startup so the initial
+theme already matches the OS.  When the setting cannot be read, e.g.
+because there is no session bus, a value of 0 is assumed, i.e. a dark
+theme is selected."
     (interactive)
-    (dbus-call-method-asynchronously
-     :session "org.freedesktop.portal.Desktop"
-     "/org/freedesktop/portal/desktop"
-     "org.freedesktop.portal.Settings"
-     "Read"
-     #'malb/theme-from-dbus
-     "org.freedesktop.appearance"
-     "color-scheme")))
+    (if sync
+        (malb/theme-from-dbus
+         (let ((value (condition-case _
+                          (dbus-call-method
+                           :session "org.freedesktop.portal.Desktop"
+                           "/org/freedesktop/portal/desktop"
+                           "org.freedesktop.portal.Settings"
+                           "Read"
+                           "org.freedesktop.appearance"
+                           "color-scheme")
+                        (dbus-error nil))))
+           (or value 0)))
+      (dbus-call-method-asynchronously
+       :session "org.freedesktop.portal.Desktop"
+       "/org/freedesktop/portal/desktop"
+       "org.freedesktop.portal.Settings"
+       "Read"
+       #'malb/theme-from-dbus
+       "org.freedesktop.appearance"
+       "color-scheme"))))
 #+end_src
 
 *** Load Theme
@@ -13127,7 +13145,9 @@ selected, otherwise a dark theme will be selected."
 (defun malb/load-theme (frame)
   (when (not malb/theme-loaded)
     (select-frame frame)
-    (load-theme 'solarized-light-malb)
+    (if (display-graphic-p)
+        (malb/sync-theme-from-os t)
+      (load-theme 'solarized-zenburn-malb))
     (doom-modeline-mode t)
     (setq malb/theme-loaded t)))
 

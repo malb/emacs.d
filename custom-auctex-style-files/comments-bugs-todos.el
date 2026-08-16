@@ -22,7 +22,6 @@
  '("hlcmnt"  "text")
  '("hlbug"   "text"))
 
-;; Font-lock as function (matches malb/latex-add-font-lock styling)
 (font-latex-add-keywords '(("cmnt" "*{{[")
                            ("todo" "*[{[")
                            ("bug"   "*{[")
