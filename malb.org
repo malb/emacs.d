@@ -6171,10 +6171,7 @@ This packages tries to smartly go to definition leveraging several methods to do
                     (kill-buffer))
                 (delete-char arg)))
 
-            (malb/register-right-side-window (rx "*jupyter-pager*") t)
-
-            ;; BUG: workaround
-            (setq jupyter-use-zmq nil)))
+            (malb/register-right-side-window (rx "*jupyter-pager*") t)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -6202,6 +6199,34 @@ This prevents 'wrong-type-argument wholenump nil' errors in newer Org versions."
         (substring-no-properties (match-string 1))
       "sagemath")))
 #+end_src
+
+**** Note
+
+In the past, I needed the following two workaround:
+
+1. Disable ZMQ
+
+#+begin_src emacs-lisp :tangle no
+(setq jupyter-use-zmq nil)
+#+end_src
+
+2. Create =jupyter-base= conda environment with an old jupyter version
+
+#+begin_src shell :session *!!jupyter-conda*
+conda create -n jupyter-base python=3.11
+conda activate jupyter-base
+conda install -c conda-forge jupyter_core==4.12.0 notebook==6.5.7
+conda install -c conda-forge jupyter_console
+#+end_src
+
+3. Use it:
+
+#+begin_src shell
+ls -l ~/.local/bin/jupyter
+#+end_src
+
+#+RESULTS:
+: lrwxrwxrwx 1 malb malb 47 Aug  5 13:45 /home/malb/.local/bin/jupyter -> /home/malb/.conda/envs/jupyter-base/bin/jupyter
 
 **** Toggle Shell for Jupyter Kernels
 
