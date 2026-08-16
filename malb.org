@@ -8076,10 +8076,10 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
 
             (defun malb/company-latex-setup ()
               (setq-local company-backends '(company-bibtex-completion
-                                             (company-auctex-macros
+                                             (company-auctex-macros      ;; most detailed, has options etc
                                               company-reftex-labels
-                                              company-capf
-                                              company-math-symbols-latex
+                                              company-capf               ;; lsp
+                                              company-math-symbols-latex ;; all the math
                                               company-auctex-environments
                                               company-files
                                               :with company-yasnippet)
