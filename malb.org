@@ -1797,7 +1797,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
                     ((eq major-mode 'org-agenda-mode)
                      (call-interactively #'helm-org-agenda-files-headings))
                     ((eq major-mode 'LaTeX-mode)
-                     (call-interactively #'malb/helm-reftex-xref-find-definitions))
+                     (call-interactively #'malb/helm-reftex-labels))
                     ((and (bound-and-true-p lsp-mode) (not (eq major-mode 'LaTeX-mode)))
                      (call-interactively #'helm-lsp-workspace-symbol))
                     (t
@@ -7982,46 +7982,45 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
          (LaTeX-mode . prettify-symbols-mode)
          (LaTeX-mode . malb/latex-add-environments)
          (LaTeX-mode . malb/latex-add-font-lock)
-         (LaTeX-mode . malb/enable-cleveref)
          (LaTeX-mode . malb/expand-region-LaTeX-setup)
          (LaTeX-mode . malb/lsp-enable-maybe)
          (LaTeX-mode . malb/company-latex-setup)
          (LaTeX-mode . malb/raise-flycheck-error-threshold)
          (LaTeX-mode . visual-wrap-prefix-mode))
 
-  :custom ((texmathp-tex-commands '(("\\sendmessageright*" arg-on)
+  :custom ((TeX-PDF-mode t)
+           (TeX-auto-local (expand-file-name "auctex-auto" malb/cache-dir))
+           (TeX-auto-save t)
+           (TeX-command-default "LaTeXMk")
+           (TeX-electric-sub-and-superscript t)
+           (TeX-engine 'luatex)
+           (TeX-error-overview-open-after-TeX-run t)
+           (TeX-master 'dwim)
+           (TeX-parse-self t)
+           (TeX-quote-after-quote nil)
+           (TeX-save-query nil)
+           (TeX-source-correlate-mode t)
+           (TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
+                                    ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
+           (TeX-view-program-selection '((output-pdf "PDF Tools")
+                                         (output-html "xdg-open")))
+           (LaTeX-math-menu-unicode t)
+           (reftex-plug-into-AUCTeX t)
+           (texmathp-tex-commands '(("\\sendmessageright*" arg-on)
                                     ("\\sendmessageleft*" arg-on)
                                     ("\\sendmessagerightleft*" arg-on)))
-           (TeX-auto-save t)
-           (TeX-parse-self t)
-           (reftex-plug-into-AUCTeX t)
-           (reftex-toc-max-level 4)
-           (LaTeX-math-menu-unicode t)
-           (TeX-PDF-mode t)
-           (TeX-source-correlate-mode t)
-           (TeX-save-query nil)
-           (TeX-error-overview-open-after-TeX-run t)
-           (TeX-electric-sub-and-superscript t)
-           (TeX-quote-after-quote nil)
            (font-latex-fontify-sectioning 1.0))
 
   :config (progn
             (require 'tex-mode)
 
             ;; Findings for social foundations
-
             (defun malb/reftex-finding-context (env-or-mac)
               (buffer-substring-no-properties (- (point) 94) (- (point) 10)))
 
             (add-to-list 'reftex-label-alist (list "\\finding{*}" ?F "find:" "~\\findref{%s}"
                                                    #'malb/reftex-finding-context
                                                    nil))
-
-            (setq-default TeX-engine 'luatex)
-            (setq-default TeX-command-default "LaTeXMk")
-
-            ;; TODO somehow auctex wants the former but we have the latter, this is for `prettify-symbols-mode'
-            (fset 'TeX--prettify-symbols-compose-p #'tex--prettify-symbols-compose-p)
 
             ;; :- vs :=
             (setq tex--prettify-symbols-alist (remove '("\\coloneq" . ?≔) tex--prettify-symbols-alist))
@@ -8031,12 +8030,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (push '("\\concat" . ?‖) tex--prettify-symbols-alist)
             (push '("\\mhyphen " . ?-) tex--prettify-symbols-alist)
             (push '("\\mathbb{F}" . ?𝔽) tex--prettify-symbols-alist)
-
-            (setq TeX-view-program-list '(("Okular" "okular --unique %o#src:%n%b")
-                                          ("Emacs" "emacsclient -n -e '(find-file-other-window \"%o\")'")))
-
-            (setq TeX-view-program-selection '((output-pdf "PDF Tools")
-                                               (output-html "xdg-open")))
 
             (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
 
@@ -8087,31 +8080,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                               company-dabbrev
                                               :with company-yasnippet))))
 
-            (defun malb/enable-cleveref ()
-              ;; TODO dunno why cleveref.el isn't loaded
-              (font-latex-add-keywords '(("cref"          "*{")
-                                         ("Cref"          "*{")
-                                         ("crefrange"     "*{{")
-                                         ("Crefrange"     "*{{")
-                                         ("cpageref"      "{")
-                                         ("Cpageref"      "{")
-                                         ("cpagerefrange" "{{")
-                                         ("Cpagerefrange" "{{")
-                                         ("namecref"      "{")
-                                         ("nameCref"      "{")
-                                         ("lcnamecref"    "{")
-                                         ("namecrefs"     "{")
-                                         ("nameCrefs"     "{")
-                                         ("lcnamecrefs"   "{")
-                                         ("labelcref"     "{")
-                                         ("labelcpageref" "{")
-                                         ("label"         "[{")
-                                         ("citet"         "*[{")
-                                         ("citep"         "*[{"))
-                                       'reference)
-
-              (setq reftex-ref-style-default-list '("Default" "Cleveref")))
-
             (defun malb/raise-flycheck-error-threshold ()
               (setq-local flycheck-checker-error-threshold nil))
 
@@ -8124,39 +8092,22 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\" (or (any ",.!;@")
-                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
-                                  symbol-end)))
+                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
+                                   symbol-end)))
                 0 'malb/unimportant-latex-face prepend))
              'end)
 
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\pc" (and (or "if" "then" "else" "elseif"
-                                    "for" "do"
-                                    "return" "abort" "continue"
-                                    "const"
-                                    "and" "or"
-                                    "linecomment" "comment" "assert" "in")
-                                symbol-end))
+                                     "for" "do"
+                                     "return" "abort" "continue"
+                                     "const"
+                                     "and" "or"
+                                     "linecomment" "comment" "assert" "in")
+                                 symbol-end))
                 0 'font-latex-bold-face prepend))
              'end)
-
-            (add-to-list 'display-buffer-alist
-                         '("^\\*toc\\*$" display-buffer-in-side-window
-                           (window-parameters
-                            (no-other-window . t)
-                            (no-delete-other-windows . t))
-                           (side . left)
-                           (window-width . 0.15)
-                           (preserve-size t)
-                           (dedicated . t)))
-
-            (defun malb/reftex-toc-advice (old-function &rest arguments)
-              (save-window-excursion
-                (apply old-function arguments))
-              (display-buffer "*toc*"))
-
-            (advice-add #'reftex-toc :around #'malb/reftex-toc-advice)
 
             ;; https://stackoverflow.com/questions/19845598/emacs-regex-replacing-a-string-inside-a-latex-equation
             (defun malb/latex-replace-in-math ()
@@ -8167,10 +8118,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                        (save-excursion (save-match-data (goto-char BEG) (texmathp)))))
                     (case-fold-search nil))
                 (call-interactively 'query-replace-regexp)))
-
-            (setq-default TeX-master 'dwim
-                          TeX-auto-local (expand-file-name "auctex-auto" malb/cache-dir))
-
 
             (add-to-list 'TeX-command-list
                          '("HTLaTeX"
@@ -8211,6 +8158,49 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
 
             (add-to-list 'LaTeX-verbatim-environments "lstlisting")
 
+            (malb/register-right-side-window (rx "*TeX Help*") t)))
+#+end_src
+
+*** RefTeX
+
+#+begin_src emacs-lisp
+(use-package reftex-toc
+  :ensure nil
+  :commands (malb/helm-reftex-labels reftex-toc)
+  :after tex
+  :custom ((reftex-toc-split-windows-fraction 0.15)
+           (reftex-toc-max-level 4)
+           (reftex-toc-split-windows-horizontally t))
+  :config (progn
+            (define-key reftex-toc-mode-map
+              [remap reftex-toc-goto-line]
+              (lambda ()
+                "Go to document location in other window. TOC window stays and focus stays."
+                (interactive)
+                (reftex-toc-dframe-p nil 'error)
+                (reftex-toc-visit-location nil)))
+            (define-key reftex-toc-mode-map
+              [remap reftex-toc-goto-line-and-hide]
+              #'reftex-toc-goto-line)
+
+
+            (add-to-list 'display-buffer-alist
+                         '("^\\*toc\\*$" display-buffer-in-side-window
+                           (window-parameters
+                            (no-other-window . t)
+                            (no-delete-other-windows . t))
+                           (side . left)
+                           (window-width . 0.15)
+                           (preserve-size t)
+                           (dedicated . t)))
+
+            (defun malb/reftex-toc-advice (old-function &rest arguments)
+              (save-window-excursion
+                (apply old-function arguments))
+              (display-buffer "*toc*"))
+
+            (advice-add #'reftex-toc :around #'malb/reftex-toc-advice)
+
             (defun malb/helm-reftex-get-candidates ()
               "Extract \\label{} entries from RefTeX's internal docstruct."
               (reftex-access-scan-info)
@@ -8235,7 +8225,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
 
                 (delete-dups (nreverse candidates))))
 
-            (defun malb/helm-reftex-xref-find-definitions ()
+            (defun malb/helm-reftex-labels ()
               "Use Helm to select a RefTeX label and jump to it in the current window."
               (interactive)
               (let ((candidates (malb/helm-reftex-get-candidates)))
@@ -8264,30 +8254,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                     :buffer "*helm reftex xref*"
                     :prompt "Label: "))))
 
-            (add-to-list 'helm-commands-using-frame #'malb/helm-reftex-xref-find-definitions)
-
-            (malb/register-right-side-window (rx "*TeX Help*") t)))
-#+end_src
-
-*** RefTeX
-
-#+begin_src emacs-lisp
-(use-package reftex-toc
-  :ensure nil
-  :after tex
-  :custom ((reftex-toc-split-windows-fraction 0.15)
-           (reftex-toc-split-windows-horizontally t))
-  :config (progn
-            (define-key reftex-toc-mode-map
-              [remap reftex-toc-goto-line]
-              (lambda ()
-                "Go to document location in other window. TOC window stays and focus stays."
-                (interactive)
-                (reftex-toc-dframe-p nil 'error)
-                (reftex-toc-visit-location nil)))
-            (define-key reftex-toc-mode-map
-              [remap reftex-toc-goto-line-and-hide]
-              #'reftex-toc-goto-line)))
+            (add-to-list 'helm-commands-using-frame #'malb/helm-reftex-labels)))
 #+end_src
 
 *** CDLaTeX
