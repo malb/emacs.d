@@ -8067,12 +8067,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                          ("vec" "{"))
                                        'bold-command)
               (font-latex-add-keywords '(("malb" "*[{[")
-                                         ("todo" "*[{[")
-                                         ("cmnt" "*{{[")
-                                         ("bug" "*{[")
-                                         ("hltodo" "{")
-                                         ("hlcmnt" "{")
-                                         ("hlbug" "{")
                                          ("anonymous" "{{")
                                          ("fullversion" "{{")
                                          ("pgfkeysvalueof" "{")
@@ -8082,14 +8076,14 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
 
             (defun malb/company-latex-setup ()
               (setq-local company-backends '(company-bibtex-completion
-                                             (company-capf
+                                             (company-auctex-macros
+                                              company-reftex-labels
+                                              company-capf
                                               company-math-symbols-latex
                                               company-auctex-environments
                                               company-files
                                               :with company-yasnippet)
-                                             (company-reftex-labels
-                                              company-auctex-macros
-                                              company-dabbrev
+                                             (company-dabbrev
                                               :with company-yasnippet))))
 
             (defun malb/raise-flycheck-error-threshold ()
@@ -8104,8 +8098,8 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\" (or (any ",.!;@")
-                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
-                                   symbol-end)))
+                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
+                                  symbol-end)))
                 0 'malb/unimportant-latex-face prepend))
              'end)
 

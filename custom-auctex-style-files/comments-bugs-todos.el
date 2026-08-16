@@ -11,11 +11,24 @@
 ;;   \hltodo{m}    text highlighted in TaskColor
 ;;   \hlbug{m}     text highlighted in BugColor
 
-(LaTeX-add-command "\\cmnt"   "author" "comment" ["highlight"])
-(LaTeX-add-command "\\todo"   "note" ["highlight"])
-(LaTeX-add-command "\\bug"    "note" ["highlight"])
-(LaTeX-add-command "\\hltodo" "text")
-(LaTeX-add-command "\\hlcmnt" "text")
-(LaTeX-add-command "\\hlbug"  "text")
+(TeX-add-symbols
+ '("cmnt"    "author" "comment" [ "highlight" ])
+ '("cmnt*"   "author" "comment" [ "highlight" ])
+ '("todo"    "note" [ "highlight" ])
+ '("todo*"   "note" [ "highlight" ])
+ '("bug"     "note" [ "highlight" ])
+ '("bug*"    "note" [ "highlight" ])
+ '("hltodo"  "text")
+ '("hlcmnt"  "text")
+ '("hlbug"   "text"))
+
+;; Font-lock as function (matches malb/latex-add-font-lock styling)
+(font-latex-add-keywords '(("cmnt" "*{{[")
+                           ("todo" "*[{[")
+                           ("bug"   "*{[")
+                           ("hltodo" "{")
+                           ("hlcmnt" "{")
+                           ("hlbug"  "{"))
+                         'function)
 
 ;; --- comments-bugs-todos.el ends here
