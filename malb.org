@@ -8231,7 +8231,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                              (label-type (nth 1 entry))
                              (context    (nth 2 entry))
                              (display-label (propertize label-name 'face 'font-lock-variable-name-face)))
-                        (push (cons (format "%-30s %s" display-label context) entry) candidates)))))
+                        (push (cons (format "%-30s %s" display-label context) label-name) candidates)))))
 
                 (delete-dups (nreverse candidates))))
 
