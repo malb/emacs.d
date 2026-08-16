@@ -3562,7 +3562,7 @@ Categories=System;
 MimeType=x-scheme-handler/org-protocol;
 #+end_src
 
-#+begin_src shell :async
+#+begin_src shell :async :tangle no
 update-desktop-database ~/.local/share/applications
 #+end_src
 
