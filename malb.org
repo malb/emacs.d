@@ -8269,6 +8269,8 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (malb/register-right-side-window (rx "*TeX Help*") t)))
 #+end_src
 
+*** RefTeX
+
 #+begin_src emacs-lisp
 (use-package reftex-toc
   :ensure nil
