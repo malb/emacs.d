@@ -22,6 +22,38 @@
  '("gameproof"      LaTeX-env-args ["pcgameproofkeys"])
  '("gamedescription" LaTeX-env-args ["pcgameproofkeys"]))
 
+(TeX-add-symbols
+ ;; Block-level
+ '("pseudocode"      [ "keys" ] "code")
+ '("procedure"       [ "keys" ] "name/args" "code")
+ '("pseudocodeblock" [ "keys" ] "code")
+ '("procedureblock"  [ "keys" ] "name" "code")
+ '("gameprocedure"   [ "keys" ] "code")
+ ;; Structural
+ '("pcind"           [ "level" ])
+ '("pccomment"       [ "sep" ] "text")
+ '("pclinecomment"   [ "sep" ] "text")
+ '("pcrepeat"        "count")
+ '("pcrepeatuntil"   "cond1" "cond2")
+ ;; Messages
+ '("sendmessage"     "path" "keys")
+ '("sendmessageright" [ "path" ] "keys")
+ '("sendmessageleft"  [ "path" ] "keys")
+ ;; Nodes/boxes
+ '("pcnode"          "name" [ "keys" ])
+ '("pcdraw"          "tikz-code" [ "tikz-options" ])
+ '("gamechange"      [ "color" ] "text")
+ ;; Black-box
+ '("bbrinput"        "value" [ "keys" ])
+ '("bbroutput"       "value" [ "keys" ])
+ '("bbrloop"         "node1" "node2" "keys")
+ ;; Game proofs
+ '("describegame"    [ "keys" ])
+ '("addgamehop"      "i" "j" "keys")
+ '("addstartgamehop" [ "startnr" ] "keys")
+ '("addendgamehop"   [ "endnr" ] "keys")
+ '("addloopgamehop"  [ "nr" ] "keys"))
+
 ;; Highlight cryptocode control keywords buffer-locally
 (font-lock-add-keywords
  nil `((,(rx "\\pc" (and (or "if" "then" "else" "elseif"
