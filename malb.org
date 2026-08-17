@@ -2000,6 +2000,7 @@ Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-c
   :config (progn
             (malb/defadvice! malb/open-bookmarks-in-tab (orig-function bookmark &optional display-func)
               :around #'bookmark-jump
+              :around #'helm-bookmark-jump-1
 
               (if display-func
                   ;; don't create a tab if display-func is nil
