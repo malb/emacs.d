@@ -11,23 +11,26 @@
 ;;   \hltodo{m}    text highlighted in TaskColor
 ;;   \hlbug{m}     text highlighted in BugColor
 
-(TeX-add-symbols
- '("cmnt"    "author" "comment" [ "highlight" ])
- '("cmnt*"   "author" "comment" [ "highlight" ])
- '("todo"    "note" [ "highlight" ])
- '("todo*"   "note" [ "highlight" ])
- '("bug"     "note" [ "highlight" ])
- '("bug*"    "note" [ "highlight" ])
- '("hltodo"  "text")
- '("hlcmnt"  "text")
- '("hlbug"   "text"))
+(TeX-add-style-hook
+ "comments-bugs-todos"
+ (lambda ()
+   (TeX-add-symbols
+    '("cmnt"    "author" "comment" [ "highlight" ])
+    '("cmnt*"   "author" "comment" [ "highlight" ])
+    '("todo"    "note" [ "highlight" ])
+    '("todo*"   "note" [ "highlight" ])
+    '("bug"     "note" [ "highlight" ])
+    '("bug*"    "note" [ "highlight" ])
+    '("hltodo"  "text")
+    '("hlcmnt"  "text")
+    '("hlbug"   "text"))
 
-(font-latex-add-keywords '(("cmnt" "*{{[")
-                           ("todo" "*[{[")
-                           ("bug"   "*{[")
-                           ("hltodo" "{")
-                           ("hlcmnt" "{")
-                           ("hlbug"  "{"))
-                         'function)
+   (font-latex-add-keywords '(("cmnt" "*{{[")
+                              ("todo" "*[{[")
+                              ("bug"   "*{[")
+                              ("hltodo" "{")
+                              ("hlcmnt" "{")
+                              ("hlbug"  "{"))
+                            'function)))
 
 ;; --- comments-bugs-todos.el ends here
