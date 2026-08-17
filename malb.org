@@ -1135,10 +1135,14 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
 #+begin_src emacs-lisp
 (use-package yankpad
   :after (helm yasnippet projectile)
+  :commands (yankpad-insert)
+  :bind (:map yas-minor-mode-map ("C-c h Y" . yankpad-insert))
+  :preface
+  (defun malb/yp-date (fmt &optional read)
+    (unless yas-modified-p
+      (format-time-string fmt (org-read-date nil t read))))
   :init (setq yankpad-file (expand-file-name "yankpad.org" malb/org-files-dir))
   :config (progn
-            (bind-key "C-c h Y" #'yankpad-insert yas-minor-mode-map)
-
             ;; yankpad can slow down helm by insisting on parsing the yankpad file each time, so
             ;; we disable it for helm
             (setq malb/disable-yankpad-major-modes
@@ -1152,10 +1156,6 @@ Let’s say that you have text snippets that you want to paste, but that yasnipp
             (malb/defadvice! malb/yankpad-reload-first (&rest r)
               :before #'yankpad-insert
               (yankpad-reload))
-
-            (defun malb/yp-date (fmt &optional read)
-              (unless yas-modified-p
-                (format-time-string fmt (org-read-date nil t read))))
 
             (define-advice yankpad-local-category-to-major-mode
                 (:around (old-function &rest args) malb/disable-yankpad-maybe)
