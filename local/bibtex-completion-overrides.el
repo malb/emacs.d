@@ -112,9 +112,10 @@ The PDF can be added either from an open buffer or a file."
 (defvar malb/bibtex-completion-hashes nil)
 
 (defun malb/bibtex-completion-hashes ()
-  "Return all the hashes."
+  "Return the bibliography files paired with each file's cached content hash."
   (cons bibtex-completion-bibliography
-        (mapcar 'cadr bibtex-completion-cache)))
+        (mapcar (lambda (entry) (cons (car entry) (nth 1 entry)))
+                bibtex-completion-cache)))
 
 (defvar malb/bibtex-completion-candidates-cache nil)
 
