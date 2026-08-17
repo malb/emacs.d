@@ -1278,8 +1278,7 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
 
 #+begin_src emacs-lisp
 (setq company-backends '(company-files
-                         (company-bibtex-completion
-                          company-math-symbols-unicode
+                         (company-math-symbols-unicode
                           company-math-symbols-latex
                           company-emoji
                           company-capf)))
