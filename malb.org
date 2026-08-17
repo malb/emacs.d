@@ -8791,7 +8791,7 @@ index 10b1afb..0bcbbd5 100644
             (malb/defadvice! malb/bibtex-completion-get-value (old-function &rest args)
               :around 'bibtex-completion-get-value
               (let ((st (apply old-function args)))
-                (when st
+                (when (and st (string-match-p "[\\~]" st))
                   (dolist (rep malb/bibtex-completion-get-value-replacements)
                     (setq st (replace-regexp-in-string (car rep) (cdr rep) st))))
                 st))

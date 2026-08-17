@@ -9,6 +9,39 @@
 ;; PDF Filenames
 ;;;;;;;;;;;;;;;;;;;;
 
+;; Indexing the file names of `bibtex-completion-library-path' once
+;; turns the per-entry PDF check from one file test per directory
+;; (which dominates the parse time for large bibliographies) into a
+;; hash lookup.
+
+(defvar malb/bibtex-completion-pdf-ht nil
+  "Hash table mapping PDF file names to t, for all library directories.")
+
+(defvar malb/bibtex-completion-pdf-ht-mtimes nil
+  "Alist (DIR . MTIME) as recorded when `malb/bibtex-completion-pdf-ht' was built.")
+
+(defvar malb/bibtex-completion-pdf-ht-frozen nil
+  "Non-nil while reparsing the bibliography; suppresses freshness checks.")
+
+(defun malb/bibtex-completion-pdf-ht-rebuild ()
+  "Rebuild `malb/bibtex-completion-pdf-ht' from the library directories."
+  (let ((ht (make-hash-table :test 'equal :size 4096))
+        (mtimes nil))
+    (dolist (dir (-flatten (list bibtex-completion-library-path)))
+      (dolist (file (ignore-errors (directory-files dir t)))
+        (puthash (file-name-nondirectory file) t ht))
+      (push (cons dir (ignore-errors (file-attribute-mtime dir))) mtimes))
+    (setq malb/bibtex-completion-pdf-ht ht
+          malb/bibtex-completion-pdf-ht-mtimes mtimes)))
+
+(defun malb/bibtex-completion-pdf-ht ()
+  "Return `malb/bibtex-completion-pdf-ht', rebuilding it if stale."
+  (unless (or malb/bibtex-completion-pdf-ht-frozen
+              (and malb/bibtex-completion-pdf-ht
+                   (cl-loop for (dir . mtime) in malb/bibtex-completion-pdf-ht-mtimes
+                            always (equal mtime (ignore-errors (file-attribute-mtime dir))))))
+    (malb/bibtex-completion-pdf-ht-rebuild))
+  malb/bibtex-completion-pdf-ht)
 
 (defun malb/bibtex-completion-find-pdf-in-library (key-or-entry &optional find-additional)
   "Search the directories in `bibtex-completion-library-path' by KEY-OR-ENTRY.
@@ -21,14 +54,14 @@ starts with the BibTeX key and ends with
   (let* ((key (if (stringp key-or-entry)
                   key-or-entry
                 (bibtex-completion-get-value "=key=" key-or-entry)))
+         (key (s-replace ":" "_" key))
          (main-pdf (cl-loop
-                    for dir in
-                    (-flatten bibtex-completion-library-path)
-                    append (cl-loop
-                            for ext in
-                            (-flatten bibtex-completion-pdf-extension)
-                            collect (f-join dir (s-concat
-                                                 (s-replace ":" "_" key) ext)))))) ;; the tweak
+                    for ext in (-flatten (list bibtex-completion-pdf-extension))
+                    for name = (concat key ext)
+                    when (gethash name (malb/bibtex-completion-pdf-ht))
+                    append (mapcar (lambda (dir)
+                                     (f-join dir name))
+                                   (-flatten (list bibtex-completion-library-path))))))
     (if find-additional
         (sort                           ; move main pdf on top of the list if needed
          (cl-loop
@@ -92,11 +125,18 @@ The PDF can be added either from an open buffer or a file."
 
 (defun malb/bibtex-completion-candidates-cache (old-function &rest arguments)
   "Call `bibtex-completion-candidates` only when files changed."
-
-  (let ((local-hashes (malb/bibtex-completion-hashes)))
-    (when (not (equal local-hashes malb/bibtex-completion-hashes))
-      (setq malb/bibtex-completion-hashes local-hashes
-            malb/bibtex-completion-candidates-cache (apply old-function arguments))))
+  (when (not (equal (malb/bibtex-completion-hashes) malb/bibtex-completion-hashes))
+    ;; Rebuild the PDF name index right before the reparse, and keep
+    ;; it frozen for the duration of the reparse so that the
+    ;; per-entry PDF checks are pure hash lookups:
+    (malb/bibtex-completion-pdf-ht-rebuild)
+    (setq malb/bibtex-completion-candidates-cache
+          (let ((malb/bibtex-completion-pdf-ht-frozen t))
+            (apply old-function arguments)))
+    ;; Recompute the stored identity *after* reparsing, so that it
+    ;; reflects the freshly parsed cache and the next call hits the
+    ;; memo instead of re-reading and re-hashing all files.
+    (setq malb/bibtex-completion-hashes (malb/bibtex-completion-hashes)))
   malb/bibtex-completion-candidates-cache)
 
 (advice-add #'bibtex-completion-candidates :around #'malb/bibtex-completion-candidates-cache)
