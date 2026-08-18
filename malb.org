@@ -8385,7 +8385,6 @@ Use [[file:local/latex-ocr.el][latex-ocr]] to call [[id:6a14f8ff-854f-47ac-8dce-
 
 #+begin_src emacs-lisp
 (use-package latex-change-env
-  :after latex
   :commands (latex-change-env math-delimiters-mode)
   :hook ((LaTeX-mode . math-delimiters-mode)
          (org-mode . math-delimiters-mode))
