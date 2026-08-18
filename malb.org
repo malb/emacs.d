@@ -7441,6 +7441,7 @@ Automatically pick dictionary.
 
 #+begin_src emacs-lisp
 (use-package lsp-ltex-plus
+  :commands lsp-ltex-plus-mode
   :ensure-system-package (ltex-ls . ltex-ls-plus-bin)
   :custom ((lsp-ltex-plus-ls-plus-executable "ltex-ls")
            (lsp-ltex-plus-language "en-GB")
@@ -7546,6 +7547,7 @@ to enable ~(lsp-ltex-plus-mode)~
 
 #+begin_src emacs-lisp
 (use-package tesseract
+  :commands tesseract-screenshot
   :ensure-system-package spectacle
   :ensure nil)
 #+end_src
@@ -7934,7 +7936,6 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
   :bind (:map rst-mode-map
          ("M-<up>" . drag-stuff-up)
          ("M-<down>" . drag-stuff-down))
-  :commands rst-mode-hook
   :hook ((rst-mode . visual-wrap-prefix-mode)
          (rst-mode . flyspell-mode)
          ;; realistically I only use ReST for Python READMEs.
