@@ -12582,7 +12582,6 @@ A macro to define tasks:
 
 #+begin_src emacs-lisp :noweb no-export
 (use-package ellama
-  :defer nil
   :bind (("C-c w t l"  . malb/translate-llm)
          :map git-commit-mode-map
          ("C-c w c" . ellama-generate-commit-message))
