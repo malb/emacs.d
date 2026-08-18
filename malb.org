@@ -7451,18 +7451,6 @@ Automatically pick dictionary.
 
 to enable ~(lsp-ltex-plus-mode)~
 
-*[[https://github.com/emacs-grammarly/lsp-grammarly][Grammarly]] for online grammar checking.*
-
-#+begin_src emacs-lisp
-(use-package lsp-grammarly
-  :init (progn
-          (setq lsp-grammarly-dialect "british")
-          ;; never start grammarly-ls automatically, but only do it on a document-by-document basis
-          (add-to-list 'lsp-disabled-clients 'grammarly-ls)))
-#+end_src
-
-to enable  ~# eval: (setq-local lsp-disabled-clients nil)~
-
 ** Translating
 
 *[[Https://github.com/atykhonov/google-translate][Google-translate]] queries just that.*
