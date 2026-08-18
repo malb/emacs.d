@@ -8272,6 +8272,7 @@ We do fast mathematics entry using a mix of [[https://github.com/cdominik/cdlate
 
 #+begin_src emacs-lisp
 (use-package cdlatex
+  :commands (org-cdlatex-mode cdlatex-mode turn-on-cdlatex)
   :custom ((cdlatex-takeover-parenthesis nil)
            (cdlatex-takeover-dollar nil)
            (cdlatex-simplify-sub-super-scripts nil))
