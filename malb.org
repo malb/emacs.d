@@ -1264,8 +1264,8 @@ Use [[https://github.com/Ambrevar/emacs-fish-completion][fish-completion]] for =
 
 #+begin_src emacs-lisp
 (use-package fish-completion
-  :config (progn
-            (global-fish-completion-mode)))
+  :hook ((eshell-mode . global-fish-completion-mode)
+         (shell-mode . global-fish-completion-mode)))
 #+end_src
 
 ** Emojis
@@ -1758,6 +1758,27 @@ Please always use ~=~ separator for using long option. Don't use space as separa
   (helm-add-action-to-source "Attach to E-mail" #'malb/helm-mml-attach-files helm-source-locate))
 #+end_src
 
+** Helm In Buffer
+
+#+begin_src emacs-lisp
+(defun malb/helm-in-buffer ()
+  "The right kind™ of buffer menu."
+  (interactive)
+
+  (push-mark)
+
+  (cond ((eq major-mode 'org-mode)
+         (call-interactively #'helm-org-in-buffer-headings))
+        ((eq major-mode 'org-agenda-mode)
+         (call-interactively #'helm-org-agenda-files-headings))
+        ((eq major-mode 'LaTeX-mode)
+         (call-interactively #'malb/helm-reftex-labels))
+        ((and (bound-and-true-p lsp-mode) (not (eq major-mode 'LaTeX-mode)))
+         (call-interactively #'helm-lsp-workspace-symbol))
+        (t
+         (call-interactively #'helm-semantic-or-imenu))))
+#+end_src
+
 ** Helm Org
 
 [[https://github.com/alphapapa/org-ql][org-ql]]
@@ -1767,25 +1788,8 @@ Please always use ~=~ separator for using long option. Don't use space as separa
   :after org-agenda
   :custom ((helm-org-headings-fontify t)
            (helm-org-ignore-autosaves t))
+  :commands (helm-org-in-buffer-headings helm-org-agenda-files-headings)
   :config (progn
-            (defun malb/helm-in-buffer ()
-              "The right kind™ of buffer menu."
-              (interactive)
-
-              (push-mark)
-
-              (cond ((eq major-mode 'org-mode)
-                     (call-interactively #'helm-org-in-buffer-headings))
-                    ((eq major-mode 'org-agenda-mode)
-                     (call-interactively #'helm-org-agenda-files-headings))
-                    ((eq major-mode 'LaTeX-mode)
-                     (call-interactively #'malb/helm-reftex-labels))
-                    ((and (bound-and-true-p lsp-mode) (not (eq major-mode 'LaTeX-mode)))
-                     (call-interactively #'helm-lsp-workspace-symbol))
-                    (t
-                     (call-interactively #'helm-semantic-or-imenu))))
-
-
             (malb/defadvice! malb/helm-org-faster-caching
               (orig-function filename &optional fontify nofname parents force-refresh)
               :around #'helm-org--get-candidates-in-file
@@ -1846,7 +1850,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
   :bind ("C-c h g" . helm-ddgr))
 #+end_src
 
-** Helm XRef
+** COMMENT Helm XRef
 
 [[https://github.com/brotzeit/helm-xref][Helm interface for xref results]]
 
@@ -3611,6 +3615,7 @@ iCal export is triggered after 30 seconds of inactivity.
 #+begin_src emacs-lisp
 (use-package ox-icalendar
   :ensure nil
+  :commands (org-icalendar-combine-agenda-files org-icalendar-export-to-ics)
   :config (progn
             (setq org-icalendar-include-todo t
                   org-icalendar-combined-agenda-file malb/org-mode-ics
@@ -3958,6 +3963,7 @@ Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/
 
 #+begin_src emacs-lisp
 (use-package ox-pandoc
+  :defer t
   :init (progn
           (setq org-pandoc-menu-entry  '((?m "as md." org-pandoc-export-as-commonmark)
                                          (?M "to md and open." org-pandoc-export-to-commonmark-and-open)
@@ -6271,7 +6277,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 (use-package lsp-mode
   :after (projectile)
-  :commands (lsp malb/lsp-enable-maybe)
+  :commands (lsp lsp-mode malb/lsp-enable-maybe)
   :custom ((lsp-eldoc-render-all nil)
            (lsp-session-file (expand-file-name "lsp-session-v1" malb/cache-dir))
            (lsp-server-install-dir (expand-file-name "lsp-servers" malb/cache-dir))
@@ -6537,7 +6543,8 @@ I often restart Python processes (Cython development), so let’s bind a key for
          ("C-c C-r" . pyvenv-restart-python))
   :commands (malb/python-mode-hook malb/inferior-python-mode-hook)
   :init (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-  :hook ((python-base-mode . outline-minor-mode)
+  :hook ((python-base-mode . (lambda () (require 'lsp-pyright)))
+         (python-base-mode . outline-minor-mode)
          (python-base-mode . indent-bars-mode)
          ;; (python-base-mode . malb/local-anaconda-mode)
          ;; (python-base-mode . malb/local-anaconda-eldoc-mode)
@@ -6619,7 +6626,8 @@ Fall back to dumb jump if anaconda fails.
 
 #+begin_src emacs-lisp
 (use-package lsp-pyright
-  :ensure t)
+  :ensure t
+  :defer t)
 #+end_src
 
 *** Docstrings
