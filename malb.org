@@ -1548,12 +1548,12 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
             ))
 #+end_src
 
-Actions for attaching files to e-mails.
+*Actions for attaching files to e-mails.*
 
 #+begin_src emacs-lisp
 (use-package helm-utils
   :ensure nil
-  ;; :after transfer-sh
+  :commands malb/helm-mml-attach-files
   :config (progn
             (defun malb/helm-mml-attach-files (_candidate)
               "Attach all selected files"
@@ -1563,20 +1563,7 @@ Actions for attaching files to e-mails.
             (defun malb/helmified-mml-attach-files ()
               (interactive)
               (with-helm-alive-p
-                (helm-exit-and-execute-action 'malb/helm-mml-attach-files)))
-
-            ;; (defun malb/helm-transfer-sh-files (_candidate)
-            ;;   "Transfer.sh all selected files"
-            ;;   (let* ((files (helm-marked-candidates)))
-            ;;     (mapcar (lambda (file)
-            ;;               (transfer-sh-upload-file-async file (file-name-nondirectory file)))
-            ;;             files)))
-
-            ;; (defun malb/helmified-transfer-sh-files ()
-            ;;   (interactive)
-            ;;   (with-helm-alive-p
-            ;;     (helm-exit-and-execute-action 'malb/helm-transfer-sh-files)))
-            ))
+                (helm-exit-and-execute-action 'malb/helm-mml-attach-files)))))
 #+end_src
 
 ** Helm Ring
@@ -1762,17 +1749,13 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 #+begin_src emacs-lisp
 (use-package helm-locate
   :ensure nil
-  :after (helm helm-utils)
+  :after helm
   :commands helm-locate
   :bind (:map helm-generic-files-map
-         ("C-c C-a" . malb/helmified-mml-attach-files)
-         ;; ("C-c C-t" . malb/helmified-transfer-sh-files)
-         )
-  :config (progn
-            (add-to-list 'helm-commands-using-frame 'helm-locate)
-            (helm-add-action-to-source "Attach to E-mail" #'malb/helm-mml-attach-files helm-source-locate)
-            ;; (helm-add-action-to-source "Transfer.sh"      #'malb/helm-transfer-sh-files helm-source-locate)
-            ))
+         ("C-c C-a" . malb/helmified-mml-attach-files))
+  :config
+  (add-to-list 'helm-commands-using-frame 'helm-locate)
+  (helm-add-action-to-source "Attach to E-mail" #'malb/helm-mml-attach-files helm-source-locate))
 #+end_src
 
 ** Helm Org
@@ -1820,7 +1803,6 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 
             ;; TODO advice malb/helm-in-buffer
             (advice-add #'helm-org-in-buffer-headings :around #'malb/back-to-current-frame-advice)
-            (advice-add #'helm-lsp-workspace-symbol :around #'malb/back-to-current-frame-advice)
             (advice-add #'helm-semantic-or-imenu :around #'malb/back-to-current-frame-advice)
 
             (add-to-list 'helm-commands-using-frame 'helm-semantic-or-imenu)
@@ -6346,10 +6328,12 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 ;; https://github.com/emacs-lsp/helm-lsp/issues/19
 (use-package helm-lsp
+  :commands (helm-lsp-workspace-symbol helm-lsp-global-workspace-symbol)
   :config (progn
             (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
             (add-to-list 'helm-commands-using-frame #'helm-lsp-workspace-symbol)
-            (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbol)))
+            (add-to-list 'helm-commands-using-frame #'helm-lsp-global-workspace-symbol)
+            (advice-add #'helm-lsp-workspace-symbol :around #'malb/back-to-current-frame-advice)))
 #+end_src
 
 *** COMMENT Aider
@@ -10851,8 +10835,8 @@ Other:     _p_ plain    _c_ csv table  _j_ json table _x_ ocr
 
 #+begin_src emacs-lisp :noweb no-export
 (use-package pdf-tools
+  :defer t
   :magic ("%PDF" . pdf-view-mode)
-  :after (org tex)
   :hook ((pdf-view-mode . pdf-view-auto-slice-minor-mode))
   :bind (:map pdf-view-mode-map
          ("s h" . malb/pdf-view-llncs-from-bounding-box)
@@ -12835,8 +12819,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 #+begin_src emacs-lisp
 (use-package conf-mode
   :ensure nil
-  :mode (("Doxyfile$"  . conf-mode)
-         ("\\.mailrc$" . conf-mode)))
+  :mode (("\\.mailrc$" . conf-mode)))
 #+end_src
 
 ** HotCRP Reviews
