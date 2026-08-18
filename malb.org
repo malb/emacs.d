@@ -11627,14 +11627,13 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
 
 #+begin_src emacs-lisp
 (use-package emms-setup
+  :ensure emms
+  :commands (emms-start emms-add-file)
   :custom ((emms-directory (expand-file-name "emms" malb/cache-dir)))
-  :ensure emms)
-
-(use-package emms-player-mpv
-  :ensure nil
-  :after emms-setup
-  :config (progn (emms-standard)
-                 (emms-default-players)))
+  :config
+  (require 'emms-player-mpv)
+  (emms-all)
+  (emms-default-players))
 #+end_src
 
 ** Kodi

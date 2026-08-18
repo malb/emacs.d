@@ -5,7 +5,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'emms)
+(require 'emms-setup)
 (require 'guess-language)
 (require 'pandoc-mode-utils)
 (require 'f)
