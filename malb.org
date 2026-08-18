@@ -3090,7 +3090,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
         org-agenda-skip-additional-timestamps-same-entry nil
         org-agenda-skip-timestamp-if-deadline-is-shown t
         org-agenda-skip-deadline-prewarning-if-scheduled t
-        ;; org-agenda-ignore-properties '(effort appt category)
         org-agenda-window-setup 'current-window ; Current window gets agenda
         org-agenda-sticky t                     ; Use sticky agenda's so they persist
         org-agenda-compact-blocks nil           ; Don't compact the block agenda view
@@ -12497,20 +12496,14 @@ Make links in comments and string clickable
 
 * LLM
 
-#+begin_src emacs-lisp :noweb no-export
-(use-package ellama
-  :defer nil
-  :bind (("C-c w t l"  . malb/translate-llm)
-         :map git-commit-mode-map
-         ("C-c w c" . ellama-generate-commit-message))
-  :init (setopt ellama-response-process-method 32)
-  :config (progn
-            (require 'llm-openai)
-            (require 'git-commit)
+Override default =ellama-generate-commit-message= to use His Majesty’s English and to use a small model.
 
-            (setopt ellama-generate-commit-message-template
-                    (format
-                     "<INSTRUCTIONS>
+#+begin_src emacs-lisp :tangle no :noweb-ref ellama-git-commit-message
+(require 'git-commit)
+
+(setopt ellama-generate-commit-message-template
+        (format
+         "<INSTRUCTIONS>
 You are a professional software developer.
 
 Write concise commit message based on diff in the following format:
@@ -12533,26 +12526,104 @@ Improved abc feature by adding new xyz module.
 %%s
 </DIFF>" git-commit-summary-max-length))
 
-            (malb/defadvice! malb/ellama-generate-commit-message (old-function &rest args)
-              :around #'ellama-generate-commit-message
+(malb/defadvice! malb/ellama-generate-commit-message (old-function &rest args)
+  :around #'ellama-generate-commit-message
 
-              (let ((old-ellama-provider ellama-provider)
-                    (ellama-provider malb/llm-commit))
-                (unwind-protect
-                    (apply old-function args)
-                  (setq ellama-provider old-ellama-provider))))
+  (let ((old-ellama-provider ellama-provider)
+        (ellama-provider malb/llm-commit))
+    (unwind-protect
+        (apply old-function args)
+      (setq ellama-provider old-ellama-provider))))
+#+end_src
 
-            (define-derived-mode malb/ellama-major-mode
-              org-mode "Ellama Major Mode"
-              "Major mode for ellama.")
+A macro to define tasks:
 
-            (malb/register-right-side-window (rx bos "ellama-session"))
+#+begin_src emacs-lisp :tangle no :noweb-ref malb-llm-do-task
+(defmacro malb/llm-do-task (cmd task &rest args)
+  `(defun ,(intern (concat "malb/" cmd "-llm")) (arg)
+     ,(plist-get args :docstring)
+     (interactive "P")
 
-            (add-hook 'malb/ellama-major-mode-hook #'guess-language-mode)
+     (let* ((beg (cond ((use-region-p) (region-beginning))
+                       ((eq ,(plist-get args :scope) 'paragraph)
+                        (save-excursion (backward-paragraph) (+ (point) 1)))
+                       ((eq ,(plist-get args :scope) 'section)
+                        (cond ((eq major-mode 'org-mode)
+                               (save-restriction (org-narrow-to-subtree) (point-min)))
+                              ((eq major-mode 'markdown-mode)
+                               (save-restriction (markdown-narrow-to-subtree) (point-min)))
+                              (t (save-excursion (backward-paragraph) (+ (point) 1)))))
+                       (t (point-min))))
+            (end (cond ((use-region-p) (region-end))
+                       ((eq ,(plist-get args :scope) 'paragraph)
+                        (save-excursion (forward-paragraph) (- (point) 1)))
+                       ((eq ,(plist-get args :scope) 'section)
+                        (cond ((eq major-mode 'org-mode)
+                               (save-restriction (org-narrow-to-subtree) (point-max)))
+                              ((eq major-mode 'markdown-mode)
+                               (save-restriction (markdown-narrow-to-subtree) (point-max)))
+                              (t (save-excursion (forward-paragraph) (- (point) 1)))))
+                       (t (point-max))))
+            (filter (lambda (txt) (string-trim txt)))
+            (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
+                                              (when (eq major-mode 'fundamental-mode)
+                                                (normal-mode)))))
+            (old-ellama-provider ellama-provider))
 
-            (defun malb/ellama-static-name (_provider _action _prompt)
-              "Generate name for ellama session by current time."
-              "ellama-session")
+       (setq task (templatel-render-string
+                   (apply 'concat (mapcar (lambda (str) (concat str "\n")) ,task))
+                   (list (cons "context" (if ,(plist-get args :format)
+                                             (malb/pandoc-convert
+                                              (prin1-to-string ,(plist-get args :format))
+                                              (current-buffer) beg end)
+                                           (buffer-substring-no-properties beg end))))))
+       (when ,(plist-get args :model)
+         (setq ellama-provider (malb/llm-provider ,(plist-get args :model))
+               ellama--current-session-id nil))
+
+       (when arg
+         (setq ellama-provider (malb/llm-provider (llama-swap-shell-select-model))
+               ellama--current-session-id nil))
+
+
+       (unwind-protect
+           (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
+                  (progn
+                    (ellama-stream task :point (point) :filter filter :ephemeral-session t
+                                   :on-done restoref :on-error restoref)))
+                 ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
+                  (progn
+                    (kill-region beg end)
+                    (ellama-stream task :point beg :filter filter :ephemeral-session t
+                                   :on-done restoref :on-error restoref)))
+                 ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
+                  (progn
+                    (goto-char end)
+                    (insert "\n\n-----\n\n")
+                    (sit-for 1)
+                    (ellama-stream task :point (+ end 9) :filter filter :ephemeral-session t
+                                   :on-done restoref :on-error restoref)))
+                 (t
+                  (ellama-instant task)))
+         (setq ellama-provider old-ellama-provider)))))
+#+end_src
+
+#+begin_src emacs-lisp :noweb no-export
+(use-package ellama
+  :defer nil
+  :bind (("C-c w t l"  . malb/translate-llm)
+         :map git-commit-mode-map
+         ("C-c w c" . ellama-generate-commit-message))
+  :custom ((ellama-language "German")
+           (ellama-long-lines-length 1000000)
+           (ellama-fill-paragraphs nil)
+           (ellama-enable-keymap nil)
+           (ellama-show-reasoning nil)
+           (llm-warn-on-nonfree nil)
+           (ellama-response-process-method 64))
+  :config (progn
+            ;; Provider Selection
+            (require 'llm-openai)
 
             (defun malb/llm-provider (model)
               (cond ((llm-openai-compatible-p model) model)
@@ -12564,15 +12635,21 @@ Improved abc feature by adding new xyz module.
             (defconst malb/llm-commit    (malb/llm-provider "commit"))
             (defconst malb/llm-translate (malb/llm-provider "translate"))
 
-            (setopt ellama-language "German"
-                    ellama-provider malb/llm-default
-                    ellama-long-lines-length 1000000
-                    ellama-fill-paragraphs nil
-                    ellama-enable-keymap nil
-                    ellama-show-reasoning nil
-                    ellama-naming-scheme #'malb/ellama-static-name
-                    ellama-major-mode 'malb/ellama-major-mode
-                    llm-warn-on-nonfree nil)
+            (malb/defadvice! malb/ellama-provider-select ()
+              "Use llama-swap models for ellama."
+              :override #'ellama-provider-select
+              (interactive)
+              (setq ellama-provider (malb/llm-provider (llama-swap-shell-select-model))
+                    ellama--current-session-id nil))
+
+            ;; Major Mode
+            (defun malb/ellama-static-name (_provider _action _prompt)
+              "Generate name for ellama session by current time."
+              "ellama-session")
+
+            (define-derived-mode malb/ellama-major-mode
+              org-mode "Ellama Major Mode"
+              "Major mode for ellama.")
 
             (defun malb/ellama-session-mode-hook-fn ()
               (setq-local org-highlight-latex-and-related '(native entities))
@@ -12581,107 +12658,18 @@ Improved abc feature by adding new xyz module.
               (org-compute-latex-and-related-regexp))
 
             (add-hook 'malb/ellama-major-mode-hook #'malb/ellama-session-mode-hook-fn)
+            (add-hook 'malb/ellama-major-mode-hook #'guess-language-mode)
 
-            (malb/defadvice! malb/ellama-provider-select ()
-              "Use llama-swap models for ellama."
-              :override #'ellama-provider-select
-              (interactive)
-              (setq ellama-provider (malb/llm-provider (llama-swap-shell-select-model))
-                    ellama--current-session-id nil))
+            (malb/register-right-side-window (rx bos "ellama-session"))
+
+            (setopt ellama-provider malb/llm-default
+                    ellama-naming-scheme #'malb/ellama-static-name
+                    ellama-major-mode 'malb/ellama-major-mode)
 
             <<malb-translate-llm>>
-
-            (defmacro malb/llm-do-task (cmd task &rest args)
-              `(defun ,(intern (concat "malb/" cmd "-llm")) (arg)
-                 ,(plist-get args :docstring)
-                 (interactive "P")
-
-                 (let* ((beg (cond ((use-region-p) (region-beginning))
-                                   ((eq ,(plist-get args :scope) 'paragraph)
-                                    (save-excursion (backward-paragraph) (+ (point) 1)))
-                                   ((eq ,(plist-get args :scope) 'section)
-                                    (cond ((eq major-mode 'org-mode)
-                                           (save-restriction (org-narrow-to-subtree) (point-min)))
-                                          ((eq major-mode 'markdown-mode)
-                                           (save-restriction (markdown-narrow-to-subtree) (point-min)))
-                                          (t (save-excursion (backward-paragraph) (+ (point) 1)))))
-                                   (t (point-min))))
-                        (end (cond ((use-region-p) (region-end))
-                                   ((eq ,(plist-get args :scope) 'paragraph)
-                                    (save-excursion (forward-paragraph) (- (point) 1)))
-                                   ((eq ,(plist-get args :scope) 'section)
-                                    (cond ((eq major-mode 'org-mode)
-                                           (save-restriction (org-narrow-to-subtree) (point-max)))
-                                          ((eq major-mode 'markdown-mode)
-                                           (save-restriction (markdown-narrow-to-subtree) (point-max)))
-                                          (t (save-excursion (forward-paragraph) (- (point) 1)))))
-                                   (t (point-max))))
-                        (filter (lambda (txt) (string-trim txt)))
-                        (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
-                                                          (when (eq major-mode 'fundamental-mode)
-                                                            (normal-mode)))))
-                        (old-ellama-provider ellama-provider))
-
-                   (setq task (templatel-render-string
-                               (apply 'concat (mapcar (lambda (str) (concat str "\n")) ,task))
-                               (list (cons "context" (if ,(plist-get args :format)
-                                                         (malb/pandoc-convert
-                                                          (prin1-to-string ,(plist-get args :format))
-                                                          (current-buffer) beg end)
-                                                       (buffer-substring-no-properties beg end))))))
-                   (when ,(plist-get args :model)
-                     (setq ellama-provider (malb/llm-provider ,(plist-get args :model))
-                           ellama--current-session-id nil))
-
-                   (when arg
-                     (setq ellama-provider (malb/llm-provider (llama-swap-shell-select-model))
-                           ellama--current-session-id nil))
-
-
-                   (unwind-protect
-                       (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
-                              (progn
-                                ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
-                                (ellama-stream task :point (point) :filter filter :ephemeral-session t
-                                               :on-done restoref :on-error restoref)))
-                             ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
-                              (progn
-                                (kill-region beg end)
-                                ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
-                                (ellama-stream task :point beg :filter filter :ephemeral-session t
-                                               :on-done restoref :on-error restoref)))
-                             ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
-                              (progn
-                                (goto-char end)
-                                (insert "\n\n-----\n\n")
-                                (sit-for 1)
-                                ;; (when lsp-mode (fundamental-mode)) ;; lsp might interfere with our outputs
-                                (ellama-stream task :point (+ end 9) :filter filter :ephemeral-session t
-                                               :on-done restoref :on-error restoref)))
-                             (t
-                              (ellama-instant task)))
-                     (setq ellama-provider old-ellama-provider)))))
-
-            (malb/defadvice! malb/ellama-generate-commit-message (old-function &rest args)
-              :around #'ellama-generate-commit-message
-
-              (let ((old-ellama-provider ellama-provider)
-                    (ellama-provider malb/llm-commit))
-                (unwind-protect
-                    (apply old-function args)
-                  (setq ellama-provider old-ellama-provider))))
-
-            (bind-key "C-c w t l" #'malb/translate-llm)
-            (malb/register-right-side-window (rx bos "ellama-session") t)))
-#+end_src
-
-** LLM Prompts
-
-#+begin_src emacs-lisp
-(use-package llm-prompts
-  :defer nil
-  :after ellama
-  :ensure nil)
+            <<malb-llm-do-task>>
+            <<ellama-git-commit-message>>
+            ))
 #+end_src
 
 ** Shell Maker
