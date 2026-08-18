@@ -2877,13 +2877,15 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 [[https://github.com/magit/orgit][orgit]]
 
 #+begin_src emacs-lisp
-(use-package orgit)
+(use-package orgit
+  :after (org magit))
 #+end_src
 
 [[https://github.com/magit/orgit-forge/][orgit-forge]]
 
 #+begin_src emacs-lisp
-(use-package orgit-forge)
+(use-package orgit-forge
+  :after orgit)
 #+end_src
 
 ** Git Timemachine
@@ -12498,11 +12500,13 @@ Make links in comments and string clickable
 #+begin_src emacs-lisp :noweb no-export
 (use-package ellama
   :defer nil
-  :bind (:map git-commit-mode-map
+  :bind (("C-c w t l"  . malb/translate-llm)
+         :map git-commit-mode-map
          ("C-c w c" . ellama-generate-commit-message))
   :init (setopt ellama-response-process-method 32)
   :config (progn
             (require 'llm-openai)
+            (require 'git-commit)
 
             (setopt ellama-generate-commit-message-template
                     (format
@@ -12529,8 +12533,17 @@ Improved abc feature by adding new xyz module.
 %%s
 </DIFF>" git-commit-summary-max-length))
 
+            (malb/defadvice! malb/ellama-generate-commit-message (old-function &rest args)
+              :around #'ellama-generate-commit-message
+
+              (let ((old-ellama-provider ellama-provider)
+                    (ellama-provider malb/llm-commit))
+                (unwind-protect
+                    (apply old-function args)
+                  (setq ellama-provider old-ellama-provider))))
+
             (define-derived-mode malb/ellama-major-mode
-              org-mode"Ellama Major Mode"
+              org-mode "Ellama Major Mode"
               "Major mode for ellama.")
 
             (malb/register-right-side-window (rx bos "ellama-session"))
@@ -12552,7 +12565,7 @@ Improved abc feature by adding new xyz module.
             (defconst malb/llm-translate (malb/llm-provider "translate"))
 
             (setopt ellama-language "German"
-                    ellama-provider (malb/llm-provider malb/llm-default)
+                    ellama-provider malb/llm-default
                     ellama-long-lines-length 1000000
                     ellama-fill-paragraphs nil
                     ellama-enable-keymap nil
