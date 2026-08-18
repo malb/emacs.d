@@ -6336,6 +6336,28 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
             (advice-add #'helm-lsp-workspace-symbol :around #'malb/back-to-current-frame-advice)))
 #+end_src
 
+*** Highlight Indentation
+
+[[https://github.com/jdtsmith/indent-bars][jdtsmith/indent-bars]]
+
+#+begin_src emacs-lisp
+(use-package indent-bars
+  :config (require 'indent-bars-ts)
+  :custom
+  (indent-bars-treesit-support t)
+  (indent-bars-treesit-ignore-blank-lines-types '("module"))
+  (indent-bars-treesit-scope '((python function_definition
+                                       class_definition
+                                       for_statement
+                                       if_statement with_statement
+                                       while_statement)))
+  ;; Note: wrap may not be needed if no-descend-list is enough
+  (indent-bars-treesit-wrap '((python argument_list parameters
+                                      list list_comprehension
+                                      dictionary dictionary_comprehension
+                                      parenthesized_expression subscript))))
+#+end_src
+
 *** COMMENT Aider
 
 ([[https://github.com/tninja/aider.el][source]])
@@ -6420,28 +6442,6 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 #+RESULTS:
 : jai -j eca -D --unsetenv=* --setenv TERM --setenv HOME --setenv PATH --setenv LANG --setenv TEXMFHOME --setenv BIBINPUTS -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 -d /home/malb/.config/eca/ -d /home/malb/.cache/eca/ -d /home/malb/.config/emacs/ -d /home/malb/.cache/emacs/ -d /home/malb/.texlive/ -r /home/malb/Projects/common-latex -r /home/malb/Misc/OCR/ COMMAND
-
-*** Highlight Indentation
-
-[[https://github.com/jdtsmith/indent-bars][jdtsmith/indent-bars]]
-
-#+begin_src emacs-lisp
-(use-package indent-bars
-  :config (require 'indent-bars-ts)
-  :custom
-  (indent-bars-treesit-support t)
-  (indent-bars-treesit-ignore-blank-lines-types '("module"))
-  (indent-bars-treesit-scope '((python function_definition
-                                       class_definition
-                                       for_statement
-                                       if_statement with_statement
-                                       while_statement)))
-  ;; Note: wrap may not be needed if no-descend-list is enough
-  (indent-bars-treesit-wrap '((python argument_list parameters
-                                      list list_comprehension
-                                      dictionary dictionary_comprehension
-                                      parenthesized_expression subscript))))
-#+end_src
 
 ** C/C++
 
