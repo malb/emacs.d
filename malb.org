@@ -6291,10 +6291,23 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :bind (:map lsp-mode-map
          ("M-r" . lsp-find-references))
   :config (progn
+
+            (lsp-register-client
+             (make-lsp-client
+              :new-connection (lsp-stdio-connection '("zuban" "server"))
+              :major-modes '(python-ts-mode)
+              :server-id 'zuban
+              :priority 3))
+
             (defun malb/lsp-enable-maybe ()
               (condition-case nil
                   (if (buffer-file-name) (lsp-mode))
                 (user-error nil)))
+
+            ;; https://emacs-lsp.github.io/lsp-mode/page/faq/
+            (advice-add 'lsp :before
+                        (lambda (&rest _args)
+                          (eval '(setf (lsp-session-server-id->folders (lsp-session)) (ht)))))
 
             (setq read-process-output-max (* 1024 1024))
             (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
@@ -6546,8 +6559,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
          ("C-c C-r" . pyvenv-restart-python))
   :commands (malb/python-mode-hook malb/inferior-python-mode-hook)
   :init (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-  :hook ((python-base-mode . (lambda () (require 'lsp-pyright)))
-         (python-base-mode . outline-minor-mode)
+  :hook ((python-base-mode . outline-minor-mode)
          (python-base-mode . indent-bars-mode)
          ;; (python-base-mode . malb/local-anaconda-mode)
          ;; (python-base-mode . malb/local-anaconda-eldoc-mode)
@@ -6623,7 +6635,7 @@ Fall back to dumb jump if anaconda fails.
             (advice-add 'anaconda-mode-start :around #'malb/vanilla-python-shell-interpreter)))
 #+end_src
 
-*** Python Language Servers
+*** COMMENT Python Language Servers
 
 [[https://github.com/microsoft/pyright][Pyright]] seems okay, but it seems to struggle with Cython in FPyLLL.
 
