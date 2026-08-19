@@ -1590,6 +1590,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 #+begin_src emacs-lisp
 (use-package helm-swoop
+  :commands (malb/swoop-or-search)
   :bind (:map isearch-mode-map
          ("M-i" . helm-swoop-from-isearch)
          :map helm-swoop-map
@@ -1787,7 +1788,6 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 
 #+begin_src emacs-lisp
 (use-package helm-org
-  :after org-agenda
   :custom ((helm-org-headings-fontify t)
            (helm-org-ignore-autosaves t))
   :commands (helm-org-in-buffer-headings helm-org-agenda-files-headings)
@@ -1819,21 +1819,19 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 #+end_src
 
 #+begin_src emacs-lisp
+(defun malb/helm-org-ql-agenda-files (arg)
+  (interactive "p")
+  (push-mark)
+  (let ((current-prefix-arg nil))
+    (cond ((equal arg 4)
+           (call-interactively #'helm-org-ql-agenda-files nil))
+          (t
+           (helm-org-agenda-files-headings)))))
+
 (use-package helm-org-ql
-  :after helm-org
+  :commands (helm-org-ql helm-org-ql-agenda-files)
   :config (progn
-            (defun malb/helm-org-ql-agenda-files (arg)
-              (interactive "p")
-
-              (push-mark)
-
-              (let ((current-prefix-arg nil))
-                (cond
-                 ((equal arg 4) (call-interactively #'helm-org-ql-agenda-files nil))
-                 (t (helm-org-agenda-files-headings)))))
-
             (advice-add #'helm-org-agenda-files-headings :around #'malb/back-to-current-frame-advice)
-
             (add-to-list 'helm-commands-using-frame 'helm-org-ql)
             (add-to-list 'helm-commands-using-frame 'helm-org-ql-agenda-files)))
 #+end_src
