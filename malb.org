@@ -1590,8 +1590,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
 
 #+begin_src emacs-lisp
 (use-package helm-swoop
-  :bind (("C-c o" . helm-multi-swoop-org)
-         :map isearch-mode-map
+  :bind (:map isearch-mode-map
          ("M-i" . helm-swoop-from-isearch)
          :map helm-swoop-map
          ("M-i" . helm-multi-swoop-all-from-helm-swoop)
