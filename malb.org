@@ -6787,32 +6787,14 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 (use-package pip-requirements)
 #+end_src
 
-*** Virtual Environments (Conda)
+*** Virtual Environments (Micromamba)
 
 ([[https://github.com/necaris/conda.el][source]])
 
 #+begin_src emacs-lisp
-(use-package conda
-  :ensure-system-package ((conda . miniconda3))
-  :custom ((conda-anaconda-home "/opt/miniconda3")
-           (conda-message-on-environment-switch nil))
-  :config (progn
-            (conda-env-initialize-interactive-shells)
-            (conda-env-initialize-eshell)
-            (conda-env-autoactivate-mode t)
-
-            (add-hook 'find-file-hook (lambda () (when (bound-and-true-p conda-project-env-path)
-                                                   (conda-env-activate-for-buffer))))
-
-            (malb/defadvice! malb/conda-no-more-nil (fn name)
-              "Don't throw an error if there's no conda env"
-              :around #'conda-env-name-to-dir
-              (if name (apply fn (list name))))
-
-            (malb/defadvice! malb/conda-shut-up (fn params)
-              :around #'conda-env-activate-path
-              (cl-letf (((symbol-function 'message) (lambda (msg &rest args)) nil))
-                (apply fn (list params))))))
+(use-package micromamba
+  :ensure-system-package ((micromamba . micromamba-bin))
+  :config (micromamba-env-autoactivate-mode t))
 #+end_src
 
 *** Virtual Environments (Uv)
