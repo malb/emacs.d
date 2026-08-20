@@ -8313,6 +8313,8 @@ Run =latexmk -pvc= in async shell
                             (t (buffer-file-name)))
                          (progn
                            (buffer-file-name))))
+       (engine (if (boundp 'TeX-engine) (if (eq TeX-engine 'default) "-pdf" "-pdflua")
+                 "-pdflua"))
        (buffer-name (concat "*" "LaTeXMK" "[" name "|" (file-name-nondirectory main-file-name) "]" "*"))
        (window (get-buffer-window buffer-name)))
     (if (malb/window-has-popup-height-p window)
@@ -8327,7 +8329,7 @@ Run =latexmk -pvc= in async shell
                                        buffer-name
                                        "latexmk"
                                        "-pvc"
-                                       "-pdflua"
+                                       engine
                                        "-shell-escape"
                                        "-interaction=nonstopmode"
                                        "-halt-on-error"
