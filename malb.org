@@ -13044,6 +13044,17 @@ Toggle the theme to agree with the OS theme.
   :ensure nil
   :config
 
+  (when (daemonp)
+    (dbus-register-signal
+     :session "org.freedesktop.portal.Desktop"
+     "/org/freedesktop/portal/desktop"
+     "org.freedesktop.portal.Settings"
+     "SettingChanged"
+     (lambda (path var value)
+       (when (and (string-equal path "org.freedesktop.appearance")
+                  (string-equal var "color-scheme"))
+         (malb/theme-from-dbus value)))))
+
   (defun malb/theme-from-dbus (value)
     "Change the theme based on a D-Bus property.
 
@@ -13052,16 +13063,6 @@ an integer. When VALUE is equal to 2 then a light theme will be
 selected, otherwise a dark theme will be selected."
 
     (malb/switch-theme (not (= 2 (car (flatten-list value))))))
-
-  (dbus-register-signal
-   :session "org.freedesktop.portal.Desktop"
-   "/org/freedesktop/portal/desktop"
-   "org.freedesktop.portal.Settings"
-   "SettingChanged"
-   (lambda (path var value)
-     (when (and (string-equal path "org.freedesktop.appearance")
-                (string-equal var "color-scheme"))
-       (malb/theme-from-dbus value))))
 
   (defun malb/sync-theme-from-os (&optional sync)
     "Switch to light/dark theme based on OS.
