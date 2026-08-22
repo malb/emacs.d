@@ -60,7 +60,7 @@
    ;; Highlight cryptocode control keywords buffer-locally
    (font-lock-add-keywords
     nil `((,(rx "\\pc" (and (or "if" "then" "else" "elseif"
-                               "for" "do"
+                               "for" "do" "while"
                                "return" "abort" "continue"
                                "const"
                                "and" "or"
