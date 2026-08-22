@@ -2677,14 +2677,12 @@ This library provides easy project management and navigation. The concept of a p
 | ~M-D~   | Remove project(s): Delete marked projects from the list of known projects. |
 | ~C-c @~ | insert the current file that highlight bar is on as an org link.           |
 
-*Note*: =next-error= has nothing to do with projectile, but =<f5>= and =<f6>= kind of go together. ~previous-error~ is bound to =M-g p=.
 
 #+begin_src emacs-lisp
 (use-package projectile
   :after (tab-bar)
   :defer nil
   :bind (("<f5>" . projectile-compile-project)
-         ("<f6>" . next-error)
          :map projectile-command-map
          ("#" . #'malb/projectile-repl))
   :init  (setq projectile-keymap-prefix (kbd "C-c p"))
@@ -11974,8 +11972,10 @@ Also https://zck.org/improved-emacs-search
 #+begin_src emacs-lisp
 (use-package simple
   :ensure nil
-  :bind (:map messages-buffer-mode-map
-              ("/" . isearch-backward)))
+  :bind (("<f6>" .   next-error)
+         ("S-<f6>" . previous-error)
+         :map messages-buffer-mode-map
+         ("/" . isearch-backward)))
 #+end_src
 
 * Proced (Top)
