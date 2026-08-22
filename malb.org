@@ -7802,10 +7802,10 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
          ("README\\.md$" . gfm-mode))
   :config (progn
             (defvar malb/markdown.css
-              (expand-file-name "themes/foghorn.css" user-emacs-directory))
+              (expand-file-name "themes/markdown5.css" user-emacs-directory))
 
             (setq markdown-command (concat
-                                    "pandoc --highlight-style pygments -f markdown+smart -t html -c"
+                                    "pandoc --highlight-style pygments -f markdown+smart --mathjax -t html -c "
                                     malb/markdown.css)
                   markdown-css-paths (list malb/markdown.css)
                   markdown-enable-math t
