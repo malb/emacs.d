@@ -163,6 +163,7 @@ Use [[https://github.com/raxod502/blackout][blackout]] to remove mentions of min
 
 #+begin_src emacs-lisp
 (use-package exec-path-from-shell
+  :custom ((exec-path-from-shell-variables '("PATH" "MANPATH" "LSP_USE_PLISTS")))
   :config (exec-path-from-shell-initialize))
 #+end_src
 
@@ -6306,7 +6307,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                         (lambda (&rest _args)
                           (eval '(setf (lsp-session-server-id->folders (lsp-session)) (ht)))))
 
-            (setq read-process-output-max (* 1024 1024))
+            (setq read-process-output-max (* 4 1024 1024))
             (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)))
 #+end_src
 
@@ -6347,6 +6348,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+begin_src emacs-lisp
 ;; https://github.com/emacs-lsp/helm-lsp/issues/19
 (use-package helm-lsp
+  :after lsp-mode
   :commands (helm-lsp-workspace-symbol helm-lsp-global-workspace-symbol)
   :config (progn
             (define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
