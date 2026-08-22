@@ -11266,7 +11266,7 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 (use-package tramp-rpc
   :after tramp
   :vc (:url "https://github.com/ArthurHeymans/emacs-tramp-rpc"
-       :rev "v0.8.0"
+       :rev "v0.13.1"
        :lisp-dir "lisp"))
 #+end_src
 
