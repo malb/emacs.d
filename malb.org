@@ -13217,13 +13217,14 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
 #+begin_src emacs-lisp
 (use-package shr
   :ensure nil
-  :config (setq shr-use-fonts nil
-                shr-use-colors nil))
+  :custom ((shr-use-fonts nil)
+           (shr-fill-text nil)
+           (shr-use-colors nil)))
 #+end_src
 
 #+begin_src emacs-lisp
 (use-package shrface
-  :after shr
+  :commands (shrface-mode)
   :config (progn
             (shrface-basic)
             (shrface-trial)
@@ -13242,13 +13243,11 @@ Note that =face-font-rescale-alist= is frame specific, thus the hook.
 #+begin_src emacs-lisp
 (use-package eww
   :ensure nil
-  :after shrface
+  :hook ((eww-mode-hook . visual-fill-column-mode)
+         (eww-mode-hook . shrface-mode))
   :bind (:map eww-mode-map
-              ("TAB" .  org-cycle)
-              ("<backtab>" . org-shifttab))
-  :config (progn
-            (add-hook 'eww-mode-hook #'turn-on-visual-fill-column-mode)
-            (add-hook 'eww-after-render-hook 'shrface-mode)))
+         ("TAB" .  org-cycle)
+         ("<backtab>" . org-shifttab)))
 #+end_src
 
 #+begin_src emacs-lisp
