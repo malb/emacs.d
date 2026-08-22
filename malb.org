@@ -7965,7 +7965,12 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
   :ensure auctex
   :mode (("\\.tikz$" . LaTeX-mode))
 
-  :bind (:map LaTeX-mode-map
+  :bind (:map TeX-error-overview-mode-map
+         ("<f6>" . TeX-error-overview-next-error)
+         ("S-<f6>" . TeX-error-overview-previous-error)
+         :map LaTeX-mode-map
+         ("<f6>" . TeX-next-error)
+         ("S-<f6>" . TeX-previous-error)
          ("C-<tab>" . outline-cycle)
          ("M-<right>" . sp-forward-sexp)
          ("M-<left>" . sp-backward-sexp)
@@ -8076,8 +8081,8 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
             (font-lock-add-keywords
              'LaTeX-mode
              `((,(rx "\\" (or (any ",.!;@")
-                             (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
-                                  symbol-end)))
+                              (and (or "left" "right" "qquad" "quad" "big" "bigg" "Big" "Bigg" "t" "pcind")
+                                   symbol-end)))
                 0 'malb/unimportant-latex-face prepend))
              'end)
 
