@@ -6139,6 +6139,7 @@ This packages tries to smartly go to definition leveraging several methods to do
          ("M-<down>" . jupyter-repl-history-next-matching)
          ("C-<down>" . jupyter-repl-history-next-matching)
          ("C-d"    . malb/delchar-or-maybe-eof))
+  :custom ((jupyter-use-zmq nil))
   :init (eval-after-load 'jupyter-org-extensions
           '(unbind-key "C-c h" jupyter-org-interaction-mode-map))
   :config (progn
