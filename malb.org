@@ -7793,6 +7793,7 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
     (expand-file-name "themes/markdown5.css" user-emacs-directory))
   :custom ((markdown-command (s-join " "
                                      `("pandoc"
+                                       "--shift-heading-level-by=-1"
                                        "--syntax-highlighting"
                                        "pygments"
                                        "-f"
