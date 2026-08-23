@@ -11838,13 +11838,12 @@ then enter the text in that file's own buffer.
 
 #+begin_src emacs-lisp
 (use-package atomic-chrome
-  :config (progn
-            (setq atomic-chrome-buffer-open-style 'frame
-                  atomic-chrome-default-major-mode 'markdown-mode
-                  atomic-chrome-buffer-frame-width 160
-                  atomic-chrome-buffer-frame-height 25)
-
-            (atomic-chrome-start-server)))
+  :defer nil
+  :custom ((atomic-chrome-buffer-open-style 'frame)
+           (atomic-chrome-default-major-mode 'markdown-mode)
+           (atomic-chrome-buffer-frame-width 160)
+           (atomic-chrome-buffer-frame-height 25))
+  :config (when (daemonp) (atomic-chrome-start-server)))
 #+end_src
 
 [[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
