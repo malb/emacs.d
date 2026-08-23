@@ -6145,11 +6145,10 @@ This packages tries to smartly go to definition leveraging several methods to do
   :config (progn
             (defun malb/company-jupyter-setup ()
               (setq-local company-backends
-                          '((:separate
-                             company-files
+                          '((company-files
                              company-math-symbols-unicode
-                             company-yasnippet
                              company-capf
+                             :with company-yasnippet
                              ))))
 
             (add-hook 'jupyter-repl-mode-hook #'malb/company-jupyter-setup)
