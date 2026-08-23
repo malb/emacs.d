@@ -11879,7 +11879,7 @@ then enter the text in that file's own buffer.
                   (cons url title))))))
 #+end_src
 
-** Org-protocol entpoints for bookmarklets
+** Org-Protocol Entpoints for Bookmarklets
 
 Load a URL in EWW
 
