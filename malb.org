@@ -15,7 +15,6 @@
 
 We assume that the following variables are defined:
 
-- ~malb/startup-quick~ – disable some stuff to speed up startup
 - ~malb/documents-dir~ - documents
 - ~malb/inbox-org~ - this is where I store tasks
 - ~malb/work-org~ - this is where I store tasks
@@ -8795,8 +8794,7 @@ index 10b1afb..0bcbbd5 100644
                       (t
                        (apply old-function (list key))))))
 
-            (if (and (not malb/startup-quick)
-                     (daemonp))
+            (if (daemonp)
                 (let ((async-prompt-for-password nil))
                   (async-start `(lambda ()
                                   (setq package-user-dir (expand-file-name "~/.cache/emacs/elpa"))
