@@ -9970,51 +9970,12 @@ Action to search messages involving all correspondents.
   (add-to-list 'mu4e-headers-actions '("interaction 🔍" . malb/find-correspondence) t))
 #+end_src
 
-DWIM action. ~malb/mu4e-dwim-actions~ is a list of triples ~("from regexp" "subject regexp" (lambda (msg) …))~ where the lambda is executed whenever both regexps match. Processing does not stop after the first match.
-
-#+begin_src emacs-lisp
-(setq malb/mu4e-dwim-actions nil)
-
-(defun malb/mu4e-dwim-action (msg)
-  (let  ((from (plist-get (car (mu4e-message-field msg :from)) :email))
-         (subject (mu4e-message-field msg :subject))
-         (triggered nil))
-    (dolist (action malb/mu4e-dwim-actions)
-      (let ((from-regexp (nth 0 action))
-            (subject-regexp (nth 1 action))
-            (f (nth 2 action)))
-        (when (and (not triggered)
-                   (string-match from-regexp from)
-                   (string-match subject-regexp subject))
-          (setq triggered (funcall f msg)))))))
-
-(add-to-list 'mu4e-view-actions '("dwim" . malb/mu4e-dwim-action) t)
-(add-to-list 'mu4e-headers-actions '("dwim" . malb/mu4e-dwim-action) t)
-#+end_src
-
-This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d/mu4e.html][source]])
-
-#+begin_src emacs-lisp
-(defun malb/get-mail-header (header-name path)
-  (replace-regexp-in-string
-   "[ \t\n]*$"
-   ""
-   (shell-command-to-string
-    (concat "sed -n '/^"
-            header-name
-            ":/I{:loop t;h;n;/^ /{H;x;s/\\n//;t loop};x;p}' '"
-            path
-            "' | sed -n 's/^"
-            header-name
-            ": \\(.*\\)$/\\1/Ip'"))))
-#+end_src
-
 #+begin_src emacs-lisp
 (defun malb/edit-raw-email (msg)
   (find-file (plist-get msg :path)))
 
-(add-to-list 'mu4e-view-actions '("Edit raw" . malb/edit-raw-email) t)
-(add-to-list 'mu4e-headers-actions '("Edit raw" . malb/edit-raw-email) t)
+(add-to-list 'mu4e-view-actions    '("edit raw" . malb/edit-raw-email) t)
+(add-to-list 'mu4e-headers-actions '("edit raw" . malb/edit-raw-email) t)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -10023,6 +9984,16 @@ This can be useful for writing DWIM actions: ([[https://etienne.depar.is/emacs.d
     (malb/summarize-llm)))
 
 (add-to-list 'mu4e-view-actions '("/summarise" . malb/mail-summarize) t)
+#+end_src
+
+[[https://github.com/laurynas-biveinis/mu4e-autotask][laurynas-biveinis/mu4e-autotask]]
+
+#+begin_src emacs-lisp
+(use-package mu4e-autotask
+  :after mu4e
+  :config
+  (add-to-list 'mu4e-view-actions    '("dwim" . mu4e-autotask-dispatch) t)
+  (add-to-list 'mu4e-headers-actions '("dwim" . mu4e-autotask-dispatch) t))
 #+end_src
 
 ** Composing
