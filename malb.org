@@ -8058,15 +8058,17 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
                                        'function))
 
             (defun malb/company-latex-setup ()
+              (setq-local company-transformers
+                          '(delete-consecutive-dups))
               (setq-local company-backends
                           '(company-reftex-labels
                             company-bibtex-completion
                             (company-auctex-environments
                              company-math-symbols-latex ;; all the math
                              company-auctex-macros      ;; most detailed, has options etc
+                             company-yasnippet
                              company-capf
-                             company-files
-                             :with company-yasnippet))))
+                             company-files))))
 
             (defun malb/raise-flycheck-error-threshold ()
               (setq-local flycheck-checker-error-threshold nil))
