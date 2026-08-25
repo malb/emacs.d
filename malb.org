@@ -6433,7 +6433,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                   "--setenv" "PATH"
                   "--setenv" "LANG"
                   "--setenv" "TEXMFHOME"
-                  "--setenv" "BIBINPUTS")
+                  "--setenv" "BIBINPUTS"
+                  "--setenv" "AI_CREATE_KCL_AC_UK_API_KEY")
             ;; Workspace roots picked at session startup.
             (cl-loop for d in roots
                      append (list "-d" (expand-file-name d)))
@@ -6459,7 +6460,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+end_src
 
 #+RESULTS:
-: jai -j eca -D --unsetenv=* --setenv TERM --setenv HOME --setenv PATH --setenv LANG --setenv TEXMFHOME --setenv BIBINPUTS -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 -d /home/malb/.config/eca/ -d /home/malb/.cache/eca/ -d /home/malb/.config/emacs/ -d /home/malb/.cache/emacs/ -d /home/malb/.texlive/ -r /home/malb/Projects/common-latex -r /home/malb/Misc/OCR/ COMMAND
+: jai -j eca -D --unsetenv=* --setenv TERM --setenv HOME --setenv PATH --setenv LANG --setenv TEXMFHOME --setenv BIBINPUTS --setenv AI_CREATE_KCL_AC_UK_API_KEY -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 -d /home/malb/.config/eca/ -d /home/malb/.cache/eca/ -d /home/malb/.config/emacs/ -d /home/malb/.cache/emacs/ -d /home/malb/.texlive/ -r /home/malb/Projects/common-latex -r /home/malb/Misc/OCR/ COMMAND
 
 ** C/C++
 
