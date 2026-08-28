@@ -7709,6 +7709,22 @@ if __name__ == "__main__":
     main()
 #+end_src
 
+*** LaTeX OCR
+
+Use [[file:local/latex-ocr.el][latex-ocr]] to call [[id:6a14f8ff-854f-47ac-8dce-02fab4e932a9][ocr-vlm.py]].
+
+#+begin_src emacs-lisp
+(use-package latex-ocr
+  :ensure nil
+  :commands (latex-ocr-screenshot)
+  :ensure-system-package spectacle
+  :config
+  (setq latex-ocr-command "ocr-vlm.py %s"))
+#+end_src
+
+****** TODO Rename, this isn’t only for LaTeX.
+****** END
+
 ** Taking Notes (Deft)
 
 Use [[http://jblevins.org/projects/deft/][deft]] for random notes and for a listing of blog entries.
@@ -8354,19 +8370,6 @@ Run =latexmk -pvc= in async shell
             (with-current-buffer buffer-name
               (compilation-mode))))
         (display-buffer (get-buffer buffer-name))))))
-#+end_src
-
-*** LaTeX OCR
-
-Use [[file:local/latex-ocr.el][latex-ocr]] to call [[id:6a14f8ff-854f-47ac-8dce-02fab4e932a9][ocr-vlm.py]].
-
-#+begin_src emacs-lisp
-(use-package latex-ocr
-  :ensure nil
-  :commands (latex-ocr-screenshot)
-  :ensure-system-package spectacle
-  :config
-  (setq latex-ocr-command "ocr-vlm.py %s"))
 #+end_src
 
 *** Math Delimiters
