@@ -67,6 +67,10 @@
                                "linecomment" "comment" "assert" "in")
                            symbol-end))
            0 'font-latex-bold-face prepend))
-    'end)))
+    'end)
+
+   (font-latex-add-keywords '(("gameheading" "{")) 'sectioning-5)))
+
+
 
 ;; --- cryptocode.el ends here
