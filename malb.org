@@ -3503,7 +3503,7 @@ Archive with some order in target file preserved. ([[https://gist.github.com/edg
                             " "
                             heading
                             "\n"))
-                  (cl-incf level)))
+                  (incf level)))
               (widen)
               (org-end-of-subtree t t)
               (org-paste-subtree level tree-text))))))))
@@ -5393,7 +5393,7 @@ to be `:text'.
          ((= (length args) 1)  (setq frmt (car args)
                                      element 0)))
 
-        (if-let ((results (ring-ref malb/eshell-output (or element 0))))
+        (if-let* ((results (ring-ref malb/eshell-output (or element 0))))
             (cl-case (string-to-char frmt)
               (?l     (split-string results))
               (?f     (malb/eshell-store-file-output results))
@@ -7938,7 +7938,7 @@ We add =README.txt= as the kind of file which wants ReST and use [[http://docuti
 
   :hook ((LaTeX-mode . electric-indent-local-mode)
          (LaTeX-mode . turn-on-visual-line-mode)
-         (LaTeX-mode . turn-on-flyspell)
+         (LaTeX-mode . flyspell-mode)
          (LaTeX-mode . turn-on-reftex)
          (LaTeX-mode . turn-on-visual-fill-column-mode)
          (LaTeX-mode . outline-minor-mode)
@@ -10953,9 +10953,9 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
               "Dim out .gitignore contents"
               (unless (and (buffer-file-name)
                            (file-remote-p (buffer-file-name)))
-                (when-let ((foo (require 'vc))
-                           (ignores (vc-default-ignore-completion-table 'git ".gitignore"))
-                           (exts (make-local-variable 'completion-ignored-extensions)))
+                (when-let* ((foo (require 'vc))
+                            (ignores (vc-default-ignore-completion-table 'git ".gitignore"))
+                            (exts (make-local-variable 'completion-ignored-extensions)))
                   (dolist (item ignores)
                     (add-to-list exts item)))))
 
@@ -12484,6 +12484,7 @@ A macro to define tasks:
 
 #+begin_src emacs-lisp :noweb no-export
 (use-package ellama
+  :commands (ellama-generate-commit-message)
   :bind (("C-c w t l"  . malb/translate-llm)
          :map git-commit-mode-map
          ("C-c w c" . ellama-generate-commit-message))
