@@ -2038,30 +2038,31 @@ Make sure to auto automatically rescan for imenu change.
 
 #+begin_src emacs-lisp
 (use-package imenu-anywhere
-  :config (progn
-            (defun malb/imenu-anywhere (arg)
-              "Call `helm-imenu-anywhere'
+  :config
+  (defun malb/imenu-anywhere (arg)
+    "Call `helm-imenu-anywhere'
 
 - With no prefix, call with default configuration,
 - with one prefix argument, call `helm-imenu-anywhere' on all programming mode buffers regardless of project,
 - with two prefix arguments, call `helm-imenu-anywhere' on all buffers."
-              (interactive "p")
-              (cond
-               ((equal arg 4)
-                (let ((imenu-anywhere-buffer-filter-functions
-                       `((lambda (current other)
-                           (let ((parent (buffer-local-value 'major-mode other)))
-                             (while (and (not (memq parent '(prog-mode c-mode c-ts-mode c++-mode c++-ts-mode)))
-                                         (setq parent (get parent 'derived-mode-parent))))
-                             parent)))))
-                  (call-interactively #'helm-imenu-anywhere)))
+    (interactive "p")
+    (cond
+     ((equal arg 4)
+      (let ((imenu-anywhere-buffer-filter-functions
+             `((lambda (current other)
+                 (let ((parent (buffer-local-value 'major-mode other)))
+                   (while (and (not (memq parent '(prog-mode c-mode c-ts-mode c++-mode c++-ts-mode)))
+                               (setq parent (get parent 'derived-mode-parent))))
+                   parent)))))
+        (call-interactively #'helm-imenu-anywhere)))
 
-               ((equal arg 16)
-                (let ((imenu-anywhere-buffer-filter-functions '((lambda (current other) t))))
-                  (call-interactively #'helm-imenu-anywhere)))
+     ((equal arg 16)
+      (let ((imenu-anywhere-buffer-filter-functions '((lambda (current other) t))))
+        (call-interactively #'helm-imenu-anywhere)))
 
-               (t (call-interactively #'helm-imenu-anywhere))))
-            (add-to-list 'helm-commands-using-frame 'helm-imenu-anywhere)))
+     (t (call-interactively #'helm-imenu-anywhere))))
+
+  (add-to-list 'helm-commands-using-frame 'helm-imenu-anywhere))
 #+end_src
 
 [[https://github.com/bmag/imenu-list][imenu-list]] can be useful, =C-x t i=
