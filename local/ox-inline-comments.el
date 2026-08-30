@@ -1,4 +1,4 @@
-;;; Exporting
+;;; Exporting  -*- lexical-binding: t; -*-
 (add-hook 'org-export-before-parsing-hook #'malb/ox-inline-comment)
 
 (defun malb/ox-inline-comment (backend)
