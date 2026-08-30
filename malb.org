@@ -11794,9 +11794,7 @@ Create convenience functions to open a shell on my servers and “cd” into the
 * Search
 
 #+begin_quote
-In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, or 𝒶) when you search
-for ASCII characters (a in this example). To enable this feature, set the variable
-=search-default-mode= to =char-fold-to-regexp=. ([[http://endlessparentheses.com/new-in-emacs-25-1-easily-search-non-ascii-characters.html][source]])
+In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, or 𝒶) when you search for ASCII characters (a in this example). To enable this feature, set the variable =search-default-mode= to =char-fold-to-regexp=. ([[http://endlessparentheses.com/new-in-emacs-25-1-easily-search-non-ascii-characters.html][source]])
 #+end_quote
 
 Also https://zck.org/improved-emacs-search
