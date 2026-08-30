@@ -1835,7 +1835,7 @@ Please always use ~=~ separator for using long option. Don't use space as separa
 
 ** Helm DuckDuckGo
 
-[[./local/helm-ddgr.el][helm-ddgr]] for doing [[https://github.com/jarun/ddgr][ddgr]] based DuckDuckGo searches.
+[[./usr-lisp/helm-ddgr.el][helm-ddgr]] for doing [[https://github.com/jarun/ddgr][ddgr]] based DuckDuckGo searches.
 
 #+begin_src emacs-lisp
 (use-package helm-ddgr
@@ -3944,7 +3944,7 @@ iCal export is triggered after 30 seconds of inactivity.
 Enable inline comments in org-export ([[https://gist.github.com/andersjohansson/6baa1e42ad4d7353e125][source]])
 
 #+begin_src emacs-lisp
-(load-file (expand-file-name "local/ox-inline-comments.el" user-emacs-directory))
+(load-file (expand-file-name "user-lisp/ox-inline-comments.el" user-emacs-directory))
 #+end_src
 
 *** Bootstrap
@@ -8742,7 +8742,7 @@ index 10b1afb..0bcbbd5 100644
                 (let ((async-prompt-for-password nil))
                   (async-start `(lambda ()
                                   (setq package-user-dir (expand-file-name "~/.cache/emacs/elpa"))
-                                  (add-to-list 'load-path (expand-file-name "local/" user-emacs-directory))
+                                  (add-to-list 'load-path (expand-file-name "user-lisp/" user-emacs-directory))
                                   (setq load-prefer-newer t)
                                   (package-initialize)
                                   (require 'bibtex-completion-overrides)
@@ -10391,7 +10391,6 @@ emacs -Q -l ~/.config/emacs/mu4e-test.el
 
 #+begin_src emacs-lisp :tangle mu4e-test.el
 (package-initialize)
-(add-to-list 'load-path "~/.config/emacs/local/mu4e/")
 (require 'mu4e)
 
 (setq mu4e-headers-skip-duplicates t
