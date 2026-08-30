@@ -7789,13 +7789,11 @@ title."
 
 ** Markdown
 
-Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob/master/setup-files/setup-markdown.el][source]])
-
 #+begin_src emacs-lisp
-(use-package markdown-mode
-  :preface
-  (defvar malb/markdown.css
-    (expand-file-name "themes/markdown5.css" user-emacs-directory))
+(use-package markdown-ts-mode
+  :ensure nil
+  :preface (defvar malb/markdown.css
+             (expand-file-name "themes/markdown5.css" user-emacs-directory))
   :custom ((markdown-command (s-join " "
                                      `("pandoc"
                                        "--shift-heading-level-by=-1"
@@ -7810,64 +7808,16 @@ Standard setup and quick preview ([[https://github.com/kaushalmodi/.emacs.d/blob
                                        "-c"
                                        ,malb/markdown.css)))
            (markdown-css-paths (list malb/markdown.css))
-           (markdown-enable-math t)
-           (markdown-fontify-code-blocks-natively t))
-  :bind (:map markdown-mode-map
-         ("M-<up>" . markdown-move-up)
-         ("M-<down>" . markdown-move-down)
-         ("C-<tab>" . outline-cycle)
-         ("M-." .  markdown-do))
-  :hook ((markdown-mode . visual-wrap-prefix-mode)
-         (markdown-mode . flyspell-mode)
-         (markdown-mode . outline-minor-mode)
-         (markdown-mode . visual-fill-column-mode))
-  :mode (("\\.md$" . markdown-mode)
-         ("\\.markdown$" . markdown-mode)
-         ("\\.text$" . markdown-mode)
-         ("README\\.md$" . gfm-mode))
-  :config (progn
-            ;; https://github.com/jrblevin/markdown-mode/issues/189
-            (defun malb/markdown-footnote-find-all-marks ()
-              "Collect all footnote mark."
-              (save-excursion
-                (goto-char (point-min))
-                (cl-loop while (re-search-forward "\\[\\([^]]+\\)\\]\\(?:[^:]\\|\\'\\)" nil t)
-                         collect (match-string-no-properties 1))))
-
-            (defun malb/markdown-footnote-find-all-texts ()
-              "Collect all footnote text."
-              (save-excursion
-                (goto-char (point-min))
-                (cl-loop while (re-search-forward "^ \\{0,3\\}\\[\\([^]]+\\)\\]:" nil t)
-                         collect
-                         (let ((id (match-string-no-properties 1))
-                               (line (line-number-at-pos))
-                               (content (buffer-substring-no-properties
-                                         (line-beginning-position) (line-end-position))))
-                           (cons id (list :line line :content content))))))
-
-            (defun malb/markdown-footnote-sort ()
-              "Sort footnote text order by appearance."
-              (interactive)
-              (let* ((marks (malb/markdown-footnote-find-all-marks))
-                     (texts (malb/markdown-footnote-find-all-texts))
-                     (new-lines (sort (mapcar (lambda (e) (plist-get (cdr e) :line)) texts) #'<)))
-                (save-excursion
-                  (cl-loop for mark in marks
-                           for new-line in new-lines
-                           when (assoc-default mark texts)
-                           do
-                           (progn
-                             (goto-char (point-min))
-                             (forward-line (1- new-line))
-                             (delete-region (line-beginning-position) (line-end-position))
-                             (insert (plist-get it :content)))))))))
-#+end_src
-
-The [[https://github.com/Fanael/edit-indirect][edit-indirect]] package is used to edit code blocks in markdown-mode.
-
-#+begin_src emacs-lisp
-(use-package edit-indirect)
+           ;; (markdown-enable-math t)
+           ;; (markdown-fontify-code-blocks-natively t)
+           )
+  :hook ((markdown-ts-mode . visual-wrap-prefix-mode)
+         (markdown-ts-mode . visual-fill-column-mode)
+         (markdown-ts-mode . flyspell-mode))
+  :mode (("\\.md$" . markdown-ts-mode)
+         ("\\.markdown$" . markdown-ts-mode)
+         ("\\.mdx$" . markdown-ts-mode-x))
+  :config (require 'markdown-ts-mode-x))
 #+end_src
 
 *** Pandoc
