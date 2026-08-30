@@ -11814,17 +11814,6 @@ Also https://zck.org/improved-emacs-search
   :config (setq tzc-favourite-time-zones '("Europe/London")))
 #+end_src
 
-* Messages Mode
-
-#+begin_src emacs-lisp
-(use-package simple
-  :ensure nil
-  :bind (("<f6>" .   next-error)
-         ("S-<f6>" . previous-error)
-         :map messages-buffer-mode-map
-         ("/" . isearch-backward)))
-#+end_src
-
 * Proced (Top)
 
 ([[https://laurencewarne.github.io/emacs/programming/2022/12/26/exploring-proced.html][source]])
@@ -11833,16 +11822,15 @@ Also https://zck.org/improved-emacs-search
 (use-package proced
   :ensure nil
   :commands proced
-  :config (progn
-            (setq-default proced-auto-update-flag t)
-            (setq proced-auto-update-interval 1
-                  proced-goal-attribute nil
-                  proced-enable-color-flag t
-                  proced-show-remote-processes t)
-            (add-to-list
-             'proced-format-alist
-             '(custom user pid ppid sess tree pcpu pmem rss start time state (args comm)))
-            (setq-default proced-format 'custom)))
+  :custom ((proced-auto-update-flag t)
+           (proced-auto-update-interval 1)
+           (proced-format 'custom)
+           (proced-goal-attribute nil)
+           (proced-enable-color-flag t)
+           (proced-show-remote-processes t))
+  :config
+  (add-to-list 'proced-format-alist
+               '(custom user pid ppid sess tree pcpu pmem rss start time state (args comm))))
 #+end_src
 
 * Misc
@@ -11880,19 +11868,11 @@ Kill whole line not just content on =C-k=.
 (setq kill-whole-line t)
 #+end_src
 
-In emacs minibuffer prompt, when you press the left arrow key, the cursor will move back all the way
-over the prompt text. This is annoying because user often will hold down ~Alt+b~ to move back by
-word to edit, and when user starts to type something, emacs will say ’This is read-only’. Then you
-have to manually move cursor out of the prompt. You can try it now by calling query-replace or
-shell-command. Here's how to set the cursor not going into prompt. ([[http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html][source]])
+In emacs minibuffer prompt, when you press the left arrow key, the cursor will move back all the way over the prompt text. This is annoying because user often will hold down ~Alt+b~ to move back by word to edit, and when user starts to type something, emacs will say ’This is read-only’. Then you have to manually move cursor out of the prompt. You can try it now by calling query-replace or shell-command. Here's how to set the cursor not going into prompt. ([[http://ergoemacs.org/emacs/emacs_stop_cursor_enter_prompt.html][source]])
 
 #+begin_src emacs-lisp
 (setq minibuffer-prompt-properties
-      (quote
-       (read-only
-        t
-        point-entered minibuffer-avoid-prompt
-        face minibuffer-prompt)))
+      (quote (read-only t point-entered minibuffer-avoid-prompt face minibuffer-prompt)))
 #+end_src
 
 Smoother scrolling.
@@ -11938,8 +11918,7 @@ Diminish ~eldoc-mode~
 When saving a file that starts with =#!=, make it executable.
 
 #+begin_src emacs-lisp
-(add-hook 'after-save-hook
-          'executable-make-buffer-file-executable-if-script-p)
+(add-hook 'after-save-hook 'executable-make-buffer-file-executable-if-script-p)
 #+end_src
 
 =C-u C-SPC C-SCP= pops the mark twice
@@ -12056,10 +12035,19 @@ unset SESSION_MANAGER
 
 #+begin_src emacs-lisp
 (setopt transient-history-file (expand-file-name "transient/history.el" malb/cache-dir)
-      transient-levels-file (expand-file-name "transient/levels.el" malb/cache-dir)
-      transient-values-file (expand-file-name "transient/values.el" malb/cache-dir))
+        transient-levels-file (expand-file-name "transient/levels.el" malb/cache-dir)
+        transient-values-file (expand-file-name "transient/values.el" malb/cache-dir))
 (setopt ido-save-directory-list-file (expand-file-name "ido.last" malb/cache-dir))
 (setopt pcache-directory (expand-file-name "var/pcache/" malb/cache-dir))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package simple
+  :ensure nil
+  :bind (("<f6>" .   next-error)
+         ("S-<f6>" . previous-error)
+         :map messages-buffer-mode-map
+         ("/" . isearch-backward)))
 #+end_src
 
 ** Functions
