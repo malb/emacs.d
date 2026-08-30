@@ -11167,15 +11167,10 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
                 (when tab-created
                   (delete-other-windows))))
 
-
             (defun helm-tramp-open-vterm (path)
               "Open Vterm on remote"
               (let ((server-name (tramp-file-name-host (tramp-dissect-file-name path))))
-                (funcall (malb/make-toggle-shell
-                          (format "*mosh:%s*" server-name)
-                          `(progn
-                             (let ((vterm-shell (format "mosh %s -- tmux a" ,server-name)))
-                               (vterm (format "*mosh:%s*" server-name))))))))
+                (funcall (intern (format "motu/%s" server-name)))))
 
             (setq helm-tramp--source
                   (helm-build-sync-source "Tramp"
