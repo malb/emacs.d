@@ -11967,6 +11967,7 @@ Don’t yank syntax highlighting etc.
 
 #+begin_src emacs-lisp
 (add-to-list 'yank-excluded-properties 'font)
+(add-to-list 'yank-excluded-properties 'face)
 (add-to-list 'yank-excluded-properties 'font-lock-face)
 #+end_src
 
