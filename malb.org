@@ -12623,13 +12623,6 @@ Using [[https://github.com/doublep/logview][logview]] mode.
   :hook (csv-mode . (lambda ()  (call-interactively #'csv-align-fields))))
 #+end_src
 
-** Docker Filers
-
-#+begin_src emacs-lisp
-(use-package dockerfile-mode
-  :mode ("Dockerfile\\." . dockerfile-mode))
-#+end_src
-
 ** eBooks
 
 [[https://github.com/wasamasa/nov.el][Nov.el]] is surprisingly useful.
