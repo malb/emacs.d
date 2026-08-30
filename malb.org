@@ -11682,7 +11682,7 @@ then enter the text in that file's own buffer.
   :config (when (daemonp) (atomic-chrome-start-server)))
 #+end_src
 
-[[https://github.com/xuchunyang/grab-x-link][Grab the link]] in the current browser tab
+[[https://github.com/xuchunyang/grab-x-link][grab the link]] in the current browser tab
 
 *Note.* We adapt it to work on Wayland by using [[https://github.com/jinliu/kdotool][kdotool]] and [[https://sr.ht/~geb/dotool/][dotool]].
 
