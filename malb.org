@@ -5606,22 +5606,12 @@ of the header properties."
 ** General
 *** Tree Sitter
 
-1. Download the grammars from https://github.com/emacs-tree-sitter/tree-sitter-langs/releases
-2. Rename files:
-   #+begin_quote
-   The names of the files are =<LANGUAGE>.so= which is not in keeping with the expected naming style in Emacs. You must first rename them so they’re named =libtree-sitter-<LANGUAGE>.so=. — [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][source]]
-   #+end_quote
-3. Move to Emacs folder
-   #+begin_quote
-  Once they’re named appropriately, put them in the directory called =tree-sitter= in =user-emacs-directory=.  — [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][source]]
-   #+end_quote
-
-#+begin_src emacs-lisp :tangle no
-(treesit-language-available-p 'python)
+#+begin_src emacs-lisp
+(use-package treesit
+  :ensure nil
+  :custom ((treesit-auto-install-grammar 'always)
+           (treesit-enabled-modes t)))
 #+end_src
-
-#+RESULTS:
-: t
 
 *** REPL / Comint
 
