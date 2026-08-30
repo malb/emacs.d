@@ -12473,6 +12473,8 @@ A macro to define tasks:
 
 ** Llama Swap Shell
 
+[[./user-lisp/llama-swap-shell.el][llama-swap-shell]]
+
 #+begin_src emacs-lisp
 (use-package llama-swap-shell
   :ensure nil
