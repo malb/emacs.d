@@ -1,4 +1,4 @@
-;;; comments-bugs-todos.el --- AucTeX style file for comments-bugs-todos.sty -*-emacs-lisp-*-
+;;; comments-bugs-todos.el --- AucTeX style file for comments-bugs-todos.sty -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;;
 ;; Registers the commands defined by comments-bugs-todos.sty, an
 ;; opinionated wrapper around the todonotes package.

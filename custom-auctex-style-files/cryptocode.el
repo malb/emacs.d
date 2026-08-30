@@ -1,4 +1,4 @@
-;;; cryptocode.el --- AucTeX style file for the cryptocode package -*-emacs-lisp-*-
+;;; cryptocode.el --- AucTeX style file for the cryptocode package -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;;
 ;; Registers the environments defined by cryptocode.sty. Most use
 ;; \NewEnviron or \newenvironmentx with optional/required arguments,

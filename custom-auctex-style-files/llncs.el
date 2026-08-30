@@ -1,4 +1,4 @@
-;;; llncs.el --- AucTeX style file for the Springer LNCS class -*-emacs-lisp-*-
+;;; llncs.el --- AucTeX style file for the Springer LNCS class -*- mode: emacs-lisp; lexical-binding: t; -*-
 ;;
 ;; Registers the theorem-like environments defined by llncs.cls, which
 ;; uses the proprietary \spn@wtheorem macro (invisible to AucTeX's
