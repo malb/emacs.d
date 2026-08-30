@@ -12247,6 +12247,25 @@ If i is pressed after, insert the result at the end of region. If r is pressed r
   :config (setq alert-default-style 'libnotify))
 #+end_src
 
+* Pushover
+
+https://pushover.net/
+
+#+begin_src emacs-lisp
+(defun malb/pushover (msg)
+  (require 'url)
+  (let* ((credentials (auth-source-user-and-password "api.pushover.net+emacs"))
+         (app-token (car credentials))
+         (user-key (cadr credentials))
+         (url-request-method "POST")
+         (url-request-extra-headers '(("Content-Type" . "application/x-www-form-urlencoded")))
+         (url-request-data (concat
+                            "token="   (url-encode-url app-token)
+                            "&user="   (url-encode-url user-key)
+                            "&message=" (url-encode-url msg))))
+    (url-retrieve "https://api.pushover.net/1/messages.json" (lambda (&rest args) t))))
+#+end_src
+
 * Encryption
 
 Transparent encryption and decryption.
