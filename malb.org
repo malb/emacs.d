@@ -2031,7 +2031,7 @@ Make command history persistent ([[http://www.wisdomandwonder.com/wordpress/wp-c
 Make sure to auto automatically rescan for imenu change.
 
 #+begin_src emacs-lisp
-(set-default 'imenu-auto-rescan t)
+(setq-default imenu-auto-rescan t)
 #+end_src
 
 [[https://github.com/vspinu/imenu-anywhere][IMenu items for all buffers]] with the same major mode as the current one.
