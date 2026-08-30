@@ -193,13 +193,6 @@ Key chords allow to execute actions by pressing one or two keys really fast. Som
 *Note:* =key-chord= can slow down typing but it works e.g. in =vterm= buffers which is quite handy.
 
 * Window Management
-
-https://github.com/emacs-helm/helm/issues/1976
-
-#+begin_src emacs-lisp
-(setq x-wait-for-event-timeout 0.1) ;; BUG
-#+end_src
-
 ** Splitting
 
 Ilist, dired-sidebar, reftex-toc etc.
