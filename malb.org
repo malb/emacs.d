@@ -11775,16 +11775,17 @@ Create convenience functions to open a shell on my servers and “cd” into the
 
 #+begin_src emacs-lisp
 (dolist (server-name malb/server-names)
-  (fset (intern (format "mosh/%s" server-name))
+  (fset (intern (format "motu/%s" server-name))
         (malb/make-toggle-shell
-         (format "*mosh:%s*" server-name)
+         (format "*motu:%s*" server-name)
          `(progn
-            (let ((vterm-shell (format "mosh %s -- tmux a" ,server-name)))
-              (vterm (format "*mosh:%s*" server-name))))))
+            (require 'vterm)
+            (let ((vterm-shell (format "motu %s" ,server-name)))
+              (vterm (format "*motu:%s*" server-name))))))
 
   (fset (intern (format "eshell/%s" server-name))
         `(lambda ()
-           (insert ,(format "cd /ssh:%s:" server-name))
+           (insert ,(format "cd /rpc:%s:" server-name))
            (eshell-send-input))))
 
 (malb/register-popup-window (rx "*mosh:" (one-or-more any) "*") t)
