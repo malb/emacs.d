@@ -4710,17 +4710,7 @@ Working with source code in org-mode.
                   org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
 
-            (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-
-            ;; https://github.com/jdtsmith/indent-bars?tab=readme-ov-file#org-mode-src-blocks
-            (defun malb/org-simple-python-mode ()
-              (if (string-prefix-p " *org-src-fontification:" (buffer-name))
-	              (delay-mode-hooks (python-ts-mode))
-                (python-ts-mode)))
-            (add-to-list 'org-src-lang-modes '("python" . malb/org-simple-python))
-
-            ;; TODO until org-mode has caught up with auctex 14
-            (add-to-list 'org-src-lang-modes '("latex" . LaTeX))))
+            (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))))
 #+end_src
 
 ([[https://emacs.stackexchange.com/questions/68823/minimal-working-example-of-tikz-to-svg-in-orgmode][source]])
@@ -6343,33 +6333,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 #+begin_src emacs-lisp
 (use-package indent-bars
-  :config (require 'indent-bars-ts)
-  :custom
-  (indent-bars-treesit-support t)
-  (indent-bars-treesit-ignore-blank-lines-types '("module"))
-  (indent-bars-treesit-scope '((python function_definition
-                                       class_definition
-                                       for_statement
-                                       if_statement with_statement
-                                       while_statement)))
-  ;; Note: wrap may not be needed if no-descend-list is enough
-  (indent-bars-treesit-wrap '((python argument_list parameters
-                                      list list_comprehension
-                                      dictionary dictionary_comprehension
-                                      parenthesized_expression subscript))))
-#+end_src
-
-*** COMMENT Aider
-
-([[https://github.com/tninja/aider.el][source]])
-
-#+begin_src emacs-lisp
-(use-package aider
-  :commands aider-transient-menu
-  :config
-  (require 'aider-helm)
-  (setq aider-args '("--env-file" "/home/malb/.aider.conf.env" "--no-check-update"))
-  (aider-magit-setup-transients))
+  :hook ((python-mode yaml-mode yaml-ts-mode) . indent-bars-mode))
 #+end_src
 
 *** ECA
@@ -12610,8 +12574,7 @@ Using [[https://github.com/doublep/logview][logview]] mode.
 ** YaML Files
 
 #+begin_src emacs-lisp
-(use-package yaml-mode
-  :hook ((yaml-mode . indent-bars-mode)))
+(use-package yaml-mode)
 #+end_src
 
 ** CSV
