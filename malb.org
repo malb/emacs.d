@@ -12278,10 +12278,12 @@ Make links in comments and string clickable
 
 * Snapper Timemachine
 
-[[https://github.com/mrBliss/snapshot-timemachine][snapshot-timemachine: Emacs-mode to step through (Btrfs, ZFS, ...) snapshots of files]]
+[[https://github.com/mrBliss/snapshot-timemachine][snapshot-timemachine]]
 
 #+begin_src emacs-lisp
-(use-package snapshot-timemachine :ensure nil)
+(use-package snapshot-timemachine
+  :commands (snapshot-timeline snapshot-timemachine)
+  :ensure nil)
 #+end_src
 
 * LLM
