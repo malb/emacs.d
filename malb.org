@@ -11185,19 +11185,19 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
 
 #+begin_src emacs-lisp
 (use-package ediff
-  :config (progn
-            (setq ediff-window-setup-function 'ediff-setup-windows-plain
-                  ediff-split-window-function 'split-window-horizontally
-                  ediff-diff-options "-w")
-            (setq-default ediff-auto-refine 'on
-                          ediff-highlighting-style 'face
-                          ediff-highlight-all-diffs t)
-            (add-hook 'ediff-after-quit-hook-internal 'tab-bar-history-back)
-
-            (malb/defadvice! malb/ignore-window-parameters (orig-function &rest args)
-              :around #'ediff-regions-wordwise
-              (let ((ignore-window-parameters t))
-                (apply orig-function args)))))
+  :defer t
+  :custom ((ediff-window-setup-function 'ediff-setup-windows-plain)
+           (ediff-split-window-function 'split-window-horizontally)
+           (ediff-diff-options "-w")
+           (ediff-auto-refine 'on)
+           (ediff-highlighting-style 'face)
+           (ediff-highlight-all-diffs t))
+  :hook ((ediff-after-quit-hook-internal . tab-bar-history-back))
+  :config
+  (malb/defadvice! malb/ignore-window-parameters (orig-function &rest args)
+    :around #'ediff-regions-wordwise
+    (let ((ignore-window-parameters t))
+      (apply orig-function args))))
 #+end_src
 
 #+begin_src emacs-lisp
