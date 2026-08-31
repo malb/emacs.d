@@ -6499,7 +6499,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
 (use-package python
   :ensure nil
   :bind (:map python-mode-map
-         ("C-c C-c" . elpy-shell-send-region-or-buffer)
+         ;; ("C-c C-c" . elpy-shell-send-region-or-buffer)
          ("C-c C-r" . pyvenv-restart-python)
          ("<home>"  . malb/beginning-of-line-dwim)
          ("C-<tab>" . bicycle-cycle)
@@ -6518,7 +6518,7 @@ I often restart Python processes (Cython development), so let’s bind a key for
          (python-base-mode . sphinx-doc-mode)
          (python-base-mode . malb/python-mode-hook)
          (python-base-mode . ws-butler-mode)
-         (python-base-mode . malb/elpy-sane-defaults)
+         ;; (python-base-mode . malb/elpy-sane-defaults)
          (inferior-python-mode . malb/company-inferior-python-setup))
   :config (progn
             (setq-default python-indent 4
@@ -6709,7 +6709,7 @@ pip install isort
   :config (setq py-isort-options '("--lines=120")))
 #+end_src
 
-*** ElPy
+*** COMMENT ElPy
 
 #+BEGIN_QUOTE
 [[https://github.com/jorgenschaefer/elpy][Elpy]] is an Emacs package to bring powerful Python editing to Emacs. It combines a number of other packages, both written in Emacs Lisp as well as Python.
