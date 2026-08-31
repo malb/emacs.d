@@ -2038,6 +2038,7 @@ Make sure to auto automatically rescan for imenu change.
 
 #+begin_src emacs-lisp
 (use-package imenu-anywhere
+  :commands (malb/imenu-anywhere)
   :config
   (defun malb/imenu-anywhere (arg)
     "Call `helm-imenu-anywhere'
