@@ -2804,7 +2804,9 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
   :hook ((magit-diff-visit-file . malb/expand-org-mode-entry)
          (magit-status-mode . visual-fill-column-mode))
   :bind (("S-<f7>" . magit-status)
-         ("<f7>" . magit-dispatch))
+         ("<f7>"   . magit-dispatch)
+         :map git-commit-mode-map
+         ("C-c w c" . ellama-generate-commit-message))
   :config (progn
             ;; source: https://www.reddit.com/r/emacs/comments/ayjgpu/magit_orgmode_unfold_containing_headlines_when/
             (defun malb/expand-org-mode-entry ()
@@ -12402,10 +12404,8 @@ A macro to define tasks:
 
 #+begin_src emacs-lisp :noweb no-export
 (use-package ellama
-  :commands (ellama-generate-commit-message)
-  :bind (("C-c w t l"  . malb/translate-llm)
-         :map git-commit-mode-map
-         ("C-c w c" . ellama-generate-commit-message))
+  :commands (ellama-generate-commit-message ellama-stream ellama-instant malb/llm-do-task)
+  :bind (("C-c w t l"  . malb/translate-llm))
   :custom ((ellama-language "German")
            (ellama-long-lines-length 1000000)
            (ellama-fill-paragraphs nil)
