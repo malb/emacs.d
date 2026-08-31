@@ -3670,200 +3670,201 @@ iCal export is triggered after 30 seconds of inactivity.
 (use-package ox-latex
   :ensure nil
   :defer t
-  :config (progn
-            (add-to-list 'org-latex-packages-alist '("" "listings"))
-            (add-to-list 'org-latex-packages-alist '("" "xcolor"))
-            (add-to-list 'org-latex-packages-alist '("" "amssymb"))
-            (add-to-list 'org-latex-packages-alist '("" "amsmath"))
-            (add-to-list 'org-latex-packages-alist '("" "amsthm"))
-            (add-to-list 'org-latex-packages-alist '("" "gensymb"))
-            (add-to-list 'org-latex-packages-alist '("" "nicefrac"))
-            (add-to-list 'org-latex-packages-alist '("" "units"))
-            (add-to-list 'org-latex-packages-alist '("" "xspace"))
-            (add-to-list 'org-latex-packages-alist '("," "babel"))
-            (add-to-list 'org-latex-packages-alist '("," "stmaryrd"))
-            (add-to-list 'org-latex-packages-alist '("capitalize" "cleveref"))
-            ;; BUG: https://github.com/jbezos/enumitem/issues/55
-            ;; (add-to-list 'org-latex-packages-alist '("inline" "enumitem"))
-            (add-to-list 'org-latex-packages-alist (list (s-join "," '("notions"
-                                                                       "operators"
-                                                                       "sets"
-                                                                       "keys"
-                                                                       "ff"
-                                                                       "mm"
-                                                                       "adversary"
-                                                                       "primitives"
-                                                                       "complexity"
-                                                                       "asymptotics"
-                                                                       "lambda"
-                                                                       "landau"
-                                                                       "advantage"))
-                                                         "cryptocode"))
-            (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
-            (add-to-list 'org-latex-packages-alist '("" "booktabs"))
-            (add-to-list 'org-latex-packages-alist '("color=cyan!0!magenta!4!yellow!16" "todonotes") t)
+  :config
+  (require 's)
+  (add-to-list 'org-latex-packages-alist '("" "listings"))
+  (add-to-list 'org-latex-packages-alist '("" "xcolor"))
+  (add-to-list 'org-latex-packages-alist '("" "amssymb"))
+  (add-to-list 'org-latex-packages-alist '("" "amsmath"))
+  (add-to-list 'org-latex-packages-alist '("" "amsthm"))
+  (add-to-list 'org-latex-packages-alist '("" "gensymb"))
+  (add-to-list 'org-latex-packages-alist '("" "nicefrac"))
+  (add-to-list 'org-latex-packages-alist '("" "units"))
+  (add-to-list 'org-latex-packages-alist '("" "xspace"))
+  (add-to-list 'org-latex-packages-alist '("," "babel"))
+  (add-to-list 'org-latex-packages-alist '("," "stmaryrd"))
+  (add-to-list 'org-latex-packages-alist '("capitalize" "cleveref"))
+  ;; BUG: https://github.com/jbezos/enumitem/issues/55
+  ;; (add-to-list 'org-latex-packages-alist '("inline" "enumitem"))
+  (add-to-list 'org-latex-packages-alist (list (s-join "," '("notions"
+                                                             "operators"
+                                                             "sets"
+                                                             "keys"
+                                                             "ff"
+                                                             "mm"
+                                                             "adversary"
+                                                             "primitives"
+                                                             "complexity"
+                                                             "asymptotics"
+                                                             "lambda"
+                                                             "landau"
+                                                             "advantage"))
+                                               "cryptocode"))
+  (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
+  (add-to-list 'org-latex-packages-alist '("" "booktabs"))
+  (add-to-list 'org-latex-packages-alist '("color=cyan!0!magenta!4!yellow!16" "todonotes") t)
 
 
-            (setq org-latex-src-block-backend 'listings
-                  org-latex-compiler "lualatex"
-                  org-latex-prefer-user-labels t
-                  org-latex-caption-above nil
-                  org-latex-hyperref-template  (concat "\\hypersetup{\n"
-                                                       "pdfauthor={%a},\n"
-                                                       "pdftitle={%t},\n"
-                                                       "pdfkeywords={%k},\n"
-                                                       "pdfsubject={%d},\n"
-                                                       "pdfcreator={%c},\n"
-                                                       "pdflang={%L},\n"
-                                                       "colorlinks,\n"
-                                                       "citecolor=gray,\n"
-                                                       "filecolor=gray,\n"
-                                                       "linkcolor=gray,\n"
-                                                       "urlcolor=gray\n"
-                                                       "}\n"))
+  (setq org-latex-src-block-backend 'listings
+        org-latex-compiler "lualatex"
+        org-latex-prefer-user-labels t
+        org-latex-caption-above nil
+        org-latex-hyperref-template  (concat "\\hypersetup{\n"
+                                             "pdfauthor={%a},\n"
+                                             "pdftitle={%t},\n"
+                                             "pdfkeywords={%k},\n"
+                                             "pdfsubject={%d},\n"
+                                             "pdfcreator={%c},\n"
+                                             "pdflang={%L},\n"
+                                             "colorlinks,\n"
+                                             "citecolor=gray,\n"
+                                             "filecolor=gray,\n"
+                                             "linkcolor=gray,\n"
+                                             "urlcolor=gray\n"
+                                             "}\n"))
 
-            (defun malb/set-org-latex-class (name lines hierarchies)
-              (let* ((lines (s-join "\n" lines))
-                     (entry (append (list name lines)
-                                    hierarchies)))
-                (setq org-latex-classes
-                      (cons entry (remove (assoc name org-latex-classes) org-latex-classes))) ))
+  (defun malb/set-org-latex-class (name lines hierarchies)
+    (let* ((lines (s-join "\n" lines))
+           (entry (append (list name lines)
+                          hierarchies)))
+      (setq org-latex-classes
+            (cons entry (remove (assoc name org-latex-classes) org-latex-classes))) ))
 
-            (defconst malb/org-latex-default
-              (with-temp-buffer
-                (insert-file-contents
-                 (expand-file-name "article-header.tex" user-emacs-directory))
-                (buffer-string)))
+  (defconst malb/org-latex-default
+    (with-temp-buffer
+      (insert-file-contents
+       (expand-file-name "article-header.tex" user-emacs-directory))
+      (buffer-string)))
 
-            (defconst malb/tufte-fix
-              (concat "\\renewcommand{\\textls}[2][5]{\\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup}\n"
-                      "\\usepackage{fontspec}\n"
-                      "\\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}\n"
-                      "\\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}\n"
-                      "\\renewcommand{\\allcaps}[1]{\\textls[15]{\\MakeTextUppercase{#1}}}\n"
-                      "\\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}\n"
-                      "\\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}\n"
-                      "\n"))
+  (defconst malb/tufte-fix
+    (concat "\\renewcommand{\\textls}[2][5]{\\begingroup\\addfontfeatures{LetterSpace=#1}#2\\endgroup}\n"
+            "\\usepackage{fontspec}\n"
+            "\\renewcommand{\\allcapsspacing}[1]{\\textls[15]{#1}}\n"
+            "\\renewcommand{\\smallcapsspacing}[1]{\\textls[10]{#1}}\n"
+            "\\renewcommand{\\allcaps}[1]{\\textls[15]{\\MakeTextUppercase{#1}}}\n"
+            "\\renewcommand{\\smallcaps}[1]{\\smallcapsspacing{\\scshape\\MakeTextLowercase{#1}}}\n"
+            "\\renewcommand{\\textsc}[1]{\\smallcapsspacing{\\textsmallcaps{#1}}}\n"
+            "\n"))
 
-            (defconst malb/tufte-listings
-              (concat "\\lstset{showstringspaces=false,\n"
-                      "  aboveskip=0.75em,\n"
-                      "  basicstyle=\\footnotesize\\ttfamily,\n"
-                      "  keywordstyle=\\bfseries\\color{gray!40!black},\n"
-                      "  commentstyle=\\itshape\\color{gray!140!black},\n"
-                      "  identifierstyle=\\color{gray!40!black},\n"
-                      "  stringstyle=\\color{gray},\n"
-                      "  backgroundcolor=\\color{gray!190!black},\n"
-                      "  frame=none,\n"
-                      "  xleftmargin=\\parindent\n"
-                      "}\n"
-                      "\n"))
+  (defconst malb/tufte-listings
+    (concat "\\lstset{showstringspaces=false,\n"
+            "  aboveskip=0.75em,\n"
+            "  basicstyle=\\footnotesize\\ttfamily,\n"
+            "  keywordstyle=\\bfseries\\color{gray!40!black},\n"
+            "  commentstyle=\\itshape\\color{gray!140!black},\n"
+            "  identifierstyle=\\color{gray!40!black},\n"
+            "  stringstyle=\\color{gray},\n"
+            "  backgroundcolor=\\color{gray!190!black},\n"
+            "  frame=none,\n"
+            "  xleftmargin=\\parindent\n"
+            "}\n"
+            "\n"))
 
-            (malb/set-org-latex-class "tufte-book-noparts"
-                                      `("\\documentclass{tufte-book}"
-                                        "\\usepackage{fontspec}"
-                                        "[DEFAULT-PACKAGES]"
-                                        "[PACKAGES]"
-                                        ,malb/org-latex-default
-                                        ,malb/tufte-fix
-                                        ,malb/tufte-listings
-                                        "[EXTRA]")
-                                      '(("\\chapter{%s}" . "\\chapter*{%s}")
-                                        ("\\section{%s}" . "\\section*{%s}")
-                                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                                        ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+  (malb/set-org-latex-class "tufte-book-noparts"
+                            `("\\documentclass{tufte-book}"
+                              "\\usepackage{fontspec}"
+                              "[DEFAULT-PACKAGES]"
+                              "[PACKAGES]"
+                              ,malb/org-latex-default
+                              ,malb/tufte-fix
+                              ,malb/tufte-listings
+                              "[EXTRA]")
+                            '(("\\chapter{%s}" . "\\chapter*{%s}")
+                              ("\\section{%s}" . "\\section*{%s}")
+                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                              ("\\paragraph{%s}" . "\\paragraph*{%s}")))
 
-            (malb/set-org-latex-class "tufte-book"
-                                      `("\\documentclass{tufte-book}"
-                                        "\\usepackage{fontspec}"
-                                        "[DEFAULT-PACKAGES]"
-                                        "[PACKAGES]"
-                                        ,malb/org-latex-default
-                                        ,malb/tufte-fix
-                                        ,malb/tufte-listings
-                                        "[EXTRA]")
-                                      '(("\\part{%s}" . "\\part*{%s}")
-                                        ("\\chapter{%s}" . "\\chapter*{%s}")
-                                        ("\\section{%s}" . "\\section*{%s}")
-                                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                                        ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+  (malb/set-org-latex-class "tufte-book"
+                            `("\\documentclass{tufte-book}"
+                              "\\usepackage{fontspec}"
+                              "[DEFAULT-PACKAGES]"
+                              "[PACKAGES]"
+                              ,malb/org-latex-default
+                              ,malb/tufte-fix
+                              ,malb/tufte-listings
+                              "[EXTRA]")
+                            '(("\\part{%s}" . "\\part*{%s}")
+                              ("\\chapter{%s}" . "\\chapter*{%s}")
+                              ("\\section{%s}" . "\\section*{%s}")
+                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                              ("\\paragraph{%s}" . "\\paragraph*{%s}")))
 
-            (malb/set-org-latex-class "handout"
-                                      `("\\documentclass{tufte-handout}"
-                                        "\\usepackage{fontspec}"
-                                        "[DEFAULT-PACKAGES]"
-                                        "[PACKAGES]"
-                                        ,malb/org-latex-default
-                                        ,malb/tufte-fix
-                                        ,malb/tufte-listings
-                                        "[EXTRA]")
-                                      '(("\\section{%s}" . "\\section*{%s}")
-                                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (malb/set-org-latex-class "handout"
+                            `("\\documentclass{tufte-handout}"
+                              "\\usepackage{fontspec}"
+                              "[DEFAULT-PACKAGES]"
+                              "[PACKAGES]"
+                              ,malb/org-latex-default
+                              ,malb/tufte-fix
+                              ,malb/tufte-listings
+                              "[EXTRA]")
+                            '(("\\section{%s}" . "\\section*{%s}")
+                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                              ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-            (malb/set-org-latex-class "report"
-                                      `("\\documentclass{report}"
-                                        "[DEFAULT-PACKAGES]"
-                                        "[PACKAGES]"
-                                        "\\usepackage{fontspec}"
-                                        "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}"
-                                        "\\usepackage[hang,flushmargin]{footmisc}"
-                                        "\\parskip 1em"
-                                        "\\parindent 0pt"
-                                        "\\linespread{1.25}"
-                                        ,malb/org-latex-default
-                                        "[EXTRA]")
-                                      '(("\\chapter{%s}" . "\\chapter*{%s}")
-                                        ("\\section{%s}" . "\\section*{%s}")
-                                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-            ;; backward compatibility
-            (add-to-list 'org-latex-classes (cons "org-report" (cdr (assoc "report" org-latex-classes))))
+  (malb/set-org-latex-class "report"
+                            `("\\documentclass{report}"
+                              "[DEFAULT-PACKAGES]"
+                              "[PACKAGES]"
+                              "\\usepackage{fontspec}"
+                              "\\usepackage[a4paper,includeheadfoot,margin=2.54cm]{geometry}"
+                              "\\usepackage[hang,flushmargin]{footmisc}"
+                              "\\parskip 1em"
+                              "\\parindent 0pt"
+                              "\\linespread{1.25}"
+                              ,malb/org-latex-default
+                              "[EXTRA]")
+                            '(("\\chapter{%s}" . "\\chapter*{%s}")
+                              ("\\section{%s}" . "\\section*{%s}")
+                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                              ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  ;; backward compatibility
+  (add-to-list 'org-latex-classes (cons "org-report" (cdr (assoc "report" org-latex-classes))))
 
-            (malb/set-org-latex-class "article"
-                                      `("\\documentclass{article}"
-                                        "[DEFAULT-PACKAGES]"
-                                        "[PACKAGES]"
-                                        "\\usepackage{fontspec}"
-                                        "\\usepackage[a4paper,includeheadfoot,margin=3cm]{geometry}"
-                                        "\\usepackage[hang,flushmargin]{footmisc}"
-                                        "\\parskip 1em"
-                                        "\\parindent 0pt"
-                                        ,malb/org-latex-default
-                                        "[EXTRA]")
-                                      '(("\\section{%s}" . "\\section*{%s}")
-                                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (malb/set-org-latex-class "article"
+                            `("\\documentclass{article}"
+                              "[DEFAULT-PACKAGES]"
+                              "[PACKAGES]"
+                              "\\usepackage{fontspec}"
+                              "\\usepackage[a4paper,includeheadfoot,margin=3cm]{geometry}"
+                              "\\usepackage[hang,flushmargin]{footmisc}"
+                              "\\parskip 1em"
+                              "\\parindent 0pt"
+                              ,malb/org-latex-default
+                              "[EXTRA]")
+                            '(("\\section{%s}" . "\\section*{%s}")
+                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                              ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-            (malb/set-org-latex-class "plain-article"
-                                      `("\\documentclass[11pt]{article}")
-                                      '(("\\section{%s}" . "\\section*{%s}")
-                                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-            (malb/set-org-latex-class "plain-report"
-                                      `("\\documentclass[11pt]{report}")
-                                      '(("\\part{%s}" . "\\part*{%s}")
-                                        ("\\chapter{%s}" . "\\chapter*{%s}")
-                                        ("\\section{%s}" . "\\section*{%s}")
-                                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
-            (malb/set-org-latex-class "plain-book"
-                                      `("\\documentclass[11pt]{book}")
-                                      '(("\\part{%s}" . "\\part*{%s}")
-                                        ("\\chapter{%s}" . "\\chapter*{%s}")
-                                        ("\\section{%s}" . "\\section*{%s}")
-                                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+  (malb/set-org-latex-class "plain-article"
+                            `("\\documentclass[11pt]{article}")
+                            '(("\\section{%s}" . "\\section*{%s}")
+                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                              ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                              ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (malb/set-org-latex-class "plain-report"
+                            `("\\documentclass[11pt]{report}")
+                            '(("\\part{%s}" . "\\part*{%s}")
+                              ("\\chapter{%s}" . "\\chapter*{%s}")
+                              ("\\section{%s}" . "\\section*{%s}")
+                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+  (malb/set-org-latex-class "plain-book"
+                            `("\\documentclass[11pt]{book}")
+                            '(("\\part{%s}" . "\\part*{%s}")
+                              ("\\chapter{%s}" . "\\chapter*{%s}")
+                              ("\\section{%s}" . "\\section*{%s}")
+                              ("\\subsection{%s}" . "\\subsection*{%s}")
+                              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
 
-            ;; backward compatibility
-            (add-to-list 'org-latex-classes (cons "org-article" (cdr (assoc "article" org-latex-classes))))))
+  ;; backward compatibility
+  (add-to-list 'org-latex-classes (cons "org-article" (cdr (assoc "article" org-latex-classes)))))
 
 (use-package ox-koma-letter
   :ensure org
