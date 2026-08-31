@@ -6080,12 +6080,6 @@ This packages tries to smartly go to definition leveraging several methods to do
       gdb-many-windows t)
 #+end_src
 
-*** CamelCase
-
-#+begin_src emacs-lisp
-(use-package string-inflection)
-#+end_src
-
 *** Code Formatting
 
 [[https://github.com/radian-software/apheleia][apheleia]]
