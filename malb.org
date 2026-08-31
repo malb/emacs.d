@@ -8798,15 +8798,17 @@ I like the interface of [[https://github.com/cpitclaudel/biblio.el][biblio]] bet
 
   #+begin_src emacs-lisp
 (use-package biblio
-  :config (setq biblio-bibtex-use-autokey t))
+  :defer t
+  :custom ((biblio-bibtex-use-autokey t)))
   #+end_src
 
 *[[https://github.com/cute-jumper/gscholar-bibtex][gscholar-bibtex]] grabs BibTeX entries from from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP.*
 
   #+begin_src emacs-lisp
 (use-package gscholar-bibtex
-  :config
-  (setq gscholar-bibtex-database-file (expand-file-name "common-latex/local.bib" malb/projects-dir)))
+  :defer t
+  :custom ((gscholar-bibtex-database-file
+            (expand-file-name "common-latex/local.bib" malb/projects-dir))))
   #+end_src
 
 *** Org Cite
