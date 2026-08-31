@@ -2611,7 +2611,8 @@ Refine provides a convenient UI for editing variables. Refine is not for editing
 #+END_QUOTE
 
 #+begin_src emacs-lisp
-(use-package refine)
+(use-package refine
+  :defer t)
 #+end_src
 
 * Projects (Projectile)
@@ -2869,7 +2870,8 @@ We enable [[https://github.com/magit/magit-svn][magit-svn]] whenever necessary.
 I don’t often use [[https://github.com/pidu/git-timemachine#start-of-content][git-timemachine]] but when I do …
 
 #+begin_src emacs-lisp
-(use-package git-timemachine)
+(use-package git-timemachine
+  :defer t)
 #+end_src
 
 ** Git Link
@@ -2891,7 +2893,8 @@ functions that create URLs for files and commits in GitHub/Bitbucket/GitLab/... 
 [[https://github.com/ryuslash/git-auto-commit-mode][git-auto-commit-mode]] for committing … automatically.
 
 #+begin_src emacs-lisp
-(use-package git-auto-commit-mode)
+(use-package git-auto-commit-mode
+  :defer t)
 #+end_src
 
 ** Git Annex
