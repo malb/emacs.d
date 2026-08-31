@@ -5439,7 +5439,7 @@ to be `:text'.
 
 #+begin_src emacs-lisp
 (use-package eshell-git-prompt
-  :config (progn (eshell-git-prompt-use-theme "powerline")))
+  :hook (eshell-mode . (lambda () (eshell-git-prompt-use-theme "powerline"))))
 #+end_src
 
 *** Tips
