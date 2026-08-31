@@ -7766,7 +7766,7 @@ title."
                                        "-c"
                                        ,malb/markdown.css)))
            (markdown-css-paths (list malb/markdown.css))
-           (markdown-ts-default-converter (html . pandoc)))
+           (markdown-ts-default-converter '(html . pandoc)))
   :hook ((markdown-ts-mode . visual-wrap-prefix-mode)
          (markdown-ts-mode . visual-fill-column-mode)
          (markdown-ts-view-mode . visual-line-mode)
