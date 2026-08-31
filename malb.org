@@ -3058,7 +3058,6 @@ See [[http://orgmode.org/guide/Introduction.html][here]] for an introduction to 
 #+begin_src emacs-lisp
 (use-package org-agenda
   :ensure nil
-  :defer nil
   :after org
   :bind (:map org-agenda-keymap
          ("C-_" . org-agenda-undo))
@@ -4819,7 +4818,6 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 (use-package org-crypt
   :ensure nil
   :after org
-  :defer nil
   :config (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance '("crypt")))
 #+end_src
@@ -8953,7 +8951,7 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
 #+begin_src emacs-lisp
 (use-package mu4e-headers
   :ensure nil
-  :after all-the-icons
+  :after (mu4e all-the-icons)
   :config (setq mu4e-use-fancy-chars t
                 mu4e-headers-draft-mark     '("D" . "✎ ") ; draft
                 mu4e-headers-new-mark       '("N" . "")
