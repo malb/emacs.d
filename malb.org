@@ -7783,70 +7783,71 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 
 #+begin_src emacs-lisp
 (use-package pandoc-mode
-  :config (progn
-            (add-hook 'markdown-mode-hook #'conditionally-turn-on-pandoc)
-            (add-hook 'org-mode-hook #'conditionally-turn-on-pandoc)
-            (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings)
-            (add-to-list 'pandoc-major-modes '(LaTeX-mode . "latex"))
-            (add-to-list 'pandoc-major-modes '(mu4e-view-mode . "markdown"))
-            (add-to-list 'pandoc-major-modes '(mu4e-compose-mode . "markdown"))
+  :bind ("M-W" . malb/copy-as)
+  :commands (malb/copy-as-org malb/copy-as-latex)
+  :hook ((markdown-mode-hook . conditionally-turn-on-pandoc)
+         (org-mode-hook      . conditionally-turn-on-pandoc)
+         (pandoc-mode-hook   . pandoc-load-default-settings))
+  :config
 
-            (defun malb/pandoc-convert (writer &optional buffer beginning end reader)
-              (let* ((buffer (or buffer (current-buffer)))
-                     (pandoc-buffer (get-buffer-create pandoc--output-buffer-name))
-                     (begginning (or beginning (point-min)))
-                     (end (or end (point-max)))
-                     (reader (or reader (cdr (assq major-mode pandoc-major-modes)) "markdown"))
-                     text)
+  (add-to-list 'pandoc-major-modes '(LaTeX-mode . "latex"))
+  (add-to-list 'pandoc-major-modes '(mu4e-view-mode . "markdown"))
+  (add-to-list 'pandoc-major-modes '(mu4e-compose-mode . "markdown"))
 
-                (with-current-buffer pandoc-buffer
-                  (erase-buffer))
-                (with-current-buffer buffer
-                  (apply #'call-process-region
-                         `(,beginning ,end "pandoc" nil ,pandoc-buffer t
-                                      "--read"
-                                      ,reader
-                                      "--write"
-                                      ,writer
-                                      ,@(when (s-equals-p writer "latex") '("--listings"))
-                                      "--quiet"
-                                      "--wrap=none")))
+  (defun malb/pandoc-convert (writer &optional buffer beginning end reader)
+    (let* ((buffer (or buffer (current-buffer)))
+           (pandoc-buffer (get-buffer-create pandoc--output-buffer-name))
+           (begginning (or beginning (point-min)))
+           (end (or end (point-max)))
+           (reader (or reader (cdr (assq major-mode pandoc-major-modes)) "markdown"))
+           text)
 
-                (with-current-buffer pandoc-buffer
-                  (setq text (buffer-string)))
-                text))
+      (with-current-buffer pandoc-buffer
+        (erase-buffer))
+      (with-current-buffer buffer
+        (apply #'call-process-region
+               `(,beginning ,end "pandoc" nil ,pandoc-buffer t
+                            "--read"
+                            ,reader
+                            "--write"
+                            ,writer
+                            ,@(when (s-equals-p writer "latex") '("--listings"))
+                            "--quiet"
+                            "--wrap=none")))
 
-            (defun malb/-copy-as-from-org (backend)
-              (let ((beg (if (org-region-active-p) (region-beginning) (point-min)))
-                    (end (if (org-region-active-p) (region-end) (point-max))))
-                (kill-new (org-export-string-as (buffer-substring beg end) backend t))
-                (deactivate-mark)))
+      (with-current-buffer pandoc-buffer
+        (setq text (buffer-string)))
+      text))
 
-            (defun malb/-copy-as (what)
-              (kill-new (malb/pandoc-convert what
-                                             (current-buffer)
-                                             (if (use-region-p) (region-beginning) (point-min))
-                                             (if (use-region-p) (region-end) (point-max))))
-              (deactivate-mark))
+  (defun malb/-copy-as-from-org (backend)
+    (let ((beg (if (org-region-active-p) (region-beginning) (point-min)))
+          (end (if (org-region-active-p) (region-end) (point-max))))
+      (kill-new (org-export-string-as (buffer-substring beg end) backend t))
+      (deactivate-mark)))
+
+  (defun malb/-copy-as (what)
+    (kill-new (malb/pandoc-convert what
+                                   (current-buffer)
+                                   (if (use-region-p) (region-beginning) (point-min))
+                                   (if (use-region-p) (region-end) (point-max))))
+    (deactivate-mark))
 
 
-            (defun malb/copy-as (arg)
-              (interactive "P")
-              (cond (arg (malb/-copy-as (completing-read
-                                         "Output format to use: "
-                                         (mapcar 'car pandoc-output-format-extensions) nil t)))
-                    ((derived-mode-p 'org-mode) (malb/-copy-as-from-org 'md))
-                    (t (malb/-copy-as "org"))))
+  (defun malb/copy-as (arg)
+    (interactive "P")
+    (cond (arg (malb/-copy-as (completing-read
+                               "Output format to use: "
+                               (mapcar 'car pandoc-output-format-extensions) nil t)))
+          ((derived-mode-p 'org-mode) (malb/-copy-as-from-org 'md))
+          (t (malb/-copy-as "org"))))
 
-            (defun malb/copy-as-latex ()
-              (interactive)
-              (malb/-copy-as "latex"))
+  (defun malb/copy-as-latex ()
+    (interactive)
+    (malb/-copy-as "latex"))
 
-            (defun malb/copy-as-org ()
-              (interactive)
-              (malb/-copy-as "org"))
-
-            (bind-key "M-W" #'malb/copy-as)))
+  (defun malb/copy-as-org ()
+    (interactive)
+    (malb/-copy-as "org")))
 #+end_src
 
 ** ReST
