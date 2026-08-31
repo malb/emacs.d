@@ -12039,6 +12039,7 @@ Use ~(copyright-update)~ to update copyright info
 
 #+begin_src emacs-lisp
 (put 'narrow-to-region 'disabled nil)
+(put 'LaTeX-narrow-to-environment 'disabled nil)
 (put 'list-timers 'disabled nil)
 #+end_src
 
