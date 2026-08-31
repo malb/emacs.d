@@ -6677,32 +6677,6 @@ INDENT is the current indentation level of the Python function."
   :after (cython-mode flycheck))
 #+end_src
 
-*** Managing Imports
-
-[[https://github.com/anachronic/importmagic.el][importmagic]] tries to guess how to add missing imports. You need to install =importmagic= and =epc= for it work.
-
-#+begin_src shell :tangle no
-pip install importmagic epc
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package importmagic
-  :blackout importmagic-mode
-  :commands importmagic-mode
-  :config (setq importmagic-python-interpreter "python"))
-#+end_src
-
-[[https://github.com/timothycrosley/isort][isort]] sorts Python imports. You need to install =isort= first.
-
-#+begin_example shell :tangle no
-pip install isort
-#+end_example
-
-#+begin_src emacs-lisp
-(use-package py-isort
-  :config (setq py-isort-options '("--lines=120")))
-#+end_src
-
 *** COMMENT ElPy
 
 #+BEGIN_QUOTE
