@@ -7781,7 +7781,32 @@ title."
   :config (require 'markdown-ts-mode-x))
 #+end_src
 
-*** Pandoc
+[[https://github.com/agzam/prisma.el][agzam/prisma.el: gfm->org-mode->gfm]]
+
+- =primsa-convert=
+
+  #+begin_quote
+Prisma builds a render map during conversion that tracks which source AST node produced which region of mirror text. On commit, it text-diffs the mirror (before vs after your edits), identifies the affected source nodes, re-parses just those regions, and patches them back. Unchanged regions - tables, code blocks, links, metadata - pass through untouched.
+
+This is not Pandoc. There is no whole-document re-serialization, no normalization, no lost formatting. Format-specific constructs with no target equivalent pass through as literal text and round-trip verbatim.
+  #+end_quote
+
+- =prisma-yank-mode=
+
+  #+begin_quote
+A kill remembers the markup format of the buffer it came from. Paste it into a buffer of the other format and it arrives converted - Markdown copied into an Org buffer lands as Org, Org copied into a Markdown buffer lands as Markdown. Kills from anywhere else, and pastes into anything but Org and Markdown, are untouched.
+  #+end_quote
+
+#+begin_src emacs-lisp
+(use-package prisma
+  :commands (prisma-yank-mode prisma-convert)
+  :defer nil
+  :config (prisma-yank-mode 1)
+  :vc (:url "https://github.com/agzam/prisma.el"
+       :rev "v1.2.0"))
+#+end_src
+
+** Pandoc
 
 Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http://johnmacfarlane.net/pandoc/][pandoc]] for converting markdown to everything else.
 
