@@ -2479,7 +2479,7 @@ See [[http://emacsrocks.com/e09.html][Emacs Rocks #9]] for an intro to [[https:/
 
 #+begin_src emacs-lisp
 (use-package expand-region
-  :commands (er/expand-region)
+  :commands (er/expand-region er/mark-inside-pairs er/mark-outside-pairs)
   :init (setq expand-region-fast-keys-enabled nil)
   :config (progn
             (malb/defadvice! malb/er-add-text-mode-expansions (old-function &rest args)
