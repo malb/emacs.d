@@ -7501,6 +7501,7 @@ With ARG, OCR entire document instead."
 #+end_src
 
 #+begin_src python :tangle /home/malb/.local/bin/ocr-vlm.py  :shebang "#!/usr/bin/env python"
+#!/usr/bin/env python
 # DO NOT EDIT, EDIT malb.org INSTEAD
 
 from pathlib import Path
@@ -7509,9 +7510,11 @@ import base64
 import os
 import re
 import requests
+import hashlib
 import subprocess
 import sys
 import tempfile
+
 
 def process_pdf(filename, tmpdir, page_range=None):
     """
@@ -7532,7 +7535,7 @@ def process_pdf(filename, tmpdir, page_range=None):
             print("Invalid page range. Use -p X-Y (e.g, -p 1-5)", file=sys.stderr)
             sys.exit(1)
 
-    cmd = ["pdftocairo", "-jpeg", "-r", "300", filename]
+    cmd = ["pdftocairo", "-jpeg", "-r", "200", filename]
     if page_start is not None and page_end is not None:
         cmd.extend(["-f", str(page_start), "-l", str(page_end)])
 
@@ -7541,7 +7544,9 @@ def process_pdf(filename, tmpdir, page_range=None):
     try:
         subprocess.run(cmd, check=True)
     except subprocess.CalledProcessError as e:
-        print(f"Error: pdftocairo failed with exit code {e.returncode}", file=sys.stderr)
+        print(
+            f"Error: pdftocairo failed with exit code {e.returncode}", file=sys.stderr
+        )
         sys.exit(1)
 
     image_files = sorted(Path(tmpdir).glob("*.jpg"))
@@ -7551,6 +7556,7 @@ def process_pdf(filename, tmpdir, page_range=None):
         sys.exit(1)
 
     return image_files
+
 
 def ocr_image(image_filename, model="ocr"):
     """
@@ -7564,23 +7570,31 @@ def ocr_image(image_filename, model="ocr"):
     prompt = ""
 
     ext = Path(image_filename).suffix.lower()
-    mime_type = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}.get(ext, "image/png")
+    mime_type = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg"}.get(
+        ext, "image/png"
+    )
 
     with open(image_filename, "rb") as img_file:
         b64_data = base64.b64encode(img_file.read()).decode("utf-8")
 
     content = [
         {"type": "text", "text": prompt},
-        {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{b64_data}"}},
+        {
+            "type": "image_url",
+            "image_url": {"url": f"data:{mime_type};base64,{b64_data}"},
+        },
     ]
 
     response = requests.post(
         f"http://localhost:38080/v1/chat/completions",
         headers={"Content-Type": "application/json"},
-        json={"model": model,
-              "messages": [
-                  {"role": "system", "content": "You are a helpful assistant."},
-                  {"role": "user", "content": content}]},
+        json={
+            "model": model,
+            "messages": [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": content},
+            ],
+        },
     )
     response = response.json()
     content = response["choices"][0]["message"]["content"]
@@ -7588,12 +7602,22 @@ def ocr_image(image_filename, model="ocr"):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Convert PDF or images (PNG, JPEG) to Markdown.")
+    parser = argparse.ArgumentParser(
+        description="Convert PDF or images (PNG, JPEG) to Markdown."
+    )
     parser.add_argument("filename", help="Input PDF file")
-    parser.add_argument("-p", "--page-range", dest="page_range",
-                        help="Page range in format X-Y (e., 1-5)")
-    parser.add_argument("-m", "--model", dest="model", default="ocr",
-                        help="A visual language model")
+    parser.add_argument(
+        "-p",
+        "--page-range",
+        dest="page_range",
+        help="Page range in format X-Y (e., 1-5)",
+    )
+    parser.add_argument(
+        "-m", "--model", dest="model", default="ocr", help="A visual language model"
+    )
+    parser.add_argument(
+        "--cached", action="store_true", help="Use cached output if available"
+    )
     return parser.parse_args()
 
 
@@ -7604,6 +7628,15 @@ def main():
         print(f"Error: File '{args.filename}' not found", file=sys.stderr)
         sys.exit(1)
 
+    cache_path = None
+    if args.cached:
+        stem = Path(args.filename).stem
+        sha256 = hashlib.sha256(open(args.filename, "rb").read()).hexdigest()
+        cache_path = Path("/tmp") / f"ocr-vlm-{stem}-{sha256}.md"
+        if cache_path.exists():
+            print(cache_path.read_text(), end="")
+            return
+
     with tempfile.TemporaryDirectory() as tmpdir:
         if args.filename.endswith(".pdf"):
             image_files = process_pdf(args.filename, tmpdir, args.page_range)
@@ -7613,15 +7646,26 @@ def main():
             print(f"Error: File '{args.filename}' not supported", file=sys.stderr)
             sys.exit(1)
 
+        output_parts = []
         for i, image_file in enumerate(image_files):
             try:
                 result = ocr_image(str(image_file), model=args.model)
                 print(result)
-                if i < len(image_files)-1:
+                output_parts.append(result)
+                output_parts.append("\n")
+                if i < len(image_files) - 1:
                     print("\f")  # Form feed character for page break
+                    output_parts.append("\f\n")
             except subprocess.CalledProcessError as e:
-                print(f"Error: ocr.py failed for {Path(image_file).name} ({e}) ", file=sys.stderr)
+                print(
+                    f"Error: ocr.py failed for {Path(image_file).name} ({e}) ",
+                    file=sys.stderr,
+                )
                 sys.exit(1)
+
+    if cache_path is not None:
+        cache_path.write_text("".join(output_parts))
+
 
 if __name__ == "__main__":
     main()
