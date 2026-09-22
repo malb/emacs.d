@@ -9887,6 +9887,10 @@ Action to search messages involving all correspondents.
   :config
   (progn
     (require 'mu4e-search)
+
+    (setq malb/find-correspondence-after-init-hook '((lambda ()
+                                                       (with-helm-buffer
+                                                         (run-at-time 0.25 nil #'helm-mark-all)))))
     (defun malb/find-correspondence (msg)
       "Find messages involving all correspondents."
       (let* ((addresses (append (mapcar (lambda (x) (downcase (plist-get x :email)))
@@ -9899,13 +9903,11 @@ Action to search messages involving all correspondents.
                                         (member x (mu4e-personal-addresses)))
                                       addresses))
              (selected-addresses (helm :sources
-                                       (helm-build-sync-source "Filter candidates:"
-                                         :candidates addresses
-                                         :after-init-hook (lambda ()
-                                                            (with-helm-buffer
-                                                              (run-at-time 0.25 nil #'helm-mark-all)))
-                                         :action '(("Filter" . (lambda (x)
-                                                                 (helm-marked-candidates))))))))
+                                   (helm-build-sync-source "Filter candidates:"
+                                     :candidates addresses
+                                     :after-init-hook 'malb/find-correspondence-after-init-hook
+                                     :action '(("Filter" . (lambda (x)
+                                                             (helm-marked-candidates))))))))
         (mu4e-search (mapconcat (lambda (x) (format "contact:%s" x))
                                 selected-addresses" AND ")))))
 
