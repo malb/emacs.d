@@ -1,4 +1,4 @@
-;;; helm-baloo --- Helm interface to KDE's Baloo
+;;; helm-baloo --- Helm interface to KDE's Baloo  -*- lexical-binding: t; -*-
 ;;; Commentary:
 
 ;;; Code:
@@ -6,6 +6,7 @@
 (require 'helm-source)
 (require 'helm-locate)
 (require 'helm-files)
+(require 'helm-help)
 
 (defcustom helm-baloo-file-limit 100
   "Limit number of entries returned by baloo to this number."
@@ -80,7 +81,7 @@
                    :action helm-baloo-actions
                    :keymap helm-baloo-map
                    :requires-pattern 3
-                   :help-message #'helm-generic-file-help-message)
+                   :help-message 'helm-generic-file-help-message)
         :buffer "*helm baloo*"))
 
 (defun helm-baloo-in-directory (directory)
@@ -92,7 +93,7 @@
                    :action helm-baloo-actions
                    :keymap helm-baloo-map
                    :requires-pattern 3
-                   :help-message #'helm-generic-file-help-message)
+                   :help-message 'helm-generic-file-help-message)
         :buffer "*helm baloo*"))
 
 ;;;###autoload

@@ -59,6 +59,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'org)
 
 ;;;###autoload
 (defun math-delimiters-no-dollars ()

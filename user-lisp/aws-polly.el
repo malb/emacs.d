@@ -6,7 +6,8 @@
 
 ;;; Code:
 
-(require 'emms)
+(require 'emms-setup)
+(require 'emms-source-file)
 (require 'guess-language)
 (require 'pandoc-mode-utils)
 

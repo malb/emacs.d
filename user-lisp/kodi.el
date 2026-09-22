@@ -7,6 +7,7 @@
 
 (require 'hydra)
 (require 's)
+(require 'json)
 (require 'all-the-icons)
 
 (defvar kodi-hosts nil)

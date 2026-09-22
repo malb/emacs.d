@@ -4,6 +4,7 @@
 ;;; Code:
 
 (require 'bibtex-completion)
+(require 'files)
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; PDF Filenames
@@ -30,7 +31,7 @@
     (dolist (dir (-flatten (list bibtex-completion-library-path)))
       (dolist (file (ignore-errors (directory-files dir t)))
         (puthash (file-name-nondirectory file) t ht))
-      (push (cons dir (ignore-errors (file-attribute-mtime dir))) mtimes))
+      (push (cons dir (ignore-errors (file-attribute-modification-time dir))) mtimes))
     (setq malb/bibtex-completion-pdf-ht ht
           malb/bibtex-completion-pdf-ht-mtimes mtimes)))
 
@@ -39,7 +40,7 @@
   (unless (or malb/bibtex-completion-pdf-ht-frozen
               (and malb/bibtex-completion-pdf-ht
                    (cl-loop for (dir . mtime) in malb/bibtex-completion-pdf-ht-mtimes
-                            always (equal mtime (ignore-errors (file-attribute-mtime dir))))))
+                            always (equal mtime (ignore-errors (file-attribute-modification-time dir))))))
     (malb/bibtex-completion-pdf-ht-rebuild))
   malb/bibtex-completion-pdf-ht)
 

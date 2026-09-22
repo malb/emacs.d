@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defvar solarized-light-malb-color-palette-alist
   '(;; solarized-light palette
     (base03      . "#002b36")
