@@ -12376,79 +12376,13 @@ Improved abc feature by adding new xyz module.
 
 A macro to define tasks:
 
-#+begin_src emacs-lisp :tangle no :noweb-ref malb-llm-do-task
-(defmacro malb/llm-do-task (cmd task &rest args)
-  `(defun ,(intern (concat "malb/" cmd "-llm")) (arg)
-     ,(plist-get args :docstring)
-     (interactive "P")
+#+begin_src emacs-lisp
 
-     (let* ((beg (cond ((use-region-p) (region-beginning))
-                       ((eq ,(plist-get args :scope) 'paragraph)
-                        (save-excursion (backward-paragraph) (+ (point) 1)))
-                       ((eq ,(plist-get args :scope) 'section)
-                        (cond ((eq major-mode 'org-mode)
-                               (save-restriction (org-narrow-to-subtree) (point-min)))
-                              ((eq major-mode 'markdown-mode)
-                               (save-restriction (markdown-narrow-to-subtree) (point-min)))
-                              (t (save-excursion (backward-paragraph) (+ (point) 1)))))
-                       (t (point-min))))
-            (end (cond ((use-region-p) (region-end))
-                       ((eq ,(plist-get args :scope) 'paragraph)
-                        (save-excursion (forward-paragraph) (- (point) 1)))
-                       ((eq ,(plist-get args :scope) 'section)
-                        (cond ((eq major-mode 'org-mode)
-                               (save-restriction (org-narrow-to-subtree) (point-max)))
-                              ((eq major-mode 'markdown-mode)
-                               (save-restriction (markdown-narrow-to-subtree) (point-max)))
-                              (t (save-excursion (forward-paragraph) (- (point) 1)))))
-                       (t (point-max))))
-            (filter (lambda (txt) (string-trim txt)))
-            (restoref `(lambda (&rest args) (with-current-buffer ,(current-buffer)
-                                              (when (eq major-mode 'fundamental-mode)
-                                                (normal-mode)))))
-            (old-ellama-provider ellama-provider))
-
-       (setq task (templatel-render-string
-                   (apply 'concat (mapcar (lambda (str) (concat str "\n")) ,task))
-                   (list (cons "context" (if ,(plist-get args :format)
-                                             (malb/pandoc-convert
-                                              (prin1-to-string ,(plist-get args :format))
-                                              (current-buffer) beg end)
-                                           (buffer-substring-no-properties beg end))))))
-       (when ,(plist-get args :model)
-         (setq ellama-provider (malb/llm-provider ,(plist-get args :model))
-               ellama--current-session-id nil))
-
-       (when arg
-         (setq ellama-provider (malb/llm-provider (llama-swap-shell-select-model))
-               ellama--current-session-id nil))
-
-
-       (unwind-protect
-           (cond ((and (equal ,(plist-get args :mode) 'insert) (not buffer-read-only))
-                  (progn
-                    (ellama-stream task :point (point) :filter filter :ephemeral-session t
-                                   :on-done restoref :on-error restoref)))
-                 ((and (equal ,(plist-get args :mode) 'change) (not buffer-read-only))
-                  (progn
-                    (kill-region beg end)
-                    (ellama-stream task :point beg :filter filter :ephemeral-session t
-                                   :on-done restoref :on-error restoref)))
-                 ((and (equal ,(plist-get args :mode) 'append) (not buffer-read-only))
-                  (progn
-                    (goto-char end)
-                    (insert "\n\n-----\n\n")
-                    (sit-for 1)
-                    (ellama-stream task :point (+ end 9) :filter filter :ephemeral-session t
-                                   :on-done restoref :on-error restoref)))
-                 (t
-                  (ellama-instant task)))
-         (setq ellama-provider old-ellama-provider)))))
 #+end_src
 
 #+begin_src emacs-lisp :noweb no-export
 (use-package ellama
-  :commands (ellama-generate-commit-message ellama-stream ellama-instant malb/llm-do-task)
+  :commands (ellama-generate-commit-message ellama-stream ellama-instant)
   :bind (("C-c w t l"  . malb/translate-llm))
   :custom ((ellama-language "German")
            (ellama-long-lines-length 1000000)
@@ -12503,7 +12437,6 @@ A macro to define tasks:
                     ellama-major-mode 'malb/ellama-major-mode)
 
             <<malb-translate-llm>>
-            <<malb-llm-do-task>>
             <<ellama-git-commit-message>>
             ))
 #+end_src
