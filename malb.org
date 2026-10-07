@@ -8939,7 +8939,9 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
          ("C-\\" . er/expand-region)
          ("<home>" . beginning-of-visual-line)
          ("<end>" . end-of-visual-line)
-         ("g" . ace-link))
+         ("g" . ace-link)
+         :map mu4e-compose-minor-mode-map
+         ("F" . malb/mu4e-compose-forward))
   :config
   (setq mu4e-view-always-show-url-indicators t
         mu4e-headers-skip-duplicates t
@@ -8966,8 +8968,160 @@ E-mail is fetched by [[http://isync.sourceforge.net/mbsync.html][mbsync]] and pa
         mu4e-org-link-query-in-headers-mode t
         mu4e-eldoc-support t
         mu4e-modeline-support nil)
+
+  <<mu4e-compose-forward-as-text>>
   <<mu4e-view-expansions>>
   )
+#+end_src
+
+** Forwarding
+
+When forwarding, render the message to plain text (through =mu4e-view-message-text=, i.e. the same treatment as when replying) and include it inline, while the attachments of the original message are attached, not inlined. With =C-u=, fall back to the default behaviour of =mu4e-compose-forward=, i.e. forwarding the raw message.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref mu4e-compose-forward-as-text
+;; Forward messages as plain text, like replying. The body of the message to be forwarded is
+;; rendered to plain text by `mu4e-view-message-text' (i.e. HTML is rendered through `shr', exactly
+;; like when replying) and included inline. The attachments of the original message are re-added as
+;; real attachments, unlike `mu4e--reply-insert-mime-parts' (the reply mechanism governed by
+;; `mu4e-compose-reply-include-mime-types') which inlines them.
+;;
+;; Note that we cannot simply use `message-forward' with `message-forward-as-mime' bound to nil
+;; here: its non-MIME path (`message-forward-make-body-plain') passes the buffer contents through
+;; `mime-to-mml', which presumes a raw, undecoded message and garbles already rendered (e.g.
+;; UTF-8) text; e.g. “Benjamin’s thesis”. Hence `malb/message-forward-insert-rendered-text'.
+
+(defun malb/mu4e-compose-forward-attachment-parts (handles)
+  "Collect the leaf parts of HANDLES that correspond to attachments."
+  (cond
+   ;; leaf handle
+   ((bufferp (car handles))
+    (when (or (mm-handle-filename handles)
+              (equal "attachment" (car (mm-handle-disposition handles))))
+      (list handles)))
+   ;; composite handle, e.g. multipart/*: recurse
+   ((stringp (car handles))
+    (mapcan #'malb/mu4e-compose-forward-attachment-parts (cdr handles)))
+   ;; plain list of handles: recurse
+   (t (mapcan #'malb/mu4e-compose-forward-attachment-parts handles))))
+
+(defun malb/mu4e-compose-forward-attachments (parent)
+  "Add the attachments of the message PARENT to the current draft.
+
+Unlike `mu4e--reply-insert-mime-parts' — used for replies, and governed
+there by `mu4e-compose-reply-include-mime-types' — this attaches the
+parts as real attachments rather than inlining them into the message
+body."
+  ;; the attachment contents must be extracted to files while the
+  ;; raw-message dissect buffer is still alive.
+  (let* ((specs
+          (with-temp-buffer
+            (insert-file-contents-literally
+             (mu4e-message-readable-path parent))
+            (when-let* ((handles (mm-dissect-buffer t t)))
+              (unwind-protect
+                  (let ((parts (malb/mu4e-compose-forward-attachment-parts
+                                handles))
+                        (specs nil) (i 0) (names nil) tmpdir)
+                    (dolist (part parts)
+                      (unless tmpdir
+                        (setq
+                         tmpdir
+                         (make-temp-file "mu4e-forward-attachments-" 'dir)))
+                      (let* ((name (replace-regexp-in-string
+                                    "[^[:alnum:]._-]" "_"
+                                    (file-name-nondirectory
+                                     (or (mm-handle-filename part)
+                                         (format "part-%d" (cl-incf i))))))
+                             (type (mm-handle-media-type part)))
+                        (when (member name names)
+                          (setq
+                           name (format "%03d-%s" (cl-incf i) name)))
+                        (push name names)
+                        (let ((path (expand-file-name name tmpdir)))
+                          (mm-save-part-to-file part path)
+                          (push (list :path path :type type
+                                      :description (mm-handle-description part))
+                                specs))))
+                    (nreverse specs))
+                (mm-destroy-parts handles))))))
+    (when specs
+      (let ((mml-attach-file-at-the-end t))
+        (dolist (spec specs)
+          (mml-attach-file (plist-get spec :path)
+                           (plist-get spec :type)
+                           (plist-get spec :description)
+                           "attachment"))))))
+
+(defun malb/message-forward-insert-rendered-text (forward-buffer)
+  "Insert the text of FORWARD-BUFFER into the message being composed.
+The contents of FORWARD-BUFFER — e.g. the rendering returned by
+`mu4e-view-message-text' — are included verbatim between the
+usual `message-forward' separator lines.
+
+This mirrors `message-forward-make-body-plain', i.e. `message-forward'
+with `message-forward-as-mime' bound to nil, except that the buffer
+contents do not pass through `mime-to-mml'. The latter assumes a raw,
+undecoded message and garbles already decoded (UTF-8) text."
+  (if message-forward-before-signature
+      (message-goto-body)
+    (goto-char (point-max)))
+  (insert
+   "\n-------------------- Start of forwarded message --------------------\n")
+  (let ((b (point)) e
+        (contents (with-current-buffer forward-buffer (buffer-string))))
+    (unless (multibyte-string-p contents)
+      (error "Attempt to insert unibyte string from the buffer \"%s\"\
+ to the multibyte buffer \"%s\""
+             forward-buffer
+             (buffer-name)))
+    (insert contents)
+    (unless (bolp) (insert "\n"))
+    (setq e (point))
+    (insert
+     "-------------------- End of forwarded message --------------------\n")
+    (message-remove-ignored-headers b e))
+  (message-position-point))
+
+(defun malb/mu4e-compose-forward (&optional do-raw)
+  "Forward the message at point, translated to plain text.
+
+Unlike `mu4e-compose-forward', which includes the raw message, HTML is
+rendered to plain text here (`mu4e-view-message-text', i.e. the same
+treatment as when replying) and the message is included inline. The
+attachments of the original message are added as real attachments.
+
+With DO-RAW (prefix-argument) fall back to the default, raw
+`mu4e-compose-forward'."
+  (interactive "P")
+  (if do-raw
+      (call-interactively #'mu4e-compose-forward)
+    (let ((parent (mu4e-message-at-point)))
+      (mu4e--draft-with-parent
+       'forward parent
+       (lambda ()
+         (setq
+          message-reply-headers
+          (make-full-mail-header
+           0
+           (or (message-field-value "Subject") "none")
+           (or (message-field-value "From") "nobody")
+           (message-field-value "Date")
+           (message-field-value "Message-Id" t)
+           (message-field-value "References")
+           0 0 ""))
+         (erase-buffer)
+         (insert (mu4e-view-message-text parent))
+         ;; like `message-forward', but with the rendered text included
+         ;; verbatim; `message-forward' would pass it through `mime-to-mml'
+         ;; which garbles already decoded text, see
+         ;; `malb/message-forward-insert-rendered-text'.
+         (let* ((forward-buffer (current-buffer))
+                (subject (message-make-forward-subject))
+                (draft (mu4e--message-call #'message-mail nil subject)))
+           (with-current-buffer draft
+             (malb/message-forward-insert-rendered-text forward-buffer)
+             (malb/mu4e-compose-forward-attachments parent)
+             draft)))))))
 #+end_src
 
 ** Folders
