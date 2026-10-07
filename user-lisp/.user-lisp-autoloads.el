@@ -273,7 +273,7 @@ When ARG is given, prompt the user for a model.
 
 ;;; Generated autoloads from llm-prompts.el
 
-(register-definition-prefixes "llm-prompts" '("malb/reply-to-email-llm"))
+(register-definition-prefixes "llm-prompts" '("malb/"))
 
 
 ;;; Generated autoloads from math-delimiters.el
