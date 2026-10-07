@@ -310,6 +310,7 @@ it will restore the window configuration to prior to full-framing."
            (tab-bar-new-tab-to 'rightmost "Open new tabs at the end")
            (tab-bar-history-limit 256))
   :config (progn
+            (unbind-key "C-<tab>" tab-bar-mode-map)
             ;; https://www.rousette.org.uk/archives/using-the-tab-bar-in-emacs/
             (defun malb/name-tab-by-project-or-default ()
               "Return project name if in a project, or default tab-bar name if not.
