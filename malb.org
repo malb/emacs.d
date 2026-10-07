@@ -11848,6 +11848,7 @@ Also https://zck.org/improved-emacs-search
 (setq search-default-mode 'char-fold-to-regexp
       replace-char-fold t
       isearch-lazy-count t
+      search-invisible 'open
       lazy-count-prefix-format nil
       lazy-count-suffix-format "   (%s/%s)")
 #+end_src
