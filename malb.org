@@ -9132,10 +9132,13 @@ With DO-RAW (prefix-argument) fall back to the default, raw
       mu4e-trash-folder  "/gmail/[Google Mail]/Bin")
 
 (setq mu4e-maildir-shortcuts
-      '((:maildir "/gmail/Inbox"            :key ?G)
-        (:maildir "/sandbox/Inbox"          :key ?S)
-        (:maildir "/kcl/INBOX"              :key ?K)
-        (:maildir "/gmail/research/reviews" :key ?r)))
+      '((:maildir "/gmail/Inbox"                      :key ?G)
+        (:maildir "/sandbox/Inbox"                    :key ?S)
+        (:maildir "/kcl/INBOX"                        :key ?K)
+        (:maildir "/kcl/PhD Applications 2026"        :key ?1)
+        (:maildir "/kcl/Postdoc Applications 2026"    :key ?2)
+        (:maildir "/kcl/Internship Applications 2026" :key ?3)
+        (:maildir "/gmail/research/reviews"           :key ?r)))
 #+end_src
 
 ** Retrieving
