@@ -730,21 +730,21 @@ Find a frame not named qualified as “special” if there is any, make one othe
 
 #+begin_src emacs-lisp
 (defun malb/switch-away-from-special (&optional is-okay)
-  (let ((other-frame (catch 'other-frame
-                       (dolist (frame (frame-list))
-                         (cond
-                          ;; we allow it (e.g. inline helm)
-                          ((and (malb/frame-is-special-p frame)
-                                is-okay)
-                           (throw 'other-frame frame))
-                          ;; a plain frame
-                          ((malb/frame-is-not-special-p frame)
-                           (throw 'other-frame frame)))))))
-    (select-frame-set-input-focus (or other-frame (make-frame)))))
+  "Select a frame that is not special, creating one if none exists."
+  (unless is-okay
+    (let ((other-frame (catch 'other-frame
+                         (dolist (frame (frame-list))
+                           (when (malb/frame-is-not-special-p frame)
+                             (throw 'other-frame frame))))))
+      (select-frame-set-input-focus (or other-frame (make-frame))))))
 
 (defun malb/switch-away-from-special-and-tab (&optional helm-is-okay)
-  (malb/switch-away-from-special helm-is-okay)
-  (malb/switch-tab-1))
+  "Like `malb/switch-away-from-special', but also select tab 1.
+Do nothing (stay in the current frame and tab) when HELM-IS-OKAY is
+non-nil, so inline Helm keeps its place in the mu4e/compose frame."
+  (unless helm-is-okay
+    (malb/switch-away-from-special)
+    (malb/switch-tab-1)))
 
 (defun malb/switch-away-from-special-advice (old-function &rest arguments)
   (malb/switch-away-from-special)
