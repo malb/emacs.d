@@ -6345,6 +6345,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
            (eca-chat-use-side-window nil)
            (eca-server-version-file-path (expand-file-name "eca/eca-version" malb/cache-dir)))
   :commands eca
+  :hook ((eca-chat-mode . malb/company-prose-setup))
   :config
   (add-to-list 'display-buffer-alist
                `(,(rx "<eca-chat[" (zero-or-more nonl) "]:" (one-or-more digit) ":" (one-or-more digit) ">")
@@ -7205,13 +7206,14 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
                       (cdr args))))
 
             (defun malb/company-prose-setup ()
+              (setq-local company-idle-delay 2.0)
               (setq-local company-backends
                           '((company-capf :with company-yasnippet)
                             (company-math-symbols-unicode :with company-yasnippet)
                             (company-files :with company-yasnippet)
                             (company-emoji :with company-yasnippet)
                             company-ispell))
-                            ;; https://github.com/redguardtoo/emacs.d/issues/473
+              ;; https://github.com/redguardtoo/emacs.d/issues/473
               (if (and (boundp 'ispell-alternate-dictionary)
                        ispell-alternate-dictionary)
                   (setq company-ispell-dictionary ispell-alternate-dictionary)))
