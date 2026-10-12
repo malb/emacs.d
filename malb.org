@@ -7797,6 +7797,8 @@ title."
   :config (require 'markdown-ts-mode-x))
 #+end_src
 
+*** Prisma
+
 [[https://github.com/agzam/prisma.el][agzam/prisma.el: gfm->org-mode->gfm]]
 
 - =primsa-convert=
@@ -7820,6 +7822,22 @@ A kill remembers the markup format of the buffer it came from. Paste it into a b
   :config (prisma-yank-mode 1)
   :vc (:url "https://github.com/agzam/prisma.el"
        :rev "v1.2.0"))
+#+end_src
+
+** LaTeX SVG
+
+#+begin_src emacs-lisp
+(use-package latex-to-svg-frontend
+  :defer t
+  :custom ((latex-to-svg-frontend-engine 'ratex)
+           (latex-to-svg-frontend-number-equations nil)
+           (latex-to-svg-frontend-quiet t)))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package latex-to-svg-for-markdown
+  :hook ((markdown-mode . latex-to-svg-for-markdown-mode)
+         (markdown-ts-mode . latex-to-svg-for-markdown-mode)))
 #+end_src
 
 ** Pandoc
