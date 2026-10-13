@@ -5,6 +5,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'cl-lib)
 (require 'emms-setup)
 (require 'emms-source-file)
 (require 'guess-language)
@@ -166,29 +167,27 @@ When ARG is given, allow to select the voice first."
                 (region-end)))
          (full-text (piper-plaintextify beginning end))
          (default-language (piper-guess-language full-text))
-         (texts (split-string full-text "\n\n"))
-         (silence (make-temp-file "emacs-piper-silence" nil ".mp3"))
-         (files nil)
-         (set-voice (if arg (piper-voices-completing-read) nil)))
-    (dolist (text texts)
-      (add-to-list 'files (piper-render-speech text set-voice default-language) t))
-    ;; TODO I'm too lazy to figure out how to prevent emms from keeping the last file in the
-    ;; playlist, we just add a short silence to make it unnoticeable
-    (add-to-list 'files silence t)
-    (dolist (file files)
-      (let ((current-prefix-arg nil))
-        (emms-add-file file)))
+         (texts (split-string full-text "\n\n" t))
+         (set-voice (if arg (piper-voices-completing-read) nil))
+         (files (cl-loop for text in texts
+                         collect (piper-render-speech text set-voice default-language))))
+    (when emms-player-playing-p
+      (emms-stop)
+      ;; EMMS' mpv player defers a new `loadfile' until the previous track's
+      ;; "end-file" event arrives (mpv ignores "stop + loadfile"); if we start
+      ;; again while a stop is still pending, that deferred `loadfile' can be
+      ;; dropped when mpv goes idle, so the new speech never plays.  Wait until
+      ;; the pending stop has settled before issuing the next `emms-start'.
+      (cl-loop with deadline = (+ (float-time) 1.0)
+               while (and (boundp 'emms-player-mpv-ipc-stop-command)
+                          (eq emms-player-mpv-ipc-stop-command t)
+                          (< (float-time) deadline))
+               do (sit-for 0.05)))
+    (emms-playlist-current-clear)
+    (cl-loop for file in files
+             do (emms-source-add 'emms-source-file file))
+    (emms-playlist-current-select-first)
     (emms-start)))
-
-(defcustom piper-make-silence-command
-  "ffmpeg -f lavfi -y -i anullsrc=r=22050:cl=mono -t %f -q:a 9 -acodec libmp3lame %s"
-  "Command to make moments of silence."
-  :group 'piper
-  :type 'string)
-
-(defun piper-make-silence (length output-filename)
-  "Write LENGTH seconds of silence to OUTPUT-FILENAME."
-  (call-process-shell-command (format piper-make-silence-command length output-filename) nil nil nil))
 
 
 (provide 'piper)
