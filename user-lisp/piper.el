@@ -1,4 +1,4 @@
-;;; piper --- Speak text with Piper
+;;; piper --- Speak text with Piper  -*- lexical-binding: t; -*-
 ;;;
 ;;; See https://github.com/rhasspy/piper
 ;;;
@@ -84,7 +84,7 @@ These are tuples of (\"tag\" \"lang-code\" \"model-path\" \"speaker-number\")."
 The file is parsed between BEGINNING and END."
   (let* ((buffer (or buffer (current-buffer)))
          (pandoc-buffer (get-buffer-create pandoc--output-buffer-name))
-         (begginning (or beginning (point-min)))
+         (beginning (or beginning (point-min)))
          (end (or end (point-max)))
          (reader (or reader (cdr (assq major-mode pandoc-major-modes))))
          (text))
@@ -109,8 +109,7 @@ This kills links etc. which we typically do  not want read out.
 
 Region between BEGINNING and END is converted."
   (let ((pandoc-use-async nil)
-        (reader (cdr (assq major-mode pandoc-major-modes)))
-        (text))
+        (reader (cdr (assq major-mode pandoc-major-modes))))
     (if reader
         (replace-regexp-in-string "_" ""
                                   (piper-pandoc-convert "plain" (current-buffer) beginning end reader))
