@@ -7837,7 +7837,8 @@ A kill remembers the markup format of the buffer it came from. Paste it into a b
 #+begin_src emacs-lisp
 (use-package latex-to-svg-for-markdown
   :hook ((markdown-mode . latex-to-svg-for-markdown-mode)
-         (markdown-ts-mode . latex-to-svg-for-markdown-mode)))
+         (markdown-ts-mode . latex-to-svg-for-markdown-mode))
+  :config (add-to-list 'warning-suppress-types '(latex-to-svg-backend)))
 #+end_src
 
 ** Pandoc
