@@ -7206,7 +7206,7 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
                       (cdr args))))
 
             (defun malb/company-prose-setup ()
-              (setq-local company-idle-delay 2.0)
+              (setq-local company-idle-delay 0.6)
               (setq-local company-backends
                           '((company-capf :with company-yasnippet)
                             (company-math-symbols-unicode :with company-yasnippet)
