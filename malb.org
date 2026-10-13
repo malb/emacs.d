@@ -4717,6 +4717,40 @@ Working with source code in org-mode.
                   org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
 
+            (defun org-babel-examplify-region (beg end &optional results-switches inline)
+              (interactive "*r")
+              (let ((maybe-cap
+                     (lambda (str)
+                       (if org-babel-uppercase-example-markers (upcase str) str))))
+                (if inline
+                    (save-excursion
+                      (goto-char beg)
+                      (insert (format org-babel-inline-result-wrap
+                                      (delete-and-extract-region beg end))))
+                  (let ((size (count-lines beg end)))
+                    (save-excursion
+                      (cond ((= size 0)) ; do nothing for an empty result
+                            ((< size org-babel-min-lines-for-block-output)
+                             (goto-char beg)
+                             (dotimes (_ size)
+                               (forward-line 0) (insert ": ") (forward-line 1)))
+                            (t
+                             (goto-char beg)
+                             (unless (bolp) (insert "\n"))
+                             (insert (if results-switches
+                                         (format "%s%s\n"
+                                                 (funcall maybe-cap "#+begin_example")
+                                                 results-switches)
+                                       (funcall maybe-cap "#+begin_example\n")))
+                             (let ((p (point)))
+                               (if (markerp end) (goto-char end) (forward-char (- end beg)))
+                               (org-escape-code-in-region p (point)))
+                             (unless (bolp) (insert "\n"))
+                             (insert (funcall maybe-cap "#+end_example"))
+                             ;; was: (unless (eolp) (insert "\n"))
+                             ;; without the patch example block outputs eat the whitespace below
+                             (insert "\n"))))))))
+
             (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))))
 #+end_src
 
