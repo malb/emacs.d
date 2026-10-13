@@ -11716,7 +11716,18 @@ From a dired buffer, you can: =@= - make a gist out of marked files (with a pref
   :config
   (require 'emms-player-mpv)
   (emms-all)
-  (emms-default-players))
+  (emms-default-players)
+  ;; `emms-player-mpv' retries the socket connection while mpv is starting, and each failed attempt
+  ;; leaks a `failed' `emms-player-mpv-ipc' network process into `list-processes' (the failed
+  ;; process is dropped from the variable without being deleted). Clean them up each time the IPC
+  ;; connection is established, so they don't pile up.
+  (defun malb/cleanup-emms-ipc-processes ()
+    "Delete stale `emms-player-mpv-ipc' socket processes from `process-list'."
+    (dolist (proc (process-list))
+      (when (and (eq (process-status proc) 'failed)
+                 (string-prefix-p "emms-player-mpv-ipc" (process-name proc)))
+        (delete-process proc))))
+  (add-hook 'emms-player-mpv-event-connect-hook #'malb/cleanup-emms-ipc-processes))
 #+end_src
 
 ** Kodi
