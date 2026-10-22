@@ -11384,6 +11384,14 @@ Note, you can use =dired-toggle-read-only= (=C-x C-q=) to make a Dired buffer ed
    "for file in '<<f>>'; do sd-cli -M metadata  --metadata-format json --image $file | jq '.entries[1].data.text'; done"
    :utils "sd-cli"))
 
+(defun malb/dwim-shell-commands-convert-to-jpg-delete ()
+  "Convert to JPEG and delete original."
+  (interactive)
+  (dwim-shell-command-on-marked-files
+   "Convert and delete"
+   "parallel 'magick {} {.}.jpg' ::: '<<f>>'; parallel '[ -f {.}.jpg ] && rm {}' ::: '<<f>>'"
+   :utils "magick"))
+
 #+end_src
 
 * Tramp
