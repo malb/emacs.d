@@ -4803,7 +4803,7 @@ Add =:async= keyword to header-args of any org-babel src block and invoke ~ob-as
 #+begin_src emacs-lisp
 (use-package ob-async
   :after ob
-  :init (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia")
+  :init (setq ob-async-no-async-languages-alist '("jupyter-python" "jupyter-julia" "shell" "bash" "sh" "zsh")
               async-inject-variables-exclude-regexps
               `(,(rx "-syntax-table" eos)
                 ,(rx bos "org-babel-expand-noweb-references--cache-buffer" eos)
@@ -5024,6 +5024,20 @@ We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/m
 #+begin_src emacs-lisp
 (setenv "PAGER" "cat")
 (setq shell-file-name "/bin/zsh")
+
+(use-package ob-shell
+  :ensure nil
+  :config
+  ;; zsh (via zle) echoes the commands sent to an org-babel session back into the comint output stream
+  ;; (bash does not). org-babel's async result extraction (`ob-comint.el') assumes commands are *not*
+  ;; echoed and bounds the result by the `ob_comint_async_shell_{start,end}' markers, so with zsh the
+  ;; echoed command lines (including `echo 'ob_comint_async_shell_end_...'') leak into the result.
+  ;;
+  ;; Disable zle and terminal echo for ob-shell sessions so the comint output only carries the
+  ;; commands' actual output. Only affects org-babel sessions.
+  (let ((zsh (assoc "zsh" org-babel-shell-set-prompt-commands)))
+    (when zsh
+      (setcdr zsh "unsetopt zle;setopt nopromptcr;stty -echo;PROMPT_COMMAND=;PS1=\"%s\";PS2="))))
 #+end_src
 
 ** Toggle Shells
