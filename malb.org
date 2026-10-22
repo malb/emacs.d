@@ -7259,7 +7259,8 @@ Also use [[https://github.com/larstvei/Focus][focus-mode]] occationally.
                             (company-math-symbols-unicode :with company-yasnippet)
                             (company-files :with company-yasnippet)
                             (company-emoji :with company-yasnippet)
-                            company-ispell))
+                            ;; company-ispell
+                            ))
               ;; https://github.com/redguardtoo/emacs.d/issues/473
               (if (and (boundp 'ispell-alternate-dictionary)
                        ispell-alternate-dictionary)
