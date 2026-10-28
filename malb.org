@@ -12939,7 +12939,8 @@ Display buffer name in frame titles ([[https://github.com/wasamasa/dotemacs/blob
            (doom-modeline-github nil)
            (doom-modeline-buffer-encoding nil)
            (doom-modeline-minor-modes nil)
-           (doom-modeline-project-detection 'projectile))
+           (doom-modeline-project-detection 'projectile)
+           (doom-modeline-workspace-name t))
   :config (progn
             (require 'doom-modeline-segments)
             (doom-modeline-def-segment conda-env
