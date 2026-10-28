@@ -6774,7 +6774,10 @@ Elpy is quite opinionated and we don’t necessarily share all those opinions. H
 
 #+begin_src emacs-lisp
 (use-package uv-mode
-  :hook (python-base-mode . uv-mode-auto-activate-hook))
+  :hook (python-base-mode . uv-mode-auto-activate-hook)
+  :config
+  (unbind-key "C-c C-s" uv-mode-map)
+  (unbind-key "C-c C-u" uv-mode-map))
 #+end_src
 
 ** Sage
