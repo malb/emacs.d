@@ -5037,7 +5037,13 @@ We don’t need a =$PAGER= here ([[https://github.com/baron42bba/.emacs.d/blob/m
   ;; commands' actual output. Only affects org-babel sessions.
   (let ((zsh (assoc "zsh" org-babel-shell-set-prompt-commands)))
     (when zsh
-      (setcdr zsh "unsetopt zle;setopt nopromptcr;stty -echo;PROMPT_COMMAND=;PS1=\"%s\";PS2="))))
+      (setcdr zsh (s-join ";" '("  unsetopt zle"
+                                "HISTFILE=/dev/null"
+                                "setopt nopromptcr"
+                                "stty -echo"
+                                "PROMPT_COMMAND="
+                                "PS1=\"%s\""
+                                "PS2="))))))
 #+end_src
 
 ** Toggle Shells
