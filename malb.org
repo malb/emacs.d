@@ -7903,8 +7903,9 @@ A kill remembers the markup format of the buffer it came from. Paste it into a b
 #+begin_src emacs-lisp
 (use-package latex-to-svg-frontend
   :defer t
-  :custom ((latex-to-svg-frontend-engine 'ratex)
+  :custom ((latex-to-svg-frontend-engine 'texres)
            (latex-to-svg-frontend-number-equations nil)
+           (latex-to-svg-frontend-failure-mark nil)
            (latex-to-svg-frontend-quiet t)))
 #+end_src
 
