@@ -6443,7 +6443,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
                   "-d" (expand-file-name "~/.cache/eca/")
                   "-d" (expand-file-name "~/.config/emacs/")
                   "-d" (expand-file-name "~/.cache/emacs/")
-                  "-d" (expand-file-name "~/.texlive/")
+                  "-r" (expand-file-name "~/.texlive/")
+                  "-d" (expand-file-name "~/.texlive/texmf-var/")
                   "-r" malb/common-latex
                   "-r" (expand-file-name "~/Misc/OCR/"))
             command))
