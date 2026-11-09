@@ -27,3 +27,5 @@
 *.elc
 /user-lisp/pari/
 /user-lisp/llm-prompts.el
+/forge-database-v15-20261027-1558.db
+/eshell/
