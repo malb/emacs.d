@@ -6463,6 +6463,21 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+RESULTS:
 : jai -j eca -D --unsetenv=* --setenv TERM --setenv HOME --setenv PATH --setenv LANG --setenv TEXMFHOME --setenv BIBINPUTS --setenv AI_CREATE_KCL_AC_UK_API_KEY -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 -d /home/malb/.config/eca/ -d /home/malb/.cache/eca/ -d /home/malb/.config/emacs/ -d /home/malb/.cache/emacs/ -d /home/malb/.texlive/ -r /home/malb/Projects/common-latex -r /home/malb/Misc/OCR/ COMMAND
 
+*** Hutch
+
+[[https://github.com/adjaecent/magit-hutch][adjaecent/magit-hutch: code reviews for emacs]]
+
+#+begin_src emacs-lisp
+(use-package hutch
+  :config
+  (setq hutch-backend (gptel-make-openai "llama-swap"
+                        :stream t
+                        :protocol "http"
+                        :host "localhost:38080"
+                        :models '(qwen3.8:27b:medium)))
+  (hutch-add-review-binding))
+#+end_src
+
 ** C/C++
 
 #+begin_src emacs-lisp
