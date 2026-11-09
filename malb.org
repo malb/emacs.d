@@ -12656,7 +12656,7 @@ A macro to define tasks:
            (ellama-enable-keymap nil)
            (ellama-show-reasoning nil)
            (llm-warn-on-nonfree nil)
-           (ellama-response-process-method 64))
+           (ellama-response-process-method 128))
   :config (progn
             ;; Provider Selection
             (require 'llm-openai)
