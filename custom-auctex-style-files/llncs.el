@@ -28,7 +28,7 @@
     '("question"   LaTeX-env-label)
     '("solution"   LaTeX-env-label)
     ;; Unnumbered
-    '("claim"      LaTeX-env-text)
-    '("proof"      LaTeX-env-text))))
+    "claim"
+    "proof")))
 
 ;; --- llncs.el ends here
