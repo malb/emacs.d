@@ -12093,10 +12093,10 @@ In Emacs 25, Isearch can find a wide range of Unicode characters (like á, ⓐ, 
 Also https://zck.org/improved-emacs-search
 
 #+begin_src emacs-lisp
+(setopt search-invisible 'open)
 (setq search-default-mode 'char-fold-to-regexp
       replace-char-fold t
       isearch-lazy-count t
-      search-invisible 'open
       lazy-count-prefix-format nil
       lazy-count-suffix-format "   (%s/%s)")
 #+end_src
