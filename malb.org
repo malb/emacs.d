@@ -4352,6 +4352,13 @@ replace the default prompt message."
          :clock-in t
          :clock-resume t
          :empty-lines 1)
+        (,(format "%s\tJournal Entry" (all-the-icons-material "save" :face 'all-the-icons :v-adjust 0.01))
+         :keys "j"
+         :file malb/journal-org
+         :datetree t
+         :type plain
+         :after-finalize (lambda () (malb/org-todo-done "Journal Entry"))
+         :empty-lines 1)
         (,(format "%s\tNote" (all-the-icons-faicon "sticky-note" :face 'all-the-icons :v-adjust 0.01))
          :keys "n"
          :file malb/inbox-org
