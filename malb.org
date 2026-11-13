@@ -7914,6 +7914,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
   (add-to-list 'pandoc-major-modes '(LaTeX-mode . "latex"))
   (add-to-list 'pandoc-major-modes '(mu4e-view-mode . "markdown"))
   (add-to-list 'pandoc-major-modes '(mu4e-compose-mode . "markdown"))
+  (add-to-list 'pandoc-major-modes '(markdown-ts-mode . "markdown"))
 
   (defun malb/pandoc-convert (writer &optional buffer beginning end reader)
     (let* ((buffer (or buffer (current-buffer)))
