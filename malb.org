@@ -4302,32 +4302,6 @@ replace the default prompt message."
            :immediate-finish t
            :empty-lines 1
            :prepend t)
-          (,(format "%s\tMail Merge" (all-the-icons-faicon "envelope-o" :face 'all-the-icons :v-adjust 0.01))
-           :keys "m"
-           :file malb/inbox-org
-           :template ("* MAIL %?"
-                      "SCHEDULED: %^t"
-                      ":PROPERTIES:"
-                      ":CREATED: %U"
-                      ":BCC:"
-                      ":END:"
-                      ""
-                      "#+name: mm-data"
-                      "| TO | CC | name |"
-                      "|----|----|------|"
-                      "|    |    |      |"
-                      ""
-                      "#+name: mm-template"
-                      "#+begin_src markdown"
-                      "Hi {{ name }},",
-                      ""
-                      ""
-                      "Cheers,"
-                      "Martin"
-                      "#+end_src"
-                      "")
-           :empty-lines 1
-           :prepend t)
           ))
         (,(format "%s\tQuick Task" (all-the-icons-faicon "fast-forward" :face 'all-the-icons :v-adjust 0.01))
          :keys "y"
