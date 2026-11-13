@@ -4697,6 +4697,7 @@ Working with source code in org-mode.
                   org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"
                   org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar")
 
+            ;; BUG
             (defun org-babel-examplify-region (beg end &optional results-switches inline)
               (interactive "*r")
               (let ((maybe-cap
