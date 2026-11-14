@@ -676,7 +676,6 @@ Separate “special” frames from others ([[https://stackoverflow.com/questions
 
 #+begin_src emacs-lisp
 (defvar malb/special-frame-names '("\\*Minibuf-1\\*.*" ;; helm
-                                   "\\*mu4e\\*"
                                    "F1" ;; daemon
                                    )
   "Special frame names")
@@ -688,7 +687,7 @@ Separate “special” frames from others ([[https://stackoverflow.com/questions
                           (lambda (name)
                             (if (eq (string-match-p name (frame-parameter frame 'name)) 0) t nil))
                           malb/special-frame-names)))
-         (is-mu4e (string-match-p "\\*mu4e\\*" (frame-parameter frame 'name))))
+         (is-mu4e (frame-parameter frame 'mu4e-frame)))
     (if mu4e-is-not-special
         (and is-special (not is-mu4e))
       is-special)))
@@ -803,7 +802,7 @@ Main frame dispatch function:
     nil)
 
    ;; this is not a mu4e buffer but we’re in the mu4e frame
-   ((and (string-match "*mu4e*" (frame-parameter nil 'name))
+   ((and (frame-parameter nil 'mu4e-frame)
          (not (malb/mu4e-buffer-p buffer nil))
          (not (malb/regexp-match-p malb/mu4e-buffer-allowed-regexps (buffer-name buffer))))
     (malb/switch-away-from-special-and-tab (string-match-p ".*helm.*" (buffer-name buffer)))
@@ -10391,7 +10390,8 @@ We allow helm buffers in the mu4e frame, e.g. to pick attachments.
     (if other-frame
         (select-frame-set-input-focus other-frame)
       (progn
-        (select-frame (make-frame '((malb/special-frame . t))))
+        (select-frame (make-frame '((malb/special-frame . t)
+                                    (mu4e-frame . t))))
         (set-frame-name "*mu4e*")))))
 
 (defun malb/switch-to-mu4e-advice (old-function &rest arguments)
@@ -10407,17 +10407,7 @@ Find a frame which is the mu4e frame or create a fresh one.
 #+begin_src emacs-lisp
 (defun malb/mu4e-frame ()
   "Return mu4e main frame if any."
-  (catch 'other-frame
-    (dolist (frame (frame-list))
-      (if (string-match "\\*mu4e\\*" (frame-parameter frame 'name))
-          (progn
-            (dolist (window (window-list frame))
-              (with-current-buffer (window-buffer window)
-                (when (or (eq major-mode 'mu4e-headers-mode)
-                          (eq major-mode 'mu4e-main-mode))
-                  (throw 'other-frame frame))))
-            nil)
-        nil))))
+  (seq-find (lambda (frame) (frame-parameter frame 'mu4e-frame)) (frame-list)))
 #+end_src
 
 Kill the mu4e frame.
