@@ -7886,7 +7886,9 @@ A kill remembers the markup format of the buffer it came from. Paste it into a b
        :rev "v1.2.0"))
 #+end_src
 
-** LaTeX SVG
+** LaTeX ⇒ SVG
+
+[[https://github.com/alberti42/latex-to-svg][Preview LaTeX math as SVG images for Org, Markdown and LaTeX buffers]]
 
 #+begin_src emacs-lisp
 (use-package latex-to-svg-frontend
