@@ -7896,7 +7896,15 @@ A kill remembers the markup format of the buffer it came from. Paste it into a b
   :custom ((latex-to-svg-frontend-engine 'texres)
            (latex-to-svg-frontend-number-equations nil)
            (latex-to-svg-frontend-failure-mark nil)
-           (latex-to-svg-frontend-quiet t)))
+           (latex-to-svg-frontend-quiet t))
+  :config
+  (setq latex-to-svg-backend-preamble-packages
+        (mapconcat #'identity
+                   '("\\newcommand{\\ZZ}{\\mathbb{Z}}"
+                     "\\newcommand{\\mat}[1]{\\mathbf{#1}}"
+                     "\\renewcommand{\\vec}[1]{\\mathbf{#1}}"
+                     "\\newcommand{\\poly}[1]{\\mathsf{poly}(#1)}")
+                   "\n")))
 #+end_src
 
 #+begin_src emacs-lisp
