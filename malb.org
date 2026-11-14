@@ -1337,14 +1337,16 @@ Add YasSippet support for all company backends. ([[https://github.com/syl20bnr/s
 
    ;; leave the math env
    ((and (or (and (eq major-mode 'org-mode) (bound-and-true-p org-cdlatex-mode))
-             (and (eq major-mode 'LaTeX-mode) (bound-and-true-p cdlatex-mode)))
+             (and (eq major-mode 'LaTeX-mode) (bound-and-true-p cdlatex-mode))
+             (and (derived-mode-p 'markdown-mode) (bound-and-true-p cdlatex-mode)))
          (texmathp))
     (cdlatex-tab))
 
    ;; arg triggers cdlatex
    ((or
      (and (eq major-mode 'org-mode) (bound-and-true-p org-cdlatex-mode) arg)
-     (and (eq major-mode 'LaTeX-mode) (bound-and-true-p cdlatex-mode) arg))
+     (and (eq major-mode 'LaTeX-mode) (bound-and-true-p cdlatex-mode) arg)
+     (and (derived-mode-p 'markdown-mode) (bound-and-true-p cdlatex-mode) arg))
     (cdlatex-tab))
 
    ;; if the next char is space or eol, but prev char not whitespace
@@ -1602,6 +1604,7 @@ We also use ~(helm-all-mark-rings)~ to jump around marks (set with =C-SPC C-SPC=
                     Man-mode
                     helpful-mode
                     markdown-mode
+                    markdown-ts-mode
                     LaTeX-mode
                     sage-shell-mode
                     inferior-python-mode
@@ -2210,7 +2213,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
             (sp-pair "{"  nil :post-handlers '(("||\n[i]" "RET") ("| " " ")) :wrap "C-{")
             (sp-pair "("  nil :post-handlers '(("||\n[i]" "RET") ("| " " ")) :wrap "C-(")
             (sp-pair "["  nil :post-handlers '(("| " " ")))
-            (sp-local-pair '(sh-mode markdown-mode python-mode python-ts-mode cython-mode) "`" nil)
+            (sp-local-pair '(sh-mode markdown-mode markdown-ts-mode python-mode python-ts-mode cython-mode) "`" nil)
 
             ;; https://github.com/Fuco1/smartparens/issues/652#issuecomment-250518705
             (defun malb/latex-replace-dollar (_id action _context)
@@ -2274,17 +2277,22 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
                 (sp-local-pair "'" "'"    :actions nil)))
 
             (let ((bracket-qualifiers '(sp-point-before-word-p
+                                        sp-point-before-same-p
+                                        sp-latex-point-after-backslash)))
+              (sp-with-modes '(markdown-mode markdown-ts-mode)
+                (sp-local-pair "\\(" "\\)" :unless bracket-qualifiers)
+                (sp-local-pair "\\[" "\\]" :unless bracket-qualifiers)))
+
+            (let ((bracket-qualifiers '(sp-point-before-word-p
                                         sp-point-before-same-p)))
               (sp-with-modes '(python-mode python-ts-mode)
                 (sp-local-pair  "(" ")" :unless bracket-qualifiers)
                 (sp-local-pair  "[" "]" :unless bracket-qualifiers)))
 
             ;; https://github.com/millejoh/emacs-ipython-notebook/issues/172
-            (add-to-list 'sp-ignore-modes-list 'markdown-mode)
             (add-to-list 'sp-ignore-modes-list 'hotcrp-mode)
             (add-to-list 'sp-ignore-modes-list 'sage-shell-mode)
-            (add-to-list 'sp-ignore-modes-list 'jupyter-repl-mode)
-            (add-to-list 'sp-ignore-modes-list 'eca-chat-mode)))
+            (add-to-list 'sp-ignore-modes-list 'jupyter-repl-mode)))
 #+end_src
 
 Automatically insert [[https://github.com/emacs-berlin/syntactic-close][closing delimiter]]
@@ -5942,6 +5950,7 @@ Show function in mode-line ([[https://github.com/howardabrams/dot-files/blob/mas
                   which-func-maxout 1024
                   which-func-modes '(latex-mode
                                      LaTeX-mode
+                                     markdown-ts-mode
                                      markdown-mode
                                      c-mode
                                      c-ts-mode
@@ -6380,8 +6389,22 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
            (eca-chat-tool-call-fontify-markdown nil)
            (eca-server-version-file-path (expand-file-name "eca/eca-version" malb/cache-dir)))
   :commands eca
-  :hook ((eca-chat-mode . malb/company-prose-setup))
+  :hook ((eca-chat-mode . turn-on-cdlatex)
+         (eca-chat-mode . malb/company-eca-setup))
   :config
+  (defun malb/company-eca-setup ()
+    (require 'texmathp nil)
+    (when (fboundp 'texmathp-compile)
+      (unless (bound-and-true-p texmathp-onoff-regexp)
+        (texmathp-compile)))
+    (setq-local company-math-allow-latex-symbols-in-faces t)
+    (setq-local company-backends
+                '(company-files
+                  (malb/company-math-mathmode
+                   company-emoji
+                   company-capf
+                   :with company-yasnippet))))
+
   (add-to-list 'display-buffer-alist
                `(,(rx "<eca-chat[" (zero-or-more nonl) "]:" (one-or-more nonl) ":" (one-or-more nonl) ">")
                  (display-buffer-reuse-window
@@ -7852,11 +7875,35 @@ title."
          (markdown-ts-view-mode . visual-line-mode)
          (markdown-ts-view-mode . visual-wrap-prefix-mode)
          (markdown-ts-view-mode . visual-fill-column-mode)
-         (markdown-ts-mode . flyspell-mode))
+         (markdown-ts-mode . flyspell-mode)
+         (markdown-ts-mode . turn-on-cdlatex)
+         (markdown-ts-mode . malb/company-markdown-setup))
   :mode (("\\.md$" . markdown-ts-mode)
          ("\\.markdown$" . markdown-ts-mode)
          ("\\.mdx$" . markdown-ts-mode-x))
-  :config (require 'markdown-ts-mode-x))
+  :config (progn
+            (require 'markdown-ts-mode-x)
+
+            (defun malb/company-math-mathmode (command &optional arg &rest _ignored)
+              (interactive (list 'interactive))
+              (cond ((eq command 'interactive)
+                     (company-begin-backend 'malb/company-math-mathmode))
+                    (t (if (texmathp)
+                           (company-math-symbols-latex command arg)
+                         (company-math-symbols-unicode command arg)))))
+
+            (defun malb/company-markdown-setup ()
+              (require 'texmathp nil)
+              (when (fboundp 'texmathp-compile)
+                (unless (bound-and-true-p texmathp-onoff-regexp)
+                  (texmathp-compile)))
+              (setq-local company-math-allow-latex-symbols-in-faces t)
+              (setq-local company-backends
+                          '(company-files
+                            (malb/company-math-mathmode
+                             company-emoji
+                             company-capf
+                             :with company-yasnippet))))))
 #+end_src
 
 *** Prisma
@@ -7909,8 +7956,6 @@ A kill remembers the markup format of the buffer it came from. Paste it into a b
 
 #+begin_src emacs-lisp
 (use-package latex-to-svg-for-markdown
-  ;; :hook ((markdown-mode . latex-to-svg-for-markdown-mode)
-  ;;        (markdown-ts-mode . latex-to-svg-for-markdown-mode))
   :config (add-to-list 'warning-suppress-types '(latex-to-svg-backend)))
 #+end_src
 
@@ -7922,7 +7967,7 @@ Use [[https://joostkremers.github.io/pandoc-mode/][pandoc-mode]] to call [[http:
 (use-package pandoc-mode
   :bind ("M-W" . malb/copy-as)
   :commands (malb/copy-as-org malb/copy-as-latex)
-  :hook ((markdown-mode-hook . conditionally-turn-on-pandoc)
+  :hook ((markdown-ts-mode-hook . conditionally-turn-on-pandoc)
          (org-mode-hook      . conditionally-turn-on-pandoc)
          (pandoc-mode-hook   . pandoc-load-default-settings))
   :config
@@ -10838,7 +10883,7 @@ https://github.com/org2blog/org2blog/wiki/Debugging-Stories
          (target-buffer-name (format "*Notes for %s*" source-buffer-name))
          (target-buffer (get-buffer-create target-buffer-name)))
     (with-current-buffer target-buffer
-      (markdown-mode)
+      (markdown-ts-mode)
       (erase-buffer)
       (visual-fill-column-mode)
 
@@ -11976,7 +12021,7 @@ then enter the text in that file's own buffer.
 (use-package atomic-chrome
   :defer nil
   :custom ((atomic-chrome-buffer-open-style 'frame)
-           (atomic-chrome-default-major-mode 'markdown-mode)
+           (atomic-chrome-default-major-mode 'markdown-ts-mode)
            (atomic-chrome-buffer-frame-width 160)
            (atomic-chrome-buffer-frame-height 25))
   :config (when (daemonp) (atomic-chrome-start-server)))
@@ -12542,7 +12587,7 @@ Make links in comments and string clickable
 (use-package goto-addr
   :hook ((compilation-mode . goto-address-mode)
          (prog-mode . goto-address-prog-mode)
-         (markdown-mode . goto-address-mode)
+         (markdown-ts-mode . goto-address-mode)
          (eshell-mode . goto-address-mode)
          (shell-mode . goto-address-mode))
 
