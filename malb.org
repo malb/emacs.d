@@ -6382,26 +6382,32 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :hook ((eca-chat-mode . malb/company-prose-setup))
   :config
   (add-to-list 'display-buffer-alist
-               `(,(rx "<eca-chat[" (zero-or-more nonl) "]:" (one-or-more digit) ":" (one-or-more digit) ">")
+               `(,(rx "<eca-chat[" (zero-or-more nonl) "]:" (one-or-more nonl) ":" (one-or-more nonl) ">")
                  (display-buffer-reuse-window
                   display-buffer-pop-up-frame)
-                 (dedicated . t)
-                 (window-parameters
-                  (no-other-window . t)
-                  (no-delete-other-windows . t))
+                 (reusable-frames (lambda (frame) (frame-parameter frame 'eca-chat-frame)))
                  (pop-up-frame-parameters . ((malb/special-frame . t)
+                                             (eca-chat-frame . t)
                                              (height . 60)
                                              (width . 100)))))
 
-  (malb/defadvice! malb/eca--handle-message (old-function &rest args)
-    :around #'eca--handle-message
-    (let* ((window (selected-window))
-           (dedicated (window-dedicated-p window)))
-      (unwind-protect
-          (progn
-            (set-window-dedicated-p window nil)
-            (apply old-function args))
-        (set-window-dedicated-p window dedicated))))
+  (defun malb/eca-close-eca-frame-on-kill (&optional buffer)
+    (let ((buffer (or buffer (current-buffer))))
+      (when (and (buffer-live-p buffer)
+                 (string-prefix-p "<eca-chat[" (buffer-name buffer)))
+        (let ((frames (delete-dups
+                       (mapcar (lambda (w) (window-frame w))
+                               (seq-filter (lambda (w)
+                                             (frame-parameter (window-frame w) 'eca-chat-frame))
+                                           (get-buffer-window-list buffer nil t))))))
+          (when frames
+            (run-with-idle-timer 0.1 nil
+                                 (lambda ()
+                                   (dolist (f frames)
+                                     (when (frame-live-p f)
+                                       (delete-frame f))))))))))
+
+  (add-hook 'kill-buffer-hook #'malb/eca-close-eca-frame-on-kill)
 
   (defun malb/eca-jail-wrapper (command roots)
     "Wrap the eca server COMMAND with `jai', exposing ROOTS."
