@@ -6435,29 +6435,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
   (defun malb/eca-jail-wrapper (command roots)
     "Wrap the eca server COMMAND with `jai', exposing ROOTS."
-    (append (list "jai" "-j" "eca"
-                  "-D"                  ; do not expose $CWD
-                  "--unsetenv=*"        ; hide all environment vars
-                  "--setenv" "TERM"
-                  "--setenv" "HOME"
-                  "--setenv" "PATH"
-                  "--setenv" "LANG"
-                  "--setenv" "TEXMFHOME"
-                  "--setenv" "BIBINPUTS"
-                  "--setenv" "GH_TOKEN"
-                  "--setenv" "AI_CREATE_KCL_AC_UK_API_KEY")
-            ;; Workspace roots picked at session startup.
-            (cl-loop for d in roots
-                     append (list "-d" (expand-file-name d)))
-            ;; Always-needed directories for ECA itself.
-            (list "-d" (expand-file-name "~/.config/eca/")
-                  "-d" (expand-file-name "~/.cache/eca/")
-                  "-d" (expand-file-name "~/.config/emacs/")
-                  "-d" (expand-file-name "~/.cache/emacs/")
-                  "-r" (expand-file-name "~/.texlive/")
-                  "-d" (expand-file-name "~/.texlive/texmf-var/")
-                  "-r" malb/common-latex
-                  "-r" (expand-file-name "~/Misc/OCR/"))
+    (append (list "jai" "-C" "eca" "-D")
+            (cl-loop for d in roots append (list "-d" (expand-file-name d)))
             command))
 
   (setq eca-process-wrapper-function #'malb/eca-jail-wrapper)
@@ -6472,7 +6451,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 #+end_src
 
 #+RESULTS:
-: jai -j eca -D --unsetenv=* --setenv TERM --setenv HOME --setenv PATH --setenv LANG --setenv TEXMFHOME --setenv BIBINPUTS --setenv AI_CREATE_KCL_AC_UK_API_KEY -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 -d /home/malb/.config/eca/ -d /home/malb/.cache/eca/ -d /home/malb/.config/emacs/ -d /home/malb/.cache/emacs/ -d /home/malb/.texlive/ -r /home/malb/Projects/common-latex -r /home/malb/Misc/OCR/ COMMAND
+: jai -j eca -D -d /home/malb/ROOT-DIR -d /home/malb/ROOR-DIR2 COMMAND
 
 *** Hutch
 
