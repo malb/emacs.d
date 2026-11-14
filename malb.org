@@ -2137,6 +2137,7 @@ Some of the config below is stolen from hlissner’s [[https://github.com/hlissn
 #+begin_src emacs-lisp
 (use-package smartparens
   :blackout smartparens-mode
+  :defer nil
   :bind (:map smartparens-mode-map
          ("C-M-f" . sp-forward-sexp)
          ("C-M-b" . sp-backward-sexp)
