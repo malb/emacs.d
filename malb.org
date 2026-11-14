@@ -6377,6 +6377,7 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
   :ensure-system-package (jai)
   :custom ((eca-server-install-path (expand-file-name "eca/eca" malb/cache-dir))
            (eca-chat-use-side-window nil)
+           (eca-chat-tool-call-fontify-markdown nil)
            (eca-server-version-file-path (expand-file-name "eca/eca-version" malb/cache-dir)))
   :commands eca
   :hook ((eca-chat-mode . malb/company-prose-setup))
