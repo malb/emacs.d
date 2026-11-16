@@ -6461,12 +6461,13 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 #+begin_src emacs-lisp
 (use-package hutch
+  :commands (hutch-magit-review hutch-add-review-binding)
   :config
   (setq hutch-backend (gptel-make-openai "llama-swap"
                         :stream t
                         :protocol "http"
                         :host "localhost:38080"
-                        :models '(qwen3.8:27b:medium)))
+                        :models '(road:qwen3.8:27b:medium)))
   (hutch-add-review-binding))
 #+end_src
 
