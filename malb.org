@@ -6392,6 +6392,8 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
            (eca-server-version-file-path (expand-file-name "eca/eca-version" malb/cache-dir)))
   :commands eca
   :hook ((eca-chat-mode . turn-on-cdlatex)
+         (eca-chat-mode . flyspell-mode)
+         (eca-chat-mode . latex-to-svg-for-markdown-mode)
          (eca-chat-mode . malb/company-eca-setup))
   :config
   (defun malb/company-eca-setup ()
