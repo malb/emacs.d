@@ -9393,6 +9393,7 @@ Just press ~l~ in the headers view and any mailing list you've subscribed to wil
 Canned queries.
 
 #+begin_src emacs-lisp
+(with-eval-after-load 'mu4e
 (setq mu4e-bookmarks nil)               ; clear out
 
 (add-to-list 'mu4e-bookmarks `(:key ?i :name "Inbox"
@@ -9427,6 +9428,7 @@ Canned queries.
                                :query ,(mu4e-query-fragments-expand "%doc AND %inbox AND %month")) t)
 (add-to-list 'mu4e-bookmarks `(:key ?r :name "Fresh Reviews"
                                :query ,(mu4e-query-fragments-expand "maildir:/gmail/research/reviews date:1d..now")) t)
+)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -9441,15 +9443,17 @@ Canned queries.
              (format-time-string "%Y%m%d" (org-read-date nil t nil "From: "))
              (format-time-string "%Y%m%d" (org-read-date nil t nil "To (Inclusive): "))))))
 
-(bind-key "M-g M-g" #'malb/mu4e-search-date mu4e-headers-mode-map)
-(bind-key "M-g M-g" #'malb/mu4e-search-date mu4e-main-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "M-g M-g" #'malb/mu4e-search-date mu4e-headers-mode-map)
+  (bind-key "M-g M-g" #'malb/mu4e-search-date mu4e-main-mode-map))
 #+end_src
 
 ** Key Bindings
 
 #+begin_src emacs-lisp
-(bind-key "D" #'mu4e-headers-mark-for-trash mu4e-headers-mode-map)
-(bind-key "d" #'mu4e-headers-mark-for-delete mu4e-headers-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "D" #'mu4e-headers-mark-for-trash mu4e-headers-mode-map)
+  (bind-key "d" #'mu4e-headers-mark-for-delete mu4e-headers-mode-map))
 #+end_src
 
 ** Contacts
@@ -9532,7 +9536,8 @@ A function to add new replacements.
 #+end_src
 
 #+begin_src emacs-lisp
-(bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "N" #'malb/add-mu4e-name-replacement mu4e-view-mode-map))
 #+end_src
 
 Canonicalise contacts as they appear from mu4e.
@@ -9708,7 +9713,8 @@ Use Helm to re-arrange recipients of an e-mail. I often get e-mail from Bob with
 #+end_src
 
 #+begin_src emacs-lisp
-(bind-key "C-c ]" #'malb/helm-reorder-recipients mu4e-compose-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "C-c ]" #'malb/helm-reorder-recipients mu4e-compose-mode-map))
 #+end_src
 
 *** Add MailRC entry
@@ -9747,7 +9753,8 @@ Query the user for an alias and add an entry to =~/.mailrc=.
 *** Searching
 
 #+begin_src emacs-lisp
-(unbind-key "s" mu4e-main-mode-map)
+(with-eval-after-load 'mu4e
+  (unbind-key "s" mu4e-main-mode-map))
 #+end_src
 
 A helm menu for contacts, based on ([[http://kitchingroup.cheme.cmu.edu/blog/2015/03/14/A-helm-mu4e-contact-selector/][source]])
@@ -9824,7 +9831,8 @@ it is to insert the contact.
 #+end_src
 
 #+begin_src emacs-lisp
-(bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "C-c [" #'malb/helm-mu-contacts mu4e-compose-mode-map))
 #+end_src
 
 Search mu with [[https://github.com/emacs-helm/helm-mu][helm-mu]].
@@ -9877,10 +9885,11 @@ Dropping =[mouse-1]= otherwise I end up with links being clicked twice.
 Headers to show in header view.
 
 #+begin_src emacs-lisp
+(with-eval-after-load 'mu4e
 (add-to-list 'mu4e-header-info-custom
              '(:empty . (:name "Empty"
                                :shortname ""
-                               :function (lambda (msg) "  "))))
+                               :function (lambda (msg) "  ")))))
 
 (setq mu4e-headers-fields '((:empty . 2)
                             (:human-date . 12)
@@ -10116,23 +10125,28 @@ return the filename."
       (shell-command
        (format "wkhtmltopdf %s ~/Downloads/%s" infile outfile) t))))
 
-(add-to-list 'mu4e-view-actions '("save to pdf" . malb/mu4e-action-save-to-pdf) t)
+(with-eval-after-load 'mu4e
+  (add-to-list 'mu4e-view-actions '("save to pdf" . malb/mu4e-action-save-to-pdf) t))
 #+end_src
 
 #+begin_src emacs-lisp
-(delete '("show this thread" . mu4e-action-show-thread) mu4e-view-actions)
+(with-eval-after-load 'mu4e
+  (delete '("show this thread" . mu4e-action-show-thread) mu4e-view-actions))
 #+end_src
 
 #+begin_src emacs-lisp
-(delete '("view as pdf" . mu4e-action-view-as-pdf) mu4e-view-actions)
+(with-eval-after-load 'mu4e
+  (delete '("view as pdf" . mu4e-action-view-as-pdf) mu4e-view-actions))
 #+end_src
 
 #+begin_src emacs-lisp
-(delete '("xview in xwidget" . mu4e-action-view-in-xwidget) mu4e-view-actions)
+(with-eval-after-load 'mu4e
+  (delete '("xview in xwidget" . mu4e-action-view-in-xwidget) mu4e-view-actions))
 #+end_src
 
 #+begin_src emacs-lisp
-(add-to-list 'mu4e-view-actions '("Save all attachments" . malb/mu4e-view-save-all-attachments) t)
+(with-eval-after-load 'mu4e
+  (add-to-list 'mu4e-view-actions '("Save all attachments" . malb/mu4e-view-save-all-attachments) t))
 #+end_src
 
 Action to search messages by/to sender.
@@ -10203,8 +10217,10 @@ Action to search messages involving all correspondents.
 (defun malb/edit-raw-email (msg)
   (find-file (plist-get msg :path)))
 
+(with-eval-after-load 'mu4e
 (add-to-list 'mu4e-view-actions    '("edit raw" . malb/edit-raw-email) t)
 (add-to-list 'mu4e-headers-actions '("edit raw" . malb/edit-raw-email) t)
+)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -10212,7 +10228,8 @@ Action to search messages involving all correspondents.
   (let ((display-buffer-alist nil))
     (malb/summarize-llm)))
 
-(add-to-list 'mu4e-view-actions '("/summarise" . malb/mail-summarize) t)
+(with-eval-after-load 'mu4e
+  (add-to-list 'mu4e-view-actions '("/summarise" . malb/mail-summarize) t))
 #+end_src
 
 [[https://github.com/laurynas-biveinis/mu4e-autotask][laurynas-biveinis/mu4e-autotask]]
@@ -10251,7 +10268,8 @@ Don’t break long lines manually.
 
 (add-hook 'mu4e-compose-mode-hook #'malb/mu4e-compose-mode-hook)
 
-(add-to-list 'mu4e-draft-hidden-headers "x-ms-reactions:")
+(with-eval-after-load 'mu4e
+  (add-to-list 'mu4e-draft-hidden-headers "x-ms-reactions:"))
 #+end_src
 
 Don’t add an empty line after “On bla” line but add one before.
@@ -10274,13 +10292,14 @@ Don’t add an empty line after “On bla” line but add one before.
 Various shortcuts to jump to/create headers.
 
 #+begin_src emacs-lisp
-(bind-key "C-c g t" #'message-goto-to mu4e-compose-mode-map)
-(bind-key "C-c g c" #'message-goto-cc mu4e-compose-mode-map)
-(bind-key "C-c g b" #'message-goto-bcc mu4e-compose-mode-map)
-(bind-key "C-c g f" #'message-goto-from mu4e-compose-mode-map)
-(bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
-(bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
-(bind-key "C-c z" #'malb/fixup-email mu4e-compose-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "C-c g t" #'message-goto-to mu4e-compose-mode-map)
+  (bind-key "C-c g c" #'message-goto-cc mu4e-compose-mode-map)
+  (bind-key "C-c g b" #'message-goto-bcc mu4e-compose-mode-map)
+  (bind-key "C-c g f" #'message-goto-from mu4e-compose-mode-map)
+  (bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
+  (bind-key "C-c g s" #'message-goto-subject mu4e-compose-mode-map)
+  (bind-key "C-c z" #'malb/fixup-email mu4e-compose-mode-map))
 #+end_src
 
 Don’t ask me to remove the backup file, I do want to remove the backup file, too.
@@ -10339,7 +10358,8 @@ Don’t ask me to remove the backup file, I do want to remove the backup file, t
        (and (> (+ tos ccs) 1)
             (yes-or-no-p "Reply to all?"))))))
 
-(bind-key "R" #'malb/supersede-or-compose-reply-ask-wide 'mu4e-compose-minor-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "R" #'malb/supersede-or-compose-reply-ask-wide 'mu4e-compose-minor-mode-map))
 #+end_src
 
 Do not restore window configuration (not necessary) or kill frame (handled by dedicated buffers)
@@ -10425,7 +10445,8 @@ message from the wrong account"
                                  (length names))
                             names)))))
 
-(bind-key "C-c C-i" #'malb/mu4e-cycle-contexts mu4e-compose-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "C-c C-i" #'malb/mu4e-cycle-contexts mu4e-compose-mode-map))
 #+end_src
 
 ** Window Management
@@ -10474,7 +10495,8 @@ Kill the mu4e frame.
   (kill-buffer)
   (delete-frame))
 
-(bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "q" #'malb/mu4e-quit-session mu4e-main-mode-map))
 #+end_src
 
 
@@ -10484,7 +10506,8 @@ Kill the mu4e frame.
   (when (not (malb/quit-bottom-disposable-windows))
     (mu4e-view-quit)))
 
-(bind-key "q" #'malb/mu4e-view-quit mu4e-view-mode-map)
+(with-eval-after-load 'mu4e
+  (bind-key "q" #'malb/mu4e-view-quit mu4e-view-mode-map))
 #+end_src
 
 We dispatch to our own display function in =malb/frame-dispatch=.
@@ -10501,6 +10524,7 @@ We dispatch to our own display function in =malb/frame-dispatch=.
 Update buffer treatment:
 
 #+begin_src emacs-lisp
+(with-eval-after-load 'mu4e
 (add-to-list 'display-buffer-alist
              `(,(regexp-quote mu4e--update-name)
                (display-buffer-reuse-window
@@ -10510,7 +10534,7 @@ Update buffer treatment:
                (window-parameters
                 (no-other-window . t)
                 (no-delete-other-windows . t))
-               (window-height   . 0.2)))
+               (window-height   . 0.2))))
 #+end_src
 
 Open raw view in message view or below.
@@ -10526,8 +10550,9 @@ Open raw view in message view or below.
 
 #+begin_src emacs-lisp
 (setq mml2015-encrypt-to-self t)
-(define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
-(define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime)
+(with-eval-after-load 'mu4e
+  (define-key mu4e-compose-mode-map (kbd "C-c s") 'mml-secure-message-sign-pgpmime)
+  (define-key mu4e-compose-mode-map (kbd "C-c e") 'mml-secure-message-encrypt-pgpmime))
 #+end_src
 
 #+begin_src emacs-lisp
