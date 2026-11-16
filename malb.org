@@ -7929,10 +7929,10 @@ A kill remembers the markup format of the buffer it came from. Paste it into a b
   :config
   (setq latex-to-svg-backend-preamble-packages
         (mapconcat #'identity
-                   '("\\newcommand{\\ZZ}{\\mathbb{Z}}"
+                   '("\\usepackage{mathtools}"
+                     "\\newcommand{\\ZZ}{\\mathbb{Z}}"
                      "\\newcommand{\\mat}[1]{\\mathbf{#1}}"
-                     "\\renewcommand{\\vec}[1]{\\mathbf{#1}}"
-                     "\\newcommand{\\poly}[1]{\\mathsf{poly}(#1)}")
+                     "\\renewcommand{\\vec}[1]{\\mathbf{#1}}")
                    "\n")))
 #+end_src
 
