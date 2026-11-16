@@ -4543,7 +4543,8 @@ X-KDE-Username=
 
 #+begin_src emacs-lisp
 (use-package org-web-tools
-  :after org)
+  :after org
+  :defer t)
 #+end_src
 
 ** Eldoc
