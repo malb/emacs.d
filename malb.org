@@ -8509,6 +8509,25 @@ Run =latexmk -pvc= in async shell
            (lsp-latex-diagnostics-ignored-patterns `(,(rx "Unused label")))))
 #+end_src
 
+Setting
+
+#+begin_src lisp-data :tangle no
+((latex-mode . ((lsp-latex-build-on-save . t)
+                (lsp-latex-build-executable . "latex-atomic")
+                (lsp-latex-build-args . ("pdflatex" "%f")))))
+#+end_src
+
+will call the script below
+
+#+begin_src bash :tangle /home/malb/.local/bin/latex-atomic :shebang "#!/usr/bin/env bash"
+CUR=$(pwd)
+TMP=$(mktemp -d)
+$1 -aux-directory="$TMP" -output-directory="$TMP" -interaction=nonstopmode -synctex=1 $2
+mv "$TMP"/* "$CUR"
+rm -rf "$TMP"
+#+end_src
+
+That compiles the document once and then copies over the results. This is meant to be fast and unobtrusive.
 
 *** Utility Functions
 
