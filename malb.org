@@ -7932,6 +7932,8 @@ A kill remembers the markup format of the buffer it came from. Paste it into a b
   (setq latex-to-svg-backend-preamble-packages
         (mapconcat #'identity
                    '("\\usepackage{mathtools}"
+                     "\\newcommand{\\poly}[1]{\\mathsf{poly}(#1)}"
+                     "\\newcommand{\\eps}{\\varepsilon}"
                      "\\newcommand{\\ZZ}{\\mathbb{Z}}"
                      "\\newcommand{\\mat}[1]{\\mathbf{#1}}"
                      "\\renewcommand{\\vec}[1]{\\mathbf{#1}}")
