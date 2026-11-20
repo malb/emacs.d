@@ -2812,6 +2812,8 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
              magit-stage-file
              magit-unstage-file
              malb/expand-org-mode-entry)
+  :custom ((magit-define-global-key-bindings t)
+           (magit-diff-refine-hunk t))
   :hook ((magit-diff-visit-file . malb/expand-org-mode-entry)
          (magit-status-mode . visual-fill-column-mode))
   :bind (("S-<f7>" . magit-status)
@@ -2827,11 +2829,7 @@ We add a “Create file“ action ([[https://www.reddit.com/r/emacs/comments/3m8
               (when (derived-mode-p 'org-mode)
                 (org-reveal '(4))))
 
-            (setq magit-push-always-verify nil
-                  magit-last-seen-setup-instructions "2.1.0"
-                  magit-define-global-key-bindings t)
-
-            (setq-default magit-diff-refine-hunk t)))
+            (hutch-add-review-binding)))
 #+end_src
 
 *Notes*
@@ -6463,13 +6461,13 @@ The Language Server Protocol (LSP) defines the protocol used between an editor o
 
 #+begin_src emacs-lisp
 (use-package hutch
-  :commands (hutch-magit-review hutch-add-review-binding)
+  :commands (hutch-add-review-binding)
   :config
   (setq hutch-backend (gptel-make-openai "llama-swap"
                         :stream t
                         :protocol "http"
                         :host "localhost:38080"
-                        :models '(road:qwen3.8:27b:medium)))
+                        :models '(road:qwen3.8:medium)))
   (hutch-add-review-binding))
 #+end_src
 
